@@ -1,0 +1,841 @@
+feed,date,bars,kept,reason
+histdata,2010-11-15,351,True,thin
+histdata,2010-11-17,368,True,thin
+histdata,2010-11-18,338,True,thin
+histdata,2010-11-19,321,True,thin
+histdata,2010-11-22,360,True,thin
+histdata,2010-11-24,302,True,thin
+histdata,2010-11-25,68,False,holiday: Thanksgiving
+histdata,2010-11-26,198,False,early close: day after Thanksgiving
+histdata,2010-12-01,353,True,thin
+histdata,2010-12-02,340,True,thin
+histdata,2010-12-03,338,True,thin
+histdata,2010-12-06,331,True,thin
+histdata,2010-12-08,361,True,thin
+histdata,2010-12-09,330,True,thin
+histdata,2010-12-10,312,True,thin
+histdata,2010-12-13,333,True,thin
+histdata,2010-12-14,323,True,thin
+histdata,2010-12-15,353,True,thin
+histdata,2010-12-16,324,True,thin
+histdata,2010-12-17,276,False,feed gap
+histdata,2010-12-20,287,False,feed gap
+histdata,2010-12-21,261,False,feed gap
+histdata,2010-12-22,187,False,feed gap
+histdata,2010-12-23,208,False,feed gap
+histdata,2010-12-27,174,False,feed gap
+histdata,2010-12-28,174,False,feed gap
+histdata,2010-12-29,157,False,feed gap
+histdata,2010-12-30,196,False,feed gap
+histdata,2010-12-31,144,False,feed gap
+histdata,2011-01-03,258,False,feed gap
+histdata,2011-01-04,319,True,thin
+histdata,2011-01-05,318,True,thin
+histdata,2011-01-06,335,True,thin
+histdata,2011-01-07,366,True,thin
+histdata,2011-01-10,345,True,thin
+histdata,2011-01-11,317,True,thin
+histdata,2011-01-12,307,True,thin
+histdata,2011-01-13,324,True,thin
+histdata,2011-01-14,302,True,thin
+histdata,2011-01-17,58,False,holiday: MLK
+histdata,2011-01-18,294,False,feed gap
+histdata,2011-01-19,333,True,thin
+histdata,2011-01-20,361,True,thin
+histdata,2011-01-21,336,True,thin
+histdata,2011-01-24,333,True,thin
+histdata,2011-01-25,352,True,thin
+histdata,2011-01-26,334,True,thin
+histdata,2011-01-27,336,True,thin
+histdata,2011-02-01,332,True,thin
+histdata,2011-02-02,337,True,thin
+histdata,2011-02-03,356,True,thin
+histdata,2011-02-04,341,True,thin
+histdata,2011-02-07,304,True,thin
+histdata,2011-02-08,307,True,thin
+histdata,2011-02-09,343,True,thin
+histdata,2011-02-10,348,True,thin
+histdata,2011-02-11,330,True,thin
+histdata,2011-02-14,294,False,feed gap
+histdata,2011-02-15,313,True,thin
+histdata,2011-02-16,335,True,thin
+histdata,2011-02-17,320,True,thin
+histdata,2011-02-18,314,True,thin
+histdata,2011-02-21,89,False,holiday: Presidents
+histdata,2011-02-25,356,True,thin
+histdata,2011-02-28,344,True,thin
+histdata,2011-03-03,349,True,thin
+histdata,2011-03-08,363,True,thin
+histdata,2011-03-21,345,True,thin
+histdata,2011-03-22,364,True,thin
+histdata,2011-03-24,361,True,thin
+histdata,2011-03-25,359,True,thin
+histdata,2011-03-28,321,True,thin
+histdata,2011-03-29,332,True,thin
+histdata,2011-03-30,328,True,thin
+histdata,2011-03-31,323,True,thin
+histdata,2011-04-01,325,True,thin
+histdata,2011-04-04,334,True,thin
+histdata,2011-04-05,345,True,thin
+histdata,2011-04-06,352,True,thin
+histdata,2011-04-07,362,True,thin
+histdata,2011-04-08,357,True,thin
+histdata,2011-04-11,357,True,thin
+histdata,2011-04-12,361,True,thin
+histdata,2011-04-14,356,True,thin
+histdata,2011-04-15,331,True,thin
+histdata,2011-04-18,357,True,thin
+histdata,2011-04-19,345,True,thin
+histdata,2011-04-20,345,True,thin
+histdata,2011-04-21,279,False,feed gap
+histdata,2011-04-25,229,False,feed gap
+histdata,2011-04-26,299,False,feed gap
+histdata,2011-04-27,342,True,thin
+histdata,2011-04-28,337,True,thin
+histdata,2011-04-29,274,False,feed gap
+histdata,2011-05-02,342,True,thin
+histdata,2011-05-03,358,True,thin
+histdata,2011-05-09,357,True,thin
+histdata,2011-05-10,347,True,thin
+histdata,2011-05-18,368,True,thin
+histdata,2011-05-26,368,True,thin
+histdata,2011-05-27,328,True,thin
+histdata,2011-05-30,49,False,holiday: Memorial
+histdata,2011-05-31,350,True,thin
+histdata,2011-06-09,330,True,thin
+histdata,2011-06-14,359,True,thin
+histdata,2011-06-20,365,True,thin
+histdata,2011-06-21,365,True,thin
+histdata,2011-06-28,364,True,thin
+histdata,2011-06-30,359,True,thin
+histdata,2011-07-01,368,True,thin
+histdata,2011-07-04,69,False,holiday: Independence
+histdata,2011-07-05,361,True,thin
+histdata,2011-07-06,364,True,thin
+histdata,2011-07-07,343,True,thin
+histdata,2011-07-20,365,True,thin
+histdata,2011-07-22,368,True,thin
+histdata,2011-07-25,365,True,thin
+histdata,2011-07-26,360,True,thin
+histdata,2011-09-05,117,False,holiday: Labor
+histdata,2011-11-24,116,False,holiday: Thanksgiving
+histdata,2011-11-25,224,False,early close: day after Thanksgiving
+histdata,2011-12-23,274,False,feed gap
+histdata,2011-12-27,339,True,thin
+histdata,2011-12-29,351,True,thin
+histdata,2011-12-30,303,True,thin
+histdata,2012-01-10,368,True,thin
+histdata,2012-01-11,367,True,thin
+histdata,2012-01-12,347,True,thin
+histdata,2012-01-16,94,False,holiday: MLK
+histdata,2012-01-17,341,True,thin
+histdata,2012-01-18,355,True,thin
+histdata,2012-01-19,341,True,thin
+histdata,2012-01-20,301,True,thin
+histdata,2012-01-23,360,True,thin
+histdata,2012-01-24,334,True,thin
+histdata,2012-01-25,367,True,thin
+histdata,2012-01-26,360,True,thin
+histdata,2012-01-30,353,True,thin
+histdata,2012-01-31,349,True,thin
+histdata,2012-02-01,357,True,thin
+histdata,2012-02-02,326,True,thin
+histdata,2012-02-03,299,False,feed gap
+histdata,2012-02-06,320,True,thin
+histdata,2012-02-07,310,True,thin
+histdata,2012-02-08,352,True,thin
+histdata,2012-02-09,338,True,thin
+histdata,2012-02-10,336,True,thin
+histdata,2012-02-13,304,True,thin
+histdata,2012-02-14,343,True,thin
+histdata,2012-02-16,353,True,thin
+histdata,2012-02-17,247,False,feed gap
+histdata,2012-02-20,71,False,holiday: Presidents
+histdata,2012-02-21,326,True,thin
+histdata,2012-02-22,341,True,thin
+histdata,2012-02-23,349,True,thin
+histdata,2012-02-24,306,True,thin
+histdata,2012-02-27,328,True,thin
+histdata,2012-02-28,338,True,thin
+histdata,2012-02-29,360,True,thin
+histdata,2012-03-01,345,True,thin
+histdata,2012-03-02,358,True,thin
+histdata,2012-03-05,353,True,thin
+histdata,2012-03-06,360,True,thin
+histdata,2012-03-07,349,True,thin
+histdata,2012-03-08,338,True,thin
+histdata,2012-03-09,314,True,thin
+histdata,2012-03-12,340,True,thin
+histdata,2012-03-13,356,True,thin
+histdata,2012-03-14,351,True,thin
+histdata,2012-03-15,355,True,thin
+histdata,2012-03-16,305,True,thin
+histdata,2012-03-19,308,True,thin
+histdata,2012-03-20,346,True,thin
+histdata,2012-03-21,330,True,thin
+histdata,2012-03-22,335,True,thin
+histdata,2012-03-23,306,True,thin
+histdata,2012-03-26,266,False,feed gap
+histdata,2012-03-27,328,True,thin
+histdata,2012-03-28,356,True,thin
+histdata,2012-03-30,317,True,thin
+histdata,2012-04-02,332,True,thin
+histdata,2012-04-03,357,True,thin
+histdata,2012-04-04,361,True,thin
+histdata,2012-04-05,334,True,thin
+histdata,2012-04-09,329,True,thin
+histdata,2012-04-12,339,True,thin
+histdata,2012-04-13,359,True,thin
+histdata,2012-04-17,321,True,thin
+histdata,2012-04-18,360,True,thin
+histdata,2012-04-20,355,True,thin
+histdata,2012-04-23,358,True,thin
+histdata,2012-04-24,356,True,thin
+histdata,2012-04-26,317,True,thin
+histdata,2012-04-27,308,True,thin
+histdata,2012-04-30,315,True,thin
+histdata,2012-05-01,287,False,feed gap
+histdata,2012-05-02,342,True,thin
+histdata,2012-05-03,361,True,thin
+histdata,2012-05-04,356,True,thin
+histdata,2012-05-07,353,True,thin
+histdata,2012-05-25,366,True,thin
+histdata,2012-05-28,94,False,holiday: Memorial
+histdata,2012-06-19,365,True,thin
+histdata,2012-06-22,361,True,thin
+histdata,2012-06-25,357,True,thin
+histdata,2012-06-27,352,True,thin
+histdata,2012-06-29,350,True,thin
+histdata,2012-07-02,347,True,thin
+histdata,2012-07-03,209,False,early close: July 3
+histdata,2012-07-04,53,False,holiday: Independence
+histdata,2012-07-05,369,True,thin
+histdata,2012-07-06,368,True,thin
+histdata,2012-07-09,363,True,thin
+histdata,2012-07-10,367,True,thin
+histdata,2012-07-13,333,True,thin
+histdata,2012-07-16,364,True,thin
+histdata,2012-07-18,346,True,thin
+histdata,2012-07-20,369,True,thin
+histdata,2012-07-27,366,True,thin
+histdata,2012-07-30,354,True,thin
+histdata,2012-08-01,364,True,thin
+histdata,2012-08-03,332,True,thin
+histdata,2012-08-06,304,True,thin
+histdata,2012-08-07,294,False,feed gap
+histdata,2012-08-08,338,True,thin
+histdata,2012-08-09,304,True,thin
+histdata,2012-08-10,313,True,thin
+histdata,2012-08-13,319,True,thin
+histdata,2012-08-14,328,True,thin
+histdata,2012-08-15,288,False,feed gap
+histdata,2012-08-16,295,False,feed gap
+histdata,2012-08-17,263,False,feed gap
+histdata,2012-08-20,269,False,feed gap
+histdata,2012-08-21,346,True,thin
+histdata,2012-08-22,345,True,thin
+histdata,2012-08-23,336,True,thin
+histdata,2012-08-24,298,False,feed gap
+histdata,2012-08-27,292,False,feed gap
+histdata,2012-08-28,319,True,thin
+histdata,2012-08-29,283,False,feed gap
+histdata,2012-08-30,298,False,feed gap
+histdata,2012-08-31,368,True,thin
+histdata,2012-09-03,55,False,holiday: Labor
+histdata,2012-09-04,324,True,thin
+histdata,2012-09-05,323,True,thin
+histdata,2012-09-06,312,True,thin
+histdata,2012-09-07,291,False,feed gap
+histdata,2012-09-10,281,False,feed gap
+histdata,2012-09-11,300,True,thin
+histdata,2012-09-12,351,True,thin
+histdata,2012-09-14,357,True,thin
+histdata,2012-09-17,322,True,thin
+histdata,2012-09-18,338,True,thin
+histdata,2012-09-19,342,True,thin
+histdata,2012-09-20,341,True,thin
+histdata,2012-09-21,273,False,feed gap
+histdata,2012-09-24,302,True,thin
+histdata,2012-09-25,338,True,thin
+histdata,2012-09-26,365,True,thin
+histdata,2012-09-27,364,True,thin
+histdata,2012-09-28,366,True,thin
+histdata,2012-10-03,355,True,thin
+histdata,2012-10-04,359,True,thin
+histdata,2012-10-05,356,True,thin
+histdata,2012-10-08,349,True,thin
+histdata,2012-10-11,364,True,thin
+histdata,2012-10-12,366,True,thin
+histdata,2012-10-15,359,True,thin
+histdata,2012-10-16,349,True,thin
+histdata,2012-10-17,330,True,thin
+histdata,2012-10-24,359,True,thin
+histdata,2012-10-31,366,True,thin
+histdata,2012-11-01,364,True,thin
+histdata,2012-11-05,329,True,thin
+histdata,2012-11-06,354,True,thin
+histdata,2012-11-12,351,True,thin
+histdata,2012-11-19,348,True,thin
+histdata,2012-11-21,341,True,thin
+histdata,2012-11-22,53,False,holiday: Thanksgiving
+histdata,2012-11-23,192,False,early close: day after Thanksgiving
+histdata,2012-11-26,367,True,thin
+histdata,2012-12-06,367,True,thin
+histdata,2012-12-10,333,True,thin
+histdata,2012-12-11,337,True,thin
+histdata,2012-12-12,369,True,thin
+histdata,2012-12-13,368,True,thin
+histdata,2012-12-14,359,True,thin
+histdata,2012-12-17,365,True,thin
+histdata,2012-12-18,361,True,thin
+histdata,2012-12-19,368,True,thin
+histdata,2012-12-20,353,True,thin
+histdata,2012-12-21,368,True,thin
+histdata,2012-12-24,170,False,early close: Christmas Eve
+histdata,2012-12-26,327,True,thin
+histdata,2012-12-28,352,True,thin
+histdata,2013-01-02,366,True,thin
+histdata,2013-01-03,356,True,thin
+histdata,2013-01-04,334,True,thin
+histdata,2013-01-07,308,True,thin
+histdata,2013-01-08,319,True,thin
+histdata,2013-01-09,327,True,thin
+histdata,2013-01-10,351,True,thin
+histdata,2013-01-11,285,False,feed gap
+histdata,2013-01-14,309,True,thin
+histdata,2013-01-15,301,True,thin
+histdata,2013-01-16,280,False,feed gap
+histdata,2013-01-17,315,True,thin
+histdata,2013-01-18,283,False,feed gap
+histdata,2013-01-21,56,False,holiday: MLK
+histdata,2013-01-22,296,False,feed gap
+histdata,2013-01-23,273,False,feed gap
+histdata,2013-01-24,343,True,thin
+histdata,2013-01-25,334,True,thin
+histdata,2013-01-28,320,True,thin
+histdata,2013-01-29,333,True,thin
+histdata,2013-01-30,341,True,thin
+histdata,2013-01-31,309,True,thin
+histdata,2013-02-01,316,True,thin
+histdata,2013-02-04,361,True,thin
+histdata,2013-02-05,329,True,thin
+histdata,2013-02-06,346,True,thin
+histdata,2013-02-07,364,True,thin
+histdata,2013-02-08,293,False,feed gap
+histdata,2013-02-11,304,True,thin
+histdata,2013-02-12,284,False,feed gap
+histdata,2013-02-13,302,True,thin
+histdata,2013-02-14,292,False,feed gap
+histdata,2013-02-15,322,True,thin
+histdata,2013-02-18,31,False,holiday: Presidents
+histdata,2013-02-19,292,False,feed gap
+histdata,2013-02-20,351,True,thin
+histdata,2013-02-22,338,True,thin
+histdata,2013-02-28,356,True,thin
+histdata,2013-03-04,368,True,thin
+histdata,2013-03-05,357,True,thin
+histdata,2013-03-06,350,True,thin
+histdata,2013-03-07,363,True,thin
+histdata,2013-03-08,323,True,thin
+histdata,2013-03-11,314,True,thin
+histdata,2013-03-12,361,True,thin
+histdata,2013-03-13,339,True,thin
+histdata,2013-03-14,320,True,thin
+histdata,2013-03-15,282,False,feed gap
+histdata,2013-03-18,352,True,thin
+histdata,2013-03-20,348,True,thin
+histdata,2013-03-21,367,True,thin
+histdata,2013-03-22,353,True,thin
+histdata,2013-03-26,345,True,thin
+histdata,2013-03-27,365,True,thin
+histdata,2013-03-28,315,True,thin
+histdata,2013-04-01,314,True,thin
+histdata,2013-04-02,321,True,thin
+histdata,2013-04-08,350,True,thin
+histdata,2013-04-09,359,True,thin
+histdata,2013-04-10,346,True,thin
+histdata,2013-04-11,363,True,thin
+histdata,2013-04-12,356,True,thin
+histdata,2013-04-23,367,True,thin
+histdata,2013-04-24,357,True,thin
+histdata,2013-04-25,355,True,thin
+histdata,2013-04-26,363,True,thin
+histdata,2013-04-29,321,True,thin
+histdata,2013-04-30,349,True,thin
+histdata,2013-05-01,358,True,thin
+histdata,2013-05-02,348,True,thin
+histdata,2013-05-03,336,True,thin
+histdata,2013-05-06,308,True,thin
+histdata,2013-05-07,329,True,thin
+histdata,2013-05-08,320,True,thin
+histdata,2013-05-09,357,True,thin
+histdata,2013-05-10,368,True,thin
+histdata,2013-05-13,335,True,thin
+histdata,2013-05-14,337,True,thin
+histdata,2013-05-15,365,True,thin
+histdata,2013-05-16,330,True,thin
+histdata,2013-05-17,329,True,thin
+histdata,2013-05-20,325,True,thin
+histdata,2013-05-21,366,True,thin
+histdata,2013-05-27,73,False,holiday: Memorial
+histdata,2013-07-03,221,False,early close: July 3
+histdata,2013-07-04,106,False,holiday: Independence
+histdata,2013-07-09,356,True,thin
+histdata,2013-07-11,356,True,thin
+histdata,2013-07-12,343,True,thin
+histdata,2013-07-15,315,True,thin
+histdata,2013-07-16,340,True,thin
+histdata,2013-07-17,357,True,thin
+histdata,2013-07-18,346,True,thin
+histdata,2013-07-19,337,True,thin
+histdata,2013-07-22,310,True,thin
+histdata,2013-07-23,319,True,thin
+histdata,2013-07-24,369,True,thin
+histdata,2013-07-25,356,True,thin
+histdata,2013-07-26,356,True,thin
+histdata,2013-07-29,344,True,thin
+histdata,2013-07-30,365,True,thin
+histdata,2013-07-31,347,True,thin
+histdata,2013-08-01,348,True,thin
+histdata,2013-08-02,344,True,thin
+histdata,2013-08-05,306,True,thin
+histdata,2013-08-06,319,True,thin
+histdata,2013-08-07,361,True,thin
+histdata,2013-08-08,352,True,thin
+histdata,2013-08-09,358,True,thin
+histdata,2013-08-12,361,True,thin
+histdata,2013-08-20,354,True,thin
+histdata,2013-08-22,360,True,thin
+histdata,2013-08-23,359,True,thin
+histdata,2013-08-26,343,True,thin
+histdata,2013-08-28,368,True,thin
+histdata,2013-09-02,66,False,holiday: Labor
+histdata,2013-09-04,353,True,thin
+histdata,2013-09-05,346,True,thin
+histdata,2013-09-09,353,True,thin
+histdata,2013-09-11,352,True,thin
+histdata,2013-09-12,369,True,thin
+histdata,2013-09-13,293,False,feed gap
+histdata,2013-09-16,346,True,thin
+histdata,2013-09-17,279,False,feed gap
+histdata,2013-09-18,349,True,thin
+histdata,2013-09-19,333,True,thin
+histdata,2013-09-20,362,True,thin
+histdata,2013-09-23,344,True,thin
+histdata,2013-09-24,329,True,thin
+histdata,2013-09-27,352,True,thin
+histdata,2013-10-01,363,True,thin
+histdata,2013-10-02,369,True,thin
+histdata,2013-10-04,369,True,thin
+histdata,2013-10-11,351,True,thin
+histdata,2013-10-17,353,True,thin
+histdata,2013-10-18,345,True,thin
+histdata,2013-10-21,338,True,thin
+histdata,2013-10-24,368,True,thin
+histdata,2013-10-25,348,True,thin
+histdata,2013-10-28,321,True,thin
+histdata,2013-10-29,347,True,thin
+histdata,2013-10-31,367,True,thin
+histdata,2013-11-04,347,True,thin
+histdata,2013-11-05,350,True,thin
+histdata,2013-11-11,314,True,thin
+histdata,2013-11-12,366,True,thin
+histdata,2013-11-13,347,True,thin
+histdata,2013-11-14,360,True,thin
+histdata,2013-11-15,329,True,thin
+histdata,2013-11-18,341,True,thin
+histdata,2013-11-21,356,True,thin
+histdata,2013-11-22,316,True,thin
+histdata,2013-11-25,257,False,feed gap
+histdata,2013-11-26,292,False,feed gap
+histdata,2013-11-27,304,True,thin
+histdata,2013-11-28,44,False,holiday: Thanksgiving
+histdata,2013-11-29,182,False,early close: day after Thanksgiving
+histdata,2013-12-02,328,True,thin
+histdata,2013-12-03,367,True,thin
+histdata,2013-12-06,348,True,thin
+histdata,2013-12-09,326,True,thin
+histdata,2013-12-10,344,True,thin
+histdata,2013-12-12,368,True,thin
+histdata,2013-12-13,356,True,thin
+histdata,2013-12-16,365,True,thin
+histdata,2013-12-17,359,True,thin
+histdata,2013-12-18,365,True,thin
+histdata,2013-12-19,364,True,thin
+histdata,2013-12-20,294,False,feed gap
+histdata,2013-12-23,326,True,thin
+histdata,2013-12-24,156,False,early close: Christmas Eve
+histdata,2013-12-26,254,False,feed gap
+histdata,2013-12-27,269,False,feed gap
+histdata,2013-12-30,240,False,feed gap
+histdata,2013-12-31,238,False,feed gap
+histdata,2014-01-03,329,True,thin
+histdata,2014-01-07,332,True,thin
+histdata,2014-01-08,367,True,thin
+histdata,2014-01-09,363,True,thin
+histdata,2014-01-10,364,True,thin
+histdata,2014-01-13,361,True,thin
+histdata,2014-01-14,364,True,thin
+histdata,2014-01-15,345,True,thin
+histdata,2014-01-16,334,True,thin
+histdata,2014-01-17,330,True,thin
+histdata,2014-01-20,25,False,holiday: MLK
+histdata,2014-01-21,336,True,thin
+histdata,2014-01-22,340,True,thin
+histdata,2014-02-10,363,True,thin
+histdata,2014-02-11,358,True,thin
+histdata,2014-02-12,369,True,thin
+histdata,2014-02-13,355,True,thin
+histdata,2014-02-14,320,True,thin
+histdata,2014-02-17,40,False,holiday: Presidents
+histdata,2014-02-18,311,True,thin
+histdata,2014-02-20,350,True,thin
+histdata,2014-02-21,354,True,thin
+histdata,2014-02-24,333,True,thin
+histdata,2014-02-28,355,True,thin
+histdata,2014-03-04,369,True,thin
+histdata,2014-03-05,369,True,thin
+histdata,2014-03-06,336,True,thin
+histdata,2014-03-18,365,True,thin
+histdata,2014-03-31,366,True,thin
+histdata,2014-04-01,369,True,thin
+histdata,2014-04-17,367,True,thin
+histdata,2014-04-21,352,True,thin
+histdata,2014-04-22,343,True,thin
+histdata,2014-05-05,362,True,thin
+histdata,2014-05-12,340,True,thin
+histdata,2014-05-13,368,True,thin
+histdata,2014-05-14,356,True,thin
+histdata,2014-05-19,339,True,thin
+histdata,2014-05-21,364,True,thin
+histdata,2014-05-22,335,True,thin
+histdata,2014-05-23,265,False,feed gap
+histdata,2014-05-26,60,False,holiday: Memorial
+histdata,2014-05-27,292,False,feed gap
+histdata,2014-05-28,343,True,thin
+histdata,2014-05-29,293,False,feed gap
+histdata,2014-05-30,331,True,thin
+histdata,2014-06-02,51,False,feed gap
+histdata,2014-06-03,329,True,thin
+histdata,2014-06-04,276,False,feed gap
+histdata,2014-06-05,337,True,thin
+histdata,2014-06-06,298,False,feed gap
+histdata,2014-06-09,308,True,thin
+histdata,2014-06-10,294,False,feed gap
+histdata,2014-06-11,327,True,thin
+histdata,2014-06-12,362,True,thin
+histdata,2014-06-13,323,True,thin
+histdata,2014-06-16,352,True,thin
+histdata,2014-06-17,352,True,thin
+histdata,2014-06-18,367,True,thin
+histdata,2014-06-19,359,True,thin
+histdata,2014-06-20,276,False,feed gap
+histdata,2014-06-23,308,True,thin
+histdata,2014-06-24,323,True,thin
+histdata,2014-06-26,365,True,thin
+histdata,2014-06-27,338,True,thin
+histdata,2014-06-30,319,True,thin
+histdata,2014-07-01,335,True,thin
+histdata,2014-07-02,314,True,thin
+histdata,2014-07-03,187,False,early close: July 3
+histdata,2014-07-04,35,False,holiday: Independence
+histdata,2014-07-07,335,True,thin
+histdata,2014-07-10,368,True,thin
+histdata,2014-07-11,320,True,thin
+histdata,2014-07-14,307,True,thin
+histdata,2014-07-16,318,True,thin
+histdata,2014-07-18,345,True,thin
+histdata,2014-07-21,349,True,thin
+histdata,2014-07-22,330,True,thin
+histdata,2014-07-23,340,True,thin
+histdata,2014-07-24,317,True,thin
+histdata,2014-07-25,359,True,thin
+histdata,2014-07-28,361,True,thin
+histdata,2014-07-29,350,True,thin
+histdata,2014-08-11,363,True,thin
+histdata,2014-08-13,350,True,thin
+histdata,2014-08-14,315,True,thin
+histdata,2014-08-18,281,False,feed gap
+histdata,2014-08-19,250,False,feed gap
+histdata,2014-08-20,305,True,thin
+histdata,2014-08-21,276,False,feed gap
+histdata,2014-08-22,355,True,thin
+histdata,2014-08-25,317,True,thin
+histdata,2014-08-26,263,False,feed gap
+histdata,2014-08-27,263,False,feed gap
+histdata,2014-08-28,314,True,thin
+histdata,2014-08-29,311,True,thin
+histdata,2014-09-01,77,False,holiday: Labor
+histdata,2014-09-02,349,True,thin
+histdata,2014-09-03,366,True,thin
+histdata,2014-09-04,364,True,thin
+histdata,2014-09-05,362,True,thin
+histdata,2014-09-08,368,True,thin
+histdata,2014-09-10,363,True,thin
+histdata,2014-09-17,369,True,thin
+histdata,2014-09-18,363,True,thin
+histdata,2014-09-19,360,True,thin
+histdata,2014-11-10,365,True,thin
+histdata,2014-11-11,355,True,thin
+histdata,2014-11-12,353,True,thin
+histdata,2014-11-14,367,True,thin
+histdata,2014-11-17,364,True,thin
+histdata,2014-11-18,343,True,thin
+histdata,2014-11-20,353,True,thin
+histdata,2014-11-24,341,True,thin
+histdata,2014-11-25,358,True,thin
+histdata,2014-11-26,278,False,feed gap
+histdata,2014-11-27,121,False,holiday: Thanksgiving
+histdata,2014-11-28,218,False,early close: day after Thanksgiving
+histdata,2014-12-02,363,True,thin
+histdata,2014-12-03,354,True,thin
+histdata,2014-12-05,339,True,thin
+histdata,2014-12-24,196,False,early close: Christmas Eve
+histdata,2014-12-26,297,False,feed gap
+histdata,2014-12-29,363,True,thin
+histdata,2014-12-30,365,True,thin
+histdata,2014-12-31,367,True,thin
+histdata,2015-01-19,185,False,holiday: MLK
+histdata,2015-02-16,136,False,holiday: Presidents
+histdata,2015-02-23,358,True,thin
+histdata,2015-02-24,365,True,thin
+histdata,2015-02-25,366,True,thin
+histdata,2015-03-02,361,True,thin
+histdata,2015-03-20,353,True,thin
+histdata,2015-04-06,369,True,thin
+histdata,2015-04-10,348,True,thin
+histdata,2015-04-20,367,True,thin
+histdata,2015-05-14,359,True,thin
+histdata,2015-05-15,362,True,thin
+histdata,2015-05-18,342,True,thin
+histdata,2015-05-19,354,True,thin
+histdata,2015-05-21,338,True,thin
+histdata,2015-05-22,354,True,thin
+histdata,2015-05-25,68,False,holiday: Memorial
+histdata,2015-05-27,357,True,thin
+histdata,2015-06-19,345,True,thin
+histdata,2015-06-23,350,True,thin
+histdata,2015-07-03,178,False,holiday: Independence
+histdata,2015-07-14,353,True,thin
+histdata,2015-07-16,351,True,thin
+histdata,2015-07-17,344,True,thin
+histdata,2015-07-20,350,True,thin
+histdata,2015-08-10,352,True,thin
+histdata,2015-08-21,347,True,thin
+histdata,2015-09-07,176,False,holiday: Labor
+histdata,2015-11-26,111,False,holiday: Thanksgiving
+histdata,2015-11-27,220,False,early close: day after Thanksgiving
+histdata,2015-12-24,217,False,early close: Christmas Eve
+histdata,2016-01-18,194,False,holiday: MLK
+histdata,2016-02-15,183,False,holiday: Presidents
+histdata,2016-03-18,368,True,thin
+histdata,2016-05-26,366,True,thin
+histdata,2016-05-27,365,True,thin
+histdata,2016-05-30,112,False,holiday: Memorial
+histdata,2016-06-07,336,True,thin
+histdata,2016-06-08,363,True,thin
+histdata,2016-06-17,361,True,thin
+histdata,2016-07-04,165,False,holiday: Independence
+histdata,2016-07-18,369,True,thin
+histdata,2016-07-19,351,True,thin
+histdata,2016-07-20,332,True,thin
+histdata,2016-07-21,365,True,thin
+histdata,2016-07-22,338,True,thin
+histdata,2016-07-25,353,True,thin
+histdata,2016-08-05,348,True,thin
+histdata,2016-08-08,317,True,thin
+histdata,2016-08-09,361,True,thin
+histdata,2016-08-11,349,True,thin
+histdata,2016-08-12,351,True,thin
+histdata,2016-08-15,316,True,thin
+histdata,2016-08-16,356,True,thin
+histdata,2016-08-17,368,True,thin
+histdata,2016-08-18,366,True,thin
+histdata,2016-08-19,368,True,thin
+histdata,2016-08-23,340,True,thin
+histdata,2016-08-29,351,True,thin
+histdata,2016-09-05,100,False,holiday: Labor
+histdata,2016-09-07,365,True,thin
+histdata,2016-10-10,354,True,thin
+histdata,2016-10-19,355,True,thin
+histdata,2016-10-24,352,True,thin
+histdata,2016-11-18,368,True,thin
+histdata,2016-11-21,358,True,thin
+histdata,2016-11-22,369,True,thin
+histdata,2016-11-23,369,True,thin
+histdata,2016-11-24,73,False,holiday: Thanksgiving
+histdata,2016-11-25,184,False,early close: day after Thanksgiving
+histdata,2016-12-20,355,True,thin
+histdata,2016-12-21,291,False,feed gap
+histdata,2016-12-22,328,True,thin
+histdata,2016-12-23,235,False,feed gap
+histdata,2016-12-27,252,False,feed gap
+histdata,2016-12-28,354,True,thin
+histdata,2017-01-04,347,True,thin
+histdata,2017-01-09,363,True,thin
+histdata,2017-01-10,369,True,thin
+histdata,2017-01-16,100,False,holiday: MLK
+histdata,2017-01-24,369,True,thin
+histdata,2017-01-26,357,True,thin
+histdata,2017-01-27,332,True,thin
+histdata,2017-02-03,365,True,thin
+histdata,2017-02-09,356,True,thin
+histdata,2017-02-10,361,True,thin
+histdata,2017-02-13,359,True,thin
+histdata,2017-02-17,363,True,thin
+histdata,2017-03-06,369,True,thin
+histdata,2017-03-07,363,True,thin
+histdata,2017-03-13,358,True,thin
+histdata,2017-03-17,348,True,thin
+histdata,2017-03-31,369,True,thin
+histdata,2017-04-20,362,True,thin
+histdata,2017-04-24,369,True,thin
+histdata,2017-04-25,364,True,thin
+histdata,2017-05-02,360,True,thin
+histdata,2017-05-05,367,True,thin
+histdata,2017-05-08,324,True,thin
+histdata,2017-05-09,350,True,thin
+histdata,2017-05-10,360,True,thin
+histdata,2017-05-11,368,True,thin
+histdata,2017-05-12,340,True,thin
+histdata,2017-05-15,314,True,thin
+histdata,2017-05-16,345,True,thin
+histdata,2017-05-22,337,True,thin
+histdata,2017-05-23,355,True,thin
+histdata,2017-05-24,347,True,thin
+histdata,2017-05-25,368,True,thin
+histdata,2017-05-26,309,True,thin
+histdata,2017-05-29,71,False,holiday: Memorial
+histdata,2017-05-30,334,True,thin
+histdata,2017-06-01,355,True,thin
+histdata,2017-06-02,369,True,thin
+histdata,2017-06-05,348,True,thin
+histdata,2017-06-06,359,True,thin
+histdata,2017-06-16,367,True,thin
+histdata,2017-06-19,342,True,thin
+histdata,2017-06-20,369,True,thin
+histdata,2017-06-22,351,True,thin
+histdata,2017-06-23,336,True,thin
+histdata,2017-07-03,225,False,early close: July 3
+histdata,2017-07-04,121,False,holiday: Independence
+histdata,2017-07-07,368,True,thin
+histdata,2017-07-10,355,True,thin
+histdata,2017-07-12,363,True,thin
+histdata,2017-07-13,353,True,thin
+histdata,2017-07-14,318,True,thin
+histdata,2017-07-17,343,True,thin
+histdata,2017-07-18,367,True,thin
+histdata,2017-07-19,318,True,thin
+histdata,2017-07-20,339,True,thin
+histdata,2017-07-21,339,True,thin
+histdata,2017-07-24,291,False,feed gap
+histdata,2017-07-25,336,True,thin
+histdata,2017-07-26,326,True,thin
+histdata,2017-07-27,362,True,thin
+histdata,2017-07-28,351,True,thin
+histdata,2017-07-31,335,True,thin
+histdata,2017-08-01,314,True,thin
+histdata,2017-08-02,359,True,thin
+histdata,2017-08-03,359,True,thin
+histdata,2017-08-04,347,True,thin
+histdata,2017-08-07,230,False,feed gap
+histdata,2017-08-08,344,True,thin
+histdata,2017-08-14,365,True,thin
+histdata,2017-08-15,360,True,thin
+histdata,2017-08-16,369,True,thin
+histdata,2017-08-22,357,True,thin
+histdata,2017-08-25,366,True,thin
+histdata,2017-08-28,366,True,thin
+histdata,2017-08-30,349,True,thin
+histdata,2017-08-31,357,True,thin
+histdata,2017-09-01,332,True,thin
+histdata,2017-09-04,90,False,holiday: Labor
+histdata,2017-09-11,338,True,thin
+histdata,2017-09-12,347,True,thin
+histdata,2017-09-13,335,True,thin
+histdata,2017-09-14,339,True,thin
+histdata,2017-09-15,312,True,thin
+histdata,2017-09-18,322,True,thin
+histdata,2017-09-19,316,True,thin
+histdata,2017-09-20,345,True,thin
+histdata,2017-09-21,348,True,thin
+histdata,2017-09-22,314,True,thin
+histdata,2017-09-26,364,True,thin
+histdata,2017-09-27,365,True,thin
+histdata,2017-09-28,335,True,thin
+histdata,2017-09-29,311,True,thin
+histdata,2017-10-02,339,True,thin
+histdata,2017-10-03,273,False,feed gap
+histdata,2017-10-04,299,False,feed gap
+histdata,2017-10-05,309,True,thin
+histdata,2017-10-06,326,True,thin
+histdata,2017-10-09,297,False,feed gap
+histdata,2017-10-10,360,True,thin
+histdata,2017-10-11,295,False,feed gap
+histdata,2017-10-12,282,False,feed gap
+histdata,2017-10-13,269,False,feed gap
+histdata,2017-10-16,272,False,feed gap
+histdata,2017-10-17,260,False,feed gap
+histdata,2017-10-18,249,False,feed gap
+histdata,2017-10-19,317,True,thin
+histdata,2017-10-20,291,False,feed gap
+histdata,2017-10-23,325,True,thin
+histdata,2017-10-24,309,True,thin
+histdata,2017-10-26,362,True,thin
+histdata,2017-10-27,355,True,thin
+histdata,2017-10-30,360,True,thin
+histdata,2017-10-31,314,True,thin
+histdata,2017-11-03,332,True,thin
+histdata,2017-11-06,298,False,feed gap
+histdata,2017-11-08,332,True,thin
+histdata,2017-11-10,356,True,thin
+histdata,2017-11-13,321,True,thin
+histdata,2017-11-16,354,True,thin
+histdata,2017-11-17,344,True,thin
+histdata,2017-11-20,330,True,thin
+histdata,2017-11-21,325,True,thin
+histdata,2017-11-22,327,True,thin
+histdata,2017-11-23,75,False,holiday: Thanksgiving
+histdata,2017-11-24,177,False,early close: day after Thanksgiving
+histdata,2017-11-27,334,True,thin
+histdata,2017-12-08,355,True,thin
+histdata,2017-12-11,352,True,thin
+histdata,2017-12-15,365,True,thin
+histdata,2017-12-18,353,True,thin
+histdata,2017-12-20,359,True,thin
+histdata,2017-12-21,331,True,thin
+histdata,2017-12-22,289,False,feed gap
+histdata,2017-12-26,296,False,feed gap
+histdata,2017-12-27,313,True,thin
+histdata,2017-12-28,261,False,feed gap
+histdata,2017-12-29,330,True,thin
+histdata,2018-01-02,324,True,thin
+histdata,2018-01-03,340,True,thin
+histdata,2018-01-04,352,True,thin
+histdata,2018-01-05,327,True,thin
+histdata,2018-01-08,332,True,thin
+histdata,2018-01-09,353,True,thin
+histdata,2018-01-11,329,True,thin
+histdata,2018-01-12,357,True,thin
+histdata,2018-01-15,113,False,holiday: MLK
+histdata,2018-01-19,366,True,thin
+histdata,2018-01-22,364,True,thin
+histdata,2018-02-19,205,False,holiday: Presidents
+histdata,2018-05-28,169,False,holiday: Memorial
+histdata,2018-07-03,226,False,early close: July 3
+histdata,2018-07-04,183,False,holiday: Independence
+histdata,2018-07-09,367,True,thin
+histdata,2018-07-18,362,True,thin
+histdata,2018-07-23,354,True,thin
+histdata,2018-08-06,344,True,thin
+histdata,2018-08-07,369,True,thin
+histdata,2018-08-08,334,True,thin
+histdata,2018-08-09,349,True,thin
+histdata,2018-08-20,341,True,thin
+histdata,2018-08-27,365,True,thin
+histdata,2018-09-03,106,False,holiday: Labor
+histdata,2018-09-26,363,True,thin
+histdata,2018-11-22,205,False,holiday: Thanksgiving
+histdata,2018-11-23,226,False,early close: day after Thanksgiving
+histdata,2018-12-05,1,False,closure: Bush day of mourning
+histdata,2018-12-24,225,False,early close: Christmas Eve

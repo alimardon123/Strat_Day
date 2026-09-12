@@ -1,0 +1,1091 @@
+feed,date,bars,kept,reason
+oanda,2005-01-17,43,False,holiday: MLK
+oanda,2005-02-21,46,False,holiday: Presidents
+oanda,2005-03-11,359,True,thin
+oanda,2005-03-14,328,True,thin
+oanda,2005-03-15,316,True,thin
+oanda,2005-03-16,313,True,thin
+oanda,2005-03-17,280,False,feed gap
+oanda,2005-04-26,218,False,feed gap
+oanda,2005-05-30,60,False,holiday: Memorial
+oanda,2005-06-10,354,True,thin
+oanda,2005-06-13,339,True,thin
+oanda,2005-06-14,302,True,thin
+oanda,2005-06-15,318,True,thin
+oanda,2005-06-16,281,False,feed gap
+oanda,2005-07-04,34,False,holiday: Independence
+oanda,2005-09-05,61,False,holiday: Labor
+oanda,2005-09-09,353,True,thin
+oanda,2005-09-12,317,True,thin
+oanda,2005-09-13,326,True,thin
+oanda,2005-09-14,302,True,thin
+oanda,2005-09-15,303,True,thin
+oanda,2005-11-24,64,False,holiday: Thanksgiving
+oanda,2005-11-25,225,False,early close: day after Thanksgiving
+oanda,2005-12-12,350,True,thin
+oanda,2005-12-13,309,True,thin
+oanda,2005-12-14,321,True,thin
+oanda,2005-12-15,279,False,feed gap
+oanda,2006-01-16,55,False,holiday: MLK
+oanda,2006-02-20,47,False,holiday: Presidents
+oanda,2006-03-10,365,True,thin
+oanda,2006-03-13,335,True,thin
+oanda,2006-03-14,352,True,thin
+oanda,2006-03-15,322,True,thin
+oanda,2006-03-16,283,False,feed gap
+oanda,2006-05-29,61,False,holiday: Memorial
+oanda,2006-06-12,369,True,thin
+oanda,2006-06-14,367,True,thin
+oanda,2006-06-15,348,True,thin
+oanda,2006-07-03,225,False,early close: July 3
+oanda,2006-07-04,55,False,holiday: Independence
+oanda,2006-09-04,71,False,holiday: Labor
+oanda,2006-09-08,346,True,thin
+oanda,2006-09-11,362,True,thin
+oanda,2006-09-12,340,True,thin
+oanda,2006-09-13,343,True,thin
+oanda,2006-09-14,308,True,thin
+oanda,2006-11-23,52,False,holiday: Thanksgiving
+oanda,2006-11-24,225,False,early close: day after Thanksgiving
+oanda,2006-12-11,316,True,thin
+oanda,2006-12-12,342,True,thin
+oanda,2006-12-13,323,True,thin
+oanda,2006-12-14,315,True,thin
+oanda,2007-01-15,80,False,holiday: MLK
+oanda,2007-02-19,74,False,holiday: Presidents
+oanda,2007-03-12,365,True,thin
+oanda,2007-03-15,355,True,thin
+oanda,2007-05-28,36,False,holiday: Memorial
+oanda,2007-06-14,353,True,thin
+oanda,2007-07-03,225,False,early close: July 3
+oanda,2007-07-04,72,False,holiday: Independence
+oanda,2007-09-03,89,False,holiday: Labor
+oanda,2007-11-22,108,False,holiday: Thanksgiving
+oanda,2007-11-23,225,False,early close: day after Thanksgiving
+oanda,2007-12-24,224,False,early close: Christmas Eve
+oanda,2008-01-21,120,False,holiday: MLK
+oanda,2008-02-18,119,False,holiday: Presidents
+oanda,2008-05-26,86,False,holiday: Memorial
+oanda,2008-07-03,225,False,early close: July 3
+oanda,2008-07-04,114,False,holiday: Independence
+oanda,2008-09-01,117,False,holiday: Labor
+oanda,2008-11-27,120,False,holiday: Thanksgiving
+oanda,2008-11-28,225,False,early close: day after Thanksgiving
+oanda,2008-12-24,225,False,early close: Christmas Eve
+oanda,2009-01-19,120,False,holiday: MLK
+oanda,2009-02-16,118,False,holiday: Presidents
+oanda,2009-05-25,118,False,holiday: Memorial
+oanda,2009-07-03,109,False,holiday: Independence
+oanda,2009-09-07,114,False,holiday: Labor
+oanda,2009-11-26,120,False,holiday: Thanksgiving
+oanda,2009-11-27,225,False,early close: day after Thanksgiving
+oanda,2009-12-15,369,True,thin
+oanda,2009-12-16,344,True,thin
+oanda,2009-12-17,360,True,thin
+oanda,2009-12-24,225,False,early close: Christmas Eve
+oanda,2010-01-18,118,False,holiday: MLK
+oanda,2010-02-15,110,False,holiday: Presidents
+oanda,2010-03-16,367,True,thin
+oanda,2010-03-17,354,True,thin
+oanda,2010-03-18,350,True,thin
+oanda,2010-05-31,116,False,holiday: Memorial
+oanda,2010-07-05,119,False,holiday: Independence
+oanda,2010-09-06,102,False,holiday: Labor
+oanda,2010-09-15,366,True,thin
+oanda,2010-09-16,355,True,thin
+oanda,2010-11-25,118,False,holiday: Thanksgiving
+oanda,2010-11-26,225,False,early close: day after Thanksgiving
+oanda,2010-12-14,361,True,thin
+oanda,2010-12-15,368,True,thin
+oanda,2010-12-16,360,True,thin
+oanda,2011-01-17,119,False,holiday: MLK
+oanda,2011-02-21,120,False,holiday: Presidents
+oanda,2011-05-30,100,False,holiday: Memorial
+oanda,2011-07-04,117,False,holiday: Independence
+oanda,2011-09-05,120,False,holiday: Labor
+oanda,2011-11-24,120,False,holiday: Thanksgiving
+oanda,2011-11-25,225,False,early close: day after Thanksgiving
+oanda,2012-01-16,120,False,holiday: MLK
+oanda,2012-02-20,120,False,holiday: Presidents
+oanda,2012-03-01,352,True,thin
+oanda,2012-03-05,272,False,feed gap
+oanda,2012-03-06,317,True,thin
+oanda,2012-03-07,334,True,thin
+oanda,2012-03-08,258,False,feed gap
+oanda,2012-03-09,284,False,feed gap
+oanda,2012-03-12,345,True,thin
+oanda,2012-03-13,355,True,thin
+oanda,2012-03-14,360,True,thin
+oanda,2012-03-15,292,False,feed gap
+oanda,2012-03-16,249,False,feed gap
+oanda,2012-03-19,241,False,feed gap
+oanda,2012-03-20,285,False,feed gap
+oanda,2012-03-21,245,False,feed gap
+oanda,2012-03-22,281,False,feed gap
+oanda,2012-03-23,314,True,thin
+oanda,2012-03-26,223,False,feed gap
+oanda,2012-03-27,285,False,feed gap
+oanda,2012-03-28,307,True,thin
+oanda,2012-03-29,351,True,thin
+oanda,2012-03-30,328,True,thin
+oanda,2012-04-02,272,False,feed gap
+oanda,2012-04-03,362,True,thin
+oanda,2012-04-05,343,True,thin
+oanda,2012-04-06,3,False,holiday: Good Friday
+oanda,2012-04-09,339,True,thin
+oanda,2012-04-12,356,True,thin
+oanda,2012-04-13,367,True,thin
+oanda,2012-04-16,363,True,thin
+oanda,2012-04-17,338,True,thin
+oanda,2012-04-18,310,True,thin
+oanda,2012-04-20,366,True,thin
+oanda,2012-04-23,365,True,thin
+oanda,2012-04-24,364,True,thin
+oanda,2012-04-26,259,False,feed gap
+oanda,2012-04-27,324,True,thin
+oanda,2012-04-30,254,False,feed gap
+oanda,2012-05-01,298,False,feed gap
+oanda,2012-05-02,348,True,thin
+oanda,2012-05-03,367,True,thin
+oanda,2012-05-04,364,True,thin
+oanda,2012-05-07,291,False,feed gap
+oanda,2012-05-14,319,True,thin
+oanda,2012-05-21,337,True,thin
+oanda,2012-05-22,361,True,thin
+oanda,2012-05-25,367,True,thin
+oanda,2012-05-28,111,False,holiday: Memorial
+oanda,2012-06-07,357,True,thin
+oanda,2012-06-11,366,True,thin
+oanda,2012-06-18,363,True,thin
+oanda,2012-06-22,350,True,thin
+oanda,2012-06-25,311,True,thin
+oanda,2012-06-27,368,True,thin
+oanda,2012-06-29,279,False,feed gap
+oanda,2012-07-02,358,True,thin
+oanda,2012-07-03,210,False,early close: July 3
+oanda,2012-07-04,62,False,holiday: Independence
+oanda,2012-07-05,368,True,thin
+oanda,2012-07-11,357,True,thin
+oanda,2012-07-13,340,True,thin
+oanda,2012-07-16,368,True,thin
+oanda,2012-07-18,358,True,thin
+oanda,2012-07-30,357,True,thin
+oanda,2012-08-01,368,True,thin
+oanda,2012-08-03,345,True,thin
+oanda,2012-08-06,319,True,thin
+oanda,2012-08-07,306,True,thin
+oanda,2012-08-08,348,True,thin
+oanda,2012-08-09,312,True,thin
+oanda,2012-08-10,326,True,thin
+oanda,2012-08-13,338,True,thin
+oanda,2012-08-14,338,True,thin
+oanda,2012-08-15,305,True,thin
+oanda,2012-08-16,311,True,thin
+oanda,2012-08-17,272,False,feed gap
+oanda,2012-08-20,286,False,feed gap
+oanda,2012-08-21,351,True,thin
+oanda,2012-08-22,360,True,thin
+oanda,2012-08-23,352,True,thin
+oanda,2012-08-24,317,True,thin
+oanda,2012-08-27,295,False,feed gap
+oanda,2012-08-28,328,True,thin
+oanda,2012-08-29,300,True,thin
+oanda,2012-08-30,303,True,thin
+oanda,2012-09-03,67,False,holiday: Labor
+oanda,2012-09-04,330,True,thin
+oanda,2012-09-05,335,True,thin
+oanda,2012-09-06,316,True,thin
+oanda,2012-09-07,303,True,thin
+oanda,2012-09-10,295,False,feed gap
+oanda,2012-09-11,312,True,thin
+oanda,2012-09-12,358,True,thin
+oanda,2012-09-14,360,True,thin
+oanda,2012-09-17,323,True,thin
+oanda,2012-09-18,339,True,thin
+oanda,2012-09-19,316,True,thin
+oanda,2012-09-20,355,True,thin
+oanda,2012-09-21,313,True,thin
+oanda,2012-09-24,316,True,thin
+oanda,2012-09-25,350,True,thin
+oanda,2012-09-27,364,True,thin
+oanda,2012-10-03,358,True,thin
+oanda,2012-10-04,366,True,thin
+oanda,2012-10-05,363,True,thin
+oanda,2012-10-08,358,True,thin
+oanda,2012-10-15,361,True,thin
+oanda,2012-10-16,357,True,thin
+oanda,2012-10-17,336,True,thin
+oanda,2012-10-24,363,True,thin
+oanda,2012-10-31,351,True,thin
+oanda,2012-11-01,354,True,thin
+oanda,2012-11-05,341,True,thin
+oanda,2012-11-06,354,True,thin
+oanda,2012-11-12,353,True,thin
+oanda,2012-11-19,357,True,thin
+oanda,2012-11-21,302,True,thin
+oanda,2012-11-22,54,False,holiday: Thanksgiving
+oanda,2012-11-23,175,False,early close: day after Thanksgiving
+oanda,2012-11-26,344,True,thin
+oanda,2012-12-10,339,True,thin
+oanda,2012-12-11,343,True,thin
+oanda,2012-12-14,360,True,thin
+oanda,2012-12-17,360,True,thin
+oanda,2012-12-18,344,True,thin
+oanda,2012-12-19,366,True,thin
+oanda,2012-12-20,357,True,thin
+oanda,2012-12-24,166,False,early close: Christmas Eve
+oanda,2012-12-26,332,True,thin
+oanda,2012-12-28,355,True,thin
+oanda,2012-12-31,206,False,feed gap
+oanda,2013-01-03,359,True,thin
+oanda,2013-01-04,339,True,thin
+oanda,2013-01-07,321,True,thin
+oanda,2013-01-08,326,True,thin
+oanda,2013-01-09,337,True,thin
+oanda,2013-01-10,358,True,thin
+oanda,2013-01-11,293,False,feed gap
+oanda,2013-01-14,318,True,thin
+oanda,2013-01-15,309,True,thin
+oanda,2013-01-16,291,False,feed gap
+oanda,2013-01-17,325,True,thin
+oanda,2013-01-18,296,False,feed gap
+oanda,2013-01-21,58,False,holiday: MLK
+oanda,2013-01-22,307,True,thin
+oanda,2013-01-23,278,False,feed gap
+oanda,2013-01-24,349,True,thin
+oanda,2013-01-25,342,True,thin
+oanda,2013-01-28,323,True,thin
+oanda,2013-01-29,341,True,thin
+oanda,2013-01-30,344,True,thin
+oanda,2013-01-31,317,True,thin
+oanda,2013-02-01,319,True,thin
+oanda,2013-02-04,366,True,thin
+oanda,2013-02-05,338,True,thin
+oanda,2013-02-06,357,True,thin
+oanda,2013-02-08,302,True,thin
+oanda,2013-02-11,316,True,thin
+oanda,2013-02-12,297,False,feed gap
+oanda,2013-02-13,309,True,thin
+oanda,2013-02-14,298,False,feed gap
+oanda,2013-02-15,333,True,thin
+oanda,2013-02-18,32,False,holiday: Presidents
+oanda,2013-02-19,310,True,thin
+oanda,2013-02-20,359,True,thin
+oanda,2013-02-22,350,True,thin
+oanda,2013-02-28,360,True,thin
+oanda,2013-03-05,362,True,thin
+oanda,2013-03-06,359,True,thin
+oanda,2013-03-07,334,True,thin
+oanda,2013-03-08,350,True,thin
+oanda,2013-03-11,319,True,thin
+oanda,2013-03-12,359,True,thin
+oanda,2013-03-13,331,True,thin
+oanda,2013-03-14,290,False,feed gap
+oanda,2013-03-15,323,True,thin
+oanda,2013-03-18,362,True,thin
+oanda,2013-03-20,355,True,thin
+oanda,2013-03-22,367,True,thin
+oanda,2013-03-26,349,True,thin
+oanda,2013-03-27,366,True,thin
+oanda,2013-03-28,325,True,thin
+oanda,2013-04-01,323,True,thin
+oanda,2013-04-02,337,True,thin
+oanda,2013-04-08,358,True,thin
+oanda,2013-04-09,368,True,thin
+oanda,2013-04-10,355,True,thin
+oanda,2013-04-11,366,True,thin
+oanda,2013-04-12,363,True,thin
+oanda,2013-04-24,366,True,thin
+oanda,2013-04-25,361,True,thin
+oanda,2013-04-26,364,True,thin
+oanda,2013-04-29,333,True,thin
+oanda,2013-04-30,356,True,thin
+oanda,2013-05-01,361,True,thin
+oanda,2013-05-02,355,True,thin
+oanda,2013-05-03,338,True,thin
+oanda,2013-05-06,319,True,thin
+oanda,2013-05-07,341,True,thin
+oanda,2013-05-08,328,True,thin
+oanda,2013-05-09,362,True,thin
+oanda,2013-05-10,369,True,thin
+oanda,2013-05-13,339,True,thin
+oanda,2013-05-14,355,True,thin
+oanda,2013-05-16,343,True,thin
+oanda,2013-05-17,346,True,thin
+oanda,2013-05-20,330,True,thin
+oanda,2013-05-21,369,True,thin
+oanda,2013-05-27,74,False,holiday: Memorial
+oanda,2013-07-03,222,False,early close: July 3
+oanda,2013-07-04,108,False,holiday: Independence
+oanda,2013-07-09,365,True,thin
+oanda,2013-07-11,363,True,thin
+oanda,2013-07-12,364,True,thin
+oanda,2013-07-15,330,True,thin
+oanda,2013-07-16,350,True,thin
+oanda,2013-07-17,368,True,thin
+oanda,2013-07-18,353,True,thin
+oanda,2013-07-19,353,True,thin
+oanda,2013-07-22,333,True,thin
+oanda,2013-07-23,333,True,thin
+oanda,2013-07-25,365,True,thin
+oanda,2013-07-26,364,True,thin
+oanda,2013-07-29,357,True,thin
+oanda,2013-07-31,326,True,thin
+oanda,2013-08-01,365,True,thin
+oanda,2013-08-02,355,True,thin
+oanda,2013-08-05,325,True,thin
+oanda,2013-08-06,332,True,thin
+oanda,2013-08-08,362,True,thin
+oanda,2013-08-09,366,True,thin
+oanda,2013-08-12,369,True,thin
+oanda,2013-08-20,368,True,thin
+oanda,2013-08-22,366,True,thin
+oanda,2013-08-23,363,True,thin
+oanda,2013-08-26,357,True,thin
+oanda,2013-09-02,68,False,holiday: Labor
+oanda,2013-09-04,367,True,thin
+oanda,2013-09-05,362,True,thin
+oanda,2013-09-09,361,True,thin
+oanda,2013-09-13,297,False,feed gap
+oanda,2013-09-16,353,True,thin
+oanda,2013-09-17,295,False,feed gap
+oanda,2013-09-18,358,True,thin
+oanda,2013-09-19,339,True,thin
+oanda,2013-09-23,361,True,thin
+oanda,2013-09-24,346,True,thin
+oanda,2013-09-27,363,True,thin
+oanda,2013-10-01,367,True,thin
+oanda,2013-10-11,368,True,thin
+oanda,2013-10-17,359,True,thin
+oanda,2013-10-18,354,True,thin
+oanda,2013-10-21,346,True,thin
+oanda,2013-10-25,362,True,thin
+oanda,2013-10-28,337,True,thin
+oanda,2013-10-29,358,True,thin
+oanda,2013-11-04,359,True,thin
+oanda,2013-11-05,363,True,thin
+oanda,2013-11-11,321,True,thin
+oanda,2013-11-13,358,True,thin
+oanda,2013-11-14,365,True,thin
+oanda,2013-11-15,342,True,thin
+oanda,2013-11-18,351,True,thin
+oanda,2013-11-21,367,True,thin
+oanda,2013-11-22,328,True,thin
+oanda,2013-11-25,270,False,feed gap
+oanda,2013-11-26,304,True,thin
+oanda,2013-11-27,324,True,thin
+oanda,2013-11-28,43,False,holiday: Thanksgiving
+oanda,2013-11-29,190,False,early close: day after Thanksgiving
+oanda,2013-12-02,340,True,thin
+oanda,2013-12-06,364,True,thin
+oanda,2013-12-09,355,True,thin
+oanda,2013-12-10,367,True,thin
+oanda,2013-12-16,367,True,thin
+oanda,2013-12-17,355,True,thin
+oanda,2013-12-19,368,True,thin
+oanda,2013-12-20,335,True,thin
+oanda,2013-12-23,340,True,thin
+oanda,2013-12-24,157,False,early close: Christmas Eve
+oanda,2013-12-26,278,False,feed gap
+oanda,2013-12-27,297,False,feed gap
+oanda,2013-12-30,272,False,feed gap
+oanda,2013-12-31,144,False,feed gap
+oanda,2014-01-03,347,True,thin
+oanda,2014-01-07,347,True,thin
+oanda,2014-01-09,365,True,thin
+oanda,2014-01-13,364,True,thin
+oanda,2014-01-15,356,True,thin
+oanda,2014-01-16,347,True,thin
+oanda,2014-01-17,341,True,thin
+oanda,2014-01-20,31,False,holiday: MLK
+oanda,2014-01-21,352,True,thin
+oanda,2014-01-22,348,True,thin
+oanda,2014-02-10,360,True,thin
+oanda,2014-02-11,364,True,thin
+oanda,2014-02-13,360,True,thin
+oanda,2014-02-14,329,True,thin
+oanda,2014-02-17,36,False,holiday: Presidents
+oanda,2014-02-18,318,True,thin
+oanda,2014-02-20,359,True,thin
+oanda,2014-02-21,364,True,thin
+oanda,2014-02-24,342,True,thin
+oanda,2014-02-27,274,False,feed gap
+oanda,2014-02-28,367,True,thin
+oanda,2014-03-06,344,True,thin
+oanda,2014-03-18,362,True,thin
+oanda,2014-04-17,368,True,thin
+oanda,2014-04-21,352,True,thin
+oanda,2014-04-22,357,True,thin
+oanda,2014-05-05,369,True,thin
+oanda,2014-05-12,352,True,thin
+oanda,2014-05-14,365,True,thin
+oanda,2014-05-19,351,True,thin
+oanda,2014-05-22,340,True,thin
+oanda,2014-05-23,282,False,feed gap
+oanda,2014-05-26,59,False,holiday: Memorial
+oanda,2014-05-27,308,True,thin
+oanda,2014-05-28,344,True,thin
+oanda,2014-05-29,305,True,thin
+oanda,2014-05-30,340,True,thin
+oanda,2014-06-02,354,True,thin
+oanda,2014-06-03,341,True,thin
+oanda,2014-06-04,294,False,feed gap
+oanda,2014-06-05,346,True,thin
+oanda,2014-06-06,316,True,thin
+oanda,2014-06-09,314,True,thin
+oanda,2014-06-10,305,True,thin
+oanda,2014-06-11,329,True,thin
+oanda,2014-06-12,366,True,thin
+oanda,2014-06-13,328,True,thin
+oanda,2014-06-16,359,True,thin
+oanda,2014-06-17,355,True,thin
+oanda,2014-06-18,350,True,thin
+oanda,2014-06-19,365,True,thin
+oanda,2014-06-20,307,True,thin
+oanda,2014-06-23,322,True,thin
+oanda,2014-06-24,335,True,thin
+oanda,2014-06-27,347,True,thin
+oanda,2014-06-30,337,True,thin
+oanda,2014-07-01,343,True,thin
+oanda,2014-07-02,323,True,thin
+oanda,2014-07-03,188,False,early close: July 3
+oanda,2014-07-04,40,False,holiday: Independence
+oanda,2014-07-07,354,True,thin
+oanda,2014-07-11,324,True,thin
+oanda,2014-07-14,316,True,thin
+oanda,2014-07-16,329,True,thin
+oanda,2014-07-18,354,True,thin
+oanda,2014-07-21,356,True,thin
+oanda,2014-07-22,348,True,thin
+oanda,2014-07-23,346,True,thin
+oanda,2014-07-24,324,True,thin
+oanda,2014-07-25,364,True,thin
+oanda,2014-07-28,367,True,thin
+oanda,2014-07-29,354,True,thin
+oanda,2014-08-13,357,True,thin
+oanda,2014-08-14,337,True,thin
+oanda,2014-08-18,293,False,feed gap
+oanda,2014-08-19,263,False,feed gap
+oanda,2014-08-20,310,True,thin
+oanda,2014-08-21,294,False,feed gap
+oanda,2014-08-22,360,True,thin
+oanda,2014-08-25,330,True,thin
+oanda,2014-08-26,273,False,feed gap
+oanda,2014-08-27,273,False,feed gap
+oanda,2014-08-28,331,True,thin
+oanda,2014-08-29,313,True,thin
+oanda,2014-09-01,61,False,holiday: Labor
+oanda,2014-09-02,306,True,thin
+oanda,2014-09-03,318,True,thin
+oanda,2014-09-04,340,True,thin
+oanda,2014-09-05,329,True,thin
+oanda,2014-09-08,337,True,thin
+oanda,2014-09-09,362,True,thin
+oanda,2014-09-10,336,True,thin
+oanda,2014-09-11,354,True,thin
+oanda,2014-09-12,360,True,thin
+oanda,2014-09-15,366,True,thin
+oanda,2014-09-16,353,True,thin
+oanda,2014-09-17,341,True,thin
+oanda,2014-09-18,300,True,thin
+oanda,2014-09-19,348,True,thin
+oanda,2014-09-22,357,True,thin
+oanda,2014-09-23,367,True,thin
+oanda,2014-09-24,342,True,thin
+oanda,2014-09-26,362,True,thin
+oanda,2014-09-29,369,True,thin
+oanda,2014-10-03,352,True,thin
+oanda,2014-11-06,346,True,thin
+oanda,2014-11-07,336,True,thin
+oanda,2014-11-10,326,True,thin
+oanda,2014-11-11,286,False,feed gap
+oanda,2014-11-12,306,True,thin
+oanda,2014-11-13,359,True,thin
+oanda,2014-11-14,332,True,thin
+oanda,2014-11-17,336,True,thin
+oanda,2014-11-18,284,False,feed gap
+oanda,2014-11-19,333,True,thin
+oanda,2014-11-20,299,False,feed gap
+oanda,2014-11-21,340,True,thin
+oanda,2014-11-24,293,False,feed gap
+oanda,2014-11-25,301,True,thin
+oanda,2014-11-26,202,False,feed gap
+oanda,2014-11-27,70,False,holiday: Thanksgiving
+oanda,2014-11-28,177,False,early close: day after Thanksgiving
+oanda,2014-12-01,366,True,thin
+oanda,2014-12-02,326,True,thin
+oanda,2014-12-03,307,True,thin
+oanda,2014-12-04,337,True,thin
+oanda,2014-12-05,306,True,thin
+oanda,2014-12-08,351,True,thin
+oanda,2014-12-22,362,True,thin
+oanda,2014-12-23,347,True,thin
+oanda,2014-12-24,161,False,early close: Christmas Eve
+oanda,2014-12-26,227,False,feed gap
+oanda,2014-12-29,341,True,thin
+oanda,2014-12-30,342,True,thin
+oanda,2014-12-31,222,False,feed gap
+oanda,2015-01-19,175,False,holiday: MLK
+oanda,2015-02-16,121,False,holiday: Presidents
+oanda,2015-02-23,339,True,thin
+oanda,2015-02-24,348,True,thin
+oanda,2015-02-25,341,True,thin
+oanda,2015-02-26,353,True,thin
+oanda,2015-02-27,353,True,thin
+oanda,2015-03-02,336,True,thin
+oanda,2015-03-03,366,True,thin
+oanda,2015-03-04,365,True,thin
+oanda,2015-03-05,346,True,thin
+oanda,2015-03-09,355,True,thin
+oanda,2015-03-20,353,True,thin
+oanda,2015-03-23,353,True,thin
+oanda,2015-04-06,343,True,thin
+oanda,2015-04-07,360,True,thin
+oanda,2015-04-08,367,True,thin
+oanda,2015-04-10,314,True,thin
+oanda,2015-04-13,367,True,thin
+oanda,2015-04-15,369,True,thin
+oanda,2015-04-16,361,True,thin
+oanda,2015-04-20,347,True,thin
+oanda,2015-04-21,368,True,thin
+oanda,2015-04-22,369,True,thin
+oanda,2015-04-23,369,True,thin
+oanda,2015-04-24,343,True,thin
+oanda,2015-05-04,366,True,thin
+oanda,2015-05-08,351,True,thin
+oanda,2015-05-11,364,True,thin
+oanda,2015-05-14,342,True,thin
+oanda,2015-05-15,353,True,thin
+oanda,2015-05-18,318,True,thin
+oanda,2015-05-19,327,True,thin
+oanda,2015-05-21,308,True,thin
+oanda,2015-05-22,327,True,thin
+oanda,2015-05-25,52,False,holiday: Memorial
+oanda,2015-05-27,315,True,thin
+oanda,2015-05-28,353,True,thin
+oanda,2015-06-10,363,True,thin
+oanda,2015-06-11,350,True,thin
+oanda,2015-06-12,364,True,thin
+oanda,2015-06-16,327,True,thin
+oanda,2015-06-19,335,True,thin
+oanda,2015-06-22,363,True,thin
+oanda,2015-06-23,327,True,thin
+oanda,2015-06-25,361,True,thin
+oanda,2015-07-02,346,True,thin
+oanda,2015-07-03,155,False,holiday: Independence
+oanda,2015-07-13,304,True,thin
+oanda,2015-07-14,312,True,thin
+oanda,2015-07-15,333,True,thin
+oanda,2015-07-16,315,True,thin
+oanda,2015-07-17,299,False,feed gap
+oanda,2015-07-20,292,False,feed gap
+oanda,2015-07-21,336,True,thin
+oanda,2015-07-22,354,True,thin
+oanda,2015-07-23,341,True,thin
+oanda,2015-07-28,359,True,thin
+oanda,2015-07-30,351,True,thin
+oanda,2015-07-31,345,True,thin
+oanda,2015-08-10,309,True,thin
+oanda,2015-08-13,369,True,thin
+oanda,2015-08-17,365,True,thin
+oanda,2015-08-18,366,True,thin
+oanda,2015-09-07,172,False,holiday: Labor
+oanda,2015-11-25,320,True,thin
+oanda,2015-11-26,76,False,holiday: Thanksgiving
+oanda,2015-11-27,213,False,early close: day after Thanksgiving
+oanda,2015-12-24,213,False,early close: Christmas Eve
+oanda,2015-12-31,268,False,feed gap
+oanda,2016-01-18,184,False,holiday: MLK
+oanda,2016-02-15,160,False,holiday: Presidents
+oanda,2016-04-04,368,True,thin
+oanda,2016-04-14,360,True,thin
+oanda,2016-04-15,367,True,thin
+oanda,2016-04-18,356,True,thin
+oanda,2016-05-10,352,True,thin
+oanda,2016-05-16,357,True,thin
+oanda,2016-05-20,366,True,thin
+oanda,2016-05-24,353,True,thin
+oanda,2016-05-25,350,True,thin
+oanda,2016-05-26,277,False,feed gap
+oanda,2016-05-27,346,True,thin
+oanda,2016-05-30,90,False,holiday: Memorial
+oanda,2016-05-31,369,True,thin
+oanda,2016-06-01,339,True,thin
+oanda,2016-06-02,345,True,thin
+oanda,2016-06-03,355,True,thin
+oanda,2016-06-06,355,True,thin
+oanda,2016-06-07,310,True,thin
+oanda,2016-06-08,327,True,thin
+oanda,2016-06-09,363,True,thin
+oanda,2016-06-20,368,True,thin
+oanda,2016-06-21,358,True,thin
+oanda,2016-06-23,366,True,thin
+oanda,2016-07-01,363,True,thin
+oanda,2016-07-04,110,False,holiday: Independence
+oanda,2016-07-08,325,True,thin
+oanda,2016-07-11,348,True,thin
+oanda,2016-07-12,328,True,thin
+oanda,2016-07-13,351,True,thin
+oanda,2016-07-14,359,True,thin
+oanda,2016-07-15,305,True,thin
+oanda,2016-07-18,271,False,feed gap
+oanda,2016-07-19,322,True,thin
+oanda,2016-07-20,286,False,feed gap
+oanda,2016-07-21,295,False,feed gap
+oanda,2016-07-22,248,False,feed gap
+oanda,2016-07-25,304,True,thin
+oanda,2016-07-26,343,True,thin
+oanda,2016-07-27,363,True,thin
+oanda,2016-07-28,349,True,thin
+oanda,2016-07-29,340,True,thin
+oanda,2016-08-03,342,True,thin
+oanda,2016-08-04,340,True,thin
+oanda,2016-08-05,304,True,thin
+oanda,2016-08-08,252,False,feed gap
+oanda,2016-08-09,310,True,thin
+oanda,2016-08-10,330,True,thin
+oanda,2016-08-11,262,False,feed gap
+oanda,2016-08-12,247,False,feed gap
+oanda,2016-08-15,244,False,feed gap
+oanda,2016-08-16,297,False,feed gap
+oanda,2016-08-17,313,True,thin
+oanda,2016-08-18,319,True,thin
+oanda,2016-08-19,313,True,thin
+oanda,2016-08-22,351,True,thin
+oanda,2016-08-23,270,False,feed gap
+oanda,2016-08-24,308,True,thin
+oanda,2016-08-25,354,True,thin
+oanda,2016-08-29,286,False,feed gap
+oanda,2016-08-30,340,True,thin
+oanda,2016-09-02,354,True,thin
+oanda,2016-09-05,53,False,holiday: Labor
+oanda,2016-09-06,312,True,thin
+oanda,2016-09-07,323,True,thin
+oanda,2016-09-20,368,True,thin
+oanda,2016-09-22,350,True,thin
+oanda,2016-09-27,369,True,thin
+oanda,2016-10-05,353,True,thin
+oanda,2016-10-10,315,True,thin
+oanda,2016-10-18,357,True,thin
+oanda,2016-10-19,329,True,thin
+oanda,2016-10-21,352,True,thin
+oanda,2016-10-24,337,True,thin
+oanda,2016-10-25,363,True,thin
+oanda,2016-10-26,358,True,thin
+oanda,2016-10-31,329,True,thin
+oanda,2016-11-07,312,True,thin
+oanda,2016-11-18,354,True,thin
+oanda,2016-11-21,304,True,thin
+oanda,2016-11-22,351,True,thin
+oanda,2016-11-23,334,True,thin
+oanda,2016-11-24,36,False,holiday: Thanksgiving
+oanda,2016-11-25,166,False,early close: day after Thanksgiving
+oanda,2016-11-28,351,True,thin
+oanda,2016-11-29,335,True,thin
+oanda,2016-11-30,363,True,thin
+oanda,2016-12-02,359,True,thin
+oanda,2016-12-05,352,True,thin
+oanda,2016-12-06,352,True,thin
+oanda,2016-12-08,366,True,thin
+oanda,2016-12-09,337,True,thin
+oanda,2016-12-13,351,True,thin
+oanda,2016-12-19,316,True,thin
+oanda,2016-12-20,269,False,feed gap
+oanda,2016-12-21,228,False,feed gap
+oanda,2016-12-22,256,False,feed gap
+oanda,2016-12-23,180,False,feed gap
+oanda,2016-12-27,183,False,feed gap
+oanda,2016-12-28,315,True,thin
+oanda,2016-12-29,335,True,thin
+oanda,2016-12-30,357,True,thin
+oanda,2017-01-04,268,False,feed gap
+oanda,2017-01-05,351,True,thin
+oanda,2017-01-06,316,True,thin
+oanda,2017-01-09,322,True,thin
+oanda,2017-01-10,335,True,thin
+oanda,2017-01-11,365,True,thin
+oanda,2017-01-12,342,True,thin
+oanda,2017-01-13,334,True,thin
+oanda,2017-01-16,54,False,holiday: MLK
+oanda,2017-01-17,337,True,thin
+oanda,2017-01-18,338,True,thin
+oanda,2017-01-19,351,True,thin
+oanda,2017-01-23,328,True,thin
+oanda,2017-01-24,325,True,thin
+oanda,2017-01-25,281,False,feed gap
+oanda,2017-01-26,306,True,thin
+oanda,2017-01-27,234,False,feed gap
+oanda,2017-01-30,349,True,thin
+oanda,2017-01-31,347,True,thin
+oanda,2017-02-02,360,True,thin
+oanda,2017-02-03,320,True,thin
+oanda,2017-02-06,352,True,thin
+oanda,2017-02-07,336,True,thin
+oanda,2017-02-08,325,True,thin
+oanda,2017-02-09,257,False,feed gap
+oanda,2017-02-10,307,True,thin
+oanda,2017-02-13,314,True,thin
+oanda,2017-02-14,343,True,thin
+oanda,2017-02-15,335,True,thin
+oanda,2017-02-16,349,True,thin
+oanda,2017-02-17,318,True,thin
+oanda,2017-02-20,73,False,holiday: Presidents
+oanda,2017-02-21,313,True,thin
+oanda,2017-02-22,285,False,feed gap
+oanda,2017-02-23,346,True,thin
+oanda,2017-02-24,339,True,thin
+oanda,2017-02-27,344,True,thin
+oanda,2017-02-28,335,True,thin
+oanda,2017-03-01,348,True,thin
+oanda,2017-03-02,354,True,thin
+oanda,2017-03-03,360,True,thin
+oanda,2017-03-06,322,True,thin
+oanda,2017-03-07,332,True,thin
+oanda,2017-03-08,345,True,thin
+oanda,2017-03-09,350,True,thin
+oanda,2017-03-13,344,True,thin
+oanda,2017-03-15,361,True,thin
+oanda,2017-03-16,325,True,thin
+oanda,2017-03-17,251,False,feed gap
+oanda,2017-03-20,297,False,feed gap
+oanda,2017-03-29,351,True,thin
+oanda,2017-03-30,358,True,thin
+oanda,2017-03-31,331,True,thin
+oanda,2017-04-04,360,True,thin
+oanda,2017-04-05,355,True,thin
+oanda,2017-04-06,368,True,thin
+oanda,2017-04-07,368,True,thin
+oanda,2017-04-17,329,True,thin
+oanda,2017-04-19,351,True,thin
+oanda,2017-04-20,363,True,thin
+oanda,2017-04-21,357,True,thin
+oanda,2017-04-24,335,True,thin
+oanda,2017-04-25,326,True,thin
+oanda,2017-04-26,358,True,thin
+oanda,2017-04-27,341,True,thin
+oanda,2017-04-28,321,True,thin
+oanda,2017-05-01,324,True,thin
+oanda,2017-05-02,321,True,thin
+oanda,2017-05-03,349,True,thin
+oanda,2017-05-04,356,True,thin
+oanda,2017-05-05,321,True,thin
+oanda,2017-05-08,282,False,feed gap
+oanda,2017-05-09,300,True,thin
+oanda,2017-05-10,306,True,thin
+oanda,2017-05-11,307,True,thin
+oanda,2017-05-12,284,False,feed gap
+oanda,2017-05-15,258,False,feed gap
+oanda,2017-05-16,294,False,feed gap
+oanda,2017-05-19,327,True,thin
+oanda,2017-05-22,275,False,feed gap
+oanda,2017-05-23,297,False,feed gap
+oanda,2017-05-24,287,False,feed gap
+oanda,2017-05-25,318,True,thin
+oanda,2017-05-26,250,False,feed gap
+oanda,2017-05-29,54,False,holiday: Memorial
+oanda,2017-05-30,249,False,feed gap
+oanda,2017-05-31,353,True,thin
+oanda,2017-06-01,302,True,thin
+oanda,2017-06-02,310,True,thin
+oanda,2017-06-05,266,False,feed gap
+oanda,2017-06-06,307,True,thin
+oanda,2017-06-07,346,True,thin
+oanda,2017-06-08,358,True,thin
+oanda,2017-06-13,365,True,thin
+oanda,2017-06-15,365,True,thin
+oanda,2017-06-16,327,True,thin
+oanda,2017-06-19,287,False,feed gap
+oanda,2017-06-20,333,True,thin
+oanda,2017-06-21,358,True,thin
+oanda,2017-06-22,322,True,thin
+oanda,2017-06-23,283,False,feed gap
+oanda,2017-06-26,340,True,thin
+oanda,2017-06-27,351,True,thin
+oanda,2017-06-28,339,True,thin
+oanda,2017-06-30,359,True,thin
+oanda,2017-07-03,219,False,early close: July 3
+oanda,2017-07-04,97,False,holiday: Independence
+oanda,2017-07-05,358,True,thin
+oanda,2017-07-07,316,True,thin
+oanda,2017-07-10,295,False,feed gap
+oanda,2017-07-11,327,True,thin
+oanda,2017-07-12,318,True,thin
+oanda,2017-07-13,287,False,feed gap
+oanda,2017-07-14,251,False,feed gap
+oanda,2017-07-17,288,False,feed gap
+oanda,2017-07-18,308,True,thin
+oanda,2017-07-19,242,False,feed gap
+oanda,2017-07-20,269,False,feed gap
+oanda,2017-07-21,266,False,feed gap
+oanda,2017-07-24,215,False,feed gap
+oanda,2017-07-25,271,False,feed gap
+oanda,2017-07-26,273,False,feed gap
+oanda,2017-07-27,329,True,thin
+oanda,2017-07-28,312,True,thin
+oanda,2017-07-31,275,False,feed gap
+oanda,2017-08-01,240,False,feed gap
+oanda,2017-08-02,308,True,thin
+oanda,2017-08-03,292,False,feed gap
+oanda,2017-08-04,259,False,feed gap
+oanda,2017-08-07,156,False,feed gap
+oanda,2017-08-08,282,False,feed gap
+oanda,2017-08-09,336,True,thin
+oanda,2017-08-11,356,True,thin
+oanda,2017-08-14,295,False,feed gap
+oanda,2017-08-15,300,True,thin
+oanda,2017-08-16,326,True,thin
+oanda,2017-08-21,349,True,thin
+oanda,2017-08-22,299,False,feed gap
+oanda,2017-08-23,334,True,thin
+oanda,2017-08-24,369,True,thin
+oanda,2017-08-25,330,True,thin
+oanda,2017-08-28,318,True,thin
+oanda,2017-08-29,335,True,thin
+oanda,2017-08-30,292,False,feed gap
+oanda,2017-08-31,307,True,thin
+oanda,2017-09-01,270,False,feed gap
+oanda,2017-09-04,56,False,holiday: Labor
+oanda,2017-09-06,349,True,thin
+oanda,2017-09-07,352,True,thin
+oanda,2017-09-08,320,True,thin
+oanda,2017-09-11,287,False,feed gap
+oanda,2017-09-12,319,True,thin
+oanda,2017-09-13,276,False,feed gap
+oanda,2017-09-14,282,False,feed gap
+oanda,2017-09-15,244,False,feed gap
+oanda,2017-09-18,244,False,feed gap
+oanda,2017-09-19,242,False,feed gap
+oanda,2017-09-20,290,False,feed gap
+oanda,2017-09-21,282,False,feed gap
+oanda,2017-09-22,232,False,feed gap
+oanda,2017-09-25,344,True,thin
+oanda,2017-09-26,297,False,feed gap
+oanda,2017-09-27,298,False,feed gap
+oanda,2017-09-28,282,False,feed gap
+oanda,2017-09-29,231,False,feed gap
+oanda,2017-10-02,282,False,feed gap
+oanda,2017-10-03,197,False,feed gap
+oanda,2017-10-04,235,False,feed gap
+oanda,2017-10-05,232,False,feed gap
+oanda,2017-10-06,248,False,feed gap
+oanda,2017-10-09,195,False,feed gap
+oanda,2017-10-10,301,True,thin
+oanda,2017-10-11,209,False,feed gap
+oanda,2017-10-12,218,False,feed gap
+oanda,2017-10-13,191,False,feed gap
+oanda,2017-10-16,203,False,feed gap
+oanda,2017-10-17,177,False,feed gap
+oanda,2017-10-18,186,False,feed gap
+oanda,2017-10-19,252,False,feed gap
+oanda,2017-10-20,216,False,feed gap
+oanda,2017-10-23,252,False,feed gap
+oanda,2017-10-24,236,False,feed gap
+oanda,2017-10-25,363,True,thin
+oanda,2017-10-26,314,True,thin
+oanda,2017-10-27,284,False,feed gap
+oanda,2017-10-30,307,True,thin
+oanda,2017-10-31,240,False,feed gap
+oanda,2017-11-01,324,True,thin
+oanda,2017-11-02,350,True,thin
+oanda,2017-11-03,269,False,feed gap
+oanda,2017-11-06,230,False,feed gap
+oanda,2017-11-07,323,True,thin
+oanda,2017-11-08,282,False,feed gap
+oanda,2017-11-10,315,True,thin
+oanda,2017-11-13,250,False,feed gap
+oanda,2017-11-14,339,True,thin
+oanda,2017-11-15,347,True,thin
+oanda,2017-11-16,293,False,feed gap
+oanda,2017-11-17,305,True,thin
+oanda,2017-11-20,266,False,feed gap
+oanda,2017-11-21,245,False,feed gap
+oanda,2017-11-22,263,False,feed gap
+oanda,2017-11-23,48,False,holiday: Thanksgiving
+oanda,2017-11-24,124,False,early close: day after Thanksgiving
+oanda,2017-11-27,262,False,feed gap
+oanda,2017-11-28,329,True,thin
+oanda,2017-11-30,363,True,thin
+oanda,2017-12-06,356,True,thin
+oanda,2017-12-07,349,True,thin
+oanda,2017-12-08,303,True,thin
+oanda,2017-12-11,309,True,thin
+oanda,2017-12-12,341,True,thin
+oanda,2017-12-13,352,True,thin
+oanda,2017-12-14,359,True,thin
+oanda,2017-12-15,321,True,thin
+oanda,2017-12-18,310,True,thin
+oanda,2017-12-19,349,True,thin
+oanda,2017-12-20,323,True,thin
+oanda,2017-12-21,293,False,feed gap
+oanda,2017-12-22,235,False,feed gap
+oanda,2017-12-26,227,False,feed gap
+oanda,2017-12-27,232,False,feed gap
+oanda,2017-12-28,177,False,feed gap
+oanda,2017-12-29,269,False,feed gap
+oanda,2018-01-02,267,False,feed gap
+oanda,2018-01-03,283,False,feed gap
+oanda,2018-01-04,305,True,thin
+oanda,2018-01-05,276,False,feed gap
+oanda,2018-01-08,274,False,feed gap
+oanda,2018-01-09,296,False,feed gap
+oanda,2018-01-10,342,True,thin
+oanda,2018-01-11,280,False,feed gap
+oanda,2018-01-12,314,True,thin
+oanda,2018-01-15,79,False,holiday: MLK
+oanda,2018-01-17,355,True,thin
+oanda,2018-01-18,355,True,thin
+oanda,2018-01-19,342,True,thin
+oanda,2018-01-22,318,True,thin
+oanda,2018-01-23,351,True,thin
+oanda,2018-01-26,362,True,thin
+oanda,2018-02-19,201,False,holiday: Presidents
+oanda,2018-05-28,158,False,holiday: Memorial
+oanda,2018-06-04,346,True,thin
+oanda,2018-06-05,367,True,thin
+oanda,2018-06-06,350,True,thin
+oanda,2018-06-13,349,True,thin
+oanda,2018-06-14,360,True,thin
+oanda,2018-06-20,364,True,thin
+oanda,2018-06-22,346,True,thin
+oanda,2018-07-03,224,False,early close: July 3
+oanda,2018-07-04,164,False,holiday: Independence
+oanda,2018-07-06,367,True,thin
+oanda,2018-07-09,345,True,thin
+oanda,2018-07-10,368,True,thin
+oanda,2018-07-13,358,True,thin
+oanda,2018-07-16,360,True,thin
+oanda,2018-07-17,353,True,thin
+oanda,2018-07-18,333,True,thin
+oanda,2018-07-20,368,True,thin
+oanda,2018-07-23,320,True,thin
+oanda,2018-07-25,363,True,thin
+oanda,2018-08-03,347,True,thin
+oanda,2018-08-06,301,True,thin
+oanda,2018-08-07,338,True,thin
+oanda,2018-08-08,289,False,feed gap
+oanda,2018-08-09,303,True,thin
+oanda,2018-08-16,366,True,thin
+oanda,2018-08-20,281,False,feed gap
+oanda,2018-08-21,328,True,thin
+oanda,2018-08-22,326,True,thin
+oanda,2018-08-23,346,True,thin
+oanda,2018-08-24,334,True,thin
+oanda,2018-08-27,323,True,thin
+oanda,2018-08-28,324,True,thin
+oanda,2018-08-29,319,True,thin
+oanda,2018-08-30,359,True,thin
+oanda,2018-09-03,61,False,holiday: Labor
+oanda,2018-09-10,368,True,thin
+oanda,2018-09-11,369,True,thin
+oanda,2018-09-19,360,True,thin
+oanda,2018-09-20,349,True,thin
+oanda,2018-09-21,354,True,thin
+oanda,2018-09-25,338,True,thin
+oanda,2018-09-26,330,True,thin
+oanda,2018-09-27,356,True,thin
+oanda,2018-10-01,353,True,thin
+oanda,2018-10-02,366,True,thin
+oanda,2018-11-22,208,False,holiday: Thanksgiving
+oanda,2018-11-23,225,False,early close: day after Thanksgiving
+oanda,2018-12-24,225,False,early close: Christmas Eve
+oanda,2019-01-21,174,False,holiday: MLK
+oanda,2019-02-18,131,False,holiday: Presidents
+oanda,2019-02-19,365,True,thin
+oanda,2019-04-08,368,True,thin
+oanda,2019-04-10,367,True,thin
+oanda,2019-04-12,358,True,thin
+oanda,2019-04-15,348,True,thin
+oanda,2019-04-18,346,True,thin
+oanda,2019-04-22,335,True,thin
+oanda,2019-04-23,367,True,thin
+oanda,2019-04-24,352,True,thin
+oanda,2019-04-25,366,True,thin
+oanda,2019-04-29,344,True,thin
+oanda,2019-05-03,367,True,thin
+oanda,2019-05-27,141,False,holiday: Memorial
+oanda,2019-06-14,358,True,thin
+oanda,2019-06-17,334,True,thin
+oanda,2019-06-19,364,True,thin
+oanda,2019-06-21,367,True,thin
+oanda,2019-06-24,354,True,thin
+oanda,2019-06-27,350,True,thin
+oanda,2019-06-28,353,True,thin
+oanda,2019-07-03,211,False,early close: July 3
+oanda,2019-07-04,92,False,holiday: Independence
+oanda,2019-07-08,357,True,thin
+oanda,2019-07-09,343,True,thin
+oanda,2019-07-11,361,True,thin
+oanda,2019-07-12,315,True,thin
+oanda,2019-07-15,322,True,thin
+oanda,2019-07-17,350,True,thin
+oanda,2019-07-22,361,True,thin
+oanda,2019-07-23,368,True,thin
+oanda,2019-07-24,355,True,thin
+oanda,2019-07-26,311,True,thin
+oanda,2019-07-29,351,True,thin
+oanda,2019-07-31,356,True,thin
+oanda,2019-08-21,367,True,thin
+oanda,2019-09-02,193,False,holiday: Labor
+oanda,2019-09-04,365,True,thin
+oanda,2019-09-06,368,True,thin
+oanda,2019-09-11,340,True,thin
+oanda,2019-09-16,367,True,thin
+oanda,2019-09-17,368,True,thin
+oanda,2019-09-18,347,True,thin
+oanda,2019-09-19,366,True,thin
+oanda,2019-09-20,368,True,thin
+oanda,2019-09-23,354,True,thin
+oanda,2019-09-30,360,True,thin
+oanda,2019-10-15,366,True,thin
+oanda,2019-10-16,367,True,thin
+oanda,2019-10-21,339,True,thin
+oanda,2019-10-23,365,True,thin
+oanda,2019-10-24,359,True,thin
+oanda,2019-10-25,339,True,thin
+oanda,2019-10-28,341,True,thin
+oanda,2019-10-29,353,True,thin
+oanda,2019-11-01,343,True,thin
+oanda,2019-11-04,351,True,thin
+oanda,2019-11-05,346,True,thin
+oanda,2019-11-07,359,True,thin
+oanda,2019-11-08,342,True,thin
+oanda,2019-11-11,297,False,feed gap
+oanda,2019-11-14,352,True,thin
+oanda,2019-11-15,333,True,thin
+oanda,2019-11-18,313,True,thin
+oanda,2019-11-19,364,True,thin
+oanda,2019-11-21,363,True,thin
+oanda,2019-11-22,337,True,thin
+oanda,2019-11-25,276,False,feed gap
+oanda,2019-11-26,326,True,thin
+oanda,2019-11-27,309,True,thin
+oanda,2019-11-28,80,False,holiday: Thanksgiving
+oanda,2019-11-29,208,False,early close: day after Thanksgiving
+oanda,2019-12-04,349,True,thin
+oanda,2019-12-06,305,True,thin
+oanda,2019-12-09,348,True,thin
+oanda,2019-12-10,361,True,thin
+oanda,2019-12-16,343,True,thin
+oanda,2019-12-17,359,True,thin
+oanda,2019-12-18,303,True,thin
+oanda,2019-12-19,313,True,thin
+oanda,2019-12-20,303,True,thin
+oanda,2019-12-23,251,False,feed gap
+oanda,2019-12-24,175,False,early close: Christmas Eve
+oanda,2019-12-26,234,False,feed gap
+oanda,2019-12-27,332,True,thin
+oanda,2019-12-31,349,True,thin
+oanda,2020-01-07,367,True,thin
+oanda,2020-01-10,366,True,thin
+oanda,2020-01-13,348,True,thin
+oanda,2020-01-14,367,True,thin
+oanda,2020-01-16,339,True,thin
+oanda,2020-01-17,340,True,thin
+oanda,2020-01-20,90,False,holiday: MLK
+oanda,2020-01-22,346,True,thin
+oanda,2020-02-04,364,True,thin
+oanda,2020-02-10,356,True,thin
+oanda,2020-02-12,349,True,thin
+oanda,2020-02-14,360,True,thin
+oanda,2020-02-17,66,False,holiday: Presidents
+oanda,2020-02-19,318,True,thin

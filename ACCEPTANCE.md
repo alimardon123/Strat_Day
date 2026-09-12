@@ -44,8 +44,13 @@ and the label that applies (FAILED / UNDERPOWERED / COST-KILLED).
 3. Passes Benjamini-Hochberg FDR at 10% across every configuration tested in this run.
 4. Positive excess over its matched random-entry control (same days, same hold window,
    random entry minute, 200 draws).
-5. Deflated Sharpe ratio > 0.95 (Bailey & López de Prado 2014) with N = the number of
-   trials in this run (tracked in SCORECARD.md).
+5. Deflated Sharpe ratio > 0.95 (Bailey & López de Prado 2014) computed on the HOLDOUT
+   net-return series, with N = the number of hypotheses evaluated on the holdout in this run
+   (the 8 momentum candidates, the gap-up call, and any flow candidates) and SR0 from the
+   dispersion of those trials' holdout Sharpes. The in-sample DSR against the historical
+   trial counts (momentum: 8 + 4 it22 setups + 22 step17 tests = 34; gap-up call: 1,092
+   scan cells + 6 conditions = 1,098) is reported in SCORECARD.md as context. *(Amended in
+   Phase 2 — see CHANGELOG.)*
 6. At least 200 holdout trades. Below that: report the p-value and label UNDERPOWERED.
 
 ## Decision rule for D1 (fixed before any run)
@@ -100,3 +105,13 @@ to the prop-account constraint; no edits to files under `research/` (copy, then 
 | A16 | Random-entry control: same calendar days as the signal, random entry minute within the same window, same exit, 200 draws, excess = signal mean − control mean | Thread A methodology §7 |
 | A17 | "Worst day" and "worst year" in the playbook are at the base sizing (4% limit, 54% loss-at-stop) in % of account | Mission sizing rule |
 | A18 | Commit and push at the end of every phase and tribunal round to `claude/modest-pasteur-oyzqyh` | Ephemeral container |
+| A19 | Inference adapter (`pipeline/stats.py`) re-seeds the bootstrap generator per call and takes the split as a parameter; Thread B's one-sided convention (p/2 if mean > 0 else 1.0) is kept | `stats_engine.py` keeps one module-level RNG (p-values depend on call order) and hardcodes TRAIN_END = 2017-01-01 |
+| A20 | Execution model for hold-to-close signals: resting limit at k × ATR against the trade direction (k ∈ {0.25, 0.50, 1.00}); ATR = 14-bar rolling mean of 5-minute (high − low) built with `closed="left"`; fill window = min(30 min, minutes-to-close − 5); unfilled signals count as zero per signal; commission-only 0.10 pt on fills; puts/shorts mirrored (fill if high ≥ limit) | `step8_execution.py` is long-only, uses a 30-min window / 60-min hold that would outrun a 15:30 entry, and its 5-min resample (`label="right", closed="right"`) leaks one minute of forward information |
+| A21 | Costs are fixed in index points; the percent-of-price cost is derived per trade from the actual price level | Thread B's 0.0157% constant assumes SPX ≈ 2100 and is ~3× too high at 2021–2026 levels |
+| A22 | Thread B reproduction gate targets the conditional headline (n = 337, +0.0645%/trade, 58.5% win, net Sharpe 2.50 on histdata 2010–2018, anchored at detected-open + 360 min, month blocks) through a filtered-evaluation path written in `pipeline/`, plus the unconditional r_rest / r1 / r12 rows the bundled `step17_intramom.py` prints | The bundled step17 never applies the VIX > 17.06 / |move| > 0.665% filter; it only computes terciles |
+| A23 | Thread A it22 split: train < 2013-01-01, test ≥ 2013-01-01; reproduction tolerance ± 0.3 points on the TEST mean per trade | `HANDOFF.md:157`; the it15 scan the gap-up call came from used the same split |
+| A24 | Canonical entry times are wall-clock America/New_York (15:00, 15:30, 13:00); Thread B's detected-open + 360 offset (≈ 15:32 on histdata) is reproduced only inside the reproduction gate | Thread B's "15:30" is an offset from a detected 09:32 open |
+| A25 | VIX prior close = the last VIX close strictly before the session date (as-of merge), never a row shift | `step17_intramom.py:97` shifts by row, which mispairs on date mismatches; `step15_odte.py:58` uses same-day VIX (look-ahead) |
+| A26 | Per-year rows bootstrap with day blocks (one observation per day); the whole-holdout survival test uses month blocks (≥ 20 months available); rows with < 20 blocks are labelled n/a, never reported as p = 1.0 | `block_bootstrap_p` returns 1.0 below 20 blocks |
+| A27 | NYSE-holiday sessions are excluded even when a CFD feed prints bars; early-close days fall out by bar count and the calendar report proves no kept session is a calendar event; a dropped ordinary weekday is a "feed gap" and is counted in the session-denominator report | CFD feeds trade thinly through US holidays; Oanda 2005–2006 and March 2012 and histdata December 2010 are sparse |
+| A28 | Option P&L: spread in index points applied half at entry and half at exit on the option price; returns in % of premium; IV = k × prior-close VIX | Unifies Thread A (points) and Thread B (1% of premium) cost conventions |

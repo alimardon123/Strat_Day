@@ -23,6 +23,18 @@ Updated 2026-09-12 (Phase 0).
 | SPY daily, 928 stocks daily | `willhjw/big_movers` | 2000 → 2026-03 | date |
 | 1,344 ETFs daily incl. VXX, VXZ, VIXY, VIXM | `neo-zhao/CMSC320_Final_Tutorial_Huge_Stock_Market_Dataset` `ETFs/{ticker}.us.txt` | → 2017-11-10 | date |
 
+## Fetched in Phase 2 (`data/raw/`, manifests committed as `data/raw/manifest_*.json`)
+
+| File | Rows | Coverage | Notes |
+|---|---|---|---|
+| `oanda_SPX500_USD.parquet` | 4,011,719 | 2005-01-02 → 2020-05-14 (UTC) | 3,661 RTH sessions kept; 2017 thin (182,748 rows vs ~290k normal); sparse stretches 2005–2006 and March 2012 |
+| `histdata_SPXUSD.parquet` | 2,117,667 | 2010-11-14 → 2018-12-31 (ET, DST) | 1,935 RTH sessions kept; December 2010 sparse |
+| `histdata_GRXEUR / ETXEUR / JPXJPY.parquet` | 1.7M / 1.3M / 1.9M | 2010-11 → 2018-12 | cross-market checks only |
+| `vix_daily.parquet` | 9,271 | 1990-01-02 → 2026-09-11 | sha256 in manifest |
+| `spy_daily.parquet` | 6,593 | 2000-01-03 → 2026-03-20 | big_movers, unadjusted |
+| `etf_daily_kaggle.parquet` | 169,844 | → 2017-11-10 | 57 tickers, none missing; VXX 2009-01-30 →, VXZ 2009-01-29 →, VIXY 2011-01-07 → |
+| `stocks_daily.parquet` | pending | 2000 → 2026 | big_movers collected_stocks (928 files) |
+
 ## Missing — must be supplied under `data/ext/` (committed to the branch)
 
 | File | Status | Spec |

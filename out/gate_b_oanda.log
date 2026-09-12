@@ -1,0 +1,7 @@
+oanda: 1,383,838 RTH bars, 3,661 sessions, 2005-01-03 -> 2020-05-13, excluded 299 sessions
+DST probe: step-open by month: {'09:30': 31} | Thread B detect_open: {'09:32': 12, '09:31': 11, '08:32': 3, '08:31': 2, '09:30': 2, '09:33': 1}
+calendar reasons: {'thin': 791, 'feed gap': 173, 'holiday: Presidents': 16, 'holiday: MLK': 16, 'holiday: Memorial': 15, 'holiday: Independence': 15, 'holiday: Labor': 15, 'holiday: Thanksgiving': 15, 'early close: day after Thanksgiving': 15, 'early close: July 3': 9, 'early close: Christmas Eve': 9, 'holiday: Good Friday': 1}
+feed gaps (market open, <300 bars): 173 sessions; by year: {2005: 4, 2006: 1, 2012: 22, 2013: 14, 2014: 15, 2015: 3, 2016: 17, 2017: 85, 2018: 8, 2019: 4}
+[PASS] DST probe: open at 09:30 in every Jan/Jul
+[PASS] calendar: no kept session on a holiday/early-close/closure day
+[PASS] sessions: every kept session has >= 300 bars

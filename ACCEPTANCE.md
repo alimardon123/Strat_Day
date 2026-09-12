@@ -1,117 +1,152 @@
 # ACCEPTANCE.md — definition of done, survival rule, budgets, non-goals, assumptions
 
-Written in Phase 0 (2026-09-12). Amended only deliberately; every amendment is logged in
-CHANGELOG.md.
+v2, amended after the Phase 0 tribunal (four hostile lenses; findings and dispositions in
+CRITIQUE.md). Every amendment is logged in CHANGELOG.md. Where this file and the plan's
+upgraded prompt differ, this file governs.
 
 ## The constraint that governs everything
 
 The prop account permits ONLY 0DTE options, long-only, naked calls or puts. No selling,
 no spreads, no futures, no shares, no overnight holds. Daily loss limit 3–5% (base case
-4%). Every deliverable must be tradeable under it. The own-account track (stock account
-with options approval) is secondary.
+4%), evaluated on marked intraday P&L. Every deliverable must be tradeable under it. The
+own-account track (stock account with options approval) is secondary.
 
 ## Reference class
 
-López de Prado's backtesting standards (deflated Sharpe ratio with the trial count,
-purged/embargoed CV wherever a parameter is chosen, multiple-testing awareness) AND the
-two threads' own guards: `research/thread_B_inversion/stats_engine.py` (day-block
-bootstrap + Benjamini-Hochberg FDR) and Thread A's matched random-entry control and
-n_eff correlation adjustment. A result that would not survive both is not a result.
-Written deliverables must stand next to `research/thread_B_inversion/SYSTEM_SPEC.md`:
-every number names the script and the `out/` file it came from.
+López de Prado's backtesting standards (deflated Sharpe ratio with the trial count that
+produced the candidate, purged/embargoed CV wherever a parameter is chosen, multiple-testing
+awareness) AND the two threads' own guards: `research/thread_B_inversion/stats_engine.py`
+(block bootstrap + Benjamini-Hochberg FDR) and Thread A's matched random-entry control and
+n_eff correlation adjustment. A result that would not survive both is not a result. Written
+deliverables must stand next to `research/thread_B_inversion/SYSTEM_SPEC.md`: every number
+names the script and the `out/` file it came from.
+
+## Units
+
+D1, D2 and the survival rule are scored on the UNDERLYING in SPX index points per trade net
+of the round-trip cost (Thread B's unit, with cost fixed in points). Option-premium returns
+(Thread A's unit, % of premium) appear only in D4 and are derived from the same trades.
 
 ## Definition of done
 
 | # | Statement | Evidence file |
 |---|---|---|
-| D1 | One reconciled last-hour momentum specification, chosen by the fixed decision rule below from the 8-candidate set, scored on identical data with stats_engine.py | `out/reconcile_candidates.csv`, `out/reconcile_decision.md` |
-| D2 | The reconciled spec and Thread A's gap-up call each evaluated on the 2020-06-01→2026-09-11 holdout with thresholds frozen through 2020-05-29, reported by calendar year (2020 H2, 2021 … 2026 YTD): trades, win rate, mean net return per trade at 1.0 and 2.0 pt, worst trade, worst day, block-bootstrap p | `out/holdout_by_year.csv` |
-| D3 | Thread B's execution model (resting limit at 0.25/0.50/1.00 ATR, per-signal metric, unfilled = 0, commission-only cost on fills, fill window bounded by time to close) applied to every surviving signal, improvement vs market entry with bootstrap p | `out/execution.csv` |
-| D4 | `PLAYBOOK_0DTE.md` with every number measured on the extended data and priced with Black-Scholes at IV = k × prior-close VIX, k = 1.3 base, full sensitivity at k ∈ {1.0, 1.3, 1.6} × spread ∈ {1.0, 2.0} pt; strike 2% ITM; first paragraph states that real 0DTE quotes were unavailable and k×VIX is a model | `out/playbook_*.csv` |
-| D5 | The 8-sleeve unconstrained portfolio re-measured through 2026-09 in `OWN_ACCOUNT.md`, by year and regime, Feb 2018 and 2020 in sample for the vol sleeves, S13 weight cap stated and applied, VXX/VXZ splice documented | `out/own_account_*.csv` |
-| D6 | Every configuration tested is counted in `SCORECARD.md`; every pooled statistic date-clustered; every cross-instrument statistic correlation-adjusted; every claimed edge has a random-entry control, a block-bootstrap p and a deflated Sharpe | `SCORECARD.md`, `out/trials.csv` |
-| D7 | `make all` regenerates every table in both playbooks from `data/raw` + `data/ext`; two consecutive runs yield byte-identical `out/`; playbook tables are generated, never typed | `make all && make repeat` |
+| D1 | One reconciled last-hour momentum specification, chosen by the fixed decision rule below; all 16 configurations published | `out/reconcile_candidates.csv`, `out/reconcile_decision.md` |
+| D2 | The reconciled spec (single pre-registered holdout test) and Thread A's gap-up call each evaluated on the 2020-06-01→2026-09-11 holdout; per calendar year (2020 H2, 2021 … 2026 YTD): trades, win rate, mean net points and % of premium at quoted spreads 1.0/2.0/3.0, worst trade, worst day, intraday MAE; bootstrap p on the pooled holdout and on its two halves (2020-06→2023-06, 2023-07→2026-09) with month blocks | `out/holdout_by_year.csv`, `out/holdout_pooled.csv` |
+| D2b | Thread A's gap-up call re-run on histdata GRXEUR and ETXEUR 2010–2018 (entry at the same fraction of the local session) with Thread B's bootstrap; shrinkage > 50% or a sign flip is recorded as a finding, not a kill | `out/xmarket_*.csv` |
+| D3 | Execution model (A20) applied to every surviving signal; improvement vs market entry with bootstrap p | `out/execution.csv` |
+| D4 | `PLAYBOOK_0DTE.md`: every headline number measured on the 2020-06→2026-09 holdout only (full-sample figures in a separate table headed IN-SAMPLE + HOLDOUT); pricing per A7/A28; sensitivity = quoted spread ∈ {1.0, 2.0, 3.0} pt for every leg, k ∈ {1.0, 1.3, 1.6} for the 13:00 leg only (at 2% ITM with < 1 h to expiry the model is intrinsic ± spread — stated in the first paragraph); per-instrument settlement rules and per-contract premium / minimum account (A28); max positions per day and the combined-book worst day (A17) | `out/playbook_*.csv` |
+| D5 | The 8-sleeve unconstrained portfolio re-measured through 2026-09 in `OWN_ACCOUNT.md`, by year and regime, Feb 2018 and 2020 in sample for the vol sleeves, S13 weight cap applied, VXX/VXZ bridged through VIXY/VIXM (A13) with the three bridge correlations printed; plus the VIX − realised-vol series through 2026-09 labelled not-tradeable-as-measured (A14) | `out/own_account_*.csv` |
+| D6 | Every trial (A31) counted in `SCORECARD.md`; every pooled statistic date-clustered; every cross-instrument statistic correlation-adjusted; every claimed edge has both controls (A16), a block-bootstrap p and a deflated Sharpe at both trial counts (A15) | `SCORECARD.md`, `out/trials.csv` |
+| D7 | `make all` regenerates every table from `data/raw` + `data/ext`; `make repeat` yields byte-identical `out/`; `make all` exits non-zero if any expected output is empty or any `*.error` file exists; playbook tables are generated, never typed | `Makefile` |
 
 ## Survival rule
 
-A signal SURVIVES the holdout only if ALL hold. Otherwise it is reported with its p-value
-and the label that applies (FAILED / UNDERPOWERED / COST-KILLED).
+A signal SURVIVES the holdout only if ALL hold; otherwise it is reported with its p-value and
+the label that applies (FAILED / UNDERPOWERED / COST-KILLED / POST-SELECTION).
 
-1. Net mean > 0 at 1.0 index point round-trip.
-2. Block-bootstrap one-sided p < 0.05 via `stats_engine.block_bootstrap_p`, n_boot = 2000,
-   seed 11; blocks = trading day for pooled intraday statistics, calendar month for
-   one-observation-per-day series (what `step17_intramom.py:75` already does).
-3. Passes Benjamini-Hochberg FDR at 10% across every configuration tested in this run.
-4. Positive excess over its matched random-entry control (same days, same hold window,
-   random entry minute, 200 draws).
-5. Deflated Sharpe ratio > 0.95 (Bailey & López de Prado 2014) computed on the HOLDOUT
-   net-return series, with N = the number of hypotheses evaluated on the holdout in this run
-   (the 8 momentum candidates, the gap-up call, and any flow candidates) and SR0 from the
-   dispersion of those trials' holdout Sharpes. The in-sample DSR against the historical
-   trial counts (momentum: 8 + 4 it22 setups + 22 step17 tests = 34; gap-up call: 1,092
-   scan cells + 6 conditions = 1,098) is reported in SCORECARD.md as context. *(Amended in
-   Phase 2 — see CHANGELOG.)*
+1. Net mean > 0 in index points at 1.0 pt round-trip cost.
+2. One-sided block-bootstrap p < 0.05: `pipeline/stats.one_sided_p` (stats_engine's
+   algorithm, generator re-seeded with 11 per call, n_boot 2000, p/2 when the mean is
+   positive else 1.0 — Thread B's convention). Pooled holdout and each half use calendar-month
+   blocks (≥ 20 months each); per-year rows use trading-day blocks (one observation per day,
+   i.e. the iid bootstrap, which the 20-block guard permits); any statistic with < 20 blocks
+   is printed NA, never 1.0.
+3. Passes Benjamini-Hochberg FDR at 10% across every trial in this run (A31).
+4. Positive excess over the day-selection control (A16); the timing control is reported.
+5. Deflated Sharpe > 0.95 on the holdout trade series (per-trade Sharpe, T = trades, trade-
+   return skew and kurtosis) with N = the number of candidates among which the reported one
+   was chosen ON THE HOLDOUT (N = 1 for a pre-registered signal, so this is the probabilistic
+   Sharpe ratio; N = the family size for exploratory flow candidates). The in-sample DSR with
+   the historical trial counts (momentum: 16 this run + 4 it22 setups + 22 step17 tests = 42;
+   gap-up call: 1,092 scan cells + 6 conditions + 1 = 1,099) is reported in SCORECARD.md.
 6. At least 200 holdout trades. Below that: report the p-value and label UNDERPOWERED.
 
-## Decision rule for D1 (fixed before any run)
+## Decision rule for D1 (fixed before any run; CRITIQUE #3, #9, #19, #20)
 
-Candidate set (8 trials): {entry 15:00, 15:30} × {put-only, both directions} ×
-{magnitude gate: |open→entry| above the expanding-window 70th percentile of prior
-sessions; VIX-and-move gate: prior-close VIX > 17.06 AND |prior close→entry| > 0.665%}.
-Thread A's spec is (15:00, put-only, magnitude). Thread B's is (15:30, both, VIX-and-move).
-Winner = highest net Sharpe at 1.0 pt on 2013-01-01→2020-05-29 (the window where both
-threads' tests overlap) that is ALSO positive with block-bootstrap p < 0.10 on the
-2020-06-01→2026-09-11 holdout. Ties within 0.10 Sharpe go to the candidate with fewer
-parameters. Thresholds are never re-fitted on any data after 2020-05-29.
+Configurations (16 = entry × direction × gate): entry ∈ {15:00, 15:30}; direction ∈
+{put-only, both}; gate ∈
+- `mag` — |open → entry| above the expanding 70th percentile of strictly prior sessions
+  (Thread A's rule, unfitted; min 20 prior sessions);
+- `vixmove_exp` — prior-close VIX above its expanding upper-tercile boundary AND
+  |prev_close → entry| above its expanding upper-tercile boundary (Thread B's construction —
+  its 17.06 / 0.665 are exactly the upper-tercile boundaries of histdata 2010–2018, verified
+  in Phase 2 — turned into a rule that uses only prior sessions);
+- `vixmove_fixed` — the same boundaries computed once on Oanda 2005-01→2012-12 and frozen
+  (22.81 / 0.845%);
+- `vixmove_lit` — Thread B's literal 17.06 / 0.665, which are in-sample on 2013–2018;
+  REPORTED, never ranked.
+
+Ranking: the 12 rankable configurations are ranked on 2013-01-01→2020-05-13 (genuine test
+data for all of them: Thread A's split is < 2013 / ≥ 2013 and the vixmove rules use only
+pre-2013 information) by net Sharpe on the CALENDAR-DAY P&L series (zeros on non-trade days,
+× √252), so candidates with different trade frequencies are comparable; ties within 0.10 go to
+the configuration with fewer parameters. Exactly ONE configuration — the top-ranked — is
+tested on the 2020-06-01→2026-09-11 holdout. If it fails the survival rule, D1's outcome is
+"no reconciled specification survives". The other 15 holdout rows are still published in
+`out/reconcile_candidates.csv`, labelled POST-SELECTION, and never promoted. Expanding rules
+keep expanding through the holdout using strictly prior sessions (a rule, not a fitted
+parameter); the variant with thresholds frozen at 2020-05-13 is a separate, counted trial if
+run.
 
 ## Numeric budgets (measured, never estimated)
 
-- Costs: 0DTE options 0.5–2.0 index points round-trip, shown at 1.0 and 2.0 (half on
-  entry, half on exit); ES 0.33–0.50 pts; ETFs 2 bp/side; single stocks 5 bp/side.
-- Any Sharpe above 3.0 on price-only data triggers a mandatory bug hunt before it is
-  reported.
-- Position size is set by the worst single day against the daily loss limit, not by
-  Sharpe. Loss at stop ≈ 54% of premium for ITM 0DTE. Base 4% limit; 3% and 5% shown.
-- Bootstrap: n_boot 2000; hardware 4 cores / 15 GB; fleet ≤ 3 concurrent units.
+- Costs: 0DTE options quoted bid-ask 1.0 / 2.0 / 3.0 index points (charged per A28); ES
+  0.33–0.50 pts; ETFs 2 bp/side; single stocks 5 bp/side. Percent-of-price costs are derived
+  per trade from the actual price level (A21).
+- Any Sharpe above 3.0 on price-only data triggers a mandatory bug hunt before it is reported.
+- Position size = daily loss limit ÷ worst-trade loss in % of premium measured on the holdout,
+  with a floor of 100% (a hold-to-close trade has no stop; Thread B's 54% loss-at-stop was
+  measured on ATM calls with a 1.5-ATR stop and is not used). Worst trade and worst day are
+  also reported on intraday MAE from minute highs/lows. The sizing denominator is the worst
+  day of the COMBINED book (both signals on the same day). Base 4% limit; 3% and 5% shown.
+- Bootstrap n_boot 2000; hardware 4 cores / 15 GB; fleet ≤ 3 concurrent units.
 
 ## Non-goals
 
-No new pattern search over 2005–2020; no conditioning / regime-switching / clever
-weighting on top of the portfolio; no inversion; no ATM or OTM 0DTE on a directional
-signal; no UI; no live or paper execution; no GEX / dealer-positioning filters (no
-positioning data obtainable); no real 0DTE quotes (unobtainable — k×VIX is the model);
-no cross-market validation after 2018 (no DAX/EuroStoxx minute data obtainable); no change
-to the prop-account constraint; no edits to files under `research/` (copy, then change).
+No new pattern search over 2005–2020; no conditioning / regime-switching / clever weighting
+on top of the portfolio; no inversion; no ATM or OTM 0DTE on a directional signal; no UI; no
+live or paper execution; no GEX / dealer-positioning filters (no positioning data obtainable);
+no real 0DTE quotes (unobtainable — k×VIX is the model); no defined-risk 30–45 DTE VRP sleeve
+backtested with real option prices and margin (no option data obtainable; VRP is measured as
+VIX − realised vol and labelled not-tradeable-as-measured); no cross-market validation after
+2018 (no DAX/EuroStoxx minute data obtainable); no change to the prop-account constraint; no
+edits to files under `research/` (copy, then change).
 
 ## Assumptions (recorded, not asked)
 
 | # | Assumption | Why |
 |---|---|---|
-| A1 | Holdout = 2020-06-01 → 2026-09-11; thresholds frozen through 2020-05-29 | In-sample minute data (Oanda SPX500_USD) ends 2020-05-29, not 2020-12-31 |
-| A2 | Bundle lives verbatim at `research/` (so `research/CLAUDE.md`, `research/thread_A_multisleeve/`, `research/thread_B_inversion/`) | Zip layout kept; only the top-level folder name changed |
-| A3 | "Identical data" for D1 = Oanda SPX500_USD 2005-01→2020-05 (UTC) + `data/ext` minute file from 2020-06; histdata 2010–2018 is a cross-feed check only | Oanda is the one feed both threads used (A throughout; B for its 2019–20 holdout) |
-| A4 | Sessions: tz-aware America/New_York, 09:30–16:00, sessions with < 300 bars dropped and listed | Both threads' rule (`mh.py:17`, `step17_intramom.py:63`) |
-| A5 | Timestamp conventions: Oanda = UTC (verified 2018-07-08 22:00 first bar); histdata = Eastern with DST (verified Sunday open 18:01 in Jan and Jul 2018) | Direct inspection of the files |
-| A6 | If `data/ext` minute file is SPY: prior close adjusted by dividend on ex-dates; 1 SPX point = $0.10 SPY; instrument detected from price level | SPY ex-div gaps (~0.35%) would leak into "prior close→15:30" |
-| A7 | Option pricing: Black-Scholes, r = 0, IV = k × prior-close VIX, k base 1.3; T = minutes to 16:00 / (365×24×60) | Thread B `step15_odte.py:76`; both threads called VIX-as-IV generous |
-| A8 | 2% ITM: K = S_entry × 0.98 for calls, × 1.02 for puts, rounded to the nearest 5 SPX points | Thread A `it21.py:33` moneyness convention; SPX strike grid |
-| A9 | Thread A it22 magnitude threshold: expanding-window 70th percentile of |open→15:00| over all prior sessions; put on down days only | `ASSESSMENT_iteration22_0DTE_NATIVE.md:57-59` |
-| A10 | Thread A gap-up signal: (open / prior close − 1) > 0.3%; entry at the 13:00 bar open; 2% ITM call; hold to close | `HANDOFF.md:161`, `ZERO_DTE_PLAYBOOK.md:79-83` |
-| A11 | Thread B price_1530 = last close in [15:25, 15:30]; prev_close = last RTH close; VIX prior close = previous trading day's CLOSE | `step17_intramom.py:51-58,97` |
-| A12 | Thread A scripts it14, it17–it20, it22 are absent; specs re-implemented from ASSESSMENT text and must reproduce headline numbers before use | Bundle inventory |
-| A13 | VXX/VXZ: Kaggle-mirror series to 2017-11-10 spliced to the post-2018 ETNs on the overlap; splice proven by return correlation; gap days reported | VXX/VXZ were relaunched in January 2018 |
-| A14 | Own-account VRP sleeve: measured as VIX − realised vol through 2026 (Thread B step11 method), labelled not-tradeable-as-measured | No option prices obtainable |
-| A15 | Deflated Sharpe uses the full-run trial count N and the return series' skew and kurtosis | Bailey & López de Prado 2014 |
-| A16 | Random-entry control: same calendar days as the signal, random entry minute within the same window, same exit, 200 draws, excess = signal mean − control mean | Thread A methodology §7 |
-| A17 | "Worst day" and "worst year" in the playbook are at the base sizing (4% limit, 54% loss-at-stop) in % of account | Mission sizing rule |
+| A1 | In-sample minute data ends 2020-05-13 (Oanda file ts_max 2020-05-14 07:59 UTC). The ext minute file starts 2020-05-14; 2020-05-14→05-29 is warm-up only; holdout = 2020-06-01→2026-09-11; thresholds frozen through 2020-05-13 | Verified file coverage (CRITIQUE #32) |
+| A2 | Bundle lives verbatim at `research/` (`research/CLAUDE.md`, `research/thread_A_multisleeve/`, `research/thread_B_inversion/`) | Zip layout kept; only the top-level folder name changed |
+| A3 | "Identical data" for D1 = Oanda SPX500_USD 2005-01→2020-05 (UTC) + `data/ext` minute file from 2020-05-14; histdata 2010–2018 is a cross-feed check only | Oanda is the one feed both threads used |
+| A4 | Sessions: tz-aware America/New_York, 09:30–16:00, sessions with < 300 bars dropped and listed; sessions whose date is not an NYSE trading day (VIX daily calendar, current to 2026-09-11) dropped and listed | Both threads' rule; CFD feeds print bars on some closed days |
+| A5 | Timestamp conventions: Oanda = UTC; histdata = Eastern with DST (both verified by the sustained-step DST probe: open at 09:30 in every Jan/Jul month, 47 of 47) | Direct inspection |
+| A6 | `data/ext/ext_manifest.json` declares instrument (SPX / ES / SPY), source, `adjusted`, and for ES the roll dates or a contract column; the session builder refuses to run without it and checks the declared instrument against the price level. SPY: prior close adjusted by the dividend on ex-dates; 1 SPX point = $0.10 SPY. ES: any signal whose reference price and decision price come from different contracts is dropped and listed. SPX cash: open = first print at or after 09:31, close = last print before 16:00 (the official close is not in a bar file), recorded in DATA.md | CRITIQUE #6, #23 |
+| A7 | Option pricing: Black-Scholes, r = 0, IV = k × prior-close VIX, T = minutes to 16:00 / (365×24×60); k = 1.0 for every reproduction, k = 1.3 base for the playbook's 13:00 leg with 1.0 / 1.6 shown; for the 15:00 and 15:30 legs the model is intrinsic ± spread (time value < 0.02 pt) and k is not a sensitivity axis | `step15_odte.py:76`; options sanity check |
+| A8 | 2% ITM: K = S × 0.98 (calls) / S × 1.02 (puts), rounded AWAY from spot to the instrument's grid (5 pts SPX, $1 SPY/XSP); unrounded for the Thread A reproduction | CRITIQUE #26 |
+| A9 | Thread A it22 magnitude gate: expanding 70th percentile of \|open → 15:00\| over strictly prior sessions; put on down days only | `ASSESSMENT_iteration22:57-59` |
+| A10 | Thread A gap-up signal: open / prior close − 1 > 0.3%; entry at the first bar open after 13:00; 2% ITM call; hold to settlement | `HANDOFF.md:161` |
+| A11 | Decision price = close of the last bar within 5 min at or before the decision minute; entry = open of the next bar; Thread B's bar-close fill is reproduced only inside the reproduction gate and the difference is logged | CRITIQUE #17 |
+| A12 | Thread A scripts it14, it17–it20, it22 are absent; specs re-implemented from ASSESSMENT text; reproduction gates in A30 | Bundle inventory |
+| A13 | VXX/VXZ: the Kaggle-mirror series are the original ETNs (end 2017-11-10); today's VXX/VXZ are the 2018 Series B notes; there is no overlap. Bridge through VIXY / VIXM (same indices, continuous since 2011, in both panels): prove old-VXX ≈ VIXY (2011→2017-11) and new-VXX ≈ VIXY (2018→2026) at daily-return corr ≥ 0.99, fill 2017-11-11→2018-01 with VIXY returns; same for VXZ via VIXM | CRITIQUE #16 |
+| A14 | Own-account VRP sleeve: VIX − realised vol through 2026 (Thread B step11 method), labelled not-tradeable-as-measured | No option prices obtainable |
+| A15 | Deflated Sharpe per-trade (T = trades); SR0 from the empirical dispersion of the competing trials' per-trade Sharpes; reported at N = holdout-selection count and at the historical N | CRITIQUE #7, #28 |
+| A16 | Day-selection control: the same number of trades drawn uniformly from random holdout sessions, same entry time, same direction rule (put-only → short; both → sign of the move on that day), same exit, 200 seeds; excess = signal mean − mean of control means; also the fraction of seeds beaten. Timing control (reported only): same days, same direction, random entry minute in [13:00, entry) | CRITIQUE #14 |
+| A17 | Sizing per the numeric budget (100% floor, MAE, combined-book worst day); "worst day" and "worst year" at base sizing in % of account | CRITIQUE #1, #18 |
 | A18 | Commit and push at the end of every phase and tribunal round to `claude/modest-pasteur-oyzqyh` | Ephemeral container |
-| A19 | Inference adapter (`pipeline/stats.py`) re-seeds the bootstrap generator per call and takes the split as a parameter; Thread B's one-sided convention (p/2 if mean > 0 else 1.0) is kept | `stats_engine.py` keeps one module-level RNG (p-values depend on call order) and hardcodes TRAIN_END = 2017-01-01 |
-| A20 | Execution model for hold-to-close signals: resting limit at k × ATR against the trade direction (k ∈ {0.25, 0.50, 1.00}); ATR = 14-bar rolling mean of 5-minute (high − low) built with `closed="left"`; fill window = min(30 min, minutes-to-close − 5); unfilled signals count as zero per signal; commission-only 0.10 pt on fills; puts/shorts mirrored (fill if high ≥ limit) | `step8_execution.py` is long-only, uses a 30-min window / 60-min hold that would outrun a 15:30 entry, and its 5-min resample (`label="right", closed="right"`) leaks one minute of forward information |
-| A21 | Costs are fixed in index points; the percent-of-price cost is derived per trade from the actual price level | Thread B's 0.0157% constant assumes SPX ≈ 2100 and is ~3× too high at 2021–2026 levels |
-| A22 | Thread B reproduction gate targets the conditional headline (n = 337, +0.0645%/trade, 58.5% win, net Sharpe 2.50 on histdata 2010–2018, anchored at detected-open + 360 min, month blocks) through a filtered-evaluation path written in `pipeline/`, plus the unconditional r_rest / r1 / r12 rows the bundled `step17_intramom.py` prints | The bundled step17 never applies the VIX > 17.06 / |move| > 0.665% filter; it only computes terciles |
-| A23 | Thread A it22 split: train < 2013-01-01, test ≥ 2013-01-01; reproduction tolerance ± 0.3 points on the TEST mean per trade | `HANDOFF.md:157`; the it15 scan the gap-up call came from used the same split |
-| A24 | Canonical entry times are wall-clock America/New_York (15:00, 15:30, 13:00); Thread B's detected-open + 360 offset (≈ 15:32 on histdata) is reproduced only inside the reproduction gate | Thread B's "15:30" is an offset from a detected 09:32 open |
-| A25 | VIX prior close = the last VIX close strictly before the session date (as-of merge), never a row shift | `step17_intramom.py:97` shifts by row, which mispairs on date mismatches; `step15_odte.py:58` uses same-day VIX (look-ahead) |
-| A26 | Per-year rows bootstrap with day blocks (one observation per day); the whole-holdout survival test uses month blocks (≥ 20 months available); rows with < 20 blocks are labelled n/a, never reported as p = 1.0 | `block_bootstrap_p` returns 1.0 below 20 blocks |
-| A27 | NYSE-holiday sessions are excluded even when a CFD feed prints bars; early-close days fall out by bar count and the calendar report proves no kept session is a calendar event; a dropped ordinary weekday is a "feed gap" and is counted in the session-denominator report | CFD feeds trade thinly through US holidays; Oanda 2005–2006 and March 2012 and histdata December 2010 are sparse |
-| A28 | Option P&L: spread in index points applied half at entry and half at exit on the option price; returns in % of premium; IV = k × prior-close VIX | Unifies Thread A (points) and Thread B (1% of premium) cost conventions |
+| A19 | `pipeline/stats.py` re-seeds the bootstrap generator per call and takes the split as a parameter; Thread B's one-sided convention kept | `stats_engine.py` has one module-level RNG and a hardcoded 2017 split |
+| A20 | Execution model for hold-to-close signals: resting limit at k × ATR against the trade direction (k ∈ {0.25, 0.50, 1.00}); ATR = 14-bar rolling mean of 5-minute (high − low) built with `closed="left"`; fill window = min(30 min, minutes-to-close − 5); unfilled = 0 per signal; commission-only 0.10 pt on fills; puts/shorts mirrored | `step8_execution.py` is long-only, its 30-min window would outrun a 15:30 entry, and its resample leaks one minute |
+| A21 | Costs fixed in index points; percent-of-price derived per trade | Thread B's 0.0157% assumes SPX ≈ 2100 |
+| A22 | Thread B reproduction: (c1) DATA IDENTITY — Thread B's own conventions (detected open + 360, bar-close fill, month blocks, its cost constant) on histdata 2010–2018 must give n = 337 / +0.0645% / 58.5% / SR 2.50 within rounding, and its LEGACY holdout mode (single open minute detected on naive UTC stamps, as `step17_intramom.py:34-42` does) must give n = 85 / +0.0975% / SR 1.67 exactly; (c2) CORRECTED holdout on the America/New_York session builder is the reference row downstream, with the difference logged as a reproduced defect | Phase 2 finding: the published holdout was DST-misaligned for winter sessions |
+| A23 | Thread A it22 split: train < 2013-01-01, test ≥ 2013-01-01 | `HANDOFF.md:157`; it15 |
+| A24 | Canonical entry times are wall-clock America/New_York | Thread B's "15:30" is detected-open + 360 |
+| A25 | VIX prior close = last VIX close strictly before the session date (as-of merge) | `step17:97` row shift; `step15:58` same-day VIX |
+| A26 | Blocks as in survival rule 2 | `block_bootstrap_p` returns 1.0 below 20 blocks |
+| A27 | Calendar: NYSE holidays excluded even when a CFD prints bars; early closes fall out by bar count; a dropped ordinary weekday is a "feed gap" and is counted in the session-denominator report (Oanda 2017: 85 feed-gap sessions) | Verified in Phase 2 |
+| A28 | Settlement and cost per instrument: SPX / XSP — buy at the ask (half the quoted spread), hold to PM cash settlement, proceeds = intrinsic at the 16:00 print, no exit spread; SPY — physically settled, so sell by 15:55 with both spread halves charged; SPY figures are for a 15:55 exit only. Per-contract premium ≈ 2% × S × multiplier and the minimum account for one contract at base sizing are printed in the playbook | CRITIQUE #12 |
+| A29 | Expanding thresholds need ≥ 20 prior sessions | Same floor as the bootstrap |
+| A30 | Thread A reproduction gate: HARD (pricing-independent) — re-implemented trade counts within ±10% of it22's 516 big-down puts, 473 big-up calls and 1,030 gap-up calls on Oanda 2005-01→2020-05, underlying win rates within 1 point; SOFT — TEST (≥ 2013) mean within 0.3 percentage points of premium at k = 1.0, 2% ITM unrounded, r = 0, quoted spread 1.0 pt, under Thread A's inferred convention (entry at the ask, settlement at intrinsic — the only convention within tolerance for BOTH legs, offset +0.21 on each); the half-on-exit alternative is reported beside it. A miss is a logged finding, never a tuning target | Phase 2 convention probe |
+| A31 | A trial is one (signal rule, parameter set, target series) tested for an edge. Reporting cuts (by year, spread, k, sizing) and execution variants of an already-counted signal are not trials | CRITIQUE #7 |
+| A32 | Fleet unit failure: empty output AND `<out>.error` with the traceback, exit code 2; `run_all` and the gates fail on any empty expected output or any `*.error` | CRITIQUE #25 |
+| A33 | Reproduction runs never execute Thread B's scripts in place; `git status --porcelain research/` must be empty after every gate | CRITIQUE #29 |

@@ -65,7 +65,10 @@ reconciliation live here.
 ### Fleet unit contract
 
 `python -m pipeline.units.<name> --in <path> --out <file>`: one input path, one output
-file, deterministic (seeded), writes an empty file and exits 0 on any failure.
+file, deterministic (seeded). On any failure it writes an empty output file AND
+`<out>.error` with the traceback and exits 2 (ACCEPTANCE A32); the fleet runner tolerates
+exit 2 and continues; `run_all` and the gates fail on any empty expected output or any
+`*.error` file, so a dead unit is visible but never blocks the others.
 Unit output schemas:
 
 - `fetch_<source>` → parquet with the raw columns plus `source_url`, `fetched_at`.

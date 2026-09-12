@@ -45,18 +45,27 @@ def instrument_of(frame):
     return "SPY" if float(np.nanmedian(frame["close"])) < 1500 else "SPX"
 
 
-def build(feed, path):
+def trading_days_from_vix(path="data/raw/vix_daily.parquet"):
+    """NYSE trading-day calendar = the dates the CBOE published a VIX close (1990 → 2026-09-11)."""
+    return set(pd.to_datetime(pd.read_parquet(path)["date"]).dt.normalize())
+
+
+def build(feed, path, trading_days=None):
     """Returns (rth_frame, dropped_sessions). rth_frame columns: ts_ny, date, mod, open, high,
     low, close, volume, feed. `date` is a tz-naive midnight Timestamp (merge-friendly).
-    NYSE holidays are excluded even when a CFD feed prints bars on them; dropped_sessions
-    carries every excluded weekday with its bar count."""
+    NYSE holidays are excluded even when a CFD feed prints bars on them, and so is any date
+    outside `trading_days` (the VIX calendar) when given; dropped_sessions carries every
+    excluded weekday with its bar count."""
     d = _load(feed, path)
     d["mod"] = d["ts_ny"].dt.hour * 60 + d["ts_ny"].dt.minute
     d["date"] = d["ts_ny"].dt.tz_localize(None).dt.normalize()
     d = d[(d["mod"] >= RTH_START) & (d["mod"] < RTH_END) & (d["ts_ny"].dt.dayofweek < 5)]
     bars = d.groupby("date").size()
     hol = set().union(*(nyse_holidays(y).keys() for y in range(bars.index.min().year, bars.index.max().year + 1)))
-    keep = bars[(bars >= MIN_BARS) & ~bars.index.isin(hol)]
+    ok = (bars >= MIN_BARS) & ~bars.index.isin(hol)
+    if trading_days is not None:
+        ok &= bars.index.isin(trading_days)
+    keep = bars[ok]
     dropped = bars[~bars.index.isin(keep.index)].rename("bars").reset_index()
     d = d[d["date"].isin(keep.index)].reset_index(drop=True)
     d["feed"] = feed
@@ -89,18 +98,23 @@ def dst_probe(feed, path):
     must be 09:30 (not 08:30 or 10:30) in BOTH months. Thread B's detect_open is reported too."""
     d = _load(feed, path)
     d["mod"] = d["ts_ny"].dt.hour * 60 + d["ts_ny"].dt.minute
-    d = d[d["ts_ny"].dt.dayofweek < 5]
     d["year"], d["month"] = d["ts_ny"].dt.year, d["ts_ny"].dt.month
+    sundays = d[d["ts_ny"].dt.dayofweek == 6]
+    d = d[d["ts_ny"].dt.dayofweek < 5]
     rows = []
     for (y, m), g in d[d["month"].isin([1, 7])].groupby(["year", "month"]):
         if g["ts_ny"].dt.date.nunique() < 10:
             continue
         win, steps = open_step(g)
         om = detect_open(g)
+        sun = sundays[(sundays["year"] == y) & (sundays["month"] == m)]
+        first = sun.groupby(sun["ts_ny"].dt.date)["mod"].min()
+        anchor = f"{int(first.mode().iat[0]) // 60:02d}:{int(first.mode().iat[0]) % 60:02d}" if len(first) else "n/a"
         rows.append(dict(feed=feed, year=y, month=m, step_open=f"{win // 60:02d}:{win % 60:02d}",
                          step_0830=round(steps[RTH_START - 60], 4), step_0930=round(steps[RTH_START], 4),
                          step_1030=round(steps[RTH_START + 60], 4), ok=win == RTH_START,
-                         threadB_detect_open=f"{om // 60:02d}:{om % 60:02d}", sessions=g["ts_ny"].dt.date.nunique()))
+                         threadB_detect_open=f"{om // 60:02d}:{om % 60:02d}", sunday_first_bar=anchor,
+                         sessions=g["ts_ny"].dt.date.nunique()))
     return pd.DataFrame(rows)
 
 
@@ -189,7 +203,7 @@ if __name__ == "__main__":
     import sys
     feed, path = sys.argv[1], sys.argv[2]
     os.makedirs("out", exist_ok=True)
-    frame, dropped = build(feed, path)
+    frame, dropped = build(feed, path, trading_days_from_vix())
     probe = dst_probe(feed, path)
     cal = calendar_report(feed, frame, dropped)
     print(f"{feed}: {len(frame):,} RTH bars, {frame['date'].nunique():,} sessions, "

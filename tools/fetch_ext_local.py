@@ -2,7 +2,8 @@
 
 Produces the two files the pipeline needs under data/ext/, then commit them:
   data/ext/etf_daily_2017-11_2026-09.csv.gz   (yfinance, no account needed)
-  data/ext/spx_1min_2020-06_2026-09.csv.gz    (Alpaca free plan, IEX feed, SPY 1-min)
+  data/ext/spx_1min_2020-05_2026-09.csv.gz    (Alpaca free plan, IEX feed, SPY 1-min, from 2020-05-14)
+  data/ext/ext_manifest.json                  (declares the instrument; required by the pipeline)
   data/ext/spy_dividends.csv                  (only because the minute file is SPY)
 
 Alpaca keys: export APCA_API_KEY_ID=... APCA_API_SECRET_KEY=...
@@ -10,14 +11,16 @@ If you use Databento (ES continuous) or IBKR (SPX index) instead, write the same
 columns (ts in UTC as YYYY-MM-DD HH:MM:SS, open, high, low, close, volume) and skip the
 dividends file.
 """
-import os, time
+import json
+import os
+import time
 import pandas as pd
 import requests
 import yfinance as yf
 
 ETFS = ("spy efa eem ewj ewz ewa tlt ief lqd hyg tip gld slv gdx dbc dba uso xop uup "
         "fxe fxy fxb vnq rwx iyr vxx vxz vixy vixm").split()
-START_ETF, START_MIN, END = "2017-11-01", "2020-06-01", "2026-09-12"
+START_ETF, START_MIN, END = "2017-11-01", "2020-05-14", "2026-09-12"
 os.makedirs("data/ext", exist_ok=True)
 
 
@@ -32,7 +35,12 @@ def etf_panel():
         d = d.reset_index().rename(columns={"Date": "date"})
         d.insert(0, "ticker", t)
         rows.append(d[["ticker", "date", "open", "high", "low", "close", "adj_close", "volume"]])
-    pd.concat(rows).to_csv("data/ext/etf_daily_2017-11_2026-09.csv.gz", index=False, compression="gzip")
+    panel = pd.concat(rows)
+    first = panel.groupby("ticker")["date"].min()
+    print(first.to_string())
+    for t in ("vixy", "vixm"):
+        assert t in first and first[t] <= pd.Timestamp("2017-11-01"), f"{t} must start by 2017-11-01 (bridge for VXX/VXZ)"
+    panel.to_csv("data/ext/etf_daily_2017-11_2026-09.csv.gz", index=False, compression="gzip")
 
 
 def spy_minute_alpaca():
@@ -57,8 +65,10 @@ def spy_minute_alpaca():
                                           "c": "close", "v": "volume"})
     b["ts"] = pd.to_datetime(b["ts"], utc=True).dt.strftime("%Y-%m-%d %H:%M:%S")
     b[["ts", "open", "high", "low", "close", "volume"]].to_csv(
-        "data/ext/spx_1min_2020-06_2026-09.csv.gz", index=False, compression="gzip")
+        "data/ext/spx_1min_2020-05_2026-09.csv.gz", index=False, compression="gzip")
     yf.Ticker("SPY").dividends.rename_axis("ex_date").rename("amount").to_csv("data/ext/spy_dividends.csv")
+    json.dump({"instrument": "SPY", "source": "Alpaca IEX feed, 1Min bars, adjustment=raw", "adjusted": False,
+               "roll_dates": []}, open("data/ext/ext_manifest.json", "w"), indent=1)
 
 
 if __name__ == "__main__":

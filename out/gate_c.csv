@@ -1,0 +1,15 @@
+check,ok
+"c1 B discovery, histdata 2010-18, B's conventions (open 09:32)",True
+c1 B discovery unconditional rest-of-day,True
+"c1 B holdout LEGACY (naive UTC, one open 13:32 UTC)",True
+HARD A 15:00 put (big-down),True
+SOFT A 15:00 put (big-down),True
+"HARD A 15:00 call (big-up, rejected leg)",True
+HARD A 13:00 call (gap-up > 0.3%),True
+SOFT A 13:00 call (gap-up > 0.3%),True
+sanity,True
+entry bar strictly after decision bar,True
+"exit at the session's last bar, after entry",True
+VIX date strictly before session date,True
+expanding thresholds use prior sessions only,True
+research/ untouched,True

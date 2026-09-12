@@ -44,11 +44,19 @@ def manifest(name, **fields):
 
 
 def run(main, out):
-    """Unit wrapper: any failure writes an empty output file and exits 0."""
+    """Unit wrapper (ACCEPTANCE A32): any failure writes an empty output file AND `<out>.error`
+    with the traceback, then exits 2 so a dead unit is visible but never blocks the fleet."""
     try:
         os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
         main()
+        err = out + ".error"
+        if os.path.exists(err):
+            os.remove(err)
     except Exception:
-        traceback.print_exc(file=sys.stderr)
+        tb = traceback.format_exc()
+        sys.stderr.write(tb)
         open(out, "w").close()
+        with open(out + ".error", "w") as f:
+            f.write(tb)
+        sys.exit(2)
     sys.exit(0)

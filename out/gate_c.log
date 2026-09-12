@@ -1,0 +1,56 @@
+====================================================================================================
+THREAD B REPRODUCTION
+====================================================================================================
+c1 B discovery, histdata 2010-18, B's conventions (open 09:32)
+      n: got 338   target 337
+    net: got +0.0639   target +0.0645
+    win: got +58.2840   target +58.5000
+     sr: got +2.4835   target +2.5000
+      p: got +0.0032   target +0.0003
+   [PASS]
+c1 B discovery unconditional rest-of-day
+    net: got -0.0057   target -0.0063
+     r2: got +1.6823   target +2.3000
+   [PASS]
+c1 B holdout LEGACY (naive UTC, one open 13:32 UTC)
+      n: got 85   target 85
+    net: got +0.0975   target +0.0975
+    win: got +54.1176   target +54.1000
+     sr: got +1.6691   target +1.6700
+      p: got +nan   target +0.1350
+   [PASS]
+c2 B holdout CORRECTED (NY sessions, open 09:32, B's bar-close fill, day blocks)
+      n: got 90   target (reference row)
+    net: got +0.0776   target (reference row)
+    win: got +53.3333   target (reference row)
+     sr: got +1.2790   target (reference row)
+      p: got +0.1710   target (reference row)
+====================================================================================================
+THREAD A REPRODUCTION (re-implemented from ASSESSMENT_iteration22 prose)
+====================================================================================================
+A 15:00 put (big-down) | got: {'n': 543.0, 'win': 52.381, 'test_n': 189.0, 'test_pts': 1.324, 'test_mean': 2.972, 'test_mean_exit_convention': 1.9} | target: {'n': 516, 'win': 52.7, 'test_mean': 2.77}
+   [PASS] HARD: trade count within 10% and win rate within 1 point
+   [PASS] SOFT: TEST mean within 0.3 pts of premium (ask entry, intrinsic settlement); half-on-exit convention gives +1.90%
+A 15:00 call (big-up, rejected leg) | got: {'n': 506.0, 'win': 49.451, 'test_n': 182.0, 'test_pts': 0.596, 'test_mean': 1.108, 'test_mean_exit_convention': 0.04} | target: {'n': 473, 'win': None, 'test_mean': None}
+   [PASS] HARD: trade count within 10% and win rate within 1 point
+A 13:00 call (gap-up > 0.3%) | got: {'n': 1031.0, 'win': 52.991, 'test_n': 468.0, 'test_pts': 0.877, 'test_mean': 1.352, 'test_mean_exit_convention': 0.258} | target: {'n': 1030, 'win': 53.1, 'test_mean': 1.14}
+   [PASS] HARD: trade count within 10% and win rate within 1 point
+   [PASS] SOFT: TEST mean within 0.3 pts of premium (ask entry, intrinsic settlement); half-on-exit convention gives +0.26%
+vixmove_fixed thresholds from Oanda 2005-2012: 15:00 (22.81, 0.8155320865774084), 15:30 (22.81, 0.8452583969748683)
+====================================================================================================
+SANITY: zero-drift random walk through mh.backtest (Thread A harness)
+====================================================================================================
+  randomwalk stop=3.0 targ=6.0: win=44.8% (theory 33.3%)  meanR=-0.0606  t=-1.49
+  randomwalk stop=6.0 targ=3.0: win=50.0% (theory 66.7%)  meanR=-0.0337  t=-1.66
+  randomwalk stop=4.0 targ=4.0: win=46.9% (theory 50.0%)  meanR=-0.0531  t=-1.73
+[PASS] residual meanR equals modelled slippage (-0.2/stop) within 0.03R and |t| < 2.5
+====================================================================================================
+OBSERVABILITY (clock-based)
+====================================================================================================
+[PASS] entry bar strictly after decision bar
+[PASS] exit at the session's last bar, after entry
+[PASS] VIX date strictly before session date
+[PASS] expanding thresholds use prior sessions only
+[PASS] git status --porcelain research/ is empty
+
+GATE (c): PASS - 14 of 14

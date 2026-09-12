@@ -39,8 +39,12 @@ Updated 2026-09-12 (Phase 0).
 
 | File | Status | Spec |
 |---|---|---|
-| `data/ext/spx_1min_2020-06_2026-09.csv.gz` | **MISSING** | columns `ts,open,high,low,close,volume`; `ts` in UTC as `YYYY-MM-DD HH:MM:SS`; at least 09:30–16:00 ET each session (extended hours allowed, filtered out); SPX index or ES front-month continuous (unadjusted) preferred; SPY accepted together with `data/ext/spy_dividends.csv` (`ex_date,amount`) |
-| `data/ext/etf_daily_2017-11_2026-09.csv.gz` | **MISSING** | columns `ticker,date,open,high,low,close,adj_close,volume` for spy efa eem ewj ewz ewa tlt ief lqd hyg tip gld slv gdx dbc dba uso xop uup fxe fxy fxb vnq rwx iyr vxx vxz vixy vixm from 2017-11-01 |
+| `data/ext/spx_1min_2020-05_2026-09.csv.gz` | **MISSING** | columns `ts,open,high,low,close,volume`; `ts` in UTC as `YYYY-MM-DD HH:MM:SS`; from **2020-05-14** (the Oanda series ends 2020-05-13; 2020-05-14→05-29 is warm-up, the holdout starts 2020-06-01); at least 09:30–16:00 ET each session (extended hours allowed, filtered out). Instrument: SPY (with `data/ext/spy_dividends.csv`: `ex_date,amount`), or ES front-month with a `contract` column or roll dates in the manifest, or SPX cash index |
+| `data/ext/ext_manifest.json` | **MISSING** | `{"instrument": "SPY" \| "ES" \| "SPX", "source": "...", "adjusted": false, "roll_dates": [...] (ES only)}` — the session builder refuses to run without it and checks the declared instrument against the price level (ACCEPTANCE A6). ES: signals whose reference price and decision price straddle a roll are dropped and listed. SPX cash: open = first print at or after 09:31, close = last print before 16:00 |
+| `data/ext/etf_daily_2017-11_2026-09.csv.gz` | **MISSING** | columns `ticker,date,open,high,low,close,adj_close,volume` for spy efa eem ewj ewz ewa tlt ief lqd hyg tip gld slv gdx dbc dba uso xop uup fxe fxy fxb vnq rwx iyr vxx vxz vixy vixm from 2017-11-01. Today's VXX/VXZ are the 2018 Series B notes with no pre-2018 history; the bridge to the Kaggle-mirror series runs through VIXY/VIXM (A13), so those two must be present from 2017-11-01 |
+
+Note: the bundle's `*.pkl` intermediates were written by pandas 3 and do not load under the
+pinned pandas 2.2.3; nothing in the pipeline reads them (every number is regenerated).
 
 `tools/fetch_ext_local.py` produces both files on a machine with internet access
 (yfinance for the ETF panel; Alpaca free plan for SPY 1-minute; Databento or IBKR are

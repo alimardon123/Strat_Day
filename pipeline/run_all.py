@@ -10,6 +10,7 @@ STEPS = [
     ("gate_b_oanda", ["python", "-m", "pipeline.sessions", "oanda", "data/raw/oanda_SPX500_USD.parquet"], "out/gate_b_oanda.log"),
     ("gate_b_histdata", ["python", "-m", "pipeline.sessions", "histdata", "data/raw/histdata_SPXUSD.parquet"], "out/gate_b_histdata.log"),
     ("gate_c", ["python", "-m", "pipeline.reproduce"], "out/gate_c.log"),
+    ("gate_e", ["python", "-m", "pipeline.gate_ext"], "out/gate_e.log"),
     ("reconcile", ["python", "-m", "pipeline.reconcile"], "out/reconcile.log"),
     ("insample_d3_d4", ["python", "-m", "pipeline.insample", "2013-01-01", "2020-05-13", "IN-SAMPLE 2013-01..2020-05-13",
                         "out/insample"], "out/insample.log"),
@@ -19,6 +20,7 @@ STEPS = [
     ("xmarket_ETXEUR", ["python", "-m", "pipeline.units.xmarket", "--in", "ETXEUR", "--out", "out/xmarket_ETXEUR.csv"], "out/xmarket_ETXEUR.log"),
     ("vrp", ["python", "-m", "pipeline.vrp"], "out/vrp.log"),
     ("flow", ["python", "-m", "pipeline.units.flow", "--in", "data/raw/oanda_SPX500_USD.parquet", "--out", "out/flow_candidates.csv"], "out/flow.log"),
+    ("trials", ["python", "-m", "pipeline.trials"], "out/trials.log"),
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
 ]
 EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_histdata.csv", "out/calendar_histdata.csv",

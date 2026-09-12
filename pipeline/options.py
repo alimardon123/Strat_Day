@@ -19,7 +19,7 @@ from step15_odte import bs_call, bs_put  # noqa: E402  (research code, unchanged
 
 MINUTES_PER_YEAR = 365.0 * 24 * 60
 CLOSE_MOD = 960                          # 16:00
-GRID = {"SPX": 5.0, "SPY": 1.0, None: None}
+GRID = {"SPX": 5.0, "SPY": 10.0, None: None}   # in SPX points: SPY's $1 grid = 10 SPX-equivalent points (A8/A28)
 
 
 def price(S, K, mins_to_close, iv, kind):

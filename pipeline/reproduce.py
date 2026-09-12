@@ -74,7 +74,7 @@ def thread_b(vix):
     f = A[(A["vix"] > 17.06) & (A["r_rest"].abs() > 0.665)]
     rows.append(("c1 B discovery, histdata 2010-18, B's conventions (open %02d:%02d)" % (om // 60, om % 60),
                  _threadB_eval(f, "r_rest"), dict(n=337, net=0.0645, win=58.5, sr=2.50, p=0.0003),
-                 lambda g, t: abs(g["n"] - t["n"]) <= 5 and abs(g["net"] - t["net"]) < 0.005 and abs(g["sr"] - t["sr"]) < 0.1))
+                 lambda g, t: abs(g["n"] - t["n"]) <= 2 and abs(g["net"] - t["net"]) < 0.002 and abs(g["win"] - t["win"]) < 0.5 and abs(g["sr"] - t["sr"]) < 0.05))
     rows.append(("c1 B discovery unconditional rest-of-day", _threadB_eval(A, "r_rest"), dict(net=-0.0063, r2=2.3),
                  lambda g, t: abs(g["net"] - t["net"]) < 0.003))
     # LEGACY holdout: naive UTC stamps, one detected open by volume (step17.half_hours_oanda)
@@ -143,7 +143,9 @@ def sanity():
 
 
 def fmt(v):
-    return f"{v:+.4f}" if isinstance(v, (float, np.floating)) else str(v)
+    if isinstance(v, (float, np.floating)):
+        return "NA (< 20 blocks)" if np.isnan(v) else f"{v:+.4f}"
+    return str(v)
 
 
 if __name__ == "__main__":

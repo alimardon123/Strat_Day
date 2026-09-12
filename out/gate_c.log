@@ -17,7 +17,7 @@ c1 B holdout LEGACY (naive UTC, one open 13:32 UTC)
     net: got +0.0975   target +0.0975
     win: got +54.1176   target +54.1000
      sr: got +1.6691   target +1.6700
-      p: got +nan   target +0.1350
+      p: got NA (< 20 blocks)   target +0.1350
    [PASS]
 c2 B holdout CORRECTED (NY sessions, open 09:32, B's bar-close fill, day blocks)
       n: got 90   target (reference row)
@@ -33,10 +33,10 @@ A 15:00 put (big-down) | got: {'n': 543.0, 'win': 52.381, 'test_n': 189.0, 'test
    [PASS] SOFT: TEST mean within 0.3 pts of premium (ask entry, intrinsic settlement); half-on-exit convention gives +1.90%
 A 15:00 call (big-up, rejected leg) | got: {'n': 506.0, 'win': 49.451, 'test_n': 182.0, 'test_pts': 0.596, 'test_mean': 1.108, 'test_mean_exit_convention': 0.04} | target: {'n': 473, 'win': None, 'test_mean': None}
    [PASS] HARD: trade count within 10% and win rate within 1 point
-A 13:00 call (gap-up > 0.3%) | got: {'n': 1031.0, 'win': 52.991, 'test_n': 468.0, 'test_pts': 0.877, 'test_mean': 1.352, 'test_mean_exit_convention': 0.258} | target: {'n': 1030, 'win': 53.1, 'test_mean': 1.14}
+A 13:00 call (gap-up > 0.3%) | got: {'n': 1003.0, 'win': 52.55, 'test_n': 451.0, 'test_pts': 0.826, 'test_mean': 1.229, 'test_mean_exit_convention': 0.134} | target: {'n': 1030, 'win': 53.1, 'test_mean': 1.14}
    [PASS] HARD: trade count within 10% and win rate within 1 point
-   [PASS] SOFT: TEST mean within 0.3 pts of premium (ask entry, intrinsic settlement); half-on-exit convention gives +0.26%
-vixmove_fixed thresholds from Oanda 2005-2012: 15:00 (22.81, 0.8155320865774084), 15:30 (22.81, 0.8452583969748683)
+   [PASS] SOFT: TEST mean within 0.3 pts of premium (ask entry, intrinsic settlement); half-on-exit convention gives +0.13%
+vixmove_fixed thresholds from Oanda 2005-2012: 15:00 (22.839999999999993, 0.814968814968808), 15:30 (22.829999999999988, 0.8455635272032411)
 ====================================================================================================
 SANITY: zero-drift random walk through mh.backtest (Thread A harness)
 ====================================================================================================
@@ -50,7 +50,7 @@ OBSERVABILITY (clock-based)
 [PASS] entry bar strictly after decision bar
 [PASS] exit at the session's last bar, after entry
 [PASS] VIX date strictly before session date
-[PASS] expanding thresholds use prior sessions only
+[PASS] expanding thresholds are causal (perturbation test)
 [PASS] git status --porcelain research/ is empty
 
 GATE (c): PASS - 14 of 14

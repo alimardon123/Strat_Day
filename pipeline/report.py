@@ -77,13 +77,13 @@ def playbook():
           "Strike: 2% in the money, rounded away from spot to the grid (5 points SPX, $1 SPY/XSP). Never at-the-money or "
           "out-of-the-money (−53% per trade at a 17% hit rate in both threads).", "",
           "## 2. How the specification was chosen (selection window 2013-01 → 2020-05-13, Oanda SPX, net of 1.0 pt)", "",
-          md(cand[cand["rankable"]].sort_values("rank")[["rank", "candidate", "n", "win", "net_pts", "net_pct", "sharpe_calday",
-                                                          "p_boot_month", "p_boot_day", "excess_over_control_pct", "dsr_N12", "dsr_N42"]]), "",
+          md(cand[cand["rankable"]].sort_values("rank")[["rank", "candidate", "params", "n", "win", "net_pts", "net_pct", "sharpe_calday",
+                                                          "p_boot_month", "p_boot_day", "excess_over_control_pct", "timing_control_pct", "dsr_N12", "dsr_N42"]]), "",
           "Literal Thread B thresholds (17.06 / 0.665, in-sample on 2013–2018, reported not ranked):", "",
           md(cand[~cand["rankable"]][["candidate", "n", "win", "net_pts", "net_pct", "sharpe_calday", "p_boot_month", "p_boot_day"]]), "",
           "Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided "
-          "variants tie within 0.10 Sharpe and the parameter-count tie-break picks the 15:00 entry with frozen thresholds. No "
-          "configuration passes BH-FDR at 10% on the selection window.", ""]
+          "variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the "
+          "15:00 entry with the expanding-tercile rule. No trial passes BH-FDR at 10% across the family (`out/trials.csv`).", ""]
     L += ["## 3. Option-level results — IN-SAMPLE (% of premium per trade)", "",
           md(summ[["signal", "spread", "settle", "k", "n", "trades_per_year", "win", "mean", "median", "worst_trade", "worst_day",
                    "full_loss_trades", "premium_mean"]]), "",
@@ -93,7 +93,11 @@ def playbook():
           md(sz[["signal", "limit", "size_pct", "worst_trade_loss_pct", "exp_annual_pct", "worst_year_pct", "best_year_pct",
                  "days_with_two_positions", "worst_day_both_positions_pct"]]), "",
           "## 5. Execution — IN-SAMPLE (underlying index points per signal; unfilled limits count as zero)", "",
-          md(ex[["candidate", "entry", "fill_rate", "n_signals", "mean_net_per_signal", "mean_net_if_filled", "improvement", "p_improvement"]]), "",
+          md(ex[["candidate", "entry", "fill_rate", "n_signals", "mean_net_per_signal", "mean_net_if_filled", "improvement",
+                 "improvement_cost_part", "improvement_price_part", "p_improvement"]]), "",
+          "The improvement over market entry splits into the part that is a cost assumption (fill rate × the 0.40 pt saved by "
+          "paying commission instead of crossing the entry half of the spread) and the part that is price improvement net of "
+          "adverse selection (unfilled signals count as zero).", "",
           "## 6. Contract size and minimum account", "",
           "A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500; XSP is one tenth. At the base size (4% of account "
           "per trade) one SPX contract needs ≈ $325k of account, one XSP contract ≈ $32.5k, one SPY contract ≈ $32.5k with the "

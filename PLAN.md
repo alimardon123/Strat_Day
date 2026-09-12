@@ -21,3 +21,4 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 - 2026-09-12 Phase 0: files written; `data/ext` both MISSING; Phases 0–2 proceed without them.
 
 - 2026-09-12 Phase 3: D1 pre-registered; D3/D4 in-sample; D5 baseline + partial extension; D2b done; rank 9 killed; Phase 4 tribunal running.
+- 2026-09-12 Phase 4 tribunal (14 defects) → Phase 5 repairs: winner re-pre-registered as 15:00|both|vixmove_exp; ext path proven (gate e); family-wide FDR (23 trials, 0 pass). Phase 6/7: regeneration + judge.

@@ -1,0 +1,7 @@
+[PASS] ext feed loaded through the manifest as SPY and rescaled ×10
+[PASS] frozen thresholds identical on the extended frame
+[PASS] IDENTITY: 850 native trades vs 850 via the ext path on 2019-06→2020-05, all prices/returns equal
+[PASS] DIVIDEND: reference close shifted by the dividend on the ex-date only
+[PASS] ROLL: declared roll date excluded from prior-close signals
+[PASS] REFUSAL: missing manifest refused; declared ES on SPY-level prices refused
+GATE (e): PASS

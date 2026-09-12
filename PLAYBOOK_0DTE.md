@@ -8,8 +8,8 @@
 
 ## 1. The pre-registered specification
 
-**Reconciled last-hour momentum signal (D1 winner):** `15:00|both|vixmove_fixed` — decision at 15:00 ET on the bar close; gate: prior-close VIX and |prior close → entry| above upper-tercile boundaries frozen from Oanda 2005–2012; direction: call on an up move, put on a down move; entry at the next bar's open; hold to the 16:00 settlement.
-Frozen gate values: 15:00 → VIX > 22.81 and |move| > 0.816%; 15:30 → VIX > 22.81 and |move| > 0.845%.
+**Reconciled last-hour momentum signal (D1 winner):** `15:00|both|vixmove_exp` — decision at 15:00 ET on the bar close; gate: prior-close VIX above its expanding upper tercile AND |prior close → entry| above its expanding upper tercile; direction: call on an up move, put on a down move; entry at the next bar's open; hold to the 16:00 settlement.
+Frozen gate values: 15:00 → VIX > 22.87 and |move| > 0.815%; 15:30 → VIX > 22.87 and |move| > 0.845%.
 
 **Thread A's gap-up call (pre-registered by Thread A):** open / prior close − 1 > 0.3% → 2% ITM call at the first bar after 13:00 ET, hold to settlement.
 
@@ -17,60 +17,61 @@ Strike: 2% in the money, rounded away from spot to the grid (5 points SPX, $1 SP
 
 ## 2. How the specification was chosen (selection window 2013-01 → 2020-05-13, Oanda SPX, net of 1.0 pt)
 
-| rank | candidate | n | win | net_pts | net_pct | sharpe_calday | p_boot_month | p_boot_day | excess_over_control_pct | dsr_N12 | dsr_N42 |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1.000 | 15:00|both|vixmove_fixed | 93 | 63.441 | 5.103 | 0.188 | 0.570 |  | 0.067 | 0.226 | 0.747 | 0.662 |
-| 2.000 | 15:30|both|vixmove_exp | 147 | 59.864 | 2.581 | 0.099 | 0.533 | 0.078 | 0.080 | 0.128 | 0.634 | 0.515 |
-| 3.000 | 15:30|both|vixmove_fixed | 93 | 59.140 | 3.770 | 0.145 | 0.530 |  | 0.083 | 0.177 | 0.707 | 0.620 |
-| 4.000 | 15:00|both|vixmove_exp | 146 | 63.014 | 3.090 | 0.111 | 0.511 | 0.180 | 0.099 | 0.151 | 0.616 | 0.493 |
-| 5.000 | 15:30|put|mag | 182 | 57.143 | 0.771 | 0.033 | 0.273 | 0.255 | 0.238 | 0.072 | 0.338 | 0.232 |
-| 6.000 | 15:30|put|vixmove_exp | 62 | 51.613 | 1.542 | 0.054 | 0.178 |  | 0.314 | 0.094 | 0.416 | 0.343 |
-| 7.000 | 15:00|put|vixmove_fixed | 42 | 54.762 | 2.412 | 0.080 | 0.167 |  | 0.335 | 0.121 | 0.449 | 0.386 |
-| 8.000 | 15:00|put|vixmove_exp | 58 | 55.172 | 1.740 | 0.055 | 0.151 |  | 0.351 | 0.095 | 0.396 | 0.324 |
-| 9.000 | 15:00|put|mag | 189 | 52.381 | 0.324 | 0.017 | 0.131 | 0.362 | 0.374 | 0.062 | 0.205 | 0.123 |
-| 10.000 | 15:30|put|vixmove_fixed | 43 | 51.163 | 1.116 | 0.033 | 0.083 |  | 0.409 | 0.072 | 0.366 | 0.307 |
-| 11.000 | 15:30|both|mag | 371 | 54.717 | 0.067 | 0.002 | 0.024 | 0.478 | 0.470 | 0.036 | 0.057 | 0.019 |
-| 12.000 | 15:00|both|mag | 371 | 50.943 | -0.033 | 0.001 | 0.009 | 0.493 | 0.492 | 0.039 | 0.052 | 0.017 |
+| rank | candidate | params | n | win | net_pts | net_pct | sharpe_calday | p_boot_month | p_boot_day | excess_over_control_pct | timing_control_pct | dsr_N12 | dsr_N42 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1.000 | 15:00|both|vixmove_fixed | 2 | 92 | 64.130 | 5.272 | 0.194 | 0.557 |  | 0.063 | 0.206 | 0.416 | 0.756 | 0.662 |
+| 2.000 | 15:30|both|vixmove_fixed | 2 | 92 | 59.783 | 3.880 | 0.149 | 0.515 |  | 0.083 | 0.168 | 0.425 | 0.714 | 0.617 |
+| 3.000 | 15:00|both|vixmove_exp | 0 | 145 | 62.759 | 3.115 | 0.112 | 0.489 | 0.179 | 0.095 | 0.124 | 0.303 | 0.613 | 0.476 |
+| 4.000 | 15:30|both|vixmove_exp | 0 | 146 | 59.589 | 2.382 | 0.091 | 0.467 | 0.115 | 0.102 | 0.111 | 0.302 | 0.587 | 0.451 |
+| 5.000 | 15:30|put|mag | 0 | 182 | 57.143 | 0.771 | 0.033 | 0.260 | 0.255 | 0.238 | 0.072 | 0.241 | 0.334 | 0.217 |
+| 6.000 | 15:30|put|vixmove_exp | 0 | 62 | 51.613 | 1.542 | 0.054 | 0.170 |  | 0.314 | 0.086 | 0.287 | 0.414 | 0.332 |
+| 7.000 | 15:00|put|vixmove_fixed | 2 | 42 | 54.762 | 2.412 | 0.080 | 0.159 |  | 0.335 | 0.116 | 0.342 | 0.447 | 0.376 |
+| 8.000 | 15:00|put|vixmove_exp | 0 | 58 | 55.172 | 1.740 | 0.055 | 0.145 |  | 0.351 | 0.085 | 0.286 | 0.393 | 0.313 |
+| 9.000 | 15:00|put|mag | 0 | 189 | 52.381 | 0.324 | 0.017 | 0.125 | 0.362 | 0.374 | 0.062 | 0.226 | 0.202 | 0.112 |
+| 10.000 | 15:30|put|vixmove_fixed | 2 | 43 | 51.163 | 1.116 | 0.033 | 0.079 |  | 0.409 | 0.074 | 0.312 | 0.364 | 0.298 |
+| 11.000 | 15:30|both|mag | 0 | 371 | 54.717 | 0.067 | 0.002 | 0.023 | 0.478 | 0.470 | 0.036 | 0.211 | 0.055 | 0.016 |
+| 12.000 | 15:00|both|mag | 0 | 371 | 50.943 | -0.033 | 0.001 | 0.008 | 0.493 | 0.492 | 0.039 | 0.188 | 0.050 | 0.014 |
 
 Literal Thread B thresholds (17.06 / 0.665, in-sample on 2013–2018, reported not ranked):
 
 | candidate | n | win | net_pts | net_pct | sharpe_calday | p_boot_month | p_boot_day |
 |---|---|---|---|---|---|---|---|
-| 15:00|put|vixmove_lit | 103 | 54.369 | 1.872 | 0.068 | 0.310 | 0.183 | 0.207 |
-| 15:00|both|vixmove_lit | 255 | 58.431 | 2.083 | 0.081 | 0.615 | 0.134 | 0.058 |
-| 15:30|put|vixmove_lit | 106 | 57.547 | 1.537 | 0.060 | 0.321 | 0.100 | 0.203 |
-| 15:30|both|vixmove_lit | 257 | 59.144 | 1.472 | 0.058 | 0.528 | 0.100 | 0.089 |
+| 15:00|put|vixmove_lit | 101 | 55.446 | 2.111 | 0.080 | 0.341 | 0.141 | 0.175 |
+| 15:00|both|vixmove_lit | 251 | 58.566 | 2.168 | 0.084 | 0.603 | 0.117 | 0.046 |
+| 15:30|put|vixmove_lit | 104 | 58.654 | 1.770 | 0.071 | 0.360 | 0.059 | 0.163 |
+| 15:30|both|vixmove_lit | 252 | 59.127 | 1.425 | 0.057 | 0.484 | 0.114 | 0.088 |
+| 13:00|call|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the parameter-count tie-break picks the 15:00 entry with frozen thresholds. No configuration passes BH-FDR at 10% on the selection window.
+Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. No trial passes BH-FDR at 10% across the family (`out/trials.csv`).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
 | signal | spread | settle | k | n | trades_per_year | win | mean | median | worst_trade | worst_day | full_loss_trades | premium_mean |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 15:00|both|vixmove_fixed | 1.000 | cash | 1.000 | 93 | 12.637 | 63.441 | 11.481 | 7.226 | -100.000 | -100.000 | 5 | 52.589 |
-| 15:00|both|vixmove_fixed | 1.000 | exit | 1.000 | 93 | 12.637 | 53.763 | 6.298 | 1.559 | -100.000 | -100.000 | 5 | 50.558 |
-| 15:00|both|vixmove_fixed | 2.000 | cash | 1.000 | 93 | 12.637 | 60.215 | 10.402 | 5.991 | -100.000 | -100.000 | 5 | 53.089 |
-| 15:00|both|vixmove_fixed | 2.000 | exit | 1.000 | 93 | 12.637 | 48.387 | 4.291 | -0.386 | -100.000 | -100.000 | 5 | 51.058 |
-| 15:00|both|vixmove_fixed | 3.000 | cash | 1.000 | 93 | 12.637 | 59.140 | 9.344 | 4.784 | -100.000 | -100.000 | 5 | 53.589 |
-| 15:00|both|vixmove_fixed | 3.000 | exit | 1.000 | 93 | 12.637 | 46.237 | 2.326 | -2.294 | -100.000 | -100.000 | 5 | 51.558 |
-| 13:00|call|gap>0.3% | 1.000 | cash | 1.000 | 468 | 63.593 | 50.641 | 1.226 | 0.392 | -100.000 | -100.000 | 4 | 49.790 |
-| 13:00|call|gap>0.3% | 1.000 | cash | 1.300 | 468 | 63.593 | 50.641 | 1.157 | 0.392 | -100.000 | -100.000 | 4 | 49.816 |
-| 13:00|call|gap>0.3% | 1.000 | cash | 1.600 | 468 | 63.593 | 50.641 | 1.042 | 0.392 | -100.000 | -100.000 | 4 | 49.864 |
-| 13:00|call|gap>0.3% | 1.000 | exit | 1.000 | 468 | 63.593 | 46.154 | 0.145 | -0.625 | -100.000 | -100.000 | 4 | 47.741 |
-| 13:00|call|gap>0.3% | 1.000 | exit | 1.300 | 468 | 63.593 | 45.940 | 0.068 | -0.625 | -100.000 | -100.000 | 4 | 47.770 |
-| 13:00|call|gap>0.3% | 1.000 | exit | 1.600 | 468 | 63.593 | 45.940 | -0.058 | -0.625 | -100.000 | -100.000 | 4 | 47.823 |
-| 13:00|call|gap>0.3% | 2.000 | cash | 1.000 | 468 | 63.593 | 47.863 | 0.179 | -0.589 | -100.000 | -100.000 | 4 | 50.290 |
-| 13:00|call|gap>0.3% | 2.000 | cash | 1.300 | 468 | 63.593 | 47.863 | 0.111 | -0.589 | -100.000 | -100.000 | 4 | 50.316 |
-| 13:00|call|gap>0.3% | 2.000 | cash | 1.600 | 468 | 63.593 | 47.650 | -0.002 | -0.589 | -100.000 | -100.000 | 4 | 50.364 |
-| 13:00|call|gap>0.3% | 2.000 | exit | 1.000 | 468 | 63.593 | 39.530 | -2.008 | -2.993 | -100.000 | -100.000 | 4 | 48.241 |
-| 13:00|call|gap>0.3% | 2.000 | exit | 1.300 | 468 | 63.593 | 39.530 | -2.084 | -2.993 | -100.000 | -100.000 | 4 | 48.270 |
-| 13:00|call|gap>0.3% | 2.000 | exit | 1.600 | 468 | 63.593 | 39.530 | -2.207 | -2.993 | -100.000 | -100.000 | 4 | 48.323 |
-| 13:00|call|gap>0.3% | 3.000 | cash | 1.000 | 468 | 63.593 | 44.658 | -0.846 | -1.590 | -100.000 | -100.000 | 4 | 50.790 |
-| 13:00|call|gap>0.3% | 3.000 | cash | 1.300 | 468 | 63.593 | 44.658 | -0.913 | -1.590 | -100.000 | -100.000 | 4 | 50.816 |
-| 13:00|call|gap>0.3% | 3.000 | cash | 1.600 | 468 | 63.593 | 44.658 | -1.024 | -1.590 | -100.000 | -100.000 | 4 | 50.864 |
-| 13:00|call|gap>0.3% | 3.000 | exit | 1.000 | 468 | 63.593 | 34.829 | -4.114 | -5.184 | -100.000 | -100.000 | 4 | 48.741 |
-| 13:00|call|gap>0.3% | 3.000 | exit | 1.300 | 468 | 63.593 | 34.829 | -4.188 | -5.184 | -100.000 | -100.000 | 4 | 48.770 |
-| 13:00|call|gap>0.3% | 3.000 | exit | 1.600 | 468 | 63.593 | 34.829 | -4.308 | -5.184 | -100.000 | -100.000 | 4 | 48.823 |
+| 15:00|both|vixmove_exp | 1.000 | cash | 1.000 | 145 | 19.762 | 62.069 | 7.339 | 5.489 | -100.000 | -100.000 | 5 | 52.610 |
+| 15:00|both|vixmove_exp | 1.000 | exit | 1.000 | 145 | 19.762 | 54.483 | 3.675 | 1.349 | -99.260 | -99.260 | 0 | 55.230 |
+| 15:00|both|vixmove_exp | 2.000 | cash | 1.000 | 145 | 19.762 | 59.310 | 6.303 | 4.245 | -100.000 | -100.000 | 5 | 53.110 |
+| 15:00|both|vixmove_exp | 2.000 | exit | 1.000 | 145 | 19.762 | 47.586 | 1.809 | -0.647 | -100.000 | -100.000 | 2 | 55.730 |
+| 15:00|both|vixmove_exp | 3.000 | cash | 1.000 | 145 | 19.762 | 57.241 | 5.287 | 3.148 | -100.000 | -100.000 | 5 | 53.610 |
+| 15:00|both|vixmove_exp | 3.000 | exit | 1.000 | 145 | 19.762 | 45.517 | -0.010 | -2.576 | -100.000 | -100.000 | 2 | 56.230 |
+| 13:00|call|gap>0.3% | 1.000 | cash | 1.000 | 423 | 57.650 | 50.827 | 1.175 | 0.569 | -100.000 | -100.000 | 4 | 49.873 |
+| 13:00|call|gap>0.3% | 1.000 | cash | 1.300 | 423 | 57.650 | 50.827 | 1.099 | 0.569 | -100.000 | -100.000 | 4 | 49.903 |
+| 13:00|call|gap>0.3% | 1.000 | cash | 1.600 | 423 | 57.650 | 50.827 | 0.971 | 0.569 | -100.000 | -100.000 | 4 | 49.956 |
+| 13:00|call|gap>0.3% | 1.000 | exit | 1.000 | 423 | 57.650 | 46.809 | 0.071 | -0.443 | -100.000 | -100.000 | 3 | 52.283 |
+| 13:00|call|gap>0.3% | 1.000 | exit | 1.300 | 423 | 57.650 | 46.809 | 0.012 | -0.443 | -100.000 | -100.000 | 3 | 52.309 |
+| 13:00|call|gap>0.3% | 1.000 | exit | 1.600 | 423 | 57.650 | 46.809 | -0.090 | -0.443 | -100.000 | -100.000 | 3 | 52.358 |
+| 13:00|call|gap>0.3% | 2.000 | cash | 1.000 | 423 | 57.650 | 48.463 | 0.131 | -0.376 | -100.000 | -100.000 | 4 | 50.373 |
+| 13:00|call|gap>0.3% | 2.000 | cash | 1.300 | 423 | 57.650 | 48.463 | 0.056 | -0.376 | -100.000 | -100.000 | 4 | 50.403 |
+| 13:00|call|gap>0.3% | 2.000 | cash | 1.600 | 423 | 57.650 | 48.227 | -0.069 | -0.376 | -100.000 | -100.000 | 4 | 50.456 |
+| 13:00|call|gap>0.3% | 2.000 | exit | 1.000 | 423 | 57.650 | 41.135 | -1.889 | -2.632 | -100.000 | -100.000 | 4 | 52.783 |
+| 13:00|call|gap>0.3% | 2.000 | exit | 1.300 | 423 | 57.650 | 41.135 | -1.948 | -2.632 | -100.000 | -100.000 | 3 | 52.809 |
+| 13:00|call|gap>0.3% | 2.000 | exit | 1.600 | 423 | 57.650 | 41.135 | -2.048 | -2.632 | -100.000 | -100.000 | 3 | 52.858 |
+| 13:00|call|gap>0.3% | 3.000 | cash | 1.000 | 423 | 57.650 | 45.390 | -0.891 | -1.441 | -100.000 | -100.000 | 4 | 50.873 |
+| 13:00|call|gap>0.3% | 3.000 | cash | 1.300 | 423 | 57.650 | 45.390 | -0.965 | -1.441 | -100.000 | -100.000 | 4 | 50.903 |
+| 13:00|call|gap>0.3% | 3.000 | cash | 1.600 | 423 | 57.650 | 45.390 | -1.088 | -1.441 | -100.000 | -100.000 | 4 | 50.956 |
+| 13:00|call|gap>0.3% | 3.000 | exit | 1.000 | 423 | 57.650 | 36.407 | -3.809 | -4.722 | -100.000 | -100.000 | 4 | 53.283 |
+| 13:00|call|gap>0.3% | 3.000 | exit | 1.300 | 423 | 57.650 | 36.407 | -3.867 | -4.722 | -100.000 | -100.000 | 4 | 53.309 |
+| 13:00|call|gap>0.3% | 3.000 | exit | 1.600 | 423 | 57.650 | 36.407 | -3.966 | -4.725 | -100.000 | -100.000 | 4 | 53.358 |
 
 ## 4. Sizing — IN-SAMPLE, % of account
 
@@ -78,28 +79,30 @@ Position size = daily limit ÷ worst-trade loss with a 100% floor (a hold-to-clo
 
 | signal | limit | size_pct | worst_trade_loss_pct | exp_annual_pct | worst_year_pct | best_year_pct | days_with_two_positions | worst_day_both_positions_pct |
 |---|---|---|---|---|---|---|---|---|
-| 15:00|both|vixmove_fixed | 3.000 | 3.000 | 100.000 | 4.352 | -2.776 | 28.828 |  |  |
-| 15:00|both|vixmove_fixed | 4.000 | 4.000 | 100.000 | 5.803 | -3.702 | 38.437 |  |  |
-| 15:00|both|vixmove_fixed | 5.000 | 5.000 | 100.000 | 7.254 | -4.627 | 48.047 |  |  |
-| 13:00|call|gap>0.3% | 3.000 | 3.000 | 100.000 | 2.206 | -6.090 | 10.339 |  |  |
-| 13:00|call|gap>0.3% | 4.000 | 4.000 | 100.000 | 2.942 | -8.120 | 13.786 |  |  |
-| 13:00|call|gap>0.3% | 5.000 | 5.000 | 100.000 | 3.677 | -10.150 | 17.232 |  |  |
-| COMBINED BOOK | 3.000 | 1.500 | 200.000 | 3.279 |  |  | 48.000 | -200.000 |
-| COMBINED BOOK | 4.000 | 2.000 | 200.000 | 4.373 |  |  | 48.000 | -200.000 |
-| COMBINED BOOK | 5.000 | 2.500 | 200.000 | 5.466 |  |  | 48.000 | -200.000 |
+| 15:00|both|vixmove_exp | 3.000 | 3.000 | 100.000 | 4.351 | -1.487 | 29.789 |  |  |
+| 15:00|both|vixmove_exp | 4.000 | 4.000 | 100.000 | 5.801 | -1.983 | 39.719 |  |  |
+| 15:00|both|vixmove_exp | 5.000 | 5.000 | 100.000 | 7.252 | -2.479 | 49.648 |  |  |
+| 13:00|call|gap>0.3% | 3.000 | 3.000 | 100.000 | 1.900 | -5.403 | 10.339 |  |  |
+| 13:00|call|gap>0.3% | 4.000 | 4.000 | 100.000 | 2.533 | -7.204 | 13.786 |  |  |
+| 13:00|call|gap>0.3% | 5.000 | 5.000 | 100.000 | 3.167 | -9.005 | 17.232 |  |  |
+| COMBINED BOOK | 3.000 | 1.500 | 200.000 | 3.125 |  |  | 77.000 | -200.000 |
+| COMBINED BOOK | 4.000 | 2.000 | 200.000 | 4.167 |  |  | 77.000 | -200.000 |
+| COMBINED BOOK | 5.000 | 2.500 | 200.000 | 5.209 |  |  | 77.000 | -200.000 |
 
 ## 5. Execution — IN-SAMPLE (underlying index points per signal; unfilled limits count as zero)
 
-| candidate | entry | fill_rate | n_signals | mean_net_per_signal | mean_net_if_filled | improvement | p_improvement |
-|---|---|---|---|---|---|---|---|
-| 13:00|call|gap>0.3% | market | 1.000 | 468 | -0.123 | -0.123 | 0.000 |  |
-| 13:00|call|gap>0.3% | limit -0.25 ATR | 0.857 | 468 | 0.905 | 1.056 | 1.028 | 0.000 |
-| 13:00|call|gap>0.3% | limit -0.50 ATR | 0.744 | 468 | 1.037 | 1.394 | 1.160 | 0.000 |
-| 13:00|call|gap>0.3% | limit -1.00 ATR | 0.562 | 468 | 0.537 | 0.955 | 0.660 | 0.123 |
-| 15:00|both|vixmove_fixed | market | 1.000 | 93 | 5.103 | 5.103 | 0.000 |  |
-| 15:00|both|vixmove_fixed | limit -0.25 ATR | 0.914 | 93 | 5.671 | 6.204 | 0.567 | 0.309 |
-| 15:00|both|vixmove_fixed | limit -0.50 ATR | 0.796 | 93 | 5.674 | 7.130 | 0.570 | 0.363 |
-| 15:00|both|vixmove_fixed | limit -1.00 ATR | 0.538 | 93 | 5.721 | 10.640 | 0.617 | 0.397 |
+| candidate | entry | fill_rate | n_signals | mean_net_per_signal | mean_net_if_filled | improvement | improvement_cost_part | improvement_price_part | p_improvement |
+|---|---|---|---|---|---|---|---|---|---|
+| 13:00|call|gap>0.3% | market | 1.000 | 423 | -0.138 | -0.138 | 0.000 | 0.000 | 0.000 |  |
+| 13:00|call|gap>0.3% | limit -0.25 ATR | 0.856 | 423 | 0.518 | 0.606 | 0.656 | 0.342 | 0.314 | 0.002 |
+| 13:00|call|gap>0.3% | limit -0.50 ATR | 0.742 | 423 | 0.704 | 0.948 | 0.842 | 0.297 | 0.545 | 0.004 |
+| 13:00|call|gap>0.3% | limit -1.00 ATR | 0.556 | 423 | 0.281 | 0.505 | 0.418 | 0.222 | 0.196 | 0.245 |
+| 15:00|both|vixmove_exp | market | 1.000 | 145 | 3.115 | 3.115 | 0.000 | 0.000 | 0.000 |  |
+| 15:00|both|vixmove_exp | limit -0.25 ATR | 0.903 | 145 | 3.339 | 3.696 | 0.224 | 0.361 | -0.137 | 0.379 |
+| 15:00|both|vixmove_exp | limit -0.50 ATR | 0.779 | 145 | 3.076 | 3.947 | -0.040 | 0.312 | -0.351 | 1.000 |
+| 15:00|both|vixmove_exp | limit -1.00 ATR | 0.538 | 145 | 3.345 | 6.219 | 0.230 | 0.215 | 0.015 | 0.435 |
+
+The improvement over market entry splits into the part that is a cost assumption (fill rate × the 0.40 pt saved by paying commission instead of crossing the entry half of the spread) and the part that is price improvement net of adverse selection (unfilled signals count as zero).
 
 ## 6. Contract size and minimum account
 

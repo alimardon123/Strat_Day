@@ -50,16 +50,10 @@ def trading_days_from_vix(path="data/raw/vix_daily.parquet"):
     return set(pd.to_datetime(pd.read_parquet(path)["date"]).dt.normalize())
 
 
-def build(feed, path, trading_days=None):
-    """Returns (rth_frame, dropped_sessions). rth_frame columns: ts_ny, date, mod, open, high,
-    low, close, volume, feed. `date` is a tz-naive midnight Timestamp (merge-friendly).
-    NYSE holidays are excluded even when a CFD feed prints bars on them, and so is any date
-    outside `trading_days` (the VIX calendar) when given; dropped_sessions carries every
-    excluded weekday with its bar count."""
-    d = _load(feed, path)
+def _sessionize(d, feed, trading_days=None, first_mod=RTH_START):
     d["mod"] = d["ts_ny"].dt.hour * 60 + d["ts_ny"].dt.minute
     d["date"] = d["ts_ny"].dt.tz_localize(None).dt.normalize()
-    d = d[(d["mod"] >= RTH_START) & (d["mod"] < RTH_END) & (d["ts_ny"].dt.dayofweek < 5)]
+    d = d[(d["mod"] >= first_mod) & (d["mod"] < RTH_END) & (d["ts_ny"].dt.dayofweek < 5)]
     bars = d.groupby("date").size()
     hol = set().union(*(nyse_holidays(y).keys() for y in range(bars.index.min().year, bars.index.max().year + 1)))
     ok = (bars >= MIN_BARS) & ~bars.index.isin(hol)
@@ -70,6 +64,72 @@ def build(feed, path, trading_days=None):
     d = d[d["date"].isin(keep.index)].reset_index(drop=True)
     d["feed"] = feed
     return d, dropped
+
+
+def build(feed, path, trading_days=None):
+    """Returns (rth_frame, dropped_sessions). rth_frame columns: ts_ny, date, mod, open, high,
+    low, close, volume, feed. `date` is a tz-naive midnight Timestamp (merge-friendly).
+    NYSE holidays are excluded even when a CFD feed prints bars on them, and so is any date
+    outside `trading_days` (the VIX calendar) when given; dropped_sessions carries every
+    excluded weekday with its bar count."""
+    return _sessionize(_load(feed, path), feed, trading_days)
+
+
+def load_ext(ext_dir="data/ext"):
+    """The user-supplied post-May-2020 minute file, per DATA.md and ACCEPTANCE A6. Refuses to
+    run without ext_manifest.json; converts SPY to SPX-point scale (×10) so every downstream
+    constant (costs, strike grid) stays in index points; checks the declared instrument against
+    the price level; returns (raw_frame, meta) with meta = instrument, dividends (Series
+    ex_date -> amount in SPX points), roll_dates, source, path."""
+    import glob
+    import json
+    import os
+    man_path = os.path.join(ext_dir, "ext_manifest.json")
+    if not os.path.exists(man_path):
+        raise FileNotFoundError(f"{man_path} missing — the session builder refuses to run the ext feed without it (A6)")
+    man = json.load(open(man_path))
+    inst = man["instrument"].upper()
+    if inst not in ("SPY", "ES", "SPX"):
+        raise ValueError(f"ext_manifest.json instrument must be SPY, ES or SPX, got {inst}")
+    files = sorted(glob.glob(os.path.join(ext_dir, "spx_1min_*.csv.gz")))
+    if not files:
+        raise FileNotFoundError(f"no {ext_dir}/spx_1min_*.csv.gz")
+    d = _load("ext", files[0])
+    lvl = float(np.nanmedian(d["close"]))
+    if inst == "SPY" and not (100 < lvl < 1500):
+        raise ValueError(f"manifest says SPY but median price is {lvl:.1f}")
+    if inst in ("ES", "SPX") and not (1500 < lvl < 20000):
+        raise ValueError(f"manifest says {inst} but median price is {lvl:.1f}")
+    scale = 10.0 if inst == "SPY" else 1.0
+    for c in ("open", "high", "low", "close"):
+        d[c] = d[c] * scale
+    dividends = None
+    if inst == "SPY":
+        dp = os.path.join(ext_dir, "spy_dividends.csv")
+        if not os.path.exists(dp):
+            raise FileNotFoundError(f"{dp} missing — required with a SPY feed (A6)")
+        dv = pd.read_csv(dp, parse_dates=["ex_date"])
+        dividends = pd.Series(dv["amount"].to_numpy(float) * scale, index=pd.to_datetime(dv["ex_date"]).dt.normalize())
+    meta = dict(instrument=inst, scale=scale, dividends=dividends, roll_dates=[pd.Timestamp(x) for x in man.get("roll_dates", [])],
+                source=man.get("source", ""), path=files[0])
+    return d, meta
+
+
+def build_extended(oanda_path="data/raw/oanda_SPX500_USD.parquet", ext_dir="data/ext", trading_days=None):
+    """Oanda history + the ext feed for dates after the Oanda series ends, as ONE canonical frame
+    so expanding thresholds keep expanding through the holdout. For an SPX cash-index feed the
+    session's first bar is 09:31 (the 09:30 print is stale, A6). Returns (frame, dropped, meta);
+    meta is None when data/ext is absent."""
+    import os
+    base, dropped = build("oanda", oanda_path, trading_days)
+    if not os.path.exists(os.path.join(ext_dir, "ext_manifest.json")):
+        return base, dropped, None
+    raw, meta = load_ext(ext_dir)
+    e, dropped_e = _sessionize(raw, "ext", trading_days, first_mod=RTH_START + 1 if meta["instrument"] == "SPX" else RTH_START)
+    e = e[e["date"] > base["date"].max()].reset_index(drop=True)
+    frame = pd.concat([base, e], ignore_index=True)
+    meta["ext_first_date"], meta["ext_last_date"] = (e["date"].min(), e["date"].max()) if len(e) else (pd.NaT, pd.NaT)
+    return frame, pd.concat([dropped, dropped_e], ignore_index=True), meta
 
 
 def detect_open(frame):

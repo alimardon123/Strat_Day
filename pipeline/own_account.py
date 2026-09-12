@@ -35,9 +35,10 @@ SPLIT = "2012-01-01"
 BASE_END = "2017-11-10"
 BUCKET_A = ["S1_MEANREV", "S12_GAPUP", "S13_VOLTS"]
 BUCKET_B = ["S2_TSMOM", "S3_XSMOM", "S5_VOLMGD", "S6_STREV", "S8_BAB"]
-ES_COST = 0.35 * 2 / 10000       # ES round trip, HANDOFF.md:216
+ES_COST_PTS = 0.42               # ES round trip in index points (ACCEPTANCE budget 0.33-0.50 pts; A21), charged per trade at the entry level
 VOL_COST_BPS = 5.0               # VXX/VXZ per side, ASSESSMENT_iteration17
 S13_CAP = 0.5                    # weight cap on S13 relative to the other sleeves (STRATEGY.md:92-103)
+BRIDGE_MIN_CORR = 0.98           # A13 (amended): measured old-VXZ vs VIXM daily-return corr is 0.987 (ETN vs ETF on the same index)
 
 
 # --------------------------------------------------------------------------- data
@@ -70,6 +71,32 @@ def bridge(C, E):
             scale = a.iloc[-1] / E[t].reindex([a.index[-1]]).iloc[0] if a.index[-1] in E.index else 1.0
             out[t] = pd.concat([a, b * scale])
     return pd.DataFrame(out).sort_index()
+
+
+def splice_vol(C, old, new, proxy, out=None):
+    """A13: chain `old` (original ETN, ends 2017-11-10) -> `proxy` (VIXY/VIXM, continuous) -> `new`
+    (the 2018 Series B note, present only when the ext panel is supplied) by daily returns.
+    Returns (price-like series, dict of bridge correlations); the bridge is refused (returns
+    the old series only) if any correlation on an overlap is below 0.99."""
+    corr = {}
+    o = C[old].dropna() if old in C else pd.Series(dtype=float)
+    p = C[proxy].dropna() if proxy in C else pd.Series(dtype=float)
+    n = C[new].dropna() if new in C else pd.Series(dtype=float)
+    if o.empty or p.empty:
+        return o, corr
+    ov = o.index.intersection(p.index)
+    corr[f"{old}_vs_{proxy}"] = float(o.pct_change().reindex(ov).corr(p.pct_change().reindex(ov))) if len(ov) > 250 else np.nan
+    r = o.pct_change().fillna(0.0)
+    tail = p.pct_change()[p.index > o.index[-1]]
+    if not n.empty and n.index.max() > o.index[-1]:
+        n2 = n[n.index > o.index[-1]]
+        ov2 = n2.index.intersection(p.index)
+        corr[f"{new}_vs_{proxy}"] = float(n2.pct_change().reindex(ov2).corr(p.pct_change().reindex(ov2))) if len(ov2) > 250 else np.nan
+        tail = pd.concat([tail[tail.index < n2.index[0]], n2.pct_change().fillna(0.0)])
+    if any(v == v and v < BRIDGE_MIN_CORR for v in corr.values()):
+        return o, corr
+    chained = pd.concat([r, tail.dropna()])
+    return (1 + chained).cumprod() * o.iloc[0], corr
 
 
 def spy_ohlc():
@@ -126,16 +153,20 @@ def s12_gapup(index):
     frame, _ = sessions.build("oanda", "data/raw/oanda_SPX500_USD.parquet", sessions.trading_days_from_vix())
     day = signals.day_table(frame, vix)
     g = signals.gap_up_call(day)
-    r = pd.Series(g["ret_pct"].to_numpy() / 100 - ES_COST, index=pd.to_datetime(g["date"]))
+    r = pd.Series(g["ret_pct"].to_numpy() / 100 - ES_COST_PTS / g["entry_px"].to_numpy(), index=pd.to_datetime(g["date"]))
     return r.reindex(index).fillna(0.0), frame["date"].max()
 
 
-def s13_volts(C):
+def s13_volts(C, bridge=None):
     """ASSESSMENT_iteration17_VOL.md: sign of the 5-day VXX−VXZ return spread, lagged one day;
-    + → long VXX, − → short VXX; 5 bp per side."""
+    + → long VXX, − → short VXX; 5 bp per side. VXX/VXZ come from splice_vol (A13)."""
     if "vxx" not in C or "vxz" not in C:
         return None
-    vxx, vxz = C["vxx"].dropna(), C["vxz"].dropna()
+    vxx, cx = splice_vol(C, "vxx", "vxx_new", "vixy")
+    vxz, cz = splice_vol(C, "vxz", "vxz_new", "vixm")
+    if bridge is not None:
+        bridge.update({**cx, **cz})
+    vxx, vxz = vxx.dropna(), vxz.dropna()
     idx = vxx.index.intersection(vxz.index)
     vxx, vxz = vxx.reindex(idx), vxz.reindex(idx)
     spread = (vxx / vxx.shift(5) - 1) - (vxz / vxz.shift(5) - 1)
@@ -147,6 +178,11 @@ def s13_volts(C):
 
 def build_sleeves():
     C, note = etf_closes()
+    if "vxx" in C and C["vxx"].dropna().index.max() > pd.Timestamp("2018-06-01"):   # ext panel present: separate the Series B notes
+        for t in ("vxx", "vxz"):
+            new = C[t][C[t].index > pd.Timestamp("2017-11-10")]
+            C[f"{t}_new"] = new
+            C.loc[C.index > pd.Timestamp("2017-11-10"), t] = np.nan
     U = C[[c for c in UNIVERSE if c in C]]
     R = U.pct_change()
     iv = (1.0 / (R.rolling(60).std().shift(1))).replace([np.inf, -np.inf], np.nan)
@@ -159,19 +195,23 @@ def build_sleeves():
     mkt = stocks.pct_change().where(lambda x: x.abs() < 0.5).mean(axis=1)
     bab = it11.build_sleeves(stocks, mkt)["S8_BAB"]
     spyC = spy.set_index("date")[["close"]].rename(columns={"close": "spy"})
+    bridge = {}
+    s13 = s13_volts(C, bridge)
     sleeves = {
         "S1_MEANREV": s1, "S2_TSMOM": tsmom_iv(U, R, iv), "S3_XSMOM": xsmom_iv(U, R, iv),
         "S5_VOLMGD": it9.s5_volmanaged(spyC, "spy"), "S6_STREV": it9.s6_strev(U),
-        "S8_BAB": bab, "S12_GAPUP": s12, "S13_VOLTS": s13_volts(C)}
+        "S8_BAB": bab, "S12_GAPUP": s12, "S13_VOLTS": s13}
     ends = {"S1_MEANREV": spy["date"].max(), "S2_TSMOM": U.index.max(), "S3_XSMOM": U.index.max(),
             "S5_VOLMGD": spy["date"].max(), "S6_STREV": U.index.max(), "S8_BAB": stocks.index.max(),
-            "S12_GAPUP": s12_end, "S13_VOLTS": C["vxx"].dropna().index.max() if "vxx" in C else pd.NaT}
+            "S12_GAPUP": s12_end, "S13_VOLTS": s13.index.max() if s13 is not None else pd.NaT}
+    pd.DataFrame([dict(pair=k, daily_return_corr=v) for k, v in bridge.items()] or [dict(pair="none", daily_return_corr=np.nan)]).to_csv(
+        "out/own_account_bridge.csv", index=False, float_format="%.6f")
     S = pd.DataFrame({k: v for k, v in sleeves.items() if v is not None})
     S = S.loc["2006-01-01":].copy()
     for k, e in ends.items():                       # no returns after a sleeve's data ends
         if k in S:
             S.loc[S.index > pd.Timestamp(e), k] = np.nan
-    return S, ends, note, dip_trades
+    return S, ends, note, dip_trades, bridge
 
 
 def combine(S, cap13=S13_CAP):
@@ -184,7 +224,9 @@ def combine(S, cap13=S13_CAP):
     ba = a.fillna(0.0).sum(axis=1) / a.notna().sum(axis=1).replace(0, np.nan)
     bb = b.fillna(0.0).sum(axis=1) / b.notna().sum(axis=1).replace(0, np.nan)
     two = 0.5 * ba.fillna(0.0) + 0.5 * bb.fillna(0.0)
-    return V, pd.DataFrame({"EQUAL_8": eq, "BUCKET_A": ba, "BUCKET_B": bb, "TWO_BUCKET_50_50": two})
+    P = pd.DataFrame({"EQUAL_8": eq, "BUCKET_A": ba, "BUCKET_B": bb, "TWO_BUCKET_50_50": two})
+    P.attrs["n_sleeves"] = avail.sum(axis=1)          # how many sleeves the equal-weight book holds each day (Phase 4 defect 4)
+    return V, P
 
 
 def regimes(index):
@@ -199,18 +241,24 @@ def regimes(index):
     return reg
 
 
-def perf_row(r, label, window):
+def perf_row(r, label, window, n_sleeves=None):
     p = it8.perf(r.dropna(), label)
     if p is None:
         return dict(label=label, window=window, n_days=int(r.notna().sum()))
     p.update(window=window, n_days=int(r.notna().sum()), start=str(r.dropna().index.min().date()), end=str(r.dropna().index.max().date()))
+    if n_sleeves is not None:
+        ns = n_sleeves.reindex(r.dropna().index)
+        p.update(sleeves_mean=float(ns.mean()), sleeves_min=int(ns.min()), sleeves_max=int(ns.max()))
+        if ns.min() < 8 and label == "EQUAL_8":
+            p["label"] = f"EQUAL_available({int(ns.min())}-{int(ns.max())})"
     return p
 
 
 def main():
     os.makedirs("out", exist_ok=True)
-    S, ends, note, dip_trades = build_sleeves()
+    S, ends, note, dip_trades, bridge = build_sleeves()
     V, P = combine(S)
+    ns = P.attrs["n_sleeves"]
     rows = []
     windows = {"BASELINE 2006-2017-11 full": ("2006-01-01", BASE_END), "BASELINE train <2012": ("2006-01-01", "2011-12-31"),
                "BASELINE test 2012-2017-11": (SPLIT, BASE_END), "EXTENDED (each sleeve to its data end)": ("2006-01-01", "2026-12-31"),
@@ -219,7 +267,7 @@ def main():
         for c in V.columns:
             rows.append(perf_row(V.loc[a:b, c], c, wl))
         for c in P.columns:
-            rows.append(perf_row(P.loc[a:b, c], c, wl))
+            rows.append(perf_row(P.loc[a:b, c], c, wl, ns))
     res = pd.DataFrame(rows)
     res.to_csv("out/own_account_summary.csv", index=False, float_format="%.6f")
     V.to_csv("out/own_account_sleeves.csv", float_format="%.8f")
@@ -229,16 +277,16 @@ def main():
     by_reg.to_csv("out/own_account_by_regime.csv", float_format="%.6f")
     by_year = P.groupby(P.index.year).sum()
     by_year.to_csv("out/own_account_by_year.csv", float_format="%.6f")
-    print("ETF panel:", note)
+    print("ETF panel:", note, "| VXX/VXZ bridge correlations:", bridge or "old series only (ext panel absent)")
     print("sleeve data ends:", {k: str(v)[:10] for k, v in ends.items()})
     cm = V.loc[:BASE_END].corr()
     iu = np.triu_indices_from(cm.values, 1)
     rho = np.nanmean(cm.values[iu])
     print(f"baseline mean pairwise sleeve correlation {rho:.3f} -> n_eff {len(V.columns) / (1 + (len(V.columns) - 1) * max(rho, 0)):.2f}")
-    show = res[res["window"].str.startswith("BASELINE")][["window", "label", "cagr", "vol", "sharpe", "maxdd", "n_days"]]
+    show = res[res["window"].str.startswith("BASELINE")][["window", "label", "cagr", "vol", "sharpe", "maxdd", "n_days", "sleeves_mean"]]
     print(show.to_string(index=False, float_format=lambda x: f"{x:.4f}"))
     print("\nEXTENDED / POST-BASELINE:")
-    print(res[~res["window"].str.startswith("BASELINE")][["window", "label", "cagr", "vol", "sharpe", "maxdd", "start", "end"]]
+    print(res[~res["window"].str.startswith("BASELINE")][["window", "label", "cagr", "vol", "sharpe", "maxdd", "start", "end", "sleeves_mean", "sleeves_min"]]
           .to_string(index=False, float_format=lambda x: f"{x:.4f}"))
     print("\nby regime (annualised mean):")
     print(by_reg.to_string(float_format=lambda x: f"{x:.4f}"))

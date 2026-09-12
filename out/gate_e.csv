@@ -1,0 +1,7 @@
+check,ok
+ext feed loaded through the manifest as SPY and rescaled ×10,True
+frozen thresholds identical on the extended frame,True
+"IDENTITY: 850 native trades vs 850 via the ext path on 2019-06→2020-05, all prices/returns equal",True
+DIVIDEND: reference close shifted by the dividend on the ex-date only,True
+ROLL: declared roll date excluded from prior-close signals,True
+REFUSAL: missing manifest refused; declared ES on SPY-level prices refused,True

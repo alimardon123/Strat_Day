@@ -1,0 +1,25 @@
+trials counted: 23 (families: {'momentum': 16, 'xmarket': 3, 'flow': 3, 'gapup': 1}); FDR passes at 10%: 0
+  family                                    trial   n  p_for_fdr  fdr_pass_10pct_family
+momentum                 15:00|both|vixmove_fixed  92     0.0630                  False
+momentum                 15:30|both|vixmove_fixed  92     0.0833                  False
+momentum                   15:00|both|vixmove_exp 145     0.1795                  False
+momentum                   15:30|both|vixmove_exp 146     0.1153                  False
+momentum                            15:30|put|mag 182     0.2545                  False
+momentum                    15:30|put|vixmove_exp  62     0.3142                  False
+momentum                  15:00|put|vixmove_fixed  42     0.3345                  False
+momentum                    15:00|put|vixmove_exp  58     0.3510                  False
+momentum                            15:00|put|mag 189     0.3623                  False
+momentum                  15:30|put|vixmove_fixed  43     0.4095                  False
+momentum                           15:30|both|mag 371     0.4785                  False
+momentum                           15:00|both|mag 371     0.4928                  False
+momentum                    15:00|put|vixmove_lit 101     0.1415                  False
+momentum                   15:00|both|vixmove_lit 251     0.1165                  False
+momentum                    15:30|put|vixmove_lit 104     0.0585                  False
+momentum                   15:30|both|vixmove_lit 252     0.1140                  False
+   gapup                      13:00|call|gap>0.3% 423     1.0000                  False
+ xmarket                         gap-up on ETXEUR 548     1.0000                  False
+ xmarket                         gap-up on GRXEUR 602     0.2657                  False
+ xmarket                         gap-up on SPXUSD 499     0.1620                  False
+    flow month_end: against MTD move, 15:00→close 184     1.0000                  False
+    flow           opex: continue open→15:00 move 168     1.0000                  False
+    flow      russell recon day: long 15:00→close  15     1.0000                  False

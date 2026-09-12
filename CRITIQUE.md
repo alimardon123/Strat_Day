@@ -43,3 +43,24 @@ already in ACCEPTANCE.md v2 and the pipeline. Root cause precedes every fix.
 ## Open
 
 None from this round. Next tribunal: Phase 4, on the Phase 3 build.
+
+## Phase 4 tribunal (fleet reviewer, fresh context, Opus) — verdict CHANGES_REQUIRED, 14 defects
+
+| # | Sev | Finding (short) | Root cause | Disposition |
+|---|---|---|---|---|
+| 1 | 8 | Holdout (ext) path unwired: no manifest check, no instrument scaling, no dividend adjustment, no ES roll rule, no concatenation onto the Oanda history | Deferred because data/ext was absent | ADOPTED: `sessions.load_ext` + `build_extended`, SPY ×10 scaling, dividend-adjusted reference close, roll exclusion, SPX 09:31 open; proven by gate (e) on a synthetic file (identity of 850 trades) — A35 |
+| 2 | 7 | Tie-break counted conditions, not fitted parameters; flips the pre-registered candidate | Conflated "condition" with "parameter" | ADOPTED: params = fitted numbers only; winner is now `15:00\|both\|vixmove_exp` (logged before any holdout data) |
+| 3 | 6 | Limit entry charged commission only; the exit half of the spread still applies | Mis-read of A20 | ADOPTED: limit pays 0.10 + 0.5; improvement decomposed into cost part and price part |
+| 4 | 5 | EQUAL_8 silently becomes a 4- then 3-sleeve book | Re-normalisation over survivors | ADOPTED: sleeve counts per window; label EQUAL_available(min-max) whenever fewer than 8 |
+| 5 | 5 | A13 bridge referenced but not implemented | Docstring outran code | ADOPTED: `splice_vol` via VIXY/VIXM; correlations printed (0.9987 / 0.9875); bar amended to 0.98 with the measurement |
+| 6 | 4 | SPY strike grid applied as 1 SPX point | Unit slip | ADOPTED: GRID SPY = 10 SPX points |
+| 7 | 4 | S12 cost 0.7 bp instead of 0.33–0.50 pts | Thread A's bp constant | ADOPTED: 0.42 pt / entry price (S12 baseline Sharpe 0.58 → 0.27) |
+| 8 | 4 | FDR family = 16, not every trial; gap-up DSR at N = 1,099 missing | Family scoped per module | ADOPTED: `pipeline/trials.py` (23 trials); gap-up row with PSR and DSR at N = 1,099 |
+| 9 | 3 | Control direction base mismatched the VIX gates | Single base | ADOPTED: base per gate |
+| 10 | 3 | `np.resize` made SR0 order-dependent | Shortcut | ADOPTED: explicit N with observed dispersion |
+| 11 | 3 | Calendar-day denominator = feed sessions | Convenience | ADOPTED: NYSE trading days (VIX calendar) |
+| 12 | 3 | prev_close spanned missing sessions (45 of 468 gap-up trades) | `gap_days` unused | ADOPTED: reference must be the prior NYSE trading day; counted (A34) |
+| 13 | 3 | Gate c1 tolerance loose | — | ADOPTED: n ± 2, net ± 0.002, win ± 0.5, SR ± 0.05 (still PASS) |
+| 14 | 2 | Nits: timing-control crash on 13:00, hard-coded observability check, missing timing column, A7 bound, NA printed as nan, typed 7.37, window 954, ranking unit | — | ADOPTED all: timing window [decision − 120, decision), perturbation test for causality, timing column printed, A7 bound 0.08 pt, "NA (< 20 blocks)", years computed, window ends 15:55, Units section amended (rank verified identical under points) |
+
+Refuted: none. Unverified by the reviewer and now covered: `make repeat` byte-identity is re-run after the repairs; PLAYBOOK/OWN_ACCOUNT are rendered by `pipeline/report.py`.

@@ -11,5 +11,5 @@ sanity,True
 entry bar strictly after decision bar,True
 "exit at the session's last bar, after entry",True
 VIX date strictly before session date,True
-expanding thresholds use prior sessions only,True
+expanding thresholds are causal (perturbation test),True
 research/ untouched,True

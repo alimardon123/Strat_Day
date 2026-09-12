@@ -72,28 +72,31 @@ def calendar_day_sharpe(pnl, dates, all_dates):
     return sharpe(s.to_numpy(), 252)
 
 
-def expected_max_sharpe(sr_trials):
-    """E[max SR] under the null across N trials, from the observed dispersion of the trials'
-    (per-trade) Sharpe estimates (Bailey & López de Prado 2014)."""
+def expected_max_sharpe(sr_trials, n=None):
+    """E[max SR] under the null across N trials (Bailey & López de Prado 2014): the observed
+    dispersion of the trials' per-trade Sharpe estimates times the expected maximum of N
+    standard normals. `n` defaults to the number of observed trials; pass a larger N to
+    deflate against a trial count wider than the observed pool (same dispersion estimate)."""
     sr_trials = np.asarray(sr_trials, float)
     sr_trials = sr_trials[~np.isnan(sr_trials)]
-    n = len(sr_trials)
-    if n < 2:
+    n_obs = len(sr_trials)
+    n = n_obs if n is None else int(n)
+    if n_obs < 2 or n < 2:
         return 0.0
     g = 0.5772156649
     return float(np.std(sr_trials, ddof=1) * ((1 - g) * norm.ppf(1 - 1 / n) + g * norm.ppf(1 - 1 / (n * np.e))))
 
 
-def deflated_sharpe(x, sr_trials=()):
+def deflated_sharpe(x, sr_trials=(), n=None):
     """DSR = P(true SR > 0 | observed per-trade SR, N trials, T trades, skew, kurtosis).
-    With fewer than two trials SR0 = 0 and this is the probabilistic Sharpe ratio.
+    With fewer than two trials (or n == 1) SR0 = 0 and this is the probabilistic Sharpe ratio.
     Returns (dsr, sr0, sr_hat), all per-trade."""
     x = np.asarray(x, float)
     T = len(x)
     if T < 3 or x.std(ddof=1) == 0:
         return np.nan, np.nan, np.nan
     sr = x.mean() / x.std(ddof=1)
-    sr0 = expected_max_sharpe(sr_trials)
+    sr0 = 0.0 if n == 1 else expected_max_sharpe(sr_trials, n)
     g3, g4 = skew(x), kurtosis(x, fisher=False)
     denom = np.sqrt(max(1 - g3 * sr + (g4 - 1) / 4 * sr ** 2, 1e-12))
     return float(norm.cdf((sr - sr0) * np.sqrt(T - 1) / denom)), float(sr0), float(sr)

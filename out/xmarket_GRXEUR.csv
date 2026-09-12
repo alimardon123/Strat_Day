@@ -1,0 +1,2 @@
+market,sessions,n,win,mean_pct,mean_atr,uncond_pct,p_boot_day,open_modes,detected_open_modes
+GRXEUR,2050,602,53.488372,0.019415,0.009564,-0.023921,0.265750,"[(180, 2050)]","[(120, 2050)]"

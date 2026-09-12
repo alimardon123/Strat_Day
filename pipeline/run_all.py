@@ -13,10 +13,20 @@ STEPS = [
     ("reconcile", ["python", "-m", "pipeline.reconcile"], "out/reconcile.log"),
     ("insample_d3_d4", ["python", "-m", "pipeline.insample", "2013-01-01", "2020-05-13", "IN-SAMPLE 2013-01..2020-05-13",
                         "out/insample"], "out/insample.log"),
+    ("own_account_d5", ["python", "-m", "pipeline.own_account"], "out/own_account.log"),
+    ("xmarket_SPXUSD", ["python", "-m", "pipeline.units.xmarket", "--in", "SPXUSD", "--out", "out/xmarket_SPXUSD.csv"], "out/xmarket_SPXUSD.log"),
+    ("xmarket_GRXEUR", ["python", "-m", "pipeline.units.xmarket", "--in", "GRXEUR", "--out", "out/xmarket_GRXEUR.csv"], "out/xmarket_GRXEUR.log"),
+    ("xmarket_ETXEUR", ["python", "-m", "pipeline.units.xmarket", "--in", "ETXEUR", "--out", "out/xmarket_ETXEUR.csv"], "out/xmarket_ETXEUR.log"),
+    ("vrp", ["python", "-m", "pipeline.vrp"], "out/vrp.log"),
+    ("flow", ["python", "-m", "pipeline.units.flow", "--in", "data/raw/oanda_SPX500_USD.parquet", "--out", "out/flow_candidates.csv"], "out/flow.log"),
+    ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
 ]
 EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_histdata.csv", "out/calendar_histdata.csv",
             "out/gate_c.csv", "out/reconcile_candidates.csv", "out/reconcile_decision.md",
-            "out/insample_execution.csv", "out/insample_summary.csv", "out/insample_sizing.csv"]
+            "out/insample_execution.csv", "out/insample_summary.csv", "out/insample_sizing.csv",
+            "out/own_account_summary.csv", "out/own_account_by_year.csv", "out/own_account_by_regime.csv",
+            "out/xmarket_SPXUSD.csv", "out/xmarket_GRXEUR.csv", "out/xmarket_ETXEUR.csv",
+            "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md"]
 
 
 def main():

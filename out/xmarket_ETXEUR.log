@@ -1,0 +1,1 @@
+{'market': 'ETXEUR', 'sessions': 1454, 'n': 548, 'win': np.float64(47.81021897810219), 'mean_pct': np.float64(-0.03349802189505127), 'mean_atr': np.float64(-0.030148605001563883), 'uncond_pct': np.float64(-0.05508244246707466), 'p_boot_day': 1.0, 'open_modes': '[(180, 1454)]', 'detected_open_modes': '[(120, 1444), (180, 10)]'}

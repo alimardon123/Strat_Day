@@ -1,0 +1,1 @@
+{'market': 'GRXEUR', 'sessions': 2050, 'n': 602, 'win': np.float64(53.48837209302325), 'mean_pct': np.float64(0.019414698865637816), 'mean_atr': np.float64(0.009563710839644862), 'uncond_pct': np.float64(-0.023920569571860534), 'p_boot_day': 0.26575, 'open_modes': '[(180, 2050)]', 'detected_open_modes': '[(120, 2050)]'}

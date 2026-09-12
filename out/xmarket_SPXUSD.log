@@ -1,0 +1,1 @@
+{'market': 'SPXUSD', 'sessions': 1955, 'n': 499, 'win': np.float64(52.505010020040075), 'mean_pct': np.float64(0.02238164688682976), 'mean_atr': np.float64(0.002267650824767221), 'uncond_pct': np.float64(-0.003908588690120227), 'p_boot_day': 0.162, 'open_modes': '[(510, 15), (570, 1940)]', 'detected_open_modes': '[(510, 15), (570, 1940)]'}

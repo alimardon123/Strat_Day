@@ -1,0 +1,2 @@
+market,sessions,n,win,mean_pct,mean_atr,uncond_pct,p_boot_day,open_modes,detected_open_modes
+SPXUSD,1955,499,52.505010,0.022382,0.002268,-0.003909,0.162000,"[(510, 15), (570, 1940)]","[(510, 15), (570, 1940)]"

@@ -1,0 +1,4 @@
+candidate,n,win,net_pts,net_pct,p_boot_day,control_mean_pct,excess_over_control_pct,frac_seeds_beaten
+"month_end: against MTD move, 15:00→close",184,40.217391,-1.577174,-0.081299,1.000000,-0.070308,-0.010991,0.415000
+opex: continue open→15:00 move,168,40.476190,-1.082143,-0.096929,1.000000,-0.054521,-0.042408,0.145000
+russell recon day: long 15:00→close,15,20.000000,-3.953333,-0.241870,,-0.056153,-0.185718,0.080000

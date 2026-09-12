@@ -1,0 +1,2 @@
+market,sessions,n,win,mean_pct,mean_atr,uncond_pct,p_boot_day,open_modes,detected_open_modes
+ETXEUR,1454,548,47.810219,-0.033498,-0.030149,-0.055082,1.000000,"[(180, 1454)]","[(120, 1444), (180, 10)]"

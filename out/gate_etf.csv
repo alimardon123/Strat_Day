@@ -1,0 +1,5 @@
+check,status,ok
+29 required tickers present in the panel (Kaggle mirror bridged to the ext panel); missing: none,PASS,True
+every ext ticker's last non-NaN date == panel end (2026-09-11); stale: none,PASS,True
+"bridge table has 4 rows, each bridged/refused off a printed correlation: {'old_vxx_vs_vixy': (0.9987, 'bridged'), 'new_vxx_vs_vixy': (0.9829, 'bridged'), 'old_vxz_vs_vixm': (0.9875, 'bridged'), 'new_vxz_vs_vixm': (0.8775, 'refused (< BRIDGE_MIN_CORR)')}",PASS,True
+spliced VXX (new pair bridged) has no NaN after 2017-11-10 and its returns from 2018-01-25 equal real Series B VXX's (2168 days checked): no_gap=True match=True,PASS,True

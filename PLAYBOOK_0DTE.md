@@ -45,7 +45,7 @@ Thread A's gap-up call, same selection window (pre-registered by Thread A, not p
 |---|---|---|---|---|---|---|---|
 | 13:00\|call\|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 25 trials pass BH-FDR at 10% across the family (`out/trials.csv`).
+Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 33 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
@@ -285,3 +285,54 @@ Execution (`out/fullsample_execution.csv`):
 ## 8. Before any live capital (both threads' rule)
 
 Measure ten real 2%-ITM 0DTE fills at the mid; above 1.5 index points round-trip nothing here works. Paper-trade ≥ 60 qualifying days. Real 0DTE IV runs above 30-day VIX; the 13:00 leg is the only one where that matters.
+
+## 9. Owner-proposed fair-value-gap setup (A36) — pre-registered 2026-09-13, 8 trials
+
+8 trials (side {short, long} × R {1, 2} × BOS {on, off}) from `pipeline.units.fvg` (`out/fvg_candidates.csv`), reported on three windows. Only the SELECTION-window rows are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); CONTEXT is background and HOLDOUT is these same 8 trials' out-of-sample rows, reported here, not double-counted.
+
+### CONTEXT (2005-01-01 → 2012-12-31)
+
+| trial | n_setups | fill_rate | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | dsr_N33 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short\|R1\|bos_on | 864 | 0.5660 | 489 | 74.0286 | -0.3945 | -1.3945 | -0.0316 | -4.7875 | -4.7300 | -2.2080 | 1.0000 | 1.0000 | -0.9781 | 1.0000 | 0.0000 |
+| short\|R2\|bos_on | 863 | 0.5655 | 488 | 45.9016 | -0.5072 | -1.5072 | -0.0438 | -5.4570 | -7.5095 | -1.7348 | 1.0000 | 1.0000 | -0.8633 | 1.0000 | 0.0000 |
+| short\|R1\|bos_off | 1412 | 0.6069 | 857 | 73.9790 | -0.3957 | -1.3957 | -0.0315 | -5.2935 | -8.3605 | -2.8168 | 1.0000 | 1.0000 | -1.0550 | 1.0000 | 0.0000 |
+| short\|R2\|bos_off | 1405 | 0.6071 | 853 | 45.6038 | -0.6000 | -1.6000 | -0.0505 | -5.7580 | -8.3605 | -2.7902 | 1.0000 | 1.0000 | -1.0421 | 1.0000 | 0.0000 |
+| long\|R1\|bos_on | 776 | 0.5142 | 399 | 71.1779 | -0.3880 | -1.3880 | -0.0296 | -6.7540 | -6.8095 | -1.4248 | 1.0000 | 1.0000 | -1.0255 | 1.0000 | 0.0000 |
+| long\|R2\|bos_on | 776 | 0.5142 | 399 | 43.8596 | -0.4895 | -1.4895 | -0.0352 | -6.7540 | -8.0820 | -1.0107 | 1.0000 | 1.0000 | -0.9356 | 1.0000 | 0.0000 |
+| long\|R1\|bos_off | 1360 | 0.5816 | 791 | 74.2099 | -0.3118 | -1.3118 | -0.0233 | -5.2600 | -6.8095 | -1.5481 | 1.0000 | 1.0000 | -1.0552 | 1.0000 | 0.0000 |
+| long\|R2\|bos_off | 1358 | 0.5810 | 789 | 44.4867 | -0.5377 | -1.5377 | -0.0436 | -12.6225 | -8.0820 | -1.8675 | 1.0000 | 1.0000 | -1.0183 | 1.0000 | 0.0000 |
+
+0 of 8 trials net > 0 at 1 pt; 0 of 8 have p_day < 0.05; no trial survives (net > 0 AND p_day < 0.05 AND excess over control > 0 AND n ≥ 200; DSR at N=33 is reported in the table above, not a survival condition).
+
+### SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family
+
+| trial | n_setups | fill_rate | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | dsr_N33 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short\|R1\|bos_on | 741 | 0.6221 | 461 | 65.0759 | -0.5035 | -1.5035 | -0.0239 | -6.9260 | -6.9260 | -2.2975 | 1.0000 | 1.0000 | -0.9649 | 1.0000 | 0.0000 |
+| short\|R2\|bos_on | 740 | 0.6216 | 460 | 38.0435 | -0.7096 | -1.7096 | -0.0331 | -9.8125 | -9.8125 | -2.0431 | 1.0000 | 1.0000 | -0.7278 | 0.5450 | 0.0000 |
+| short\|R1\|bos_off | 1324 | 0.6488 | 859 | 65.7742 | -0.4000 | -1.4000 | -0.0201 | -14.3400 | -14.3400 | -2.3289 | 1.0000 | 1.0000 | -1.0364 | 1.0000 | 0.0000 |
+| short\|R2\|bos_off | 1321 | 0.6480 | 856 | 39.6028 | -0.7045 | -1.7045 | -0.0335 | -16.2270 | -16.2270 | -2.7058 | 1.0000 | 1.0000 | -0.9256 | 0.9850 | 0.0000 |
+| long\|R1\|bos_on | 608 | 0.5066 | 308 | 62.9870 | -0.3210 | -1.3210 | -0.0168 | -8.1675 | -8.1675 | -0.9845 | 1.0000 | 1.0000 | -1.0390 | 1.0000 | 0.0000 |
+| long\|R2\|bos_on | 607 | 0.5058 | 307 | 37.4593 | -0.7274 | -1.7274 | -0.0345 | -18.1860 | -18.1860 | -1.2324 | 1.0000 | 1.0000 | -0.8600 | 0.7350 | 0.0001 |
+| long\|R1\|bos_off | 1183 | 0.5613 | 664 | 65.3614 | -0.2309 | -1.2309 | -0.0138 | -11.1020 | -11.1020 | -1.0802 | 1.0000 | 1.0000 | -1.1165 | 1.0000 | 0.0000 |
+| long\|R2\|bos_off | 1177 | 0.5616 | 661 | 39.6369 | -0.6737 | -1.6737 | -0.0314 | -26.4970 | -18.1860 | -1.8059 | 1.0000 | 1.0000 | -1.0854 | 1.0000 | 0.0000 |
+
+0 of 8 trials net > 0 at 1 pt; 0 of 8 have p_day < 0.05; no trial survives (net > 0 AND p_day < 0.05 AND excess over control > 0 AND n ≥ 200; DSR at N=33 is reported in the table above, not a survival condition).
+
+### HOLDOUT (2020-07-27 → 2026-09-11)
+
+| trial | n_setups | fill_rate | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | dsr_N33 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short\|R1\|bos_on | 889 | 0.5546 | 493 | 60.8519 | -0.0039 | -1.0039 | -0.0003 | -14.7242 | -15.5900 | -0.0326 | 1.0000 | 1.0000 | -0.8682 | 1.0000 | 0.0004 |
+| short\|R2\|bos_on | 887 | 0.5558 | 493 | 35.4970 | -0.5756 | -1.5756 | -0.0138 | -19.3095 | -19.3095 | -0.8569 | 1.0000 | 1.0000 | -0.3913 | 0.2000 | 0.0000 |
+| short\|R1\|bos_off | 1629 | 0.5887 | 959 | 60.3754 | 0.0263 | -0.9737 | 0.0002 | -15.1265 | -22.5450 | 0.0181 | 0.4803 | 0.4870 | -1.1725 | 1.0000 | 0.0000 |
+| short\|R2\|bos_off | 1620 | 0.5914 | 958 | 35.3862 | -0.6621 | -1.6621 | -0.0151 | -19.3095 | -19.3095 | -1.2442 | 1.0000 | 1.0000 | -0.9742 | 0.9050 | 0.0000 |
+| long\|R1\|bos_on | 616 | 0.4578 | 282 | 56.7376 | -0.5658 | -1.5658 | -0.0140 | -17.6313 | -17.6313 | -0.9564 | 1.0000 | 1.0000 | -0.9846 | 0.9000 | 0.0000 |
+| long\|R2\|bos_on | 615 | 0.4585 | 282 | 35.4610 | -1.1434 | -2.1434 | -0.0265 | -17.6313 | -24.2755 | -1.3750 | 1.0000 | 1.0000 | -0.7097 | 0.0800 | 0.0000 |
+| long\|R1\|bos_off | 1337 | 0.5236 | 700 | 58.1429 | -0.2276 | -1.2276 | -0.0054 | -17.6313 | -18.4780 | -0.5439 | 1.0000 | 1.0000 | -1.2673 | 1.0000 | 0.0000 |
+| long\|R2\|bos_off | 1330 | 0.5233 | 696 | 36.2069 | -0.7222 | -1.7222 | -0.0145 | -17.6313 | -27.0968 | -1.0496 | 1.0000 | 1.0000 | -1.2309 | 1.0000 | 0.0000 |
+
+1 of 8 trials net > 0 at 1 pt; 0 of 8 have p_day < 0.05; no trial survives (net > 0 AND p_day < 0.05 AND excess over control > 0 AND n ≥ 200; DSR at N=33 is reported in the table above, not a survival condition).
+
+FIXED (pre-registration): ATR mult 1.5, structure lookback 12 bars, stop buffer 0.1 ATR, min box height 0.05 ATR, entry = box midpoint. atr_ref for a setup ending at bar t = rolling(20) mean true range of the 20 bars strictly before the displacement bar t-1 (no lookahead into t-1/t); ATR rolls across sessions only for the first ~19 bars of a session, else same-session (pre-registration's own allowance); true range at a session's first bar uses that bar's own open, not the prior session's close (no overnight gap in ATR).

@@ -1,3 +1,5 @@
-pair,daily_return_corr
-vxx_vs_vixy,0.998716
-vxz_vs_vixm,0.987454
+pair,daily_return_corr,n_overlap_days,corr_2018,corr_2019,corr_2020_on,zero_return_days_2018,decision,note
+old_vxx_vs_vixy,0.998716,1723,,,,,bridged,
+new_vxx_vs_vixy,0.982923,2169,0.969766,0.998916,0.983623,8.000000,bridged,
+old_vxz_vs_vixm,0.987454,1723,,,,,bridged,
+new_vxz_vs_vixm,0.877463,2169,0.176236,0.982411,0.971366,178.000000,refused (< BRIDGE_MIN_CORR),VXZ Series B refused; VIXM used as the mid-term leg from 2017-11-13

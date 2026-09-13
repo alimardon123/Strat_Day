@@ -22,5 +22,13 @@ xmarket,gap-up on SPXUSD,499,0.162000,0.162000,,,0.162000,False
 flow,"month_end: against MTD move, 15:00→close",184,1.000000,1.000000,,,1.000000,False
 flow,opex: continue open→15:00 move,168,1.000000,1.000000,,,1.000000,False
 flow,russell recon day: long 15:00→close,15,,,,,1.000000,False
+fvg,FVG short|R1|bos_on,461,1.000000,1.000000,,,1.000000,False
+fvg,FVG short|R2|bos_on,460,1.000000,1.000000,,,1.000000,False
+fvg,FVG short|R1|bos_off,859,1.000000,1.000000,,,1.000000,False
+fvg,FVG short|R2|bos_off,856,1.000000,1.000000,,,1.000000,False
+fvg,FVG long|R1|bos_on,308,1.000000,1.000000,,,1.000000,False
+fvg,FVG long|R2|bos_on,307,1.000000,1.000000,,,1.000000,False
+fvg,FVG long|R1|bos_off,664,1.000000,1.000000,,,1.000000,False
+fvg,FVG long|R2|bos_off,661,1.000000,1.000000,,,1.000000,False
 holdout,HOLDOUT 15:00|both|vixmove_exp,274,1.000000,1.000000,,,1.000000,False
 holdout,HOLDOUT 13:00|call|gap>0.3%,452,1.000000,1.000000,,,1.000000,False

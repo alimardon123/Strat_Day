@@ -148,7 +148,44 @@ def detect_side(bars, side):
     return out.reset_index(drop=True)
 
 
-def simulate(bars_by_date, setups, side, r):
+def to_day_arrays(bars):
+    """dict date -> plain numpy arrays, position i == session_idx i (guaranteed by build_bars'
+    fixed 78-slot grid, sorted by bar_mod). The fill/exit search below is done in plain numpy on
+    these arrays, not by re-filtering a pandas DataFrame per setup per seed — the pandas version
+    of this loop (per-row DataFrame boolean masks x 200 control seeds x every filled trade) took
+    tens of minutes; this one runs in well under the budget (see VERIFICATION)."""
+    out = {}
+    for d, g in bars.groupby("date"):
+        g = g.sort_values("bar_mod")
+        out[d] = dict(bar_mod=g["bar_mod"].to_numpy(), g_idx=g["g_idx"].to_numpy(),
+                      open=g["open"].to_numpy(float), high=g["high"].to_numpy(float),
+                      low=g["low"].to_numpy(float), close=g["close"].to_numpy(float),
+                      bar_ts=g["bar_ts"].to_numpy(), valid=g["close"].notna().to_numpy())
+    return out
+
+
+def _walk_exit(day, start_i, stop_px, tp_px, side):
+    """First bar at or after array position `start_i` (inclusive) whose range touches stop_px or
+    tp_px (stop wins a same-bar tie), skipping NaN (thin) bars; else the last valid bar of the
+    session (its close). Returns (exit_array_position, exit_px, exit_reason)."""
+    rest = np.arange(start_i, len(day["bar_mod"]))
+    rest = rest[day["valid"][rest]]
+    highs, lows = day["high"][rest], day["low"][rest]
+    if side == "short":
+        stop_touched, tp_touched = highs >= stop_px, lows <= tp_px
+    else:
+        stop_touched, tp_touched = lows <= stop_px, highs >= tp_px
+    hit = stop_touched | tp_touched
+    if hit.any():
+        pos = int(np.argmax(hit))
+        i = int(rest[pos])
+        is_stop = bool(stop_touched[pos])
+        return i, (stop_px if is_stop else tp_px), ("stop" if is_stop else "tp")
+    i = int(rest[-1])
+    return i, float(day["close"][i]), "close"
+
+
+def simulate(day_arrays, setups, side, r):
     """Walk the (already side/BOS-filtered) setups in bar order, one active setup at a time (see
     SPEC_NOTE); returns the per-setup trade table (including unfilled and skipped-for-open-
     position rows) and the setup/fill counts."""
@@ -166,35 +203,29 @@ def simulate(bars_by_date, setups, side, r):
                                stop_px=row.stop_px, tp_px=np.nan))
             continue
         n_setups += 1
-        day_bars = bars_by_date[row.date]
-        window_all = day_bars[(day_bars["session_idx"] > row.session_idx) & (day_bars["bar_mod"] <= FILL_DEADLINE_MOD)]
-        window_valid = window_all[window_all["close"].notna()]
-        touch = window_valid[(window_valid["low"] <= row.mid) & (window_valid["high"] >= row.mid)]
-        if touch.empty:
-            busy_until = int(window_all["g_idx"].max()) if len(window_all) else int(row.g_idx)
+        day = day_arrays[row.date]
+        t_sidx = row.session_idx
+        deadline_all = np.flatnonzero(day["bar_mod"][t_sidx + 1:] <= FILL_DEADLINE_MOD) + (t_sidx + 1)
+        fill_i = None
+        if len(deadline_all):
+            elig = deadline_all[day["valid"][deadline_all]]
+            if len(elig):
+                touch = (day["low"][elig] <= row.mid) & (day["high"][elig] >= row.mid)
+                if touch.any():
+                    fill_i = int(elig[np.argmax(touch)])
+        if fill_i is None:
+            busy_until = int(day["g_idx"][deadline_all[-1]]) if len(deadline_all) else int(row.g_idx)
             trades.append(dict(date=row.date, t_ts=row.bar_ts, filled=False, exit_reason="unfilled",
                                entry_ts=pd.NaT, entry_px=np.nan, exit_ts=pd.NaT, exit_px=np.nan, pts=np.nan,
                                ret_pct=np.nan, box_top=row.box_top, box_bottom=row.box_bottom,
                                stop_px=row.stop_px, tp_px=np.nan))
             continue
         n_filled += 1
-        fill = touch.iloc[0]
-        entry_px, entry_ts = row.mid, fill["bar_ts"]
+        entry_px, entry_ts = row.mid, day["bar_ts"][fill_i]
         stop_dist = abs(row.stop_px - entry_px)
         tp_px = entry_px + direction * r * stop_dist
-        exit_search = day_bars[(day_bars["session_idx"] >= fill["session_idx"]) & day_bars["close"].notna()]
-        exit_px = exit_reason = exit_ts = exit_g = None
-        for erow in exit_search.itertuples(index=False):
-            stop_touched = erow.high >= row.stop_px if side == "short" else erow.low <= row.stop_px
-            tp_touched = erow.low <= tp_px if side == "short" else erow.high >= tp_px
-            if stop_touched or tp_touched:                       # stop wins a same-bar tie
-                exit_px = row.stop_px if stop_touched else tp_px
-                exit_reason = "stop" if stop_touched else "tp"
-                exit_ts, exit_g = erow.bar_ts, erow.g_idx
-                break
-        if exit_px is None:
-            last = exit_search.iloc[-1]
-            exit_px, exit_reason, exit_ts, exit_g = last["close"], "close", last["bar_ts"], last["g_idx"]
+        exit_i, exit_px, exit_reason = _walk_exit(day, fill_i, row.stop_px, tp_px, side)
+        exit_ts, exit_g = day["bar_ts"][exit_i], day["g_idx"][exit_i]
         busy_until = int(exit_g)
         pts = direction * (exit_px - entry_px)
         ret_pct = direction * (exit_px / entry_px - 1) * 100
@@ -202,11 +233,18 @@ def simulate(bars_by_date, setups, side, r):
                            entry_px=entry_px, exit_ts=exit_ts, exit_px=exit_px, pts=pts, ret_pct=ret_pct,
                            box_top=row.box_top, box_bottom=row.box_bottom, stop_px=row.stop_px, tp_px=tp_px))
     t = pd.DataFrame(trades, columns=TRADE_COLS)
+    # An all-empty `trades` (e.g. the HOLDOUT window when data/ext is absent, A36's "runs on the
+    # Oanda era alone" path) makes every column dtype object, including `filled` — and `t[t["filled"]]`
+    # on a non-bool object Series with zero elements is NOT a boolean mask to pandas, it silently
+    # drops every COLUMN instead of every row (t becomes 0 rows x 0 cols downstream in summarize(),
+    # which then KeyErrors on `filled["date"]`). Cast explicitly so the empty case is still a proper
+    # boolean mask over all TRADE_COLS.
+    t["filled"] = t["filled"].astype(bool)
     counts = dict(n_patterns_detected=n_patterns, n_skipped_open=n_skipped_open, n_setups=n_setups, n_filled=n_filled)
     return t, counts
 
 
-def random_entry_control(bars_by_date, trades, side, r, cost, n_seeds=N_SEEDS, seed=CONTROL_SEED):
+def random_entry_control(day_arrays, trades, side, r, cost, n_seeds=N_SEEDS, seed=CONTROL_SEED):
     """A16-style control (Thread A convention): same days as the FILLED real trades, same side,
     same R, entry at a uniformly random 5-minute bar's OPEN in [10:00,15:30] instead of the
     midpoint touch, same stop distance as the matched real trade; 200 draws from one seeded
@@ -217,37 +255,30 @@ def random_entry_control(bars_by_date, trades, side, r, cost, n_seeds=N_SEEDS, s
     direction = -1.0 if side == "short" else 1.0
     mods = np.arange(ENTRY_WINDOW[0], ENTRY_WINDOW[1] + 1, BAR_LEN)
     rng = np.random.default_rng(seed)
-    pct_means, pts_means = [], []
-    for _ in range(n_seeds):
+    tr_dates = filled["date"].to_numpy()
+    tr_stop_dist = (filled["stop_px"] - filled["entry_px"]).abs().to_numpy()
+    n_tr = len(filled)
+    pct_means, pts_means = np.empty(n_seeds), np.empty(n_seeds)
+    for s in range(n_seeds):
+        draws = rng.choice(mods, size=n_tr)
         pct_list, pts_list = [], []
-        for tr in filled.itertuples(index=False):
-            day_bars = bars_by_date.get(tr.date)
-            if day_bars is None:
+        for k in range(n_tr):
+            day = day_arrays.get(tr_dates[k])
+            if day is None:
                 continue
-            m = int(rng.choice(mods))
-            cand = day_bars[(day_bars["bar_mod"] == m) & day_bars["close"].notna()]
-            if cand.empty:
+            i = int((draws[k] - sessions.RTH_START) // BAR_LEN)
+            if not (0 <= i < len(day["bar_mod"])) or not day["valid"][i]:
                 continue
-            crow = cand.iloc[0]
-            entry_px = float(crow["open"])
-            stop_dist = abs(tr.stop_px - tr.entry_px)
+            entry_px = float(day["open"][i])
+            stop_dist = float(tr_stop_dist[k])
             stop_px = entry_px - direction * stop_dist
             tp_px = entry_px + direction * r * stop_dist
-            exit_search = day_bars[(day_bars["session_idx"] >= crow["session_idx"]) & day_bars["close"].notna()]
-            exit_px = None
-            for erow in exit_search.itertuples(index=False):
-                stop_touched = erow.high >= stop_px if side == "short" else erow.low <= stop_px
-                tp_touched = erow.low <= tp_px if side == "short" else erow.high >= tp_px
-                if stop_touched or tp_touched:
-                    exit_px = stop_px if stop_touched else tp_px
-                    break
-            if exit_px is None:
-                exit_px = float(exit_search.iloc[-1]["close"])
+            _, exit_px, _ = _walk_exit(day, i, stop_px, tp_px, side)
             pts_list.append(direction * (exit_px - entry_px) - cost)
             pct_list.append(direction * (exit_px / entry_px - 1) * 100 - 100 * cost / entry_px)
-        pct_means.append(np.mean(pct_list) if pct_list else np.nan)
-        pts_means.append(np.mean(pts_list) if pts_list else np.nan)
-    return np.array(pct_means), np.array(pts_means)
+        pct_means[s] = np.mean(pct_list) if pct_list else np.nan
+        pts_means[s] = np.mean(pts_list) if pts_list else np.nan
+    return pct_means, pts_means
 
 
 def summarize(window_name, side, r, bos, trades, counts, all_dates, ctrl_pct, ctrl_pts):
@@ -289,7 +320,7 @@ def main(inp, out):
     td = sessions.trading_days_from_vix()
     frame, _dropped, _meta = sessions.build_extended(trading_days=td)
     bars = build_bars(frame)
-    bars_by_date = {d: g.reset_index(drop=True) for d, g in bars.groupby("date")}
+    day_arrays = to_day_arrays(bars)
     setups_by_side = {side: detect_side(bars, side) for side in ("short", "long")}
 
     rows, trade_frames = [], []
@@ -303,8 +334,8 @@ def main(inp, out):
             for bos in ("on", "off"):
                 s_bos = s_win[s_win["structure_break"]] if bos == "on" else s_win
                 for r in (1, 2):
-                    trades, counts = simulate(bars_by_date, s_bos, side, r)
-                    ctrl_pct, ctrl_pts = random_entry_control(bars_by_date, trades, side, r, COST1)
+                    trades, counts = simulate(day_arrays, s_bos, side, r)
+                    ctrl_pct, ctrl_pts = random_entry_control(day_arrays, trades, side, r, COST1)
                     row, net_pct1 = summarize(win_name, side, r, bos, trades, counts, all_dates, ctrl_pct, ctrl_pts)
                     win_rows.append(row)
                     win_nets.append(net_pct1)

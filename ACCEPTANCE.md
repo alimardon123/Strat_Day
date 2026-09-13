@@ -187,3 +187,22 @@ retrace to the box MIDPOINT, stop beyond the box, take profit on the other side.
 - Survival rule unchanged. No parameter is varied beyond the eight trials; the ATR multiple, lookback, buffer,
   minimum height and midpoint entry are fixed here and may not be re-tuned on any window.
 
+## Amendment A13 (second amendment, 2026-09-13, judge round 4 B1) — measured bridge outcome
+
+With the owner's ETF panel present, the bridge correlations are measured on the real overlaps: old-VXX ↔ VIXY
+0.9987, old-VXZ ↔ VIXM 0.9875, new-VXX ↔ VIXY 0.9829, new-VXZ ↔ VIXM 0.8775 (2018: 178 of 234 Series B VXZ
+closes are stale zero-return prints; 2019 onward 0.92–0.99). Disposition, by the existing 0.98 rule and not by
+choice: VXX is bridged to the real Series B note from 2018-01-25 (VIXY returns fill 2017-11-11 → 2018-01-24);
+the VXZ bridge is REFUSED and the mid-term leg uses VIXM's returns from 2017-11-13 onward, labelled as such in
+`out/own_account_bridge.csv` and OWN_ACCOUNT.md. Gate (f) `pipeline/gate_etf.py` asserts that every panel
+ticker survives to the panel's last date and that the bridge decision is applied as printed.
+
+## Amendment A37 — probability of backtest overfitting (D6 reporting statistic, 2026-09-13)
+
+`pipeline/pbo.py` reports the CSCV probability of backtest overfitting of the D1 selection procedure (Bailey,
+Borwein, López de Prado, Zhu 2015): the 12 rankable configurations' calendar-day P&L on 2013-01-01 → 2020-05-13,
+16 contiguous blocks, all 12,870 balanced splits, PBO = share of splits in which the in-sample best ranks below
+the out-of-sample median. It is REPORTED in PLAYBOOK §2 and SCORECARD, never a survival condition, and its
+per-column shuffled null is printed beside it with the caveat that this null preserves each configuration's own
+mean and variance and is therefore a floor for near-duplicate configurations, not 0.5.
+

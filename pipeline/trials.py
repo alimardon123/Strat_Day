@@ -23,6 +23,12 @@ def main():
     if glob.glob("out/flow_candidates.csv"):
         for _, x in pd.read_csv("out/flow_candidates.csv").iterrows():
             rows.append(dict(family="flow", trial=x["candidate"], n=x["n"], p=x["p_boot_day"], p_day=x["p_boot_day"]))
+    if os.path.exists("out/fvg_candidates.csv"):
+        # A36: only the SELECTION-window rows are trials; CONTEXT is reported context and HOLDOUT
+        # is these same 8 trials' out-of-sample rows (reported in the fvg table, not re-counted).
+        fvg = pd.read_csv("out/fvg_candidates.csv")
+        for _, x in fvg[fvg["window"] == "SELECTION"].iterrows():
+            rows.append(dict(family="fvg", trial=f"FVG {x['trial']}", n=x["n"], p=x["p_boot_month"], p_day=x["p_boot_day"]))
     hold = pd.read_csv("out/holdout_summary.csv") if os.path.exists("out/holdout_summary.csv") else None
     if hold is not None:
         for _, x in hold.iterrows():

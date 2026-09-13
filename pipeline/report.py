@@ -49,6 +49,34 @@ def winner():
     return m.group(1)
 
 
+FVG_COLS = ["trial", "n_setups", "fill_rate", "n", "win", "net_pts_cost1", "net_pts_cost2", "net_pct_cost1",
+            "worst_trade_pts_cost1", "worst_day_pts_cost1", "sharpe_calday", "p_boot_day", "p_boot_month",
+            "control_mean_pts_cost1", "frac_seeds_beaten", "dsr_N33"]
+
+
+def fvg_verdict(sub):
+    """Generated per-window verdict for the A36 fvg family: net > 0 at 1 pt and p_day < 0.05
+    counts, then the ACCEPTANCE survival check (net > 0, p_day < 0.05, excess over the random-
+    entry control > 0, n >= 200); DSR at N=33 is reported in the table, not a survival condition."""
+    n_net_pos = int((sub["net_pts_cost1"] > 0).sum())
+    n_p_sig = int((sub["p_boot_day"] < 0.05).sum())
+    excess = sub["net_pts_cost1"] - sub["control_mean_pts_cost1"]
+    survives = sub[(sub["net_pts_cost1"] > 0) & (sub["p_boot_day"] < 0.05) & (excess > 0) & (sub["n"] >= 200)]
+    verdict = "no trial survives" if survives.empty else "survives: " + ", ".join(survives["trial"])
+    return (f"{n_net_pos} of {len(sub)} trials net > 0 at 1 pt; {n_p_sig} of {len(sub)} have p_day < 0.05; "
+            f"{verdict} (net > 0 AND p_day < 0.05 AND excess over control > 0 AND n ≥ 200; DSR at N=33 is "
+            "reported in the table above, not a survival condition).")
+
+
+def fvg_caption(df):
+    """First two sentences of the `spec` column (identical on every row — the fixed pre-
+    registration), generated rather than typed (D7)."""
+    if "spec" not in df or not len(df):
+        return ""
+    parts = re.split(r"(?<=\.)\s+", str(df["spec"].iloc[0]).strip())
+    return " ".join(parts[:2])
+
+
 def describe(label):
     hm, direction, gate = label.split("|")
     g = {"mag": "|open → entry| above the expanding 70th percentile of prior sessions",
@@ -79,6 +107,20 @@ def playbook():
                          + ", ".join(f"`{t}`" for t in trials.loc[trials["fdr_pass_10pct_family"], "trial"]) + ".")
     else:
         fdr_sentence = f"0 of {len(trials)} trials pass BH-FDR at 10% across the family (`out/trials.csv`)."
+    if os.path.exists("out/pbo.csv"):
+        pbo = pd.read_csv("out/pbo.csv")
+        p16 = pbo[pbo["n_blocks"] == 16]
+        pbo_actual = p16[p16["variant"] == "actual"].iloc[0]
+        pbo_null = p16[p16["variant"] == "shuffled_null"].iloc[0]
+        pbo_sentence = (f" Probability of backtest overfitting of this {int(pbo_actual['n_configs'])}-configuration "
+                         f"selection (CSCV, {int(pbo_actual['n_blocks'])} blocks, {int(pbo_actual['n_combinations']):,} "
+                         f"splits): {pbo_actual['pbo']:.2f}; the in-sample best configuration's median out-of-sample "
+                         f"rank logit is {pbo_actual['median_logit']:.2f}; the per-column shuffled null gives "
+                         f"{pbo_null['pbo']:.2f} (this null preserves each configuration's own mean and variance, so "
+                         "it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival "
+                         "condition).")
+    else:
+        pbo_sentence = ""
     if os.path.exists("out/options_timevalue.csv"):
         tv = pd.read_csv("out/options_timevalue.csv")
         tv60 = tv[(tv["mins_to_close"] == 60) & (tv["k"] == 1.0)]
@@ -137,7 +179,7 @@ def playbook():
                  int_cols=INT_COLS), ""]
     L += ["Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided "
           "variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the "
-          f"15:00 entry with the expanding-tercile rule. {fdr_sentence}", ""]
+          f"15:00 entry with the expanding-tercile rule. {fdr_sentence}{pbo_sentence}", ""]
     L += ["## 3. Option-level results — IN-SAMPLE (% of premium per trade)", "",
           md(summ[["signal", "spread", "settle", "k", "n", "trades_per_year", "win", "mean", "median", "worst_trade", "worst_day",
                    "mae_worst", "full_loss_trades", "premium_mean"]], int_cols=INT_COLS), "",
@@ -220,6 +262,25 @@ def playbook():
     L += ["## 8. Before any live capital (both threads' rule)", "",
           "Measure ten real 2%-ITM 0DTE fills at the mid; above 1.5 index points round-trip nothing here works. Paper-trade "
           "≥ 60 qualifying days. Real 0DTE IV runs above 30-day VIX; the 13:00 leg is the only one where that matters.", ""]
+    if os.path.exists("out/fvg_candidates.csv"):
+        fvg = pd.read_csv("out/fvg_candidates.csv")
+        L += ["## 9. Owner-proposed fair-value-gap setup (A36) — pre-registered 2026-09-13, 8 trials", "",
+              "8 trials (side {short, long} × R {1, 2} × BOS {on, off}) from `pipeline.units.fvg` (`out/fvg_candidates.csv`), "
+              "reported on three windows. Only the SELECTION-window rows are counted in the trial family "
+              "(`pipeline/trials.py`, `out/trials.csv`); CONTEXT is background and HOLDOUT is these same 8 trials' "
+              "out-of-sample rows, reported here, not double-counted.", ""]
+        for win_name, win_label in (("CONTEXT", "CONTEXT (2005-01-01 → 2012-12-31)"),
+                                     ("SELECTION", "SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family"),
+                                     ("HOLDOUT", "HOLDOUT (2020-07-27 → 2026-09-11)")):
+            sub = fvg[fvg["window"] == win_name]
+            if not len(sub):
+                continue
+            L += [f"### {win_label}", "",
+                  md(sub[[c for c in FVG_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS + ("n_setups",)), "",
+                  fvg_verdict(sub), ""]
+        cap = fvg_caption(fvg)
+        if cap:
+            L += [cap, ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 
@@ -243,8 +304,20 @@ def own_account():
     if os.path.exists("out/own_account_bridge.csv"):
         b = pd.read_csv("out/own_account_bridge.csv")
         L += ["## VXX / VXZ bridge (A13): daily-return correlations on the overlaps", "",
-              "Old VXX ↔ VIXY and old VXZ ↔ VIXM are measurable now; new-VXX ↔ VIXY and new-VXZ ↔ VIXM need the ext panel. The bridge is "
+              "Correlations measured on whatever overlap each pair has in this run (`out/own_account_bridge.csv`); the bridge is "
               "refused below 0.98.", "", md(b, fmt="{:.4f}"), ""]
+        if "decision" in b:
+            frags = []
+            for _, row in b.iterrows():
+                pair = str(row.get("pair", ""))
+                label = "VXX" if "vxx" in pair.lower() else "VXZ" if "vxz" in pair.lower() else pair
+                corr = row["corr_2020_on"] if "corr_2020_on" in b and pd.notna(row.get("corr_2020_on")) else row.get("daily_return_corr", np.nan)
+                corr_str = f"{corr:.4f}" if pd.notna(corr) else "n/a"
+                frag = f"{label}: {row['decision']} (corr {corr_str}"
+                if "zero_return_days_2018" in b and pd.notna(row.get("zero_return_days_2018")):
+                    frag += f"; {int(row['zero_return_days_2018'])} stale closes in 2018"
+                frags.append(frag + ")")
+            L += ["; ".join(frags) + " — the mid-term leg uses VIXM from 2017-11-13 when the VXZ bridge is refused.", ""]
     if os.path.exists("out/vrp_vix_minus_rv.csv"):
         v = pd.read_csv("out/vrp_vix_minus_rv.csv")
         v_years = v[v["year"].astype(str).str.fullmatch(r"\d{4}")]

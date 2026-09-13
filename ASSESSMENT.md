@@ -21,15 +21,15 @@ winner's expected annual return on the holdout is +0.15 % with a worst year of �
 is −2.2 %/yr. The execution model makes the winner worse out of sample (limit entries −0.56 to −1.45 pts
 per signal: adverse selection, not cost).
 
-The 15 POST-SELECTION rows (`out/reconcile_candidates.csv`, never promoted): every VIX-gated and every
-15:30 configuration is negative on the holdout; the only positive rows are the three magnitude-gated
-ones, led by Thread A's original `15:00\|put\|mag` (+1.94 pts, Sharpe 0.48, p 0.10 / 0.11, excess
+The 15 POST-SELECTION rows (`out/reconcile_candidates.csv`, never promoted): every VIX-gated configuration and every 15:30 configuration except `15:30\|put\|mag` (+0.05 pts) is
+negative on the holdout; the only positive rows are the three magnitude-gated ones, led by Thread A's original `15:00\|put\|mag` (+1.94 pts, Sharpe 0.48, p 0.10 / 0.11, excess
 +0.046 %). It ranked 9th of 12 in-sample; one of 16 rows at p ≈ 0.1 is what chance produces; it is
 reported, not promoted, and would need its own pre-registration on data that does not yet exist.
 
 Most likely reason (as the contract asks): the reconciled edge was crisis-loaded in-sample (2008–2012 and
 Feb–May 2020 carried most of it); out of sample the high-VIX years 2020 H2 and 2021 were the worst
-years, 2022 was the only good one, and at a 1-point cost the mean is zero. Thread B's construction (the
+years; 2022 carried the gains (119 of 274 trades), 2023 and 2025 are positive on 10 and 32 trades, and at a
+1-point cost the mean over the window is zero. Thread B's construction (the
 VIX gate, prior-close move, both directions) did not carry; Thread A's magnitude/put-only shape did
 marginally better but not significantly. What research/CLAUDE.md §6.6 suggests next — flows with a
 deadline — was already tested here (month-end, opex, Russell day: all negative). The owner's own
@@ -45,14 +45,39 @@ from `out/` by `make all` and byte-identical on `make repeat`.
 
 | # | Landed | Evidence |
 |---|---|---|
-| D1 | Pre-registered. 16 configurations on 2013-01→2020-05-13; winner after the Phase 4 tie-break repair `15:00\|both\|vixmove_exp` (expanding-tercile rule, no fitted parameters; n 145, +3.12 pts/trade net, calendar-day Sharpe 0.49). Thread B's construction (VIX gate, move from the prior close, both directions) beats Thread A's (magnitude from the open, put-only) in every cross; the entry time (15:00 vs 15:30) is a wash. No trial passes BH-FDR at 10% across the 23-trial family — the reconciliation answers *which shape*, not yet *whether it is real*. | `out/reconcile_candidates.csv`, `out/reconcile_decision.md` |
+| D1 | Pre-registered. 16 configurations on 2013-01→2020-05-13; winner after the Phase 4 tie-break repair `15:00\|both\|vixmove_exp` (expanding-tercile rule, no fitted parameters; n 145, +3.12 pts/trade net, calendar-day Sharpe 0.49). Thread B's construction (VIX gate, move from the prior close, both directions) beats Thread A's (magnitude from the open, put-only) in every cross; the entry time (15:00 vs 15:30) is a wash. No trial passes BH-FDR at 10% across the 33-trial family (25 before the A36 FVG trials joined) — the reconciliation answers *which shape*, not yet *whether it is real*. | `out/reconcile_candidates.csv`, `out/reconcile_decision.md` |
 | D2 | DONE on real data: FAILED for both signals (table above); per-year rows with option returns at spreads 1/2/3, worst day and MAE in `out/holdout_by_year.csv`; the 15 post-selection rows published; data window reported, not filled. | `out/holdout_summary.csv`, `out/holdout_by_year.csv`, PLAYBOOK §7 |
 | D2b | Done as a finding: the gap-up call is +0.022%/trade on SPX (p 0.16), +0.019% on DAX (p 0.27), −0.033% on EuroStoxx (p 1.0) over 2010–2018. Marginal where it exists; not universal. | `out/xmarket_*.csv` |
 | D3 | Done in-sample; holdout pending. With the exit half of the spread still charged, limit entry at 0.25 ATR adds +0.66 pts per signal to the gap-up call (0.34 of it a cost assumption, 0.31 price improvement net of adverse selection, p 0.002) and only +0.22 to the winner (0.36 cost assumption minus 0.14 adverse selection, p 0.38). Thread B's "largest single improvement" is real for the 13:00 leg and mostly a cost assumption for the last-hour leg. | `out/insample_execution.csv` |
 | D4 | DONE: the headline is the holdout table (+0.08 % of premium per trade at 1 pt for the winner, −0.48 % at 2 pt; gap-up −1.3 %); sizing at 3/4/5 % limits shows worst years of −10 % to −17 %; full-sample tables rendered under IN-SAMPLE + HOLDOUT. Nothing in the playbook is tradeable as measured. | PLAYBOOK_0DTE.md §7, `out/holdout_d4_*.csv` |
-| D5 | DONE for the data that now exists: the ETF panel extends S2/S3/S6/S13 to 2026-09-11 with the VXX/VXZ bridge (correlations 0.9987 / 0.9875); post-2017 book EQUAL_available(4-8) Sharpe 0.52, two-bucket 0.56, maxDD −10 % / −8.7 %; baseline 0.99 vs Thread A's 1.35 explained by the gap-up sleeve's cost model; BAB on Thread A's cleaned 626-name universe. | `out/own_account_*.csv`, OWN_ACCOUNT.md |
-| D6 | Done for what ran: 23 trials in one family-wide BH-FDR (none pass); DSR at N = 12 and N = 42 (gap-up: PSR and N = 1,099); both controls with the signal's own direction base; month/day blocks. | SCORECARD.md, `out/trials.csv` |
+| D5 | DONE for the data that now exists: the ETF panel extends S2/S3/S6/S13 to 2026-09-11. Bridge (A13, measured on the real overlaps, `out/own_account_bridge.csv`): old-VXX ↔ VIXY 0.9987, old-VXZ ↔ VIXM 0.9875, new-VXX ↔ VIXY 0.9829 → VXX bridged to the real Series B note; new-VXZ ↔ VIXM 0.8775 → the VXZ bridge is REFUSED by the 0.98 rule (178 of 234 Series B closes in 2018 are stale) and VIXM is the mid-term leg from 2017-11-13, labelled as such. Judge round 4 found that the first run had silently dropped both real notes (a NaN in the splice scale); gate (f) now asserts panel coverage and the bridge decision. Baseline 0.99 vs Thread A's 1.35 explained by the gap-up sleeve's cost model; BAB on Thread A's cleaned 626-name universe. | `out/own_account_*.csv`, `out/gate_etf.csv`, OWN_ACCOUNT.md |
+| D6 | Done for what ran: 33 trials in one family-wide BH-FDR (none pass; 16 momentum + gap-up + 3 cross-market + 3 flow + 2 holdout + 8 FVG); DSR at N = 12 and N = 42 (FVG: N = 33); PBO reported per A37 (gap-up: PSR and N = 1,099); both controls with the signal's own direction base; month/day blocks. | SCORECARD.md, `out/trials.csv` |
 | D7 | PASS: `make all` regenerates every table (gates b, c, e; D1; D3/D4; [D2 when ext present]; D5; D2b; VRP; flow; trials; report), clears per-run tables first so orphans cannot survive, fails on empty outputs; `make repeat` byte-identical after every repair round; both playbooks are re-renders of `pipeline/report.py` (verified by the fleet verifier and the judge). | Makefile, `pipeline/run_all.py` |
+
+## Owner-proposed fair-value-gap setup (A36) — pre-registered, tested, no trial survives
+
+`pipeline/units/fvg.py`, 8 trials (side × R × break-of-structure), 5-minute bars, entry at the box
+midpoint, stop beyond the box, take profit at 1× or 2× the stop distance, 1.0-point cost
+(`out/fvg_candidates.csv`). Every trial is net negative in every window: on the selection window
+(2013 → 2020-05) the eight means run from −0.23 to −0.73 points per trade (win rates 63–66 % at R = 1,
+37–40 % at R = 2, n 307–859); on the holdout (2020-07 → 2026-09) from +0.03 to −1.14 (the one positive
+row, `short\|R1\|bos_off`, is +0.03 pts at p 0.48 on 959 trades). Block-bootstrap p is 1.0 for every
+row but that one; DSR at N = 33 is 0. What the test does say in the owner's favour: the midpoint entry
+beats a same-day random-time entry with the same stop and target in almost every row (`frac_seeds_beaten`
+≈ 1.0), so the box has location value — but the gross edge is below one index point per trade, which is
+the round-trip cost of the cheapest 0DTE contract. Verdict: no trial survives; the setup is reported and
+killed under the plateau rule. Fill rates 46–65 %: a third to a half of boxes are never touched at the
+midpoint.
+
+## Probability of backtest overfitting of the selection itself (A37)
+
+`out/pbo.csv`: with 12 rankable configurations on the selection window, CSCV over 16 blocks (12,870
+splits) gives PBO 0.73 — the in-sample best configuration ranks below the out-of-sample median in 73 %
+of splits, and its out-of-sample Sharpe is 0.05 against 0.25 for the average configuration
+(degradation slope −1.04). The per-column shuffled null gives 0.85, not 0.5, because the twelve
+configurations are near-duplicates whose own means and variances survive the shuffle; the statistic is
+reported, not used as a gate. It says what the holdout then confirmed: the ranking among these
+configurations carried no out-of-sample information.
 
 ## Findings that matter more than the tables
 

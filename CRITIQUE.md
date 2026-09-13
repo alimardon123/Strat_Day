@@ -123,3 +123,21 @@ Open: none. Blocked on input: D2/D4-headline/D5-ETF sleeves (DATA.md).
 
 Observation (no change): 148 kept sessions have 300–369 regular-session bars ("thin"; IEX prints only where IEX traded) — 2020: 51, 2021: 22, 2022: 1, 2024: 68, 2025: 6; one ordinary Monday (2024-12-23, 47 bars) is dropped as a feed gap. Same-defect-class watch: "proven on a synthetic stand-in that did not exercise the real format" is the class behind R1 and R2 — it is retro finding 2's counterfactual, now with a second data point inside this run.
 
+## Phase 6 judge round 4 (fleet judge, fresh context, after the real holdout) — decision ITERATE (1 blocking, 8 notes)
+
+Holdout verified clean: selection rows 0/28 mismatches vs the pre-registration; ex-dividend days 0; winner reproduced; −0.143431 on n 274 recomputed from the per-trade file; all six survival conditions coded; family 25, 0 pass; nothing promoted; data window honest; gates re-run; `make all` + `make repeat` from a clean copy byte-identical to the committed `out/` (128 files). R1–R4 VERIFIED including the ±60-minute probe power test.
+
+| # | Sev | Finding (short) | Root cause | Disposition |
+|---|---|---|---|---|
+| B1 | 6 | The ETF panel's real VXX/VXZ (Series B, from 2018-01-25) were silently discarded: the splice scale divides by the ext value on the Kaggle end date, which is NaN for the two notes; `vxx_new`/`vxz_new` never existed, only the two pre-2018 correlations were printed, and 2018 → 2026 ran on VIXY/VIXM unannounced. Measured: new-VXX ↔ VIXY 0.9829 (passes 0.98), new-VXZ ↔ VIXM 0.8775 (fails; 178 of 234 VXZ days in 2018 are stale zero-return closes) | Index-membership test instead of a value test; no gate covered the ETF panel — the "stand-in never exercised the real format" class, fourth instance (R1, R2, R4, B1) | ADOPTED: value-tested scale; `splice_vol` computes and prints all four correlations with per-year breakdown and 2018 stale-close count; DISPOSITION: VXX bridged to the real note (≥ 0.98), VXZ bridge REFUSED by the existing `BRIDGE_MIN_CORR` rule and VIXM kept as the mid-term leg from 2017-11-13, stated in the bridge table and OWN_ACCOUNT.md; new gate (f) `pipeline/gate_etf.py` asserts every panel ticker survives to the panel's last date; A13 amended with the measurement |
+| N1 | 2 | ASSESSMENT/CHANGELOG: "every 15:30 configuration is negative" — `15:30\|put\|mag` is +0.05 | Loose sentence | ADOPTED |
+| N2 | 2 | ASSESSMENT: "2022 was the only good one" — 2023 (n 10) and 2025 (n 32) are positive too | Loose sentence | ADOPTED |
+| N3 | 2 | "23-trial family" survives in ASSESSMENT/SCORECARD; the family is 25 (33 with A36) | Doc lag (recurrence of J3-3) | ADOPTED |
+| N4 | 2 | SCORECARD gate (e) "6/6" — now 7/7 | Doc lag | ADOPTED |
+| N5 | 2 | Console prints the ungridded step-open summary above the gridded PASS | Legacy print | ADOPTED (integration coder) |
+| N6 | 2 | Blank cells for NA (< 20 blocks) unlabelled | Rendering | ADOPTED: caption |
+| N7 | 1 | ASSESSMENT maxDD −8.7 % vs CSV −8.6 % | Rounding | ADOPTED |
+| N8 | — | `pipeline/pbo.py` (CSCV probability of backtest overfitting) and the faster `fvg.py` were in the working tree unannounced | Concurrent fleet work | ADOPTED: A37 names PBO as a D6 reporting statistic (not a survival condition, with its null-calibration caveat); A36's unit is integrated as a `make all` step and its 8 selection-window trials join the family (33) |
+
+Escalation watch: the stand-in class is at four instances; the judge and the orchestrator agree that a fifth in the own-account/ETF path escalates instead of looping.
+

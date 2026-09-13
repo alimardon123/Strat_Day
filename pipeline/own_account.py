@@ -39,6 +39,8 @@ ES_COST_PTS = 0.42               # ES round trip in index points (ACCEPTANCE bud
 VOL_COST_BPS = 5.0               # VXX/VXZ per side, ASSESSMENT_iteration17
 S13_CAP = 0.5                    # weight cap on S13 relative to the other sleeves (STRATEGY.md:92-103)
 BRIDGE_MIN_CORR = 0.98           # A13 (amended): measured old-VXZ vs VIXM daily-return corr is 0.987 (ETN vs ETF on the same index)
+BRIDGE_COLS = ["pair", "daily_return_corr", "n_overlap_days", "corr_2018", "corr_2019", "corr_2020_on",
+               "zero_return_days_2018", "decision", "note"]   # out/own_account_bridge.csv columns (A13 disposition)
 
 
 # --------------------------------------------------------------------------- data
@@ -56,8 +58,14 @@ def etf_closes(ext_path="data/ext/etf_daily_2017-11_2026-09.csv.gz"):
 
 def bridge(C, E):
     """Chain each ticker's ext series onto the Kaggle series by returns from the last common
-    date (or from the ext start when there is no overlap). VXX/VXZ per A13 are bridged through
-    VIXY/VIXM outside this function (see splice_vol)."""
+    date (or from the ext start when there is no overlap). Tests the overlap VALUE, not index
+    membership (B1): `a.index[-1]` is inside E's date range for every ticker (the pivot's index
+    is the union across all tickers), but for vxx/vxz the ext panel itself has no row there (the
+    Series B notes start 2018-01-25) so the reindexed value is NaN; scaling off a NaN produced a
+    silently all-NaN series. When there is no real overlap value the two segments are
+    concatenated unscaled (`scale = 1.0`) instead of scale-chained -- for vxx/vxz this leaves the
+    old (Kaggle) and new (Series B) prices back to back in one column, which splice_vol /
+    build_sleeves then split back apart into `<ticker>` and `<ticker>_new` (A13; see splice_vol)."""
     out = {}
     for t in set(C.columns) | set(E.columns):
         a = C[t].dropna() if t in C else pd.Series(dtype=float)
@@ -68,35 +76,79 @@ def bridge(C, E):
             out[t] = a
         else:
             b = b[b.index > a.index[-1]]
-            scale = a.iloc[-1] / E[t].reindex([a.index[-1]]).iloc[0] if a.index[-1] in E.index else 1.0
+            ov = E[t].reindex([a.index[-1]]).iloc[0] if a.index[-1] in E.index else np.nan
+            scale = a.iloc[-1] / ov if (ov == ov and ov != 0) else 1.0
             out[t] = pd.concat([a, b * scale])
     return pd.DataFrame(out).sort_index()
+
+
+def _bridge_corr(a, b):
+    """Daily-return correlation of `a` vs `b` on their common index; NA below 250 overlap days
+    (same floor as the old code). Returns (corr, a's return series, the overlap index)."""
+    ov = a.index.intersection(b.index)
+    ra, rb = a.pct_change().reindex(ov), b.pct_change().reindex(ov)
+    c = float(ra.corr(rb)) if len(ov) > 250 else np.nan
+    return c, ra, ov
+
+
+def _year_corr(ra, rb, ov, y0, y1=None):
+    """corr(ra, rb) restricted to the overlap dates in year y0 (or >= y0 when y1 is None);
+    NA below 20 observations (the survival rule's per-year block floor, A26)."""
+    sel = ov[(ov.year >= y0) & (ov.year <= (y1 if y1 is not None else y0))]
+    return float(ra.reindex(sel).corr(rb.reindex(sel))) if len(sel) > 20 else np.nan
 
 
 def splice_vol(C, old, new, proxy, out=None):
     """A13: chain `old` (original ETN, ends 2017-11-10) -> `proxy` (VIXY/VIXM, continuous) -> `new`
     (the 2018 Series B note, present only when the ext panel is supplied) by daily returns.
-    Returns (price-like series, dict of bridge correlations); the bridge is refused (returns
-    the old series only) if any correlation on an overlap is below BRIDGE_MIN_CORR (0.98, A13)."""
-    corr = {}
+    Returns (price-like series, list of bridge-table row dicts: pair, daily_return_corr,
+    n_overlap_days, corr_2018, corr_2019, corr_2020_on, zero_return_days_2018, decision, note).
+
+    Two independent BRIDGE_MIN_CORR (0.98, A13) checks, so the outcome is generated from the
+    measured correlation, never typed:
+      - old-vs-proxy gates whether the proxy may be used to fill any post-`old` period at all
+        (measured ~0.99 for both pairs; if this ever failed there would be no bridge and `old`
+        is returned unchanged, decision `refused (< BRIDGE_MIN_CORR)` and nothing downstream);
+      - new-vs-proxy gates whether the real Series B note is spliced in once it starts, or the
+        proxy's returns are kept for the WHOLE post-2017-11-10 period instead (the VXZ case:
+        judge finding, most of the 2018 Series B closes are stale/zero-return prints)."""
+    rows = []
     o = C[old].dropna() if old in C else pd.Series(dtype=float)
     p = C[proxy].dropna() if proxy in C else pd.Series(dtype=float)
     n = C[new].dropna() if new in C else pd.Series(dtype=float)
     if o.empty or p.empty:
-        return o, corr
-    ov = o.index.intersection(p.index)
-    corr[f"{old}_vs_{proxy}"] = float(o.pct_change().reindex(ov).corr(p.pct_change().reindex(ov))) if len(ov) > 250 else np.nan
+        return o, rows
+
+    c_old, _, ov_old = _bridge_corr(o, p)
+    d_old = "n/a" if c_old != c_old else ("bridged" if c_old >= BRIDGE_MIN_CORR else "refused (< BRIDGE_MIN_CORR)")
+    rows.append(dict(pair=f"old_{old}_vs_{proxy}", daily_return_corr=c_old, n_overlap_days=int(len(ov_old)),
+                      corr_2018=np.nan, corr_2019=np.nan, corr_2020_on=np.nan, zero_return_days_2018=np.nan,
+                      decision=d_old, note=""))
+    if d_old != "bridged":
+        return o, rows                                    # proxy never validated against the old series: no bridge at all
+
     r = o.pct_change().fillna(0.0)
     tail = p.pct_change()[p.index > o.index[-1]]
     if not n.empty and n.index.max() > o.index[-1]:
         n2 = n[n.index > o.index[-1]]
-        ov2 = n2.index.intersection(p.index)
-        corr[f"{new}_vs_{proxy}"] = float(n2.pct_change().reindex(ov2).corr(p.pct_change().reindex(ov2))) if len(ov2) > 250 else np.nan
-        tail = pd.concat([tail[tail.index < n2.index[0]], n2.pct_change().fillna(0.0)])
-    if any(v == v and v < BRIDGE_MIN_CORR for v in corr.values()):
-        return o, corr
+        c_new, r_new, ov_new = _bridge_corr(n2, p)
+        rp = p.pct_change()
+        zero18 = ov_new[ov_new.year == 2018]
+        row = dict(pair=f"new_{old}_vs_{proxy}", daily_return_corr=c_new, n_overlap_days=int(len(ov_new)),
+                   corr_2018=_year_corr(r_new, rp, ov_new, 2018), corr_2019=_year_corr(r_new, rp, ov_new, 2019),
+                   corr_2020_on=_year_corr(r_new, rp, ov_new, 2020, 9999),
+                   zero_return_days_2018=int((r_new.reindex(zero18) == 0.0).sum()) if len(zero18) else np.nan,
+                   decision="n/a", note="")
+        if c_new == c_new and c_new >= BRIDGE_MIN_CORR:
+            row["decision"] = "bridged"
+            tail = pd.concat([tail[tail.index < n2.index[0]], n2.pct_change().fillna(0.0)])
+        elif c_new == c_new:
+            row["decision"] = "refused (< BRIDGE_MIN_CORR)"
+            row["note"] = (f"{old.upper()} Series B refused; {proxy.upper()} used as the mid-term "
+                            f"leg from {tail.index[0].date()}")
+        rows.append(row)
     chained = pd.concat([r, tail.dropna()])
-    return (1 + chained).cumprod() * o.iloc[0], corr
+    return (1 + chained).cumprod() * o.iloc[0], rows
 
 
 def spy_ohlc():
@@ -201,10 +253,11 @@ def s13_volts(C, bridge=None):
     + → long VXX, − → short VXX; 5 bp per side. VXX/VXZ come from splice_vol (A13)."""
     if "vxx" not in C or "vxz" not in C:
         return None
-    vxx, cx = splice_vol(C, "vxx", "vxx_new", "vixy")
-    vxz, cz = splice_vol(C, "vxz", "vxz_new", "vixm")
+    vxx, rx = splice_vol(C, "vxx", "vxx_new", "vixy")
+    vxz, rz = splice_vol(C, "vxz", "vxz_new", "vixm")
     if bridge is not None:
-        bridge.update({**cx, **cz})
+        bridge.extend(rx)
+        bridge.extend(rz)
     vxx, vxz = vxx.dropna(), vxz.dropna()
     idx = vxx.index.intersection(vxz.index)
     vxx, vxz = vxx.reindex(idx), vxz.reindex(idx)
@@ -215,13 +268,21 @@ def s13_volts(C, bridge=None):
     return (w * r) - turn * VOL_COST_BPS / 10000.0
 
 
-def build_sleeves():
-    C, note = etf_closes()
+def split_new_notes(C):
+    """Ext panel present: separate the 2018 Series B notes from the original ETN prices so
+    splice_vol can chain old (Kaggle, <=2017-11-10) -> proxy -> new (A13). Pulled out of
+    build_sleeves so gate_etf can exercise the same split without the rest of the pipeline."""
     if "vxx" in C and C["vxx"].dropna().index.max() > pd.Timestamp("2018-06-01"):   # ext panel present: separate the Series B notes
         for t in ("vxx", "vxz"):
             new = C[t][C[t].index > pd.Timestamp("2017-11-10")]
             C[f"{t}_new"] = new
             C.loc[C.index > pd.Timestamp("2017-11-10"), t] = np.nan
+    return C
+
+
+def build_sleeves():
+    C, note = etf_closes()
+    C = split_new_notes(C)
     U = C[[c for c in UNIVERSE if c in C]]
     R = U.pct_change()
     iv = (1.0 / (R.rolling(60).std().shift(1))).replace([np.inf, -np.inf], np.nan)
@@ -234,7 +295,7 @@ def build_sleeves():
     mkt = stocks.pct_change().where(lambda x: x.abs() < 0.5).mean(axis=1)
     bab = it11.build_sleeves(stocks, mkt)["S8_BAB"]
     spyC = spy.set_index("date")[["close"]].rename(columns={"close": "spy"})
-    bridge = {}
+    bridge = []
     s13 = s13_volts(C, bridge)
     sleeves = {
         "S1_MEANREV": s1, "S2_TSMOM": tsmom_iv(U, R, iv), "S3_XSMOM": xsmom_iv(U, R, iv),
@@ -243,8 +304,9 @@ def build_sleeves():
     ends = {"S1_MEANREV": spy["date"].max(), "S2_TSMOM": U.index.max(), "S3_XSMOM": U.index.max(),
             "S5_VOLMGD": spy["date"].max(), "S6_STREV": U.index.max(), "S8_BAB": stocks.index.max(),
             "S12_GAPUP": s12_end, "S13_VOLTS": s13.index.max() if s13 is not None else pd.NaT}
-    pd.DataFrame([dict(pair=k, daily_return_corr=v) for k, v in bridge.items()] or [dict(pair="none", daily_return_corr=np.nan)]).to_csv(
-        "out/own_account_bridge.csv", index=False, float_format="%.6f")
+    bdf = pd.DataFrame(bridge, columns=BRIDGE_COLS) if bridge else pd.DataFrame(
+        [dict(pair="none", decision="n/a", note="ext panel absent")], columns=BRIDGE_COLS)
+    bdf.to_csv("out/own_account_bridge.csv", index=False, float_format="%.6f")
     S = pd.DataFrame({k: v for k, v in sleeves.items() if v is not None})
     S = S.loc["2006-01-01":].copy()
     for k, e in ends.items():                       # no returns after a sleeve's data ends
@@ -322,7 +384,11 @@ def main():
     by_year["sleeves_min"] = ns.groupby(ns.index.year).min()
     by_year.index.name = "year"
     by_year.to_csv("out/own_account_by_year.csv", float_format="%.6f")
-    print("ETF panel:", note, "| VXX/VXZ bridge correlations:", bridge or "old series only (ext panel absent)")
+    corrs = {r["pair"]: (r["daily_return_corr"], r["decision"]) for r in bridge} if bridge else "old series only (ext panel absent)"
+    print("ETF panel:", note, "| VXX/VXZ bridge correlations:", corrs)
+    for r in bridge:
+        if r.get("note"):
+            print("  note:", r["note"])
     print("sleeve data ends:", {k: str(v)[:10] for k, v in ends.items()})
     cm = V.loc[:BASE_END].corr()
     iu = np.triu_indices_from(cm.values, 1)

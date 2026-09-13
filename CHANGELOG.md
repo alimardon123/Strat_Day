@@ -94,3 +94,10 @@
 - D5: the ETF panel extends S2/S3/S6/S13 to 2026-09-11 through the VXX/VXZ bridge (0.9987 / 0.9875); post-2017 EQUAL_available(4-8) Sharpe 0.52.
 - ASSESSMENT, SCORECARD, PLAN updated; BLOCKED.md closed.
 
+## 2026-09-13 — Judge round 4 (after the real holdout): ITERATE on the ETF bridge → repaired; A36 and A37 integrated
+- Judge verified the holdout clean on every criterion (selection 0/28 mismatches, −0.143431 on n 274 recomputed from the per-trade file, nothing promoted, data window honest, `make all` from a clean copy byte-identical to the committed out/).
+- B1: the ETF panel's real VXX/VXZ had been silently dropped (NaN splice scale); fixed at the root (value-tested scale), `splice_vol` now measures all four bridge correlations with per-year breakdown and the 2018 stale-close count; DISPOSITION by the existing 0.98 rule: VXX bridged to the real Series B note (0.9829), VXZ bridge refused (0.8775; 178 of 234 stale closes in 2018) and VIXM kept as the mid-term leg — A13 amended with the measurement; new gate (f) `pipeline/gate_etf.py` asserts panel coverage and the bridge decision (it fails on the old code). Effect: S13 post-2017 Sharpe 0.18 → 0.16; extended book 0.670 → 0.668 / 0.754 → 0.750.
+- A36 (owner's fair-value-gap setup): `pipeline/units/fvg.py` (numpy hot loop, ~1 min) is a `make all` step; its 8 selection-window trials join the family (33); PLAYBOOK §9 renders the three windows with a generated verdict — no trial survives; every trial net-negative at 1 pt in every window; the midpoint entry beats a random-time entry but not the cost.
+- A37 (PBO, reporting statistic): `pipeline/pbo.py` — CSCV over 16 blocks, PBO 0.73, null 0.85 (floor for near-duplicate configurations) — printed in PLAYBOOK §2 beside the FDR sentence; not a trial, not a gate.
+- Notes N1–N7 applied (text); the gate output name reconciled (`out/gate_etf.csv`).
+

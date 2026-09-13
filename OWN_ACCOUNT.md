@@ -64,11 +64,11 @@ Secondary track for a stock account with options approval. Sleeve code is Thread
 | S6_STREV | -0.035 | 0.108 | -0.280 | -0.643 | 5205 | 2006-01-03 | 2026-09-11 |
 | S8_BAB | 0.022 | 0.096 | 0.274 | -0.414 | 5087 | 2006-01-03 | 2026-03-20 |
 | S12_GAPUP | 0.020 | 0.105 | 0.238 | -0.340 | 3615 | 2006-01-03 | 2020-05-13 |
-| S13_VOLTS | 0.018 | 0.054 | 0.363 | -0.180 | 4430 | 2009-01-30 | 2026-09-11 |
-| EQUAL_available(1-8) | 0.032 | 0.048 | 0.670 | -0.101 | 5207 | 2006-01-03 | 2026-09-11 |
-| BUCKET_A | 0.042 | 0.057 | 0.743 | -0.094 | 5205 | 2006-01-03 | 2026-09-11 |
+| S13_VOLTS | 0.018 | 0.054 | 0.351 | -0.196 | 4430 | 2009-01-30 | 2026-09-11 |
+| EQUAL_available(1-8) | 0.032 | 0.048 | 0.668 | -0.103 | 5207 | 2006-01-03 | 2026-09-11 |
+| BUCKET_A | 0.041 | 0.057 | 0.736 | -0.094 | 5205 | 2006-01-03 | 2026-09-11 |
 | BUCKET_B | 0.026 | 0.061 | 0.456 | -0.168 | 5207 | 2006-01-03 | 2026-09-11 |
-| TWO_BUCKET_50_50 | 0.034 | 0.046 | 0.754 | -0.086 | 5207 | 2006-01-03 | 2026-09-11 |
+| TWO_BUCKET_50_50 | 0.034 | 0.046 | 0.750 | -0.089 | 5207 | 2006-01-03 | 2026-09-11 |
 
 ## POST-BASELINE 2017-11-13 →
 
@@ -81,11 +81,11 @@ Secondary track for a stock account with options approval. Sleeve code is Thread
 | S6_STREV | -0.067 | 0.111 | -0.565 | -0.500 | 2218 | 2017-11-13 | 2026-09-11 |
 | S8_BAB | -0.013 | 0.088 | -0.102 | -0.230 | 2098 | 2017-11-13 | 2026-03-20 |
 | S12_GAPUP | 0.007 | 0.117 | 0.115 | -0.178 | 628 | 2017-11-13 | 2020-05-13 |
-| S13_VOLTS | 0.009 | 0.057 | 0.181 | -0.180 | 2218 | 2017-11-13 | 2026-09-11 |
-| EQUAL_available(4-8) | 0.022 | 0.044 | 0.522 | -0.101 | 2218 | 2017-11-13 | 2026-09-11 |
-| BUCKET_A | 0.028 | 0.056 | 0.524 | -0.083 | 2218 | 2017-11-13 | 2026-09-11 |
+| S13_VOLTS | 0.007 | 0.057 | 0.158 | -0.196 | 2218 | 2017-11-13 | 2026-09-11 |
+| EQUAL_available(4-8) | 0.022 | 0.044 | 0.517 | -0.103 | 2218 | 2017-11-13 | 2026-09-11 |
+| BUCKET_A | 0.027 | 0.056 | 0.509 | -0.074 | 2218 | 2017-11-13 | 2026-09-11 |
 | BUCKET_B | 0.016 | 0.057 | 0.306 | -0.168 | 2218 | 2017-11-13 | 2026-09-11 |
-| TWO_BUCKET_50_50 | 0.023 | 0.042 | 0.556 | -0.086 | 2218 | 2017-11-13 | 2026-09-11 |
+| TWO_BUCKET_50_50 | 0.022 | 0.042 | 0.547 | -0.089 | 2218 | 2017-11-13 | 2026-09-11 |
 
 ## By year (sum of daily returns at 10% sleeve vol)
 
@@ -103,13 +103,13 @@ Secondary track for a stock account with options approval. Sleeve code is Thread
 | 2015 | 0.029 | 0.030 | 0.028 | 0.029 | 8.000 | 8 |
 | 2016 | 0.004 | 0.057 | -0.029 | 0.014 | 8.000 | 8 |
 | 2017 | 0.084 | 0.075 | 0.090 | 0.082 | 8.000 | 8 |
-| 2018 | -0.069 | 0.019 | -0.121 | -0.051 | 8.000 | 8 |
-| 2019 | 0.103 | 0.095 | 0.108 | 0.101 | 8.000 | 8 |
-| 2020 | 0.056 | 0.096 | 0.028 | 0.062 | 7.364 | 7 |
-| 2021 | 0.030 | -0.009 | 0.046 | 0.018 | 7.000 | 7 |
-| 2022 | -0.012 | 0.011 | -0.022 | -0.005 | 7.000 | 7 |
-| 2023 | -0.029 | 0.008 | -0.043 | -0.018 | 7.000 | 7 |
-| 2024 | 0.022 | -0.004 | 0.032 | 0.014 | 7.000 | 7 |
+| 2018 | -0.071 | 0.012 | -0.121 | -0.054 | 8.000 | 8 |
+| 2019 | 0.106 | 0.102 | 0.108 | 0.105 | 8.000 | 8 |
+| 2020 | 0.058 | 0.101 | 0.028 | 0.064 | 7.364 | 7 |
+| 2021 | 0.031 | -0.005 | 0.046 | 0.020 | 7.000 | 7 |
+| 2022 | -0.020 | -0.016 | -0.022 | -0.019 | 7.000 | 7 |
+| 2023 | -0.029 | 0.007 | -0.043 | -0.018 | 7.000 | 7 |
+| 2024 | 0.025 | 0.008 | 0.032 | 0.020 | 7.000 | 7 |
 | 2025 | 0.056 | 0.061 | 0.055 | 0.058 | 7.000 | 7 |
 | 2026 | 0.026 | -0.023 | 0.042 | 0.010 | 4.931 | 4 |
 
@@ -117,18 +117,22 @@ Secondary track for a stock account with options approval. Sleeve code is Thread
 
 | regime | EQUAL_available | BUCKET_A | BUCKET_B | TWO_BUCKET_50_50 | sleeves_mean |
 |---|---|---|---|---|---|
-| downtrend | -0.012 | -0.007 | -0.018 | -0.012 | 6.923 |
-| high_vol | 0.032 | 0.078 | 0.010 | 0.044 | 7.307 |
-| uptrend | 0.043 | 0.034 | 0.048 | 0.041 | 7.690 |
+| downtrend | -0.013 | -0.008 | -0.018 | -0.013 | 6.923 |
+| high_vol | 0.031 | 0.076 | 0.010 | 0.043 | 7.307 |
+| uptrend | 0.043 | 0.035 | 0.048 | 0.041 | 7.690 |
 
 ## VXX / VXZ bridge (A13): daily-return correlations on the overlaps
 
-Old VXX ↔ VIXY and old VXZ ↔ VIXM are measurable now; new-VXX ↔ VIXY and new-VXZ ↔ VIXM need the ext panel. The bridge is refused below 0.98.
+Correlations measured on whatever overlap each pair has in this run (`out/own_account_bridge.csv`); the bridge is refused below 0.98.
 
-| pair | daily_return_corr |
-|---|---|
-| vxx_vs_vixy | 0.9987 |
-| vxz_vs_vixm | 0.9875 |
+| pair | daily_return_corr | n_overlap_days | corr_2018 | corr_2019 | corr_2020_on | zero_return_days_2018 | decision | note |
+|---|---|---|---|---|---|---|---|---|
+| old_vxx_vs_vixy | 0.9987 | 1723 |  |  |  |  | bridged |  |
+| new_vxx_vs_vixy | 0.9829 | 2169 | 0.9698 | 0.9989 | 0.9836 | 8.0000 | bridged |  |
+| old_vxz_vs_vixm | 0.9875 | 1723 |  |  |  |  | bridged |  |
+| new_vxz_vs_vixm | 0.8775 | 2169 | 0.1762 | 0.9824 | 0.9714 | 178.0000 | refused (< BRIDGE_MIN_CORR) | VXZ Series B refused; VIXM used as the mid-term leg from 2017-11-13 |
+
+VXX: bridged (corr 0.9987); VXX: bridged (corr 0.9836; 8 stale closes in 2018); VXZ: bridged (corr 0.9875); VXZ: refused (< BRIDGE_MIN_CORR) (corr 0.9714; 178 stale closes in 2018) — the mid-term leg uses VIXM from 2017-11-13 when the VXZ bridge is refused.
 
 ## VIX − realised vol (variance risk premium), measured not traded
 

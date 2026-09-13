@@ -29,6 +29,13 @@ def main():
         fvg = pd.read_csv("out/fvg_candidates.csv")
         for _, x in fvg[fvg["window"] == "SELECTION"].iterrows():
             rows.append(dict(family="fvg", trial=f"FVG {x['trial']}", n=x["n"], p=x["p_boot_month"], p_day=x["p_boot_day"]))
+    if os.path.exists("out/gapliq_candidates.csv"):
+        # A39: only the SELECTION-window rows are trials (mirrors the fvg block above); CONTEXT is
+        # background and HOLDOUT is these same 3 trials' out-of-sample rows, reported in the gapliq
+        # table, not re-counted.
+        gapliq = pd.read_csv("out/gapliq_candidates.csv")
+        for _, x in gapliq[gapliq["window"] == "SELECTION"].iterrows():
+            rows.append(dict(family="gapliq", trial=f"GAPLIQ {x['trial']}", n=x["n"], p=x["p_boot_month"], p_day=x["p_boot_day"]))
     hold = pd.read_csv("out/holdout_summary.csv") if os.path.exists("out/holdout_summary.csv") else None
     if hold is not None:
         for _, x in hold.iterrows():

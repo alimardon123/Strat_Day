@@ -45,3 +45,14 @@ Updated 2026-09-13 10:10 UTC — HOLDOUT RUN ON REAL DATA (owner's `data/ext/`, 
 - Thread B's published holdout was DST-misaligned (CRITIQUE #2); corrected rows in CHANGELOG.
 - Thread A's option-level numbers reproduce only under ask-entry + intrinsic settlement (A30).
 - Thread B's Sharpe convention (per-trade × √252) overstates annualised Sharpe by √(252 / trades per year); the ranking uses calendar-day Sharpe.
+
+## A39 — overnight-loss liquidation rebound (3 trials, pre-registered 2026-09-13; family 36)
+
+| Trial | Holdout n | Net pts @1 pt | p (day) | Control | Fingerprint | Verdict |
+|---|---|---|---|---|---|---|
+| T1 call 10:00 after overnight loss | 158 | +2.20 | 0.26 | beats day-selection and timing controls | T2 < T1 holds; T3 ≤ 0 FAILS | UNDERPOWERED, not promoted |
+| T2 call 09:31 (timing fingerprint) | 158 | +0.12 | 1.00 | — | — | not a candidate |
+| T3 put 10:00 after overnight gain (mirror) | 154 | +1.89 | 0.43 | — | positive → mechanism asymmetry absent | not a candidate |
+
+Family-wide BH-FDR at 10 % over 36 trials: 0 pass (`out/trials.csv`).
+

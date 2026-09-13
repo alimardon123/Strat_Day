@@ -77,6 +77,54 @@ def fvg_caption(df):
     return " ".join(parts[:2])
 
 
+GAPLIQ_COLS = ["trial", "side", "entry_time", "n_signal_days", "n_skipped", "n", "win", "net_pts_cost1",
+               "net_pts_cost2", "net_pct_cost1", "worst_trade_pts_cost1", "worst_day_pts_cost1", "sharpe_calday",
+               "p_boot_day", "p_boot_month", "control_mean_pts_cost1", "frac_seeds_beaten",
+               "timing_control_pts_cost1", "frac_timing_beaten", "opt_mean_pct_s1", "dsr_N37"]
+
+
+def gapliq_verdict(sub):
+    """Generated per-window verdict for the A39 gapliq family: T1's survival on the same four
+    programmatic checks as the FVG verdict (net > 0 at 1 pt, p_day < 0.05, excess over the
+    day-selection control > 0, n >= 200; DSR at N=37 is reported in the table, not a survival
+    condition here either) AND the amendment's mechanism fingerprint (T2 < T1; T3 <= 0 at 1 pt),
+    then the promotion decision per the amendment's kill/promotion rule."""
+    t1 = sub[sub["trial"] == "T1"]
+    t2 = sub[sub["trial"] == "T2"]
+    t3 = sub[sub["trial"] == "T3"]
+    if t1.empty:
+        return "T1 missing from this window."
+    t1 = t1.iloc[0]
+    net_pos = bool(t1["net_pts_cost1"] > 0)
+    p_sig = bool(t1["p_boot_day"] < 0.05) if pd.notna(t1["p_boot_day"]) else False
+    excess = t1["net_pts_cost1"] - t1["control_mean_pts_cost1"]
+    beats_control = bool(excess > 0) if pd.notna(excess) else False
+    n_ok = bool(t1["n"] >= 200)
+    survives = net_pos and p_sig and beats_control and n_ok
+    t2_lt_t1 = bool(t2.iloc[0]["net_pts_cost1"] < t1["net_pts_cost1"]) if len(t2) and pd.notna(t2.iloc[0]["net_pts_cost1"]) else False
+    t3_le_zero = bool(t3.iloc[0]["net_pts_cost1"] <= 0) if len(t3) and pd.notna(t3.iloc[0]["net_pts_cost1"]) else False
+    fingerprint_ok = t2_lt_t1 and t3_le_zero
+    promoted = survives and fingerprint_ok
+    decision = ("T1 promotable" if promoted else
+               "pattern without its mechanism, not promoted" if survives else
+               "T1 does not survive, not promoted")
+    return (f"T1: net {'>' if net_pos else '<='} 0 at 1 pt, p_day {'<' if p_sig else '>='} 0.05, excess over the "
+            f"day-selection control {'>' if beats_control else '<='} 0, n {'>=' if n_ok else '<'} 200 -> "
+            f"{'SURVIVES' if survives else 'does not survive'} the four programmatic checks (DSR at N=37 is reported "
+            f"in the table above, not a survival condition). Fingerprint: T2 {'<' if t2_lt_t1 else '>='} T1 "
+            f"({'holds' if t2_lt_t1 else 'fails'}); T3 {'<=' if t3_le_zero else '>'} 0 at 1 pt "
+            f"({'holds' if t3_le_zero else 'fails'}). Promotion: {decision}.")
+
+
+def gapliq_caption(df):
+    """First two sentences of the `spec` column (identical on every row — the fixed pre-
+    registration), generated rather than typed (D7)."""
+    if "spec" not in df or not len(df):
+        return ""
+    parts = re.split(r"(?<=\.)\s+", str(df["spec"].iloc[0]).strip())
+    return " ".join(parts[:2])
+
+
 def describe(label):
     hm, direction, gate = label.split("|")
     g = {"mag": "|open → entry| above the expanding 70th percentile of prior sessions",
@@ -283,6 +331,26 @@ def playbook():
                   md(sub[[c for c in FVG_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS + ("n_setups",)), "",
                   fvg_verdict(sub), ""]
         cap = fvg_caption(fvg)
+        if cap:
+            L += [cap, ""]
+    if os.path.exists("out/gapliq_candidates.csv"):
+        gapliq = pd.read_csv("out/gapliq_candidates.csv")
+        L += ["## 10. Overnight-loss forced-liquidation rebound (A39) — pre-registered 2026-09-13, 3 trials", "",
+              "3 trials (T1 long call entry 10:00, T2 same days long call entry 09:31, T3 mirror signal long put "
+              "entry 10:00) from `pipeline.units.gapliq` (`out/gapliq_candidates.csv`), reported on three windows. "
+              "Only the SELECTION-window rows are counted in the trial family (`pipeline/trials.py`, "
+              "`out/trials.csv`); CONTEXT is background and HOLDOUT is these same 3 trials' out-of-sample rows, "
+              "reported here, not double-counted.", ""]
+        for win_name, win_label in (("CONTEXT", "CONTEXT (2005-01-01 → 2012-12-31)"),
+                                     ("SELECTION", "SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family"),
+                                     ("HOLDOUT", "HOLDOUT (2020-07-27 → 2026-09-11)")):
+            sub = gapliq[gapliq["window"] == win_name]
+            if not len(sub):
+                continue
+            L += [f"### {win_label}", "",
+                  md(sub[[c for c in GAPLIQ_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS), "",
+                  gapliq_verdict(sub), ""]
+        cap = gapliq_caption(gapliq)
         if cap:
             L += [cap, ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))

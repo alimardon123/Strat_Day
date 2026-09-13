@@ -32,6 +32,7 @@ STEPS = [
     ("vrp", ["python", "-m", "pipeline.vrp"], "out/vrp.log"),
     ("flow", ["python", "-m", "pipeline.units.flow", "--in", "data/raw/oanda_SPX500_USD.parquet", "--out", "out/flow_candidates.csv"], "out/flow.log"),
     ("fvg", ["python", "-m", "pipeline.units.fvg", "--in", "extended", "--out", "out/fvg_candidates.csv"], "out/fvg.log"),
+    ("gapliq", ["python", "-m", "pipeline.units.gapliq", "--in", "extended", "--out", "out/gapliq_candidates.csv"], "out/gapliq.log"),
     ("trials", ["python", "-m", "pipeline.trials"], "out/trials.log"),
     ("options_timevalue", ["python", "-m", "pipeline.options"], "out/options_timevalue.log"),
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
@@ -42,7 +43,8 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
             "out/insample_execution.csv", "out/insample_summary.csv", "out/insample_sizing.csv",
             "out/own_account_summary.csv", "out/own_account_by_year.csv", "out/own_account_by_regime.csv", "out/own_account_bridge.csv",
             "out/xmarket_SPXUSD.csv", "out/xmarket_GRXEUR.csv", "out/xmarket_ETXEUR.csv",
-            "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/fvg_candidates.csv", "out/trials.csv", "out/options_timevalue.csv",
+            "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/fvg_candidates.csv", "out/gapliq_candidates.csv",
+            "out/trials.csv", "out/options_timevalue.csv",
             "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md"]
 EXPECTED_HOLDOUT = ["out/holdout_summary.csv", "out/holdout_by_year.csv", "out/holdout_pooled.csv",
                     "out/holdout_d4_execution.csv", "out/holdout_d4_summary.csv", "out/holdout_d4_sizing.csv",
@@ -53,7 +55,7 @@ HOLDOUT_STEPS = {"holdout_d2", "reconcile_holdout", "fullsample_d4"}   # ext-onl
 def main():
     os.makedirs("out", exist_ok=True)
     ext = sessions.ext_present()
-    for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*", "out/fvg_*"):
+    for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*", "out/fvg_*", "out/gapliq_*"):
         for f in glob.glob(pat):
             os.remove(f)
     steps = [s for s in STEPS if s[0] not in HOLDOUT_STEPS or ext]

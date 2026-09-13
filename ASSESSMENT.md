@@ -69,6 +69,19 @@ the round-trip cost of the cheapest 0DTE contract. Verdict: no trial survives; t
 killed under the plateau rule. Fill rates 46–65 %: a third to a half of boxes are never touched at the
 midpoint.
 
+## Overnight-loss forced-liquidation rebound (A39) — pre-registered, tested, not promoted
+
+Three trials (`out/gapliq_candidates.csv`, PLAYBOOK §10). On the holdout the hypothesis trade T1 (call from 10:00 after an
+overnight loss below the expanding 10th percentile) is positive: n 158, win 54.4 %, +2.20 pts at
+1 pt (+1.20 at 2 pt), day-block p 0.26, above its day-selection control (-1.07)
+and its timing control (+0.02); the timing fingerprint holds (T2 from 09:31: +0.12 pts < T1).
+But n < 200 → UNDERPOWERED, p is far from 0.05, and the mirror T3 (put from 10:00 after an overnight GAIN) is also positive
+(+1.89 pts, p 0.43) — the asymmetry the forced-liquidation mechanism predicts is absent, so what the
+holdout shows is symmetric post-2020 reversal of large overnight gaps, not liquidation exhaustion. In the selection window T1
+is negative (-2.41 pts, n 121) and in the context window too. Per the A39 rule T1 is "a pattern
+without its mechanism": reported, never promoted. It is the only Track A candidate with a positive holdout row above both
+controls; the honest reading is a candidate for a forward test (option B) with a symmetric spec, not a trade.
+
 ## Probability of backtest overfitting of the selection itself (A37)
 
 `out/pbo.csv`: with 12 rankable configurations on the selection window, CSCV over 16 blocks (12,870

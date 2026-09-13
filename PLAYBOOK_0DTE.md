@@ -45,7 +45,7 @@ Thread A's gap-up call, same selection window (pre-registered by Thread A, not p
 |---|---|---|---|---|---|---|---|
 | 13:00\|call\|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 33 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
+Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 36 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
@@ -340,3 +340,39 @@ Measure ten real 2%-ITM 0DTE fills at the mid; above 1.5 index points round-trip
 1 of 8 trials net > 0 at 1 pt; 0 of 8 have p_day < 0.05; no trial survives (net > 0 AND p_day < 0.05 AND excess over control > 0 AND n ≥ 200; DSR at N=33 is reported in the table above, not a survival condition).
 
 FIXED (pre-registration): ATR mult 1.5, structure lookback 12 bars, stop buffer 0.1 ATR, min box height 0.05 ATR, entry = box midpoint. atr_ref for a setup ending at bar t = rolling(20) mean true range of the 20 bars strictly before the displacement bar t-1 (no lookahead into t-1/t); ATR rolls across sessions only for the first ~19 bars of a session, else same-session (pre-registration's own allowance); true range at a session's first bar uses that bar's own open, not the prior session's close (no overnight gap in ATR).
+
+## 10. Overnight-loss forced-liquidation rebound (A39) — pre-registered 2026-09-13, 3 trials
+
+3 trials (T1 long call entry 10:00, T2 same days long call entry 09:31, T3 mirror signal long put entry 10:00) from `pipeline.units.gapliq` (`out/gapliq_candidates.csv`), reported on three windows. Only the SELECTION-window rows are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); CONTEXT is background and HOLDOUT is these same 3 trials' out-of-sample rows, reported here, not double-counted.
+
+### CONTEXT (2005-01-01 → 2012-12-31)
+
+| trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N37 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| T1 | call | 10:00 | 284 | 0 | 284 | 44.7183 | -3.1873 | -4.1873 | -0.2771 | -62.3000 | -62.3000 | -1.0962 | 1.0000 | 1.0000 | -0.6471 | 0.0000 | -2.7408 | 0.0900 | -7.0881 | 0.0000 |
+| T2 | call | 09:31 | 284 | 0 | 284 | 47.8873 | -2.4500 | -3.4500 | -0.2029 | -69.6000 | -69.6000 | -0.7298 | 1.0000 | 1.0000 | -0.8500 | 0.0050 | -2.7408 | 0.8150 | -3.5841 | 0.0000 |
+| T3 | put | 10:00 | 273 | 0 | 273 | 39.1941 | -3.6725 | -4.6725 | -0.3469 | -73.0000 | -73.0000 | -1.2901 | 1.0000 | 1.0000 | -0.4838 | 0.0000 | -3.7292 | 0.5700 | -9.2340 | 0.0000 |
+
+T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0, n >= 200 -> does not survive the four programmatic checks (DSR at N=37 is reported in the table above, not a survival condition). Fingerprint: T2 >= T1 (fails); T3 <= 0 at 1 pt (holds). Promotion: T1 does not survive, not promoted.
+
+### SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family
+
+| trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N37 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| T1 | call | 10:00 | 123 | 2 | 121 | 47.1074 | -2.4124 | -3.4124 | -0.0974 | -99.4000 | -99.4000 | -0.3564 | 1.0000 | 1.0000 | -0.7693 | 0.1050 | -1.9027 | 0.2950 | -2.6008 | 0.0001 |
+| T2 | call | 09:31 | 123 | 2 | 121 | 51.2397 | -0.9017 | -1.9017 | -0.0240 | -94.8000 | -94.8000 | -0.0845 | 1.0000 | 1.0000 | -0.9280 | 0.5350 | -1.9027 | 0.8350 | 0.4543 | 0.0010 |
+| T3 | put | 10:00 | 132 | 0 | 132 | 31.0606 | -8.5947 | -9.5947 | -0.3526 | -165.0000 | -165.0000 | -1.0583 | 1.0000 | 1.0000 | -0.4166 | 0.0000 | -7.1055 | 0.0500 | -10.4819 | 0.0000 |
+
+T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0, n < 200 -> does not survive the four programmatic checks (DSR at N=37 is reported in the table above, not a survival condition). Fingerprint: T2 >= T1 (fails); T3 <= 0 at 1 pt (holds). Promotion: T1 does not survive, not promoted.
+
+### HOLDOUT (2020-07-27 → 2026-09-11)
+
+| trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N37 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| T1 | call | 10:00 | 158 | 0 | 158 | 54.4304 | 2.2016 | 1.2016 | 0.0513 | -166.7500 | -166.7500 | 0.2603 | 0.2592 | 0.2278 | -1.0715 | 0.8550 | 0.0153 | 0.9350 | 3.5742 | 0.4354 |
+| T2 | call | 09:31 | 158 | 0 | 158 | 55.0633 | 0.1168 | -0.8832 | -0.0082 | -189.7000 | -189.7000 | -0.0369 | 1.0000 | 1.0000 | -0.4384 | 0.5500 | 0.0153 | 0.5150 | 1.0202 | 0.1841 |
+| T3 | put | 10:00 | 154 | 0 | 154 | 39.6104 | 1.8922 | 0.8922 | 0.0131 | -84.5000 | -84.5000 | 0.0662 | 0.4338 | 0.4353 | -1.2510 | 0.9050 | 1.4791 | 0.6450 | 0.9594 | 0.2608 |
+
+T1: net > 0 at 1 pt, p_day >= 0.05, excess over the day-selection control > 0, n < 200 -> does not survive the four programmatic checks (DSR at N=37 is reported in the table above, not a survival condition). Fingerprint: T2 < T1 (holds); T3 > 0 at 1 pt (fails). Promotion: T1 does not survive, not promoted.
+
+FIXED (pre-registration, A39): signal = overnight return (prior session's last RTH close -> this session's first RTH open) <= the expanding 10th percentile (T1/T2) / >= the expanding 90th percentile (T3, mirror) of overnight returns over all strictly prior sessions, min 250 prior sessions, no fitted parameter. T1 long call entry 10:00 bar close; T2 same days as T1, long call entry 09:31 bar close; T3 mirror signal, long put, entry 10:00 bar close; all exit at the 16:00 close.

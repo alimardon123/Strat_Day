@@ -122,3 +122,6 @@
 - A40 fixes the causal swing definition, the reversal/continuation signals, the 24-trial family, costs, the train/test lock and decision rule, the random-entry control, and the pattern-table deliverable.
 - PLAN carries both tracks; Track B rows B1–B3.
 
+## 2026-09-13 — A39 built and run (fleet coder, Sonnet): T1 positive but underpowered on the holdout, mirror also positive → not promoted
+- `pipeline/units/gapliq.py` (11 s, byte-identical twice); PLAYBOOK §10; family 36 (0 pass FDR). Holdout T1 n 158, +2.20 pts, p 0.26; T2 +0.12; T3 +1.89. Selection/context negative. Reported as a pattern without its mechanism (ASSESSMENT).
+

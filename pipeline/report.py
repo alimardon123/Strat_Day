@@ -108,7 +108,10 @@ def playbook():
     L += ["## 1. The pre-registered specification", "",
           f"**Reconciled last-hour momentum signal (D1 winner):** `{w}` — {describe(w)}."]
     if thr:
-        L += [f"Frozen gate values: 15:00 → VIX > {thr.group(1)} and |move| > {thr.group(2)}%; 15:30 → VIX > {thr.group(3)} and |move| > {thr.group(4)}%.", ""]
+        L += [f"For reference, the frozen `vixmove_fixed` boundaries (a different, non-winning configuration: Oanda 2005-2012 "
+              f"upper terciles, `out/reconcile_decision.md`): 15:00 VIX > {thr.group(1)} & |move| > {thr.group(2)}%; 15:30 VIX > "
+              f"{thr.group(3)} & |move| > {thr.group(4)}%. The pre-registered winner uses expanding terciles computed from "
+              "strictly prior sessions and has no frozen thresholds.", ""]
     L += ["**Thread A's gap-up call (pre-registered by Thread A):** open / prior close − 1 > 0.3% → 2% ITM call at the first bar "
           "after 13:00 ET, hold to settlement.", "",
           "Strike: 2% in the money, rounded away from spot to the grid (5 points SPX, $1 SPY/XSP). Never at-the-money or "
@@ -152,9 +155,10 @@ def playbook():
           "paying commission instead of crossing the entry half of the spread) and the part that is price improvement net of "
           "adverse selection (unfilled signals count as zero).", "",
           "## 6. Contract size and minimum account", "",
-          "A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500; XSP is one tenth. At the base size (4% of account "
-          "per trade) one SPX contract needs ≈ $325k of account, one XSP contract ≈ $32.5k, one SPY contract ≈ $32.5k with the "
-          "15:55 exit. Max positions per day: 2 (the two signals can coincide).", "",
+          "A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500 (S = 6,500 is an assumed current index level, not "
+          "measured here — no post-2020 price file is present; every dollar figure scales linearly with S); XSP is one tenth. "
+          "At the base size (4% of account per trade) one SPX contract needs ≈ $325k of account, one XSP contract ≈ $32.5k, "
+          "one SPY contract ≈ $32.5k with the 15:55 exit. Max positions per day: 2 (the two signals can coincide).", "",
           "## 7. Holdout — what decides whether this is tradeable", ""]
     if hold_files:
         h = pd.read_csv(hold_files[0])
@@ -236,9 +240,13 @@ def own_account():
               "refused below 0.98.", "", md(b, fmt="{:.4f}"), ""]
     if os.path.exists("out/vrp_vix_minus_rv.csv"):
         v = pd.read_csv("out/vrp_vix_minus_rv.csv")
+        v_years = v[v["year"].astype(str).str.fullmatch(r"\d{4}")]
+        v_last = v_years.iloc[-1]
         L += ["## VIX − realised vol (variance risk premium), measured not traded", "",
               "Prior-close VIX minus the next 21 trading days' realised vol of SPY, in vol points. Not tradeable as measured: no "
-              "option prices, spreads or margin; a defined-risk 30–45 DTE implementation is a recorded non-goal.", "", md(v), ""]
+              "option prices, spreads or margin; a defined-risk 30–45 DTE implementation is a recorded non-goal. Coverage ends "
+              f"with the SPY daily panel's final partial year in `out/vrp_vix_minus_rv.csv`: last row {v_last['year']} has "
+              f"n = {int(v_last['n'])}.", "", md(v), ""]
     L += ["## Known differences from Thread A's published baseline", "",
           "Thread A: 8 sleeves Sharpe 1.12 full / 1.35 test, maxDD −6.10%; two buckets 1.20 / 1.40, −5.26%. Here the BAB sleeve "
           "runs on the raw 928-stock big_movers panel with a |return| < 0.5 mask because Thread A's cleaned 626-stock panel is not "

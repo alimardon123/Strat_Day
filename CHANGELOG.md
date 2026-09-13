@@ -66,3 +66,8 @@
 - ACCEPTANCE no longer types the frozen `vixmove_fixed` boundary (it references `out/reconcile_decision.md`; gate (c)'s Thread-A path prints its own pair by design — A30 prior-bar reference).
 - No statistic, ranking, threshold or pre-registration changed; ext-absent outputs regenerate byte-identically apart from the two new columns, the one decision-file sentence and the new time-value artifact.
 
+## 2026-09-13 — Phase 6 judge round 3: DONE; six notes closed
+- Judge verified N1–N9 file by file, re-ran gates (c) and (e), reproduced the decision rule from the CSV and proved D7 with the synthetic ext feed (126 files byte-identical). Decision DONE.
+- Notes closed: the "Frozen gate values" line is relabelled as the `vixmove_fixed` reference boundaries (the winner has none); the contract-size example states S = 6,500 as an assumption; the VRP table caption carries its coverage end; SCORECARD/ASSESSMENT headers and counts refreshed; A31 names the 2 holdout tests (family 25 with the ext feed) and excludes the POST-SELECTION rows; ASSESSMENT finding 5 carries the measured time-value bound.
+- Class watch (recorded, not looped): typed prose beside generated tables appeared in three rounds at falling severity (7.37 → A7 bound → this round's notes); every playbook TABLE has been a byte-identical re-render since Phase 5.
+

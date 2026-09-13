@@ -1,6 +1,6 @@
 # ASSESSMENT.md — the bar, where each done-statement landed, every gap with a root cause
 
-Status: Phase 7 (2026-09-13; Phase 4 tribunal, Phase 6 judge round 1 and their repairs applied and re-verified). The run stopped where the protocol says it must: every
+Status: Phase 7 SHIPPED for the data that exists (2026-09-13; Phase 4 tribunal, Phase 6 judge rounds 1–2 and their repairs; judge round 3 decision DONE with six non-blocking notes, all closed). The run stopped where the protocol says it must: every
 phase and unit that does not need the user-supplied post-May-2020 data is complete and gated;
 the holdout (D2), the headline playbook numbers (D4) and the ETF-dependent sleeves (D5) wait for
 `data/ext/` (spec in DATA.md, local fetch tool in `tools/fetch_ext_local.py`). Declaring the
@@ -42,8 +42,9 @@ from `out/` by `make all` and byte-identical on `make repeat`.
    (SPY) gives +1.90 / +0.26.
 4. **The 54% loss-at-stop cannot size these trades.** They have no stop; 5 of 145 winner trades
    lost 100% of premium in-sample. Sizing uses the measured worst trade with a 100% floor.
-5. **k × VIX is not a sensitivity for last-hour ITM options** (time value < 0.001 pt at 60
-   minutes). The spread is: the gap-up call flips sign between 1 and 3 points.
+5. **k × VIX is not a sensitivity for last-hour ITM options** (time value ≤ 0.001 pt at 60
+   minutes for VIX ≤ 40 and 0.16 pt at VIX 83, `out/options_timevalue.csv`; the earlier typed
+   bound was wrong). The spread is: the gap-up call flips sign between 1 and 3 points.
 
 ## Gaps, each with a root-cause hypothesis
 

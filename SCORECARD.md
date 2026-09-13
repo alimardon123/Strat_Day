@@ -1,6 +1,6 @@
 # SCORECARD.md — where every done-statement stands, and the trial ledger
 
-Updated 2026-09-13 (after the Phase 4 tribunal, the Phase 6 judge round 1 and their repairs; verifier 11/11). Evidence files under `out/`; regenerate with `make all`.
+Updated 2026-09-13 (after the Phase 4 tribunal, Phase 6 judge rounds 1–2 and their repairs, verifier 8/8; judge round 3: DONE). Evidence files under `out/`; regenerate with `make all`.
 
 ## Gates
 
@@ -23,7 +23,7 @@ Updated 2026-09-13 (after the Phase 4 tribunal, the Phase 6 judge round 1 and th
 | D4 | IN-SAMPLE DONE, holdout pending | `out/insample_summary.csv`, `out/insample_sizing.csv`: winner +7.3% of premium/trade (cash settlement, 1 pt), median +5.5%, 5 of 145 trades lose 100%; sizing at 4% → +5.8%/yr, worst year −2.0% (IN-SAMPLE); gap-up +1.2% at 1 pt, negative at 3 pt; k irrelevant for the last-hour leg; combined book 2%/trade (77 two-position days) |
 | D5 | PARTIAL: baseline test-window EQUAL_8 Sharpe 0.99 / two-bucket 0.97 (Thread A 1.35 / 1.40; maxDD −5.4% vs −5.26%); full-window book is EQUAL_available(1-8) 0.78 because S13 starts 2009 and S2/S3 need a 252-day warm-up; extension to 2026-03 for S1/S5/S8 (3–4 sleeves, Sharpe 0.65); S2/S3/S6/S13 stop 2017-11-10 pending the ext ETF panel; VXX/VXZ bridge correlations 0.9987 / 0.9875 | `out/own_account_*.csv`, `out/own_account_bridge.csv` |
 | D6 | DONE for what ran | `out/trials.csv`: 23 trials, one BH-FDR across all (0 pass); both controls and DSR at both N in `out/reconcile_candidates.csv` |
-| D7 | PASS for the current steps; holdout step wired and conditional | `make all` / `make repeat` (byte-identical, 64 files) |
+| D7 | PASS; holdout, post-selection and full-sample steps wired and conditional on the ext feed | `make all` / `make repeat` (byte-identical: 66 files with the ext feed absent, 126 with the synthetic feed present) |
 
 ## Trial ledger (this run)
 

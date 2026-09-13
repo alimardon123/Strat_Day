@@ -95,3 +95,19 @@ The judge re-ran gates (c) 14/14 and (e) 6/6, re-rendered both playbooks byte-id
 | N9 | 1 | `rank` and `days_with_two_positions` render as floats | NaNs elsewhere in the column | ADOPTED: explicit `int_cols` allow-list in `report.md()` (no auto-detection of integral floats) |
 
 Refuted: none. Open after this round: none (judge round 3 is the done-gate).
+
+## Phase 6 judge round 3 (fleet judge, fresh context) — decision DONE, 6 notes
+
+N1–N9 all VERIFIED (file:line); gates c 14/14 and e 6/6 re-run; decision rule reproduced from the CSV; `make all` + `make repeat` byte-identical in a copy with the synthetic ext feed (126 files) and the ext-absent repo; on the synthetic holdout the pre-registration held (a POST-SELECTION row scored higher and stayed unpromoted). No escalation: the two closed classes did not recur; the "typed prose beside a generated table" class has appeared three times at decreasing severity and is recorded here rather than looped on.
+
+| # | Sev | Finding (short) | Root cause | Disposition |
+|---|---|---|---|---|
+| J3-1 | 5 | "Frozen gate values" line under the winner shows the `vixmove_fixed` boundaries, which the expanding-rule winner does not have | Generated line attached to the wrong configuration | ADOPTED: relabelled as the reference boundaries of a different, non-winning configuration; winner stated to have no frozen thresholds |
+| J3-2 | 2 | SCORECARD file count (64) and both headers stale | Doc drift | ADOPTED |
+| J3-3 | 2 | A31 family enumerates 23; `trials.py` builds 25 with the ext feed | Amendment lag | ADOPTED: A31 names the 2 holdout tests (25) and excludes the 15 POST-SELECTION rows |
+| J3-4 | 2 | ASSESSMENT finding 5 time-value bound unqualified | Not updated with A7 | ADOPTED |
+| J3-5 | 2 | "S = 6,500" contract-size example has no source in `out/` | Illustrative level | ADOPTED: stated as an assumption in the sentence (every dollar figure scales with S) |
+| J3-6 | 1 | VRP table's coverage end not on the table | Caption | ADOPTED: caption derived from the CSV's last row |
+
+Open: none. Blocked on input: D2/D4-headline/D5-ETF sleeves (DATA.md).
+

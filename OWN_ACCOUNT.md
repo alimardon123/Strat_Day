@@ -134,7 +134,7 @@ Old VXX ↔ VIXY and old VXZ ↔ VIXM are measurable now; new-VXX ↔ VIXY and n
 
 ## VIX − realised vol (variance risk premium), measured not traded
 
-Prior-close VIX minus the next 21 trading days' realised vol of SPY, in vol points. Not tradeable as measured: no option prices, spreads or margin; a defined-risk 30–45 DTE implementation is a recorded non-goal.
+Prior-close VIX minus the next 21 trading days' realised vol of SPY, in vol points. Not tradeable as measured: no option prices, spreads or margin; a defined-risk 30–45 DTE implementation is a recorded non-goal. Coverage ends with the SPY daily panel's final partial year in `out/vrp_vix_minus_rv.csv`: last row 2026 has n = 33.
 
 | year | mean | pct_positive | worst | n |
 |---|---|---|---|---|

@@ -9,7 +9,7 @@
 ## 1. The pre-registered specification
 
 **Reconciled last-hour momentum signal (D1 winner):** `15:00|both|vixmove_exp` — decision at 15:00 ET on the bar close; gate: prior-close VIX above its expanding upper tercile AND |prior close → entry| above its expanding upper tercile; direction: call on an up move, put on a down move; entry at the next bar's open; hold to the 16:00 settlement.
-Frozen gate values: 15:00 → VIX > 22.87 and |move| > 0.815%; 15:30 → VIX > 22.87 and |move| > 0.845%.
+For reference, the frozen `vixmove_fixed` boundaries (a different, non-winning configuration: Oanda 2005-2012 upper terciles, `out/reconcile_decision.md`): 15:00 VIX > 22.87 & |move| > 0.815%; 15:30 VIX > 22.87 & |move| > 0.845%. The pre-registered winner uses expanding terciles computed from strictly prior sessions and has no frozen thresholds.
 
 **Thread A's gap-up call (pre-registered by Thread A):** open / prior close − 1 > 0.3% → 2% ITM call at the first bar after 13:00 ET, hold to settlement.
 
@@ -113,7 +113,7 @@ The improvement over market entry splits into the part that is a cost assumption
 
 ## 6. Contract size and minimum account
 
-A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500; XSP is one tenth. At the base size (4% of account per trade) one SPX contract needs ≈ $325k of account, one XSP contract ≈ $32.5k, one SPY contract ≈ $32.5k with the 15:55 exit. Max positions per day: 2 (the two signals can coincide).
+A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500 (S = 6,500 is an assumed current index level, not measured here — no post-2020 price file is present; every dollar figure scales linearly with S); XSP is one tenth. At the base size (4% of account per trade) one SPX contract needs ≈ $325k of account, one XSP contract ≈ $32.5k, one SPY contract ≈ $32.5k with the 15:55 exit. Max positions per day: 2 (the two signals can coincide).
 
 ## 7. Holdout — what decides whether this is tradeable
 

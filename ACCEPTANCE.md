@@ -266,3 +266,42 @@ fingerprint, not a search; every parameter below is fixed before the first run.
   A positive T1 with a failed fingerprint is reported as "pattern without its mechanism" and never promoted.
   Honest prior LOW-MEDIUM: index-level overnight/intraday reversal is weak; the forced-liquidation timing is
   the only part that could survive 1 pt.
+
+## Amendment A40 — Track B: technical swing-start detector on range bars (owner's request, pre-registered 2026-09-13 12:26 UTC, before any run)
+
+Owner 2026-09-13: two tracks. **Track A** is everything above (mechanism-based 0DTE edges under the prop-account
+constraint). **Track B** is a technical-analysis tool: does a "liquidation" of a prior swing extreme (a sweep of
+the stops beyond it) mark the START of a swing, either by reversal (price rejects back inside) or by continuation
+(price closes through), on range charts? The owner supplied six TradingView exports (`data/ext/tv_samples/`,
+manifest inside). Track B is NOT bound to the 0DTE constraint; it is bound to the same statistical guards.
+
+- Data. SPY: range bars REBUILT from the branch's 1-minute SPY (2020-07-27 → 2026-09-11) at $0.34 (the owner's
+  34R) and $1.00; the rebuild is gated against the owner's 34R file on their overlap (2025-06-09 → 2026-03-17):
+  bars per session within ±15 %, and the 5-minute-resampled close series correlation ≥ 0.999 (gate B-a). XAUUSD:
+  the owner's 5000R ($5) file only, unless a longer minute source is found on GitHub (DATA.md); the 2000R file
+  (10 days) is context only. TradingView 1-minute/5-minute/1D files are cross-checks, never inputs (the branch
+  already carries longer series of each).
+- Causal swing level: prior swing high = max(high) over the previous L bars (excluding the current bar); prior
+  swing low symmetric. No forward-looking pivot.
+- Signals (all bar-close decisions, fill at the next bar's open):
+  REVERSAL: high > prior swing high AND close < prior swing high → short; low < prior swing low AND close >
+  prior swing low → long. Stop = the sweep extreme; target = R × risk; time stop 50 bars.
+  CONTINUATION: close > prior swing high (no sweep-and-reject) → long; close < prior swing low → short.
+  Stop = the broken level; target = R × risk; time stop 50 bars. One position per side at a time.
+- Family (all counted, none dropped): type {reversal, continuation} × L {10, 20} × R {1, 2} × range
+  {SPY $0.34, SPY $1.00, XAUUSD $5} = 24 trials. Costs: SPY 2 bp/side (the contract's ETF budget), XAUUSD
+  1 bp/side; results also at 2× cost.
+- Train/test lock (the validator skill's one rule): SPY TRAIN 2020-07-27 → 2023-06-30, TEST 2023-07-01 →
+  2026-09-11; XAUUSD TRAIN 2025-06-08 → 2025-12-31, TEST 2026-01-01 → 2026-03-18. Decision rule fixed now:
+  the SPY winner is the trial with the highest net calendar-day Sharpe on TRAIN with n ≥ 100; it is confirmed
+  only if on TEST it passes every survival condition (net > 0 after costs, day-block p < 0.05, BH-FDR at 10 %
+  within the 24-trial B family, positive excess over the random-entry control, DSR > 0.95 at N = 24, n ≥ 200).
+  XAUUSD is reported under the same rule and labelled UNDERPOWERED where n < 200. Track B's family is FDR-
+  controlled on its own (it answers a different question from Track A); both counts are stated in SCORECARD.
+- Controls: random-entry control with the same stop/target structure (200 seeds; for a random walk the win
+  rate ≈ stop ÷ (stop + target), the mh.sanity check); the actual win rate and net must beat it.
+- Deliverable whatever the verdict: `TRACK_B.md` generated from `out/trackB_*.csv` — the 24 rows on TRAIN and
+  TEST, the decision, and the pattern table the owner asked for: the conditional distribution of the next
+  1/5/20-bar return after a sweep (reversal-shaped and continuation-shaped) versus the unconditional one, by
+  instrument, so the "liquidate then reverse or continue" claim is measured even when no trade survives costs.
+- Kill: no trial passes on TEST → Track B is killed in PLAN with the pattern table as the finding.

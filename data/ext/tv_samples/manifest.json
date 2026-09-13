@@ -1,0 +1,101 @@
+{
+ "source": "owner's TradingView exports, uploaded 2026-09-13; time = Unix seconds UTC; range charts: 34R = $0.34 bars (SPY), 2000R = $2 and 5000R = $5 bars (XAUUSD)",
+ "files": {
+  "AMEX_SPY_1.csv": {
+   "rows": 10530,
+   "first_utc": "2026-02-17 14:30:00+00:00",
+   "last_utc": "2026-03-25 19:59:00+00:00",
+   "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "Volume",
+    "Volume MA"
+   ],
+   "bar_range_if_range_chart": null
+  },
+  "AMEX_SPY_1D.csv": {
+   "rows": 8337,
+   "first_utc": "1993-01-29 14:30:00+00:00",
+   "last_utc": "2026-03-13 13:30:00+00:00",
+   "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "VWAP",
+    "Volume",
+    "Volume MA"
+   ],
+   "bar_range_if_range_chart": null
+  },
+  "AMEX_SPY_34R.csv": {
+   "rows": 10075,
+   "first_utc": "2025-06-09 13:30:00+00:00",
+   "last_utc": "2026-03-17 19:56:51+00:00",
+   "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "Volume",
+    "Volume MA"
+   ],
+   "bar_range_if_range_chart": 0.34000000000003183
+  },
+  "AMEX_SPY_5.csv": {
+   "rows": 10068,
+   "first_utc": "2025-09-08 13:30:00+00:00",
+   "last_utc": "2026-03-13 19:55:00+00:00",
+   "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "Volume",
+    "Volume MA",
+    "VWAP",
+    "Basis",
+    "Upper",
+    "Lower"
+   ],
+   "bar_range_if_range_chart": null
+  },
+  "OANDA_XAUUSD_2000R.csv": {
+   "rows": 10835,
+   "first_utc": "2026-03-08 22:04:00+00:00",
+   "last_utc": "2026-03-18 16:28:37+00:00",
+   "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "Volume",
+    "Volume MA",
+    "VWAP"
+   ],
+   "bar_range_if_range_chart": 2.0
+  },
+  "OANDA_XAUUSD_5000R.csv": {
+   "rows": 10089,
+   "first_utc": "2025-06-08 22:00:00+00:00",
+   "last_utc": "2026-03-18 18:17:11+00:00",
+   "columns": [
+    "time",
+    "open",
+    "high",
+    "low",
+    "close",
+    "Volume",
+    "Volume MA"
+   ],
+   "bar_range_if_range_chart": 5.0
+  }
+ }
+}

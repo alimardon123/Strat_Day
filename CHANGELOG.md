@@ -117,3 +117,8 @@
 - Flow-candidate task (rank 9) reopened for these two only; new evidence = a named forced trader and a falsifiable timing fingerprint, absent from the three killed rows.
 - Requested the highest-value data addition: real SPY 0DTE 1-minute option bars (DATA.md), with a local fetch helper.
 
+## 2026-09-13 — Track B opened (owner's request): technical swing-start detector on range bars, pre-registered (A40) before any run
+- Owner's six TradingView exports committed under `data/ext/tv_samples/` with a manifest; the 34R file gates the range-bar rebuild, the XAUUSD 5000R file is the gold input.
+- A40 fixes the causal swing definition, the reversal/continuation signals, the 24-trial family, costs, the train/test lock and decision rule, the random-entry control, and the pattern-table deliverable.
+- PLAN carries both tracks; Track B rows B1–B3.
+

@@ -19,6 +19,17 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 | 12 | Overnight-loss forced-liquidation rebound (A39; pre-registered 2026-09-13 before any run; 3 trials incl. timing fingerprint and mirror; runs on data on the branch) | 3 | fleet (one unit) | T1 fails any survival condition, or the fingerprint fails (T2 ≥ T1 or T3 > 0) |
 | — | Real 0DTE quotes, GEX filter, post-2018 cross-market | non-goal | — | Unobtainable in this environment (recorded in ACCEPTANCE.md) |
 
+## Two tracks (owner, 2026-09-13)
+
+**Track A — mechanism-based 0DTE edge (ranks 1–12 above).** Open items: A38 (waits for the assets file), A39 (running).
+**Track B — technical swing-start detector on range bars (A40).**
+
+| Rank | Task | Phase | Owner | What would kill it |
+|---|---|---|---|---|
+| B1 | Range-bar rebuild from 1-minute SPY at $0.34 and $1.00; gate B-a against the owner's 34R export | 2 | fleet (one coder) | Bars/session outside ±15 % or resampled-close correlation < 0.999 → rebuild rule wrong, fix before any signal runs |
+| B2 | Sweep/continuation family (24 trials, A40) on TRAIN, lock, TEST once; random-entry control; B-family FDR; DSR N = 24 | 3 | fleet (one unit) | No trial passes on TEST → killed; the pattern table stays as the finding |
+| B3 | `TRACK_B.md` generated from `out/trackB_*.csv`; tribunal (reviewer + judge, fresh context) | 4–7 | single owner | Any typed number, any parameter changed after the lock |
+
 ## Status log
 
 - 2026-09-12 Phase 0: files written; `data/ext` both MISSING; Phases 0–2 proceed without them.

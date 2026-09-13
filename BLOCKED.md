@@ -131,3 +131,16 @@ Screened and rejected as disguised repeats or untestable here: FOMC 14:00 (an in
 | S&P quarterly rebalance closing auction | Passive S&P funds must match the index at the third-Friday quarterly close | Entry 15:30 on the four dates a year; direction = sign of net added-minus-deleted market cap | Nothing usable on the branch: needs a constituent-change file; the date coincides with the killed opex row | Chen, Noronha, Singal 2004; Petajisto 2011. Prior LOW: Thread B's bucket scored 0/32 and event days were calmer, not richer | Untestable without the file; if built, net ≤ 0 |
 
 Scout's ranking: the leveraged-ETF candidate has the cleanest mechanism and the shortest data path (one file, six tickers; exactly what option D anticipates) but is a refinement of a gate that already failed, so expectations are tempered. The VIX-settlement candidate has the sharpest citation and the lowest prior, and cannot reach 200 holdout trades. The S&P rebalance candidate is a relabelling of a killed family; drop it unless a constituent file appears. If the owner chooses C, the leveraged-ETF candidate is the one to pre-register, with the AUM file supplied first.
+
+---
+
+## Status after the owner's option C (2026-09-13, judge round 6 DONE on b7d4772)
+
+| Item | Result | What would change it |
+|---|---|---|
+| A39 overnight-loss liquidation rebound (3 trials) | Holdout T1 +2.20 pts, n 158 (UNDERPOWERED), p 0.26, mirror also positive → not promoted | Only more data: a forward test on sessions after 2026-09-11 (option B), symmetric spec |
+| A38 leveraged-ETF rebalancing (owner's pick) | Built, tested, wired; SKIPS — `data/ext/letf_aum_2006_2026.csv` does not exist and is not on GitHub | The owner fetches it locally (`tools/fetch_letf_aum_local.py`, sponsors' downloads) and pushes it; `make all` then runs the pre-registered test unchanged |
+| Track B swing-start detector (24 trials, SPY + gold, locked) | Both winners FAILED; 0 of 24 pass FDR; the sweep effect exists at a sixth of a bar, below cost | Nothing on price data alone; the pattern tables are the finding |
+| Real 0DTE option prices | Not on the branch; the k × VIX model prices every option leg | The owner fetches SPY 0DTE 1-minute option bars from February 2024 (`tools/fetch_spy_0dte_local.py`) — the single highest-value addition: real costs, real premiums, and an event-day long-volatility test the model cannot price |
+
+Every candidate that can be built from the data on this branch has now been pre-registered, run once, and judged. The remaining levers are two files only the owner can obtain. Until one lands, any further run would be an unregistered search over data that has already answered, which the contract forbids; the run therefore stays closed and no agent is launched against the automated stop hook.

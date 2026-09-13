@@ -144,3 +144,22 @@ Scout's ranking: the leveraged-ETF candidate has the cleanest mechanism and the 
 | Real 0DTE option prices | Not on the branch; the k × VIX model prices every option leg | The owner fetches SPY 0DTE 1-minute option bars from February 2024 (`tools/fetch_spy_0dte_local.py`) — the single highest-value addition: real costs, real premiums, and an event-day long-volatility test the model cannot price |
 
 Every candidate that can be built from the data on this branch has now been pre-registered, run once, and judged. The remaining levers are two files only the owner can obtain. Until one lands, any further run would be an unregistered search over data that has already answered, which the contract forbids; the run therefore stays closed and no agent is launched against the automated stop hook.
+
+---
+
+## Status after the real-price batch (2026-09-13, judge round 7 DONE on d684bf9)
+
+| Item | Result | What would change it |
+|---|---|---|
+| A41 re-pricing with the owner's real 0DTE bars | Every modelled trade keeps its sign; the model was optimistic by ½–4 points of premium after the spread; no row significant; k unidentifiable at 2 % ITM; prints missing in 80 % of named minutes, fills a median 3 minutes late | Nothing — the question is answered |
+| A42 event-day long volatility | Daily straddle −7 % of premium at 09:31, −17 % at 13:30 (n 608, p 1.00); FOMC afternoons near zero (n 20, UNDERPOWERED, lottery profile) | Only years more of FOMC days |
+| The one large, measured effect | The 0DTE variance risk premium: 7–17 % of premium per day, n 646/608, on the SELL side | Option E below |
+
+### Owner options, updated
+
+- **A. Stop.** The finding stands on three data sets and 39 pre-registered trials: no long-only 0DTE mechanism clears its cost.
+- **B. Forward test** the overnight-loss call (symmetric spec) on sessions after 2026-09-11; no data needed, ≈ 2 years to 200 signals.
+- **C/D. Leveraged-ETF candidate** (A38): built and waiting for `data/ext/letf_aum_2006_2026.csv`.
+- **E. Change the account constraint.** The only effect this programme measured that is large enough to pay costs is the premium collected by SELLING 0DTE straddles, which the prop account forbids. If the own-account track (a stock account with options approval) may hold DEFINED-RISK short premium (iron condors / short straddles with wings), a pre-registered sell-side test can run on the same real bars: tail risk is the whole question (worst day, margin, the 4 % daily-loss rule), not the mean. Say so and it will be pre-registered in its own commit before any run.
+
+No agent is launched against the automated stop hook; the run resumes on a letter or a file.

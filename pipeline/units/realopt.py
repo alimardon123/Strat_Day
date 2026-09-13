@@ -135,7 +135,22 @@ import pandas as pd
 from pipeline import insample, options, sessions, signals, stats
 from pipeline.units import gapliq
 
-EXT_OPT_PATH = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"
+EXT_OPT_PATH = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"   # single-file layout (message text)
+EXT_OPT_GLOB = "data/ext/spy_0dte_1min_*.csv.gz"                  # or per-year shards written by the fetch helper
+
+
+def option_shards(ext_path=EXT_OPT_PATH):
+    """The option file as one path or as per-year shards (tools/fetch_spy_0dte_local.py writes
+    <prefix><year>.csv.gz so no file exceeds GitHub's 100 MB); sorted, temp files excluded."""
+    import glob
+    paths = sorted(q for q in glob.glob(EXT_OPT_GLOB) if not q.endswith(".tmp.csv"))
+    if ext_path and os.path.exists(ext_path) and ext_path not in paths:
+        paths.append(ext_path)
+    return paths
+
+
+def read_option_bars(paths):
+    return pd.concat([pd.read_csv(q, dtype={"right": str}) for q in paths], ignore_index=True)
 CALIB_OUT = "out/realopt_calibration.csv"
 REEVAL_START = pd.Timestamp("2024-02-01")
 REAL_EXIT_MOD = 15 * 60 + 59      # 959, the last tradable print before physical settlement (A41's own text)
@@ -463,7 +478,7 @@ def process_gapliq(day, opt_df, all_dates):
 
 
 def load_option_file(path):
-    df = pd.read_csv(path, dtype={"right": str})
+    df = (read_option_bars(option_shards(path)) if not os.path.exists(path) else pd.read_csv(path, dtype={"right": str}))
     ts_ny = pd.to_datetime(df["ts"], utc=True).dt.tz_convert(sessions.NY)
     df["date"] = ts_ny.dt.tz_localize(None).dt.normalize()
     df["mod"] = ts_ny.dt.hour * 60 + ts_ny.dt.minute
@@ -487,7 +502,8 @@ def main(inp, out, ext_path=EXT_OPT_PATH, calib_out=CALIB_OUT):
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     if inp != "extended":
         raise ValueError(f"pipeline.units.realopt only supports --in extended (got {inp!r})")
-    if not os.path.exists(ext_path):
+    shards = option_shards(ext_path)
+    if not shards:
         print(f"[SKIP] A41 waits for {ext_path} (DATA.md)")
         _write_header_only(out, calib_out)
         return

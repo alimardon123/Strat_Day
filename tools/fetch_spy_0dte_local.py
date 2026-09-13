@@ -24,7 +24,9 @@ import time
 import pandas as pd
 import requests
 
-OUT = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"
+OUT = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"   # kept for --out / temp naming
+SHARD_PREFIX = "data/ext/spy_0dte_1min_"                 # final files: <prefix><year>.csv.gz (< 100 MB each)
+CHUNK = 500_000                                          # rows per pass; the whole file never sits in memory
 START, END = "2024-02-01", "2026-09-11"
 # APCA_API_BASE_URL is often set WITH a trailing /v2 (as the Alpaca SDK expects); strip it so the
 # path below is not doubled into /v2/v2/options/contracts (the 404 the owner hit on 2026-09-13).
@@ -173,10 +175,11 @@ def fetch_bars(contract_map, day, headers):
 def fetch(start, end, out, resume):
     headers = _headers()
     tmp = (out[:-len(".csv.gz")] if out.endswith(".csv.gz") else out) + ".tmp.csv"
-    if resume and os.path.exists(out) and not os.path.exists(tmp):
-        pd.read_csv(out).to_csv(tmp, index=False)
-    done = (set(pd.read_csv(tmp, usecols=["expiry"])["expiry"].astype(str))
-             if resume and os.path.exists(tmp) else set())
+    done = set()
+    if resume:
+        for sp in shard_paths() + ([tmp] if os.path.exists(tmp) else []):
+            for chunk in pd.read_csv(sp, usecols=["expiry"], chunksize=CHUNK):
+                done |= set(chunk["expiry"].astype(str))
     write_header, minute_df = not os.path.exists(tmp), load_spy_minute()
     for day in trading_days(start, end):
         if day in done:
@@ -198,30 +201,73 @@ def fetch(start, end, out, resume):
         df.to_csv(tmp, mode="a", index=False, header=write_header)
         write_header = False
         print(f"{day}: {len(wanted)} contracts ({source}), {len(df)} bars")
-    if os.path.exists(tmp):
-        pd.read_csv(tmp).to_csv(out, index=False, compression="gzip")
-        os.remove(tmp)
-    print("done:", out)
+    finalize(tmp)
 
 
-def validate(path):
-    df = pd.read_csv(path)
-    if set(COLS) - set(df.columns):
-        print("MISSING COLUMNS:", set(COLS) - set(df.columns))
+def finalize(tmp):
+    """Stream the temp CSV into per-year gzip shards without loading it (a 9.5M-row read_csv
+    ran out of memory on the owner's machine; GitHub also rejects files over 100 MB)."""
+    if not os.path.exists(tmp):
+        print("nothing to finalize:", tmp)
+        return
+    import gzip
+    handles, written = {}, {}
+    for chunk in pd.read_csv(tmp, chunksize=CHUNK, dtype={"right": str}):
+        chunk = chunk.dropna(subset=["expiry"])
+        for year, part in chunk.groupby(chunk["expiry"].astype(str).str[:4]):
+            path = f"{SHARD_PREFIX}{year}.csv.gz"
+            if year not in handles:
+                handles[year] = gzip.open(path, "wt", newline="")
+                written[year] = 0
+            part.to_csv(handles[year], index=False, header=(written[year] == 0))
+            written[year] += len(part)
+    for h in handles.values():
+        h.close()
+    for year, n in sorted(written.items()):
+        print(f"wrote {SHARD_PREFIX}{year}.csv.gz: {n} rows")
+    os.remove(tmp)
+    print("temp file removed:", tmp)
+
+
+def shard_paths():
+    return sorted(p for p in glob.glob(f"{SHARD_PREFIX}*.csv.gz") if not p.endswith(".tmp.csv"))
+
+
+def validate(path=None):
+    """Chunked validation over every shard (memory-safe): columns, per-contract monotone ts,
+    expiry == date(ts), coverage by month."""
+    paths = shard_paths() if path is None or not os.path.exists(path) else [path]
+    if not paths:
+        print("no shards found under", SHARD_PREFIX)
         return False
-    ok = True
-    df["ts_dt"] = pd.to_datetime(df["ts"])
-    for key, g in df.groupby(["expiry", "strike", "right"]):
-        if not g["ts_dt"].is_monotonic_increasing:
-            print("NOT MONOTONE within contract:", key)
-            ok = False
-    bad = df["ts_dt"].dt.strftime("%Y-%m-%d") != df["expiry"].astype(str)
-    if bad.any():
-        print(f"{bad.sum()} rows where expiry != date(ts) (must be 0 for same-day expiry)")
-        ok = False
-    cov = df.assign(month=df["ts_dt"].dt.strftime("%Y-%m")).groupby("month").size()
-    print("coverage by month:\n", cov.to_string())
-    print(f"rows: {len(df)}", "VALID" if ok else "INVALID")
+    ok, rows, cov = True, 0, {}
+    for sp in paths:
+        last_key, last_ts, cols_checked = None, None, False
+        for chunk in pd.read_csv(sp, chunksize=CHUNK, dtype={"right": str}):
+            if not cols_checked:
+                if set(COLS) - set(chunk.columns):
+                    print(sp, "MISSING COLUMNS:", set(COLS) - set(chunk.columns))
+                    return False
+                cols_checked = True
+            ts = pd.to_datetime(chunk["ts"])
+            key = list(zip(chunk["expiry"].astype(str), chunk["strike"], chunk["right"]))
+            for k, t in zip(key, ts):
+                if k == last_key and t <= last_ts:
+                    print(sp, "NOT MONOTONE within contract:", k)
+                    ok = False
+                last_key, last_ts = k, t
+            bad = ts.dt.strftime("%Y-%m-%d") != chunk["expiry"].astype(str)
+            if bad.any():
+                print(sp, f"{int(bad.sum())} rows where expiry != date(ts) (must be 0 for same-day expiry)")
+                ok = False
+            for m, n in ts.dt.strftime("%Y-%m").value_counts().items():
+                cov[m] = cov.get(m, 0) + int(n)
+            rows += len(chunk)
+    print("shards:", paths)
+    print("coverage by month:")
+    for m in sorted(cov):
+        print(f"  {m}  {cov[m]}")
+    print(f"rows: {rows}", "VALID" if ok else "INVALID")
     return ok
 
 
@@ -231,9 +277,13 @@ if __name__ == "__main__":
     ap.add_argument("--start", default=START)
     ap.add_argument("--end", default=END)
     ap.add_argument("--resume", action="store_true", help="skip days already in --out or its temp file")
-    ap.add_argument("--validate-only", action="store_true", help="skip fetch(), just validate --out")
+    ap.add_argument("--validate-only", action="store_true", help="skip fetch(), just validate the shards")
+    ap.add_argument("--finalize-only", action="store_true", help="skip fetch(), shard the existing temp file")
     a = ap.parse_args()
     if a.validate_only:
-        raise SystemExit(0 if validate(a.out) else 1)
+        raise SystemExit(0 if validate() else 1)
+    if a.finalize_only:
+        finalize((a.out[:-len(".csv.gz")] if a.out.endswith(".csv.gz") else a.out) + ".tmp.csv")
+        raise SystemExit(0 if validate() else 1)
     fetch(a.start, a.end, a.out, a.resume)
-    validate(a.out)
+    validate()

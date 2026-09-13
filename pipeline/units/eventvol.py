@@ -115,7 +115,17 @@ import pandas as pd
 
 from pipeline import sessions, stats
 
-DATA_PATH = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"
+DATA_PATH = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"   # single-file layout (message text)
+DATA_GLOB = "data/ext/spy_0dte_1min_*.csv.gz"                  # or per-year shards from the fetch helper
+
+
+def option_shards(data_path=DATA_PATH):
+    """One file or per-year shards (< 100 MB each), sorted; temp files excluded."""
+    import glob
+    paths = sorted(q for q in glob.glob(DATA_GLOB) if not q.endswith(".tmp.csv"))
+    if data_path and os.path.exists(data_path) and data_path not in paths:
+        paths.append(data_path)
+    return paths
 REQUIRED_COLS = {"ts", "expiry", "strike", "right", "open", "high", "low", "close", "volume"}
 NY = "America/New_York"
 
@@ -181,7 +191,8 @@ def fomc_dates():
 def load_0dte(path):
     """Validate and normalise the real 0DTE file (tools/fetch_spy_0dte_local.py's own format):
     ts (UTC) -> NY minute-of-day, expiry -> a plain 'YYYY-MM-DD' session key, right upper-cased."""
-    df = pd.read_csv(path)
+    paths = [path] if os.path.exists(path) else option_shards(path)
+    df = pd.concat([pd.read_csv(q, dtype={"right": str}) for q in paths], ignore_index=True)
     missing = REQUIRED_COLS - set(df.columns)
     if missing:
         raise ValueError(f"{path} missing required column(s): {sorted(missing)}")
@@ -343,7 +354,7 @@ def main(inp, out, data_path=DATA_PATH):
     os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
     if inp != "extended":
         raise ValueError(f"pipeline.units.eventvol only supports --in extended (got {inp!r})")
-    if not os.path.exists(data_path):
+    if not option_shards(data_path):
         print(f"[SKIP] A42 waits for {data_path} (tools/fetch_spy_0dte_local.py)")
         _write_header_only(out)
         return

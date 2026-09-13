@@ -384,3 +384,7 @@ forces repricing at a known minute; the counterparty is the 0DTE premium seller.
   N = 39; the six-condition survival rule (E2 fails n ≥ 200 by construction and is reported as UNDERPOWERED).
 - Prior LOW for E1 (0DTE premium is on average rich; the baseline is expected negative) and LOW-MEDIUM for E2 minus E3.
 - Kill: E2 − E3 ≤ 0, or E1 alone claimed as anything.
+
+### A41/A42 data-layout note (2026-09-13, before any real option bar exists on the branch)
+The owner's full fetch (2024-02-01 → 2026-09-11, ≈ 9.5 M bars) exceeds GitHub's 100 MB single-file limit, so the helper writes per-year shards `data/ext/spy_0dte_1min_<year>.csv.gz` with identical columns; the A41/A42 units read one file or the shards. No parameter changes.
+

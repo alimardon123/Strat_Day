@@ -146,4 +146,5 @@
 
 ## 2026-09-13 — A41 and A42 units built (fleet coders), tested (3/3 each), wired into `make all` (28 steps), verified deterministic
 - Both skip cleanly until `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz` exists; PLAYBOOK §12/§13 print wait notices. `make all` + `make repeat` byte-identical; family still 36. The owner's fetch is in progress (helper fixed at 5472df7).
+- Owner's full 0DTE fetch succeeded (≈ 92 contracts and ≈ 15,000 bars per session through 2026-09-11) but the final gzip step ran out of memory on their machine: the helper now streams the temp file into per-year shards (< 100 MB each) with `--finalize-only`, validates in chunks, and both units read the shards.
 

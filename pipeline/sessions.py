@@ -335,7 +335,8 @@ if __name__ == "__main__":
     cal = calendar_report(feed, frame, dropped)
     print(f"{feed}: {len(frame):,} RTH bars, {frame['date'].nunique():,} sessions, "
           f"{frame['date'].min().date()} -> {frame['date'].max().date()}, excluded {len(dropped)} sessions")
-    print("DST probe: step-open by month:", probe["step_open"].value_counts().to_dict(),
+    print("DST probe: gridded step-open by month (decides ok):", probe["gridstep_open"].value_counts().to_dict(),
+          "| legacy comparisons — ungridded step-open:", probe["step_open"].value_counts().to_dict(),
           "| Thread B detect_open:", probe["threadB_detect_open"].value_counts().to_dict())
     if (~probe["ok"]).any():
         print(probe[~probe["ok"]].to_string(index=False))

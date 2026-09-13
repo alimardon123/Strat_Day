@@ -124,6 +124,8 @@ Survival-rule verdict per pre-registered signal (`out/holdout_summary.csv`; `lab
 | 15:00\|both\|vixmove_exp | 274 | 53.650 | -0.143 | -0.011 | -89.200 | 1.000 | 1.000 | 1.000 |  | 0.002 | 0.364 | -0.138 | False | FAILED | 2020-07-27 | 2026-09-11 | 1526 |
 | 13:00\|call\|gap>0.3% | 452 | 50.885 | -1.904 | -0.038 | -105.300 | 1.000 | 1.000 | 1.000 | 1.000 | -0.019 | 0.067 | -0.578 | False | FAILED | 2020-07-27 | 2026-09-11 | 1526 |
 
+An empty cell is NA: that bootstrap had fewer than 20 blocks (months or days) to resample, so no p-value is reported (survival rule 2); an empty cell is never 1.0 or 0.
+
 All 16 configurations on the holdout — published, not promoted (`out/reconcile_candidates.csv`, `label` column):
 
 | candidate | label | params | n | win | net_pts | net_pct | sharpe_calday | p_boot_month | p_boot_day | excess_over_control_pct | timing_control_pct |
@@ -165,6 +167,8 @@ By calendar year (`out/holdout_by_year.csv`):
 | 13:00\|call\|gap>0.3% | 2024 | 73 | 56.164 | -0.899 | -0.015 | -102.950 | 1.000 | -0.277 | -0.727 | -1.173 | -102.950 | -97.147 | 2024-01-02 | 2024-12-31 |
 | 13:00\|call\|gap>0.3% | 2025 | 66 | 53.030 | -7.381 | -0.129 | -102.400 | 1.000 | -5.911 | -6.280 | -6.647 | -102.400 | -100.000 | 2025-01-02 | 2025-12-31 |
 | 13:00\|call\|gap>0.3% | 2026 | 51 | 47.059 | 2.269 | 0.029 | -36.800 | 0.277 | 1.727 | 1.382 | 1.040 | -36.800 | -47.972 | 2026-01-02 | 2026-09-11 |
+
+An empty cell is NA: that bootstrap had fewer than 20 blocks (months or days) to resample, so no p-value is reported (survival rule 2); an empty cell is never 1.0 or 0.
 
 opt_mean_s1/s2/s3 = option return in % of premium at quoted spread 1/2/3 (cash settlement); worst_day_pts = the worst calendar day's net index points; mae_worst_pct = the worst intraday adverse excursion in % of premium at spread 1.
 

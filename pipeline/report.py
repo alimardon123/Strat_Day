@@ -214,7 +214,9 @@ def playbook():
               md(h[[c for c in ["signal", "n", "win", "net_pts", "net_pct", "worst_trade_pts", "p_month", "p_day", "p_half1_month", "p_half2_month",
                                 "excess_over_control_pct", "psr", "sharpe_calday", "fdr_pass_10pct_family", "label_final",
                                 "data_first_date", "data_last_date", "sessions_in_window"] if c in h]],
-                 int_cols=INT_COLS), ""]
+                 int_cols=INT_COLS), "",
+              "An empty cell is NA: that bootstrap had fewer than 20 blocks (months or days) to resample, so no p-value is "
+              "reported (survival rule 2); an empty cell is never 1.0 or 0.", ""]
         hold_pub = cand[cand["window"] == HOLD_WINDOW] if "window" in cand else cand.iloc[0:0]
         if len(hold_pub):
             pub_cols = [c for c in ["candidate", "label", "params", "n", "win", "net_pts", "net_pct", "sharpe_calday",
@@ -227,6 +229,8 @@ def playbook():
                   "or pipeline/trials.py's trial family (never promoted).", ""]
         if os.path.exists("out/holdout_by_year.csv"):
             L += ["By calendar year (`out/holdout_by_year.csv`):", "", md(pd.read_csv("out/holdout_by_year.csv"), int_cols=INT_COLS), "",
+                  "An empty cell is NA: that bootstrap had fewer than 20 blocks (months or days) to resample, so no p-value is "
+                  "reported (survival rule 2); an empty cell is never 1.0 or 0.", "",
                   "opt_mean_s1/s2/s3 = option return in % of premium at quoted spread 1/2/3 (cash settlement); worst_day_pts = the "
                   "worst calendar day's net index points; mae_worst_pct = the worst intraday adverse excursion in % of premium at "
                   "spread 1.", ""]
@@ -310,10 +314,13 @@ def own_account():
             frags = []
             for _, row in b.iterrows():
                 pair = str(row.get("pair", ""))
-                label = "VXX" if "vxx" in pair.lower() else "VXZ" if "vxz" in pair.lower() else pair
-                corr = row["corr_2020_on"] if "corr_2020_on" in b and pd.notna(row.get("corr_2020_on")) else row.get("daily_return_corr", np.nan)
+                label = {"old_vxx_vs_vixy": "old VXX↔VIXY", "new_vxx_vs_vixy": "new VXX↔VIXY",
+                         "old_vxz_vs_vixm": "old VXZ↔VIXM", "new_vxz_vs_vixm": "new VXZ↔VIXM"}.get(pair, pair)
+                corr = row.get("daily_return_corr", np.nan)  # the decision basis: full-overlap correlation
                 corr_str = f"{corr:.4f}" if pd.notna(corr) else "n/a"
-                frag = f"{label}: {row['decision']} (corr {corr_str}"
+                frag = f"{label}: {row['decision']} (corr {corr_str} on {int(row['n_overlap_days'])} overlap days" if pd.notna(row.get("n_overlap_days")) else f"{label}: {row['decision']} (corr {corr_str}"
+                if "corr_2020_on" in b and pd.notna(row.get("corr_2020_on")):
+                    frag += f"; 2020-on {row['corr_2020_on']:.4f}"
                 if "zero_return_days_2018" in b and pd.notna(row.get("zero_return_days_2018")):
                     frag += f"; {int(row['zero_return_days_2018'])} stale closes in 2018"
                 frags.append(frag + ")")

@@ -132,7 +132,7 @@ Correlations measured on whatever overlap each pair has in this run (`out/own_ac
 | old_vxz_vs_vixm | 0.9875 | 1723 |  |  |  |  | bridged |  |
 | new_vxz_vs_vixm | 0.8775 | 2169 | 0.1762 | 0.9824 | 0.9714 | 178.0000 | refused (< BRIDGE_MIN_CORR) | VXZ Series B refused; VIXM used as the mid-term leg from 2017-11-13 |
 
-VXX: bridged (corr 0.9987); VXX: bridged (corr 0.9836; 8 stale closes in 2018); VXZ: bridged (corr 0.9875); VXZ: refused (< BRIDGE_MIN_CORR) (corr 0.9714; 178 stale closes in 2018) — the mid-term leg uses VIXM from 2017-11-13 when the VXZ bridge is refused.
+old VXX↔VIXY: bridged (corr 0.9987 on 1723 overlap days); new VXX↔VIXY: bridged (corr 0.9829 on 2169 overlap days; 2020-on 0.9836; 8 stale closes in 2018); old VXZ↔VIXM: bridged (corr 0.9875 on 1723 overlap days); new VXZ↔VIXM: refused (< BRIDGE_MIN_CORR) (corr 0.8775 on 2169 overlap days; 2020-on 0.9714; 178 stale closes in 2018) — the mid-term leg uses VIXM from 2017-11-13 when the VXZ bridge is refused.
 
 ## VIX − realised vol (variance risk premium), measured not traded
 

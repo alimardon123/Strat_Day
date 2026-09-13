@@ -323,3 +323,24 @@ gold windows; the Track B coder was instructed to exclude gold from the first ru
 - Rebuild gate for gold: no overlap exists between the two sources, so the rule is validated on SPY (B-a) and
   gold gets a self-consistency check only: every rebuilt bar's high − low equals $5 and bars per day on the
   TRAIN side are reported next to the owner's file's bars per day (2025–26) as context, not a gate.
+
+### A40c — gate B-a re-registered 2026-09-13 12:49 UTC, before any Track B signal run (the reference file is not a range-bar series)
+
+Gate B-a as written assumed the owner's TradingView 34R export is a faithful $0.34 range-bar series. Measured on the
+194 overlap sessions it is not: median 16 bars per session (mean 52) although the session's own high-to-low alone
+spans a median 14.6 bars of $0.34 and the 1-minute close path 143; consecutive bars are discontinuous (next open −
+close has 5th/95th percentiles of −$1.02/+$1.08, extremes ±$11); several bars share one minute with sub-millisecond
+offsets; the per-session bar count correlates only ≈ 0.5 with every volatility measure. TradingView built the export
+from 1-minute history with phantom bars and a bar cap. The first rebuild therefore FAILED the gate (median ratio 7.1,
+resampled-close correlation 0.99898) for the wrong reason, and no signal was run.
+Re-registered gate B-a (replaces the two numeric checks; the signal logic, family, costs, windows, lock and
+decision rule of A40/A40b are untouched):
+1. every completed rebuilt bar has high − low equal to the range to the cent, and open_{i+1} equals close_i within one
+   session (continuity);
+2. every session's bar count is ≥ its (high − low) ÷ range (the count can never be below the monotone minimum);
+3. the rebuild is deterministic (two runs byte-identical);
+4. context, not a gate: bars per session of the rebuild and of the owner's export are both reported with their
+   correlation, so the reader sees how far the export is from a true range series.
+The owner's 34R and 5000R exports are demoted to context. For gold this means TEST must also be rebuilt from minute
+data — none exists after 2020-05 on the branch — so gold TRAIN/TEST become: TRAIN = Oanda XAU_USD 2006-03-19 →
+2016-12-31, TEST = 2017-01-01 → 2020-05-14 (rebuilt $5 bars, same rule), decided before any gold row exists.

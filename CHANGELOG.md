@@ -125,3 +125,6 @@
 ## 2026-09-13 — A39 built and run (fleet coder, Sonnet): T1 positive but underpowered on the holdout, mirror also positive → not promoted
 - `pipeline/units/gapliq.py` (11 s, byte-identical twice); PLAYBOOK §10; family 36 (0 pass FDR). Holdout T1 n 158, +2.20 pts, p 0.26; T2 +0.12; T3 +1.89. Selection/context negative. Reported as a pattern without its mechanism (ASSESSMENT).
 
+## 2026-09-13 — Track B gate B-a failed for the right reason: the TradingView export is not a range-bar series (A40c)
+- Diagnostic on the 194 overlap sessions: median 16 export bars per session vs a monotone minimum of 14.6 and a close-path count of 143; discontinuous opens; sub-millisecond duplicate timestamps; ≈ 0.5 correlation with volatility. Gate re-registered as an internal-consistency check on the rebuild; the exports become context. Gold TEST moves to 2017-01 → 2020-05 rebuilt bars (no post-2020 gold minutes on the branch). No signal had run.
+

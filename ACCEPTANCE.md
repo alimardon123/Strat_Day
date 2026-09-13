@@ -388,3 +388,10 @@ forces repricing at a known minute; the counterparty is the 0DTE premium seller.
 ### A41/A42 data-layout note (2026-09-13, before any real option bar exists on the branch)
 The owner's full fetch (2024-02-01 → 2026-09-11, ≈ 9.5 M bars) exceeds GitHub's 100 MB single-file limit, so the helper writes per-year shards `data/ext/spy_0dte_1min_<year>.csv.gz` with identical columns; the A41/A42 units read one file or the shards. No parameter changes.
 
+
+### A41 clarification (2026-09-13 17:32 UTC, judge round 7, before the re-run)
+"Nearest listed strike … available in the file that day" is read causally: the candidate strikes for a trade are the contracts
+with at least one printed bar at or before the entry minute on that session, never a contract whose first print comes later.
+The entry bar actually used must precede the exit bar actually used; otherwise the trade is skipped and counted in
+n_skipped_missing. The used entry-bar minute is written to the per-trade file so both rules are auditable. No other parameter
+changes; the judge showed the P&L effect is small and adverse (the honest direction).

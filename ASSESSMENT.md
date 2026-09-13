@@ -82,6 +82,20 @@ is negative (-2.41 pts, n 121) and in the context window too. Per the A39 rule T
 without its mechanism": reported, never promoted. It is the only Track A candidate with a positive holdout row above both
 controls; the honest reading is a candidate for a forward test (option B) with a symmetric spec, not a trade.
 
+## Track B — swing-start detector on range bars (A40/A40c): SPY tested, no trial survives; the sweep effect is real but a fraction of a bar
+
+Range bars rebuilt from the branch's 1-minute SPY at $0.34 and $1.00 (gate B-a PASS on internal consistency; the owner's
+TradingView export proved not to be a range-bar series, A40c). 16 SPY trials, train/test locked at 2023-07-01. Every TEST row
+is net negative at 2 bp/side (best -0.013 %/trade, worst -0.037 %); each is slightly better than
+its random-entry control (controls ≈ -0.040 %) and every win rate sits within a few points of the random-walk
+expectation stop ÷ (stop + target). The pre-registered TRAIN winner (`spy100` continuation|L20|R2, TRAIN Sharpe
+0.26) FAILED on TEST (n 1933, -0.024 %, p 1.00); FDR 0 of 16.
+The pattern table (`out/trackB_pattern_table.csv`) answers the owner's question directly: after a reversal-shaped sweep of the
+prior 10-bar extreme on $0.34 bars the NEXT bar moves +0.16 bar-ranges in the rejection's direction
+(+0.011 %) against +0.005 unconditional, p < 0.001, and after a close-through
++0.05 bar-ranges; by 20 bars the difference is gone. The swing start is measurable, but its
+size (≈ $0.05–0.07 on SPY) is a quarter of the round-trip cost, so it is a description of price, not a trade. Gold runs under A40b/A40c.
+
 ## Probability of backtest overfitting of the selection itself (A37)
 
 `out/pbo.csv`: with 12 rankable configurations on the selection window, CSCV over 16 blocks (12,870

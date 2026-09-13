@@ -128,3 +128,6 @@
 ## 2026-09-13 — Track B gate B-a failed for the right reason: the TradingView export is not a range-bar series (A40c)
 - Diagnostic on the 194 overlap sessions: median 16 export bars per session vs a monotone minimum of 14.6 and a close-path count of 143; discontinuous opens; sub-millisecond duplicate timestamps; ≈ 0.5 correlation with volatility. Gate re-registered as an internal-consistency check on the rebuild; the exports become context. Gold TEST moves to 2017-01 → 2020-05 rebuilt bars (no post-2020 gold minutes on the branch). No signal had run.
 
+## 2026-09-13 — Track B SPY run (fleet coder, Sonnet; terminated by a session rate limit after the outputs were written)
+- `pipeline/units/rangebars.py` (gate B-a PASS under A40c), `pipeline/units/sweep.py` (16 SPY trials, locked windows), `pipeline/report_b.py` → `TRACK_B.md`. Winner FAILED on TEST; all rows negative after costs; the pattern table shows a significant but sub-cost 1-bar effect after sweeps. Wiring into `make all` and the gold run follow.
+

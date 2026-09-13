@@ -1,0 +1,10 @@
+check,value,threshold,ok,counts_toward_gate,note
+self_consistency_r0.34,0.000000,0.000000,True,True,"hl_bad=0/236300 completed bars, open_close_bad=0/236300 consecutive pairs"
+min_bar_count_r0.34,0.000000,0.000000,True,True,sessions violating n_bars>=(H-L)/range: 0/1526
+determinism_r0.34,1.000000,1.000000,True,True,"rebuild twice, byte-identical parquet"
+self_consistency_r1.00,0.000000,0.000000,True,True,"hl_bad=0/37493 completed bars, open_close_bad=0/37493 consecutive pairs"
+min_bar_count_r1.00,0.000000,0.000000,True,True,sessions violating n_bars>=(H-L)/range: 0/1526
+determinism_r1.00,1.000000,1.000000,True,True,"rebuild twice, byte-identical parquet"
+context_bars_per_session_median_rebuild_r034,144.000000,,,False,191 sessions in overlap
+context_bars_per_session_median_owner_34R,16.000000,,,False,"194 sessions in overlap, 191 common with rebuild"
+context_resampled_5min_close_corr_r034_vs_owner,0.998979,,,False,2826 common 5-min buckets in overlap

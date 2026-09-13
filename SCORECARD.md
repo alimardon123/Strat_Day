@@ -56,3 +56,13 @@ Updated 2026-09-13 10:10 UTC — HOLDOUT RUN ON REAL DATA (owner's `data/ext/`, 
 
 Family-wide BH-FDR at 10 % over 36 trials: 0 pass (`out/trials.csv`).
 
+## Track B — swing-start detector on range bars (A40; 24-trial family, FDR on its own; SPY 16 run, gold 8 pending)
+
+| Item | Result |
+|---|---|
+| Gate B-a (A40c: exact range, continuity, monotone minimum, determinism) | PASS on $0.34 (236,300 bars) and $1.00 (37,493 bars); the owner's export is context only |
+| TRAIN winner | `spy100` continuation|L20|R2, TRAIN Sharpe 0.26 (n 1429) |
+| TEST verdict | FAILED: n 1933, -0.024 %/trade, p 1.00, DSR 0.00; 0 of 16 pass FDR |
+| All 16 TEST rows | net negative at 2 bp/side; win rates within 3 points of stop ÷ (stop + target) |
+| Pattern finding | 1-bar continuation after a sweep-and-reject: +0.16 bar-ranges vs +0.005 unconditional (p < 0.001); gone by 20 bars |
+

@@ -26,7 +26,11 @@ import requests
 
 OUT = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"
 START, END = "2024-02-01", "2026-09-11"
-TRADING_BASE = os.environ.get("APCA_API_BASE_URL", "https://paper-api.alpaca.markets")
+# APCA_API_BASE_URL is often set WITH a trailing /v2 (as the Alpaca SDK expects); strip it so the
+# path below is not doubled into /v2/v2/options/contracts (the 404 the owner hit on 2026-09-13).
+TRADING_BASE = os.environ.get("APCA_API_BASE_URL", "https://paper-api.alpaca.markets").rstrip("/")
+if TRADING_BASE.endswith("/v2"):
+    TRADING_BASE = TRADING_BASE[:-3]
 COLS = ["ts", "expiry", "strike", "right", "open", "high", "low", "close", "volume"]
 
 
@@ -94,18 +98,39 @@ def day_open_price(day, minute_df, headers):
 
 
 def list_contracts(day, headers):
+    """Contracts expiring on `day`. Expired contracts are `status=inactive` on the trading API, so a
+    past day is queried inactive first, then active; an empty answer falls back to constructing the
+    OCC symbols directly (see occ_contracts) because the bars endpoint serves any symbol that traded."""
     url = f"{TRADING_BASE}/v2/options/contracts"
-    params = dict(underlying_symbols="SPY", expiration_date=day, limit=1000)
-    out, token = [], None
-    while True:
-        if token:
-            params["page_token"] = token
-        j = _get(url, headers, params, f"option contracts for {day}")
-        out += j.get("option_contracts", [])
-        token = j.get("next_page_token")
-        if not token:
+    statuses = ["inactive", "active"] if day < pd.Timestamp.utcnow().strftime("%Y-%m-%d") else ["active", "inactive"]
+    for status in statuses:
+        params = dict(underlying_symbols="SPY", expiration_date=day, status=status, limit=1000)
+        out, token = [], None
+        while True:
+            if token:
+                params["page_token"] = token
+            j = _get(url, headers, params, f"option contracts for {day} ({status})")
+            out += (j or {}).get("option_contracts", [])
+            token = (j or {}).get("next_page_token")
+            if not token:
+                break
+            time.sleep(0.3)
+        if out:
             return out
-        time.sleep(0.3)
+    return []
+
+
+def occ_contracts(day, lo, hi):
+    """Fallback: OCC symbols SPY<yymmdd><C|P><strike*1000, 8 digits> at $0.50 steps within [lo, hi].
+    Symbols that never traded simply return no bars, so over-generating is harmless."""
+    ymd = pd.Timestamp(day).strftime("%y%m%d")
+    out = {}
+    k = int(lo * 2) / 2.0
+    while k <= hi + 1e-9:
+        for right in ("C", "P"):
+            out[f"SPY{ymd}{right}{int(round(k * 1000)):08d}"] = (day, k, right)
+        k += 0.5
+    return out
 
 
 def strike_window(contracts, lo, hi):
@@ -158,7 +183,11 @@ def fetch(start, end, out, resume):
             continue
         try:
             price = day_open_price(day, minute_df, headers)
-            wanted = strike_window(list_contracts(day, headers), price * 0.97, price * 1.03)
+            lo, hi = price * 0.97, price * 1.03
+            wanted = strike_window(list_contracts(day, headers), lo, hi)
+            source = "contracts"
+            if not wanted:                       # expired contracts not listed -> construct OCC symbols
+                wanted, source = occ_contracts(day, lo, hi), "occ"
             rows = fetch_bars(wanted, day, headers) if wanted else []
         except Exception as e:
             print(f"SKIP {day}: {e}")
@@ -168,7 +197,7 @@ def fetch(start, end, out, resume):
             df["ts"] = pd.to_datetime(df["ts"], utc=True).dt.strftime("%Y-%m-%d %H:%M:%S")
         df.to_csv(tmp, mode="a", index=False, header=write_header)
         write_header = False
-        print(f"{day}: {len(wanted)} contracts, {len(df)} bars")
+        print(f"{day}: {len(wanted)} contracts ({source}), {len(df)} bars")
     if os.path.exists(tmp):
         pd.read_csv(tmp).to_csv(out, index=False, compression="gzip")
         os.remove(tmp)

@@ -1,0 +1,6 @@
+{
+ "instrument": "SPY",
+ "source": "Alpaca IEX feed, 1Min bars, adjustment=raw",
+ "adjusted": false,
+ "roll_dates": []
+}

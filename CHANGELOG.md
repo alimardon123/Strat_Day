@@ -109,3 +109,4 @@
 - R5-2 (N6): generated caption under the PLAYBOOK §7 holdout-summary and by-year tables — an empty cell is NA (fewer than 20 blocks), never 1.0 or 0.
 - R5-3 (N5): `sessions.py` prints the gridded step-open summary (the column that decides `ok`) as the headline; ungridded and Thread B values are marked legacy comparisons.
 - A37 amended to name the 8-block PBO sensitivity variant already in `out/pbo.csv`.
+- Verified after the fixes: `make all` (22 steps, exit 0) then `make repeat` byte-identical; the eight numeric tables (holdout summary/pooled/by-year, reconcile candidates, trials, bridge, PBO, FVG) unchanged against the previous commit; gates (b) 3/3 ×2, (c) 14/14, (e) and (f) PASS; only the two gate (b) logs changed, by their headline text.

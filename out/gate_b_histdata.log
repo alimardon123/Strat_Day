@@ -1,5 +1,5 @@
 histdata: 717,714 RTH bars, 1,935 sessions, 2010-11-15 -> 2018-12-31, excluded 155 sessions
-DST probe: step-open by month: {'09:30': 16} | Thread B detect_open: {'09:32': 8, '08:32': 3, '09:31': 2, '10:01': 1, '09:30': 1, '09:33': 1}
+DST probe: gridded step-open by month (decides ok): {'09:30': 16} | legacy comparisons — ungridded step-open: {'09:30': 16} | Thread B detect_open: {'09:32': 8, '08:32': 3, '09:31': 2, '10:01': 1, '09:30': 1, '09:33': 1}
 calendar reasons: {'thin': 685, 'feed gap': 87, 'holiday: Thanksgiving': 9, 'early close: day after Thanksgiving': 9, 'holiday: MLK': 8, 'holiday: Memorial': 8, 'holiday: Independence': 8, 'holiday: Labor': 8, 'holiday: Presidents': 7, 'early close: July 3': 5, 'early close: Christmas Eve': 5, 'closure: Bush day of mourning': 1}
 feed gaps (market open, <300 bars): 87 sessions; by year: {2010: 10, 2011: 8, 2012: 16, 2013: 19, 2014: 15, 2016: 3, 2017: 16}
 [PASS] DST probe: open at 09:30 in every Jan/Jul

@@ -276,10 +276,12 @@ def main():
     Pl = P.rename(columns={"EQUAL_8": "EQUAL_available"})             # the book holds fewer than 8 sleeves outside 2012-2017 (Phase 4 defect 4)
     by_reg = Pl.groupby(reg).mean() * 252
     by_reg["sleeves_mean"] = ns.groupby(reg).mean()
+    by_reg.index.name = "regime"
     by_reg.to_csv("out/own_account_by_regime.csv", float_format="%.6f")
     by_year = Pl.groupby(Pl.index.year).sum()
     by_year["sleeves_mean"] = ns.groupby(ns.index.year).mean()
     by_year["sleeves_min"] = ns.groupby(ns.index.year).min()
+    by_year.index.name = "year"
     by_year.to_csv("out/own_account_by_year.csv", float_format="%.6f")
     print("ETF panel:", note, "| VXX/VXZ bridge correlations:", bridge or "old series only (ext panel absent)")
     print("sleeve data ends:", {k: str(v)[:10] for k, v in ends.items()})

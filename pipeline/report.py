@@ -16,11 +16,14 @@ EXT_ETF = "data/ext/etf_daily_2017-11_2026-09.csv.gz"
 
 def md(df, cols=None, fmt="{:.3f}"):
     d = df if cols is None else df[[c for c in cols if c in df]]
-    lines = ["| " + " | ".join(str(c) for c in d.columns) + " |", "|" + "---|" * len(d.columns)]
+    int_cols = {c for c in d.columns if pd.api.types.is_integer_dtype(d[c])}   # iterrows() upcasts an all-numeric row to
+    lines = ["| " + " | ".join(str(c) for c in d.columns) + " |", "|" + "---|" * len(d.columns)]  # float, so check the column's own dtype
     for _, r in d.iterrows():
         cells = []
-        for v in r:
-            if isinstance(v, (float, np.floating)):
+        for c, v in zip(d.columns, r):
+            if c in int_cols:
+                cells.append(str(int(v)))
+            elif isinstance(v, (float, np.floating)):
                 cells.append("" if np.isnan(v) else fmt.format(v))
             else:
                 cells.append(str(v).replace("|", "\\|"))

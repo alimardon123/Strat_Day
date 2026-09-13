@@ -22,3 +22,4 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 
 - 2026-09-12 Phase 3: D1 pre-registered; D3/D4 in-sample; D5 baseline + partial extension; D2b done; rank 9 killed; Phase 4 tribunal running.
 - 2026-09-12 Phase 4 tribunal (14 defects) → Phase 5 repairs: winner re-pre-registered as 15:00|both|vixmove_exp; ext path proven (gate e); family-wide FDR (23 trials, 0 pass). Phase 6/7: regeneration + judge.
+- 2026-09-13 Phase 6 judge round 1: ITERATE (6 items: holdout step unwired in `make all`, holdout file names, FDR finalisation, pipe escaping, orphans, render gaps) → all repaired, verified by the fleet verifier 11/11, committed 6789be7. Judge round 2 next; the "holdout path unwired" class is at its second appearance (escalate if it recurs).

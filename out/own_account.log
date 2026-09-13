@@ -68,13 +68,14 @@ EXTENDED (each sleeve to its data end)     TWO_BUCKET_50_50  0.0408 0.0551  0.75
 
 by regime (annualised mean):
            EQUAL_available  BUCKET_A  BUCKET_B  TWO_BUCKET_50_50  sleeves_mean
+regime                                                                        
 downtrend          -0.0005    0.0003   -0.0003           -0.0000        6.6127
 high_vol            0.0347    0.0888    0.0058            0.0473        5.4844
 uptrend             0.0469    0.0442    0.0486            0.0464        5.9956
 
 by year (sum of daily returns):
       EQUAL_available  BUCKET_A  BUCKET_B  TWO_BUCKET_50_50  sleeves_mean  sleeves_min
-date                                                                                  
+year                                                                                  
 2006           0.0594    0.0268    0.0725            0.0497        7.0000            7
 2007           0.0151    0.1468   -0.0375            0.0546        6.9526            1
 2008           0.0028    0.1275   -0.0470            0.0402        7.0000            7

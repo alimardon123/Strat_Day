@@ -380,3 +380,11 @@ FIXED (pre-registration, A39): signal = overnight return (prior session's last R
 ## 11. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial
 
 Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.
+
+## 12. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered 2026-09-13
+
+Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.
+
+## 13. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials
+
+Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.

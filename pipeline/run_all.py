@@ -34,6 +34,9 @@ STEPS = [
     ("fvg", ["python", "-m", "pipeline.units.fvg", "--in", "extended", "--out", "out/fvg_candidates.csv"], "out/fvg.log"),
     ("gapliq", ["python", "-m", "pipeline.units.gapliq", "--in", "extended", "--out", "out/gapliq_candidates.csv"], "out/gapliq.log"),
     ("letf", ["python", "-m", "pipeline.units.letf", "--in", "extended", "--out", "out/letf_candidates.csv"], "out/letf.log"),
+    ("realopt", ["python", "-m", "pipeline.units.realopt", "--in", "extended", "--out", "out/realopt_reeval.csv"], "out/realopt.log"),
+    ("eventvol", ["python", "-m", "pipeline.units.eventvol", "--in", "extended",
+                  "--out", "out/eventvol_candidates.csv"], "out/eventvol.log"),
     ("trials", ["python", "-m", "pipeline.trials"], "out/trials.log"),
     ("options_timevalue", ["python", "-m", "pipeline.options"], "out/options_timevalue.log"),
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
@@ -49,6 +52,8 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
             "out/xmarket_SPXUSD.csv", "out/xmarket_GRXEUR.csv", "out/xmarket_ETXEUR.csv",
             "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/fvg_candidates.csv", "out/gapliq_candidates.csv",
             "out/letf_candidates.csv",
+            "out/realopt_reeval.csv",
+            "out/eventvol_candidates.csv",
             "out/trials.csv", "out/options_timevalue.csv",
             "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md",
             "out/trackB_rangebars_gate.csv", "out/trackB_sweep_candidates.csv", "out/trackB_decision.csv", "TRACK_B.md"]
@@ -62,7 +67,7 @@ def main():
     os.makedirs("out", exist_ok=True)
     ext = sessions.ext_present()
     for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*", "out/fvg_*", "out/gapliq_*",
-                "out/letf_*", "out/trackB_*"):
+                "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/trackB_*"):
         for f in glob.glob(pat):
             os.remove(f)
     steps = [s for s in STEPS if s[0] not in HOLDOUT_STEPS or ext]

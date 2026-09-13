@@ -45,6 +45,18 @@ def main():
         letf = pd.read_csv("out/letf_candidates.csv")
         for _, x in letf[letf["window"] == "SELECTION"].iterrows():
             rows.append(dict(family="letf", trial=f"LETF {x['trial']}", n=x["n"], p=x["p_boot_month"], p_day=x["p_boot_day"]))
+    if os.path.exists("out/eventvol_candidates.csv"):
+        # A42: three trials (E1 baseline, E2 FOMC, E3 non-FOMC control), each counted ONCE at
+        # cost=$0.10 (mirrors the "one row per trial" filter the fvg/gapliq/letf blocks above
+        # apply on their SELECTION window — the $0 and $0.20 rows are a cost-sensitivity sweep,
+        # not additional trials); family becomes 39. This file always exists
+        # (pipeline.units.eventvol writes it header-only until data/ext/
+        # spy_0dte_1min_2024-02_2026-09.csv.gz lands), so a header-only file has zero rows and this
+        # loop adds nothing until the real 0DTE file arrives (ACCEPTANCE A42).
+        eventvol = pd.read_csv("out/eventvol_candidates.csv")
+        for _, x in eventvol[np.isclose(eventvol["cost"], 0.10)].iterrows():
+            rows.append(dict(family="eventvol", trial=f"EVENTVOL {x['trial']}", n=x["n"],
+                             p=x["p_boot_day"], p_day=x["p_boot_day"]))
     hold = pd.read_csv("out/holdout_summary.csv") if os.path.exists("out/holdout_summary.csv") else None
     if hold is not None:
         for _, x in hold.iterrows():

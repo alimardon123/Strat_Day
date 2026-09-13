@@ -3,6 +3,7 @@
     python -m pipeline.report
 """
 import glob
+import io
 import os
 import re
 import sys
@@ -155,6 +156,80 @@ def letf_verdict(sub):
 
 
 def letf_caption(df):
+    """First two sentences of the `spec` column (identical on every row — the fixed pre-
+    registration), generated rather than typed (D7)."""
+    if "spec" not in df or not len(df):
+        return ""
+    parts = re.split(r"(?<=\.)\s+", str(df["spec"].iloc[0]).strip())
+    return " ".join(parts[:2])
+
+
+REALOPT_REEVAL_COLS = ["signal", "cost_label", "n", "n_skipped_missing", "win", "mean_pct_of_premium",
+                       "median_pct", "worst_pct", "model_mean_pct", "label", "p_boot_day", "sharpe_calday"]
+
+
+def realopt_calibration_blocks(path):
+    """Split out/realopt_calibration.csv's two blocks (per-(date,minute,right) table, one blank
+    line, then the by-VIX-tercile/by-minute/overall summary table — pipeline.units.realopt's own
+    convention, see its module docstring point 6) into two DataFrames; the second is empty if the
+    file only ever got a header (the skip path writes no summary block at all)."""
+    text = open(path).read()
+    parts = [p for p in re.split(r"\n\s*\n", text.strip()) if p.strip()]
+    calib = pd.read_csv(io.StringIO(parts[0]))
+    summary = pd.read_csv(io.StringIO(parts[1])) if len(parts) > 1 else pd.DataFrame()
+    return calib, summary
+
+
+def realopt_caption(df):
+    """First two sentences of the `spec` column (identical on every row — the fixed pre-
+    registration), generated rather than typed (D7)."""
+    if "spec" not in df or not len(df):
+        return ""
+    parts = re.split(r"(?<=\.)\s+", str(df["spec"].iloc[0]).strip())
+    return " ".join(parts[:2])
+
+
+def realopt_labels(df):
+    """One generated line per signal x cost row, straight from the `label`/`note` columns
+    themselves (D7: never typed), e.g. '- T1 at +$0.10: model pessimistic here (n=42, real mean
+    +3.10% of premium vs model +5.00%; sub-window, not a verdict).'."""
+    lines = []
+    for _, r in df.iterrows():
+        if r["n"] == 0:
+            lines.append(f"- {r['signal']} at {r['cost_label']}: {r['label']} "
+                         f"(n_skipped_missing={int(r['n_skipped_missing'])}; {r['note']}).")
+            continue
+        lines.append(f"- {r['signal']} at {r['cost_label']}: {r['label']} "
+                     f"(n={int(r['n'])}, real mean {r['mean_pct_of_premium']:+.2f}% of premium vs "
+                     f"model {r['model_mean_pct']:+.2f}%; {r['note']}).")
+    return lines
+
+
+EVENTVOL_COLS = ["trial", "cost", "n", "n_skipped", "win", "mean_pct", "median_pct", "worst_pct",
+                 "mean_usd", "p_boot_day", "sharpe_calday", "dsr_N39", "e2_minus_e3_pct",
+                 "p_e2_vs_e3", "underpowered"]
+
+
+def eventvol_verdict(df):
+    """Generated verdict for the A42 event-day long-volatility family: E1 (baseline, LOW prior,
+    expected negative) is reported for context; E2 (FOMC) is UNDERPOWERED by construction
+    (n ~ 20 < 200) at every cost and is never promoted on this sample regardless of sign or
+    significance; E2 - E3 (LOW-MEDIUM prior) is the pre-registered comparison, reported per cost."""
+    e2 = df[df["trial"] == "E2"]
+    lines = []
+    for _, row in e2.iterrows():
+        diff = row["e2_minus_e3_pct"]
+        sign = "positive" if pd.notna(diff) and diff > 0 else ("negative" if pd.notna(diff) else "n/a")
+        diff_str = f"{diff:.4f}" if pd.notna(diff) else "n/a"
+        p_str = f"{row['p_e2_vs_e3']:.4f}" if pd.notna(row["p_e2_vs_e3"]) else "n/a"
+        lines.append(f"at cost ${row['cost']:.2f}: E2 - E3 = {diff_str} pct-pts ({sign}), p_e2_vs_e3 = {p_str}")
+    detail = "; ".join(lines) if lines else "no E2 rows"
+    return (f"E2 (FOMC) is UNDERPOWERED by construction (n ~ 20 < 200) at every cost and is never "
+            f"promoted on this sample regardless of sign or significance. E2 - E3: {detail}. "
+            f"Nothing in this family is promoted here (pre-registered as reported-only, A42).")
+
+
+def eventvol_caption(df):
     """First two sentences of the `spec` column (identical on every row — the fixed pre-
     registration), generated rather than typed (D7)."""
     if "spec" not in df or not len(df):
@@ -414,6 +489,51 @@ def playbook():
                 L += [cap, ""]
         else:
             L += ["Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.", ""]
+    if os.path.exists("out/realopt_reeval.csv"):
+        reeval = pd.read_csv("out/realopt_reeval.csv")
+        L += ["## 12. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered "
+              "2026-09-13", ""]
+        if len(reeval):
+            calib, calib_summary = realopt_calibration_blocks("out/realopt_calibration.csv")
+            L += ["### Calibration (diagnostic, no decision): implied k = real bar close ÷ Black-Scholes "
+                  "premium at k=1 × prior-close VIX, by VIX tercile and by minute (`out/realopt_calibration.csv`)",
+                  "",
+                  md(calib_summary, fmt="{:.4f}") if len(calib_summary) else "No calibration rows.", ""]
+            L += [f"{len(calib)} (date, minute, right) calibration rows over {calib['date'].nunique() if len(calib) else 0} "
+                  "sessions." if len(calib) else "", ""]
+            L += ["### Re-evaluation: real 1-minute option bars replace the k×VIX model on every counted "
+                  "trial's sessions ≥ 2024-02-01 (the two pre-registered D4 holdout signals, A39 T1/T2/T3, "
+                  "and any POST-SELECTION row with a per-trade file), at three added-cost rows "
+                  "(`out/realopt_reeval.csv`, per-trade detail in `out/realopt_reeval_trades.csv`)", "",
+                  md(reeval[[c for c in REALOPT_REEVAL_COLS if c in reeval]], fmt="{:.4f}", int_cols=INT_COLS), ""]
+            L += realopt_labels(reeval) + [""]
+            cap = realopt_caption(reeval)
+            if cap:
+                L += [cap, ""]
+            L += ["Sub-window, not a verdict: nothing above is promoted, added to the trial family (A41: "
+                  "\"the trial count does not grow\"), or scored against BH-FDR.", ""]
+        else:
+            L += ["Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.", ""]
+    if os.path.exists("out/eventvol_candidates.csv"):
+        eventvol = pd.read_csv("out/eventvol_candidates.csv")
+        L += ["## 13. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials", ""]
+        if len(eventvol):
+            L += ["3 trials (E1 baseline every session, E2 FOMC statement days, E3 the E2 rule on "
+                  "every non-FOMC session) from `pipeline.units.eventvol` "
+                  "(`out/eventvol_candidates.csv`), each at three round-trip costs ($0, $0.10, "
+                  "$0.20 per two-leg trade). All three are counted trials (family 36 -> 39); only "
+                  "the $0.10 row per trial is counted in the trial family ledger "
+                  "(`pipeline/trials.py`, `out/trials.csv`) — the $0 and $0.20 rows are a cost "
+                  "sensitivity, not additional trials. This is the whole file's one out-of-sample "
+                  "window by construction (2024-02-01 onward), not a CONTEXT/SELECTION/HOLDOUT "
+                  "split.", ""]
+            L += [md(eventvol[[c for c in EVENTVOL_COLS if c in eventvol]], fmt="{:.4f}", int_cols=INT_COLS), "",
+                  eventvol_verdict(eventvol), ""]
+            cap = eventvol_caption(eventvol)
+            if cap:
+                L += [cap, ""]
+        else:
+            L += ["Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.", ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 

@@ -117,5 +117,6 @@ configurations carried no out-of-sample information.
 There is no signal to trade. The honest options are: (1) stop here — the two threads' last-hour edge is
 not there at prop-account costs after 2020; (2) if the owner wants to test Thread A's magnitude put
 rule, it must be pre-registered now and judged only on data after 2026-09-11 (or on real fills per
-PLAYBOOK §8), never on this holdout; (3) the owner's fair-value-gap family (A36) is running as a separate,
-pre-registered test and will be reported with the same rule.
+PLAYBOOK §8), never on this holdout; (3) the owner's fair-value-gap family (A36) was tested under the same rule and no trial survives
+(§ above); (4) a NEW mechanism-based candidate — one that names who must trade and when — pre-registered in its own
+commit before any run and judged on data after 2026-09-11 (BLOCKED.md lists the candidates with their priors).

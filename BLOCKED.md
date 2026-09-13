@@ -71,3 +71,51 @@ holds. A "loophole" was never on the table: both prior threads and this run meas
 effect at a few basis points per trade, concentrated in crises, at the edge of what 0DTE spreads
 allow. The playbook's section 8 (ten real fills, sixty paper days) is the only way to learn what
 the model cannot.
+
+---
+
+## Reopened 2026-09-13 12:05 UTC — the goal condition, not the data, is now the block
+
+The session's standing goal reads "a highly successful trading system … that can find a loophole or really
+strong edge in the market". The contract (ACCEPTANCE.md) was written so that this could only be claimed
+after a pre-registered signal survived the post-2020 holdout. It did not:
+
+| Evidence | Value | File |
+|---|---|---|
+| Reconciled last-hour winner on the holdout | n 274, −0.14 pts/trade at 1 pt, p 1.00, FAILED | `out/holdout_pooled.csv` |
+| Thread A gap-up call on the holdout | n 452, −1.90 pts/trade, p 1.00, FAILED | `out/holdout_pooled.csv` |
+| Family-wide BH-FDR at 10 % | 0 of 33 trials | `out/trials.csv` |
+| Owner's fair-value-gap family (A36) | 0 of 8 survive on any window | `out/fvg_candidates.csv` |
+| Flow-with-a-deadline candidates (month-end, opex, Russell) | all negative, below control | `out/flow_candidates.csv` |
+| Probability of backtest overfitting of the selection | 0.73 (null 0.85) | `out/pbo.csv` |
+| Judge round 5 | DONE on f28b5a3; nothing promoted | CRITIQUE.md |
+
+### Why more iterations inside this session cannot satisfy the condition
+
+1. Every remaining positive number sits on the holdout (three magnitude-gated post-selection rows, best
+   `15:00|put|mag` +1.94 pts, p 0.10). Promoting any of them is a re-tune on the holdout — the one
+   thing the contract forbids ("do not manufacture a pass"). It can only be a *new* pre-registration
+   judged on data after 2026-09-11 or on real fills.
+2. A fresh pattern search over 2005–2020 is a recorded non-goal (both threads exhausted it; PBO 0.73
+   says the selection procedure itself over-fits at this trial count).
+3. The plateau rule (two iterations without improvement) has been hit on every in-scope task; the
+   tribunal budget (5 rounds) is spent with a DONE verdict on a negative result.
+4. The stop hook is automated; it cannot pre-register, supply data, or choose among the options below.
+   Continuing to fire agents against it would spend budget on tests nobody registered.
+
+### Options for the owner (choose one; each is a new pre-registration in its own commit)
+
+- **A. Stop here.** The deliverable is the finding: the last-hour edge both threads found is not there
+  at prop-account costs after 2020. Everything is reproducible (`make all`, byte-identical twice).
+- **B. Forward test, no new backtest.** Pre-register `15:00|put|mag` (Thread A's rule, unchanged) and
+  judge it only on sessions after 2026-09-11 — paper fills logged by the owner, or the next data drop.
+  Survival rule unchanged (n ≥ 200 means roughly two years of signals).
+- **C. One new mechanism candidate.** From the table below (drafted by a scout, to be appended), pick
+  one that names who must trade and when; pre-register entry, direction, gate and every parameter in
+  its own commit; test once on 2005→2020 as selection and 2020-07→2026-09 as holdout; report under the
+  same six-condition survival rule; kill if it fails. No second candidate until the first is judged.
+- **D. Supply the missing mechanism data.** If the chosen candidate needs a file that is not on the
+  branch (e.g. leveraged-ETF AUM by day, VIX settlement dates), commit it under `data/ext/` with a
+  manifest, as with the minute bars.
+
+The run stays closed until one of these is chosen; no agent will be launched against the stop hook.

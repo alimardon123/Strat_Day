@@ -134,10 +134,25 @@ Holdout verified clean: selection rows 0/28 mismatches vs the pre-registration; 
 | N2 | 2 | ASSESSMENT: "2022 was the only good one" — 2023 (n 10) and 2025 (n 32) are positive too | Loose sentence | ADOPTED |
 | N3 | 2 | "23-trial family" survives in ASSESSMENT/SCORECARD; the family is 25 (33 with A36) | Doc lag (recurrence of J3-3) | ADOPTED |
 | N4 | 2 | SCORECARD gate (e) "6/6" — now 7/7 | Doc lag | ADOPTED |
-| N5 | 2 | Console prints the ungridded step-open summary above the gridded PASS | Legacy print | ADOPTED (integration coder) |
-| N6 | 2 | Blank cells for NA (< 20 blocks) unlabelled | Rendering | ADOPTED: caption |
+| N5 | 2 | Console prints the ungridded step-open summary above the gridded PASS | Legacy print | ADOPTED — recorded as done in round 4 but NOT implemented then (judge round 5 caught it); landed in round 5 |
+| N6 | 2 | Blank cells for NA (< 20 blocks) unlabelled | Rendering | ADOPTED — recorded as done in round 4 but NOT implemented then (judge round 5 caught it); caption landed in round 5 |
 | N7 | 1 | ASSESSMENT maxDD −8.7 % vs CSV −8.6 % | Rounding | ADOPTED |
 | N8 | — | `pipeline/pbo.py` (CSCV probability of backtest overfitting) and the faster `fvg.py` were in the working tree unannounced | Concurrent fleet work | ADOPTED: A37 names PBO as a D6 reporting statistic (not a survival condition, with its null-calibration caveat); A36's unit is integrated as a `make all` step and its 8 selection-window trials join the family (33) |
 
 Escalation watch: the stand-in class is at four instances; the judge and the orchestrator agree that a fifth in the own-account/ETF path escalates instead of looping.
+
+## Phase 6 judge round 5 (fleet judge, fresh context, on commit 9003387) — decision ITERATE (0 blocking, 3 rendering fixes, 5 notes)
+
+B1 verified independently from the gzip panel: spliced VXX equals real Series B on 2,169 days (max abs diff 2.2e-16), VIXY fills 2017-11-13 → 2018-01-24, the VXZ leg equals VIXM from 2017-11-13 (2,217 days); 0.9829 / 0.8775 and the 178 stale 2018 closes reproduce exactly. A36 and A37 MET; holdout tables byte-identical to 9a43cbc; spot-checked steps leave `out/` clean; hygiene MET; no fifth stand-in instance (the B1 repair is value-tested on the real panel). "This is the last repair pass: if these three land, the run is done."
+
+| # | Sev | Finding (short) | Root cause | Disposition |
+|---|---|---|---|---|
+| R5-1 | 2 | OWN_ACCOUNT.md bridge sentence quotes `corr_2020_on` (0.9836 / 0.9714) and prints "VXX:" twice, while the decisions were made on `daily_return_corr` (0.9829 / 0.8775) | Renderer picked the wrong column and a coarse label | ADOPTED: sentence quotes the decision correlation on the full overlap, names old/new pairs, 2020-on as a labelled aside |
+| R5-2 | 2 | N6 not implemented: no caption explains the empty p-value cells in PLAYBOOK §7 (holdout summary, by-year) | Round-4 note marked ADOPTED without a change | ADOPTED: generated caption under both tables |
+| R5-3 | 2 | N5 not implemented: `sessions.py` still prints the ungridded `step_open` distribution as the headline above the gridded `[PASS]` | Round-4 note marked ADOPTED without a change | ADOPTED: gridded summary is the headline, ungridded and Thread B values marked legacy comparisons |
+| R5-N1 | 2 | CHANGELOG "Notes N1–N7 applied" overstated the round-4 close-out by two items | Orchestrator recorded the coder's claim without checking the diff | ADOPTED: round-4 rows corrected above; CHANGELOG entry names the miss |
+| R5-N2 | 2 | A36 pre-registration time has no artifact stamped at that minute; ordering rests on the 9a43cbc SCORECARD/PLAN "result pending" entries | Pre-registration not its own commit | ACCEPTED as a process rule for future pre-registrations (own commit before the first run) |
+| R5-N3 | 1 | `fvg.py` numpy rewrite has no committed equivalence run against the first draft | First draft was overwritten before its output was committed | ACCEPTED as residual: constants provably untouched, the judge found no parameter moved |
+| R5-N4 | 1 | `out/fvg_candidates_trades.csv` (5 MB) committed and not in EXPECTED | Per-trade artifact | ACCEPTED: cleared per run by the `out/fvg_*` pattern, cannot go stale |
+| R5-N5 | 1 | `out/pbo.csv` 8-block variant undocumented | Sensitivity generated, not described | ADOPTED: A37 names it |
 

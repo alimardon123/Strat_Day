@@ -32,4 +32,4 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 - 2026-09-13 Owner decision: retro findings confirmed (RETRO.md); option A chosen — the owner pushes `data/ext/` to this branch, then the run resumes at the holdout (`make all`, verifier, judge). A watch on the branch is armed.
 - 2026-09-13 10:10 UTC HOLDOUT RUN (real data): both pre-registered signals FAILED (winner n 274, −0.14 pts, Sharpe −0.14, p 1.0; gap-up n 452, −1.90 pts). D1 outcome: no reconciled specification survives. Only the magnitude-gated post-selection rows are positive (best p 0.10), reported, never promoted. Judge round 4 next; A36 fair-value-gap test running.
 - 2026-09-13 Judge round 4: holdout MET; ITERATE on the ETF bridge (B1) → fixed with gate (f); A36 tested (no trial survives; killed) and A37 reported; verifier regeneration → judge round 5.
-
+- 2026-09-13 Judge round 5: ITERATE on three rendering items only (bridge sentence column, NA caption, DST headline print) — no statistic, label or pre-registration moved; declared the last repair pass. Fixes applied; full regeneration + repeat run to the verifier, then the judge's confirmation.

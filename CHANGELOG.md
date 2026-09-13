@@ -101,3 +101,11 @@
 - A37 (PBO, reporting statistic): `pipeline/pbo.py` — CSCV over 16 blocks, PBO 0.73, null 0.85 (floor for near-duplicate configurations) — printed in PLAYBOOK §2 beside the FDR sentence; not a trial, not a gate.
 - Notes N1–N7 applied (text); the gate output name reconciled (`out/gate_etf.csv`).
 
+
+## 2026-09-13 — Judge round 5 (on commit 9003387): ITERATE on three rendering items → repaired; declared the last repair pass
+- Judge verified B1 from the gzip panel itself (spliced VXX equals real Series B on 2,169 days at machine precision; VXZ leg equals VIXM from 2017-11-13), A36 and A37 MET, holdout tables byte-identical to 9a43cbc, hygiene MET, no fifth stand-in instance.
+- Correction to the round-4 entry above: "Notes N1–N7 applied" was wrong by two — N5 (gridded DST headline) and N6 (NA caption) were recorded as done without a change behind them. The CRITIQUE round-4 rows now say so.
+- R5-1: the OWN_ACCOUNT.md bridge sentence quoted `corr_2020_on` and printed "VXX:" twice; it now quotes the decision correlation on the full overlap (0.9829 bridged / 0.8775 refused), names old/new pairs, and gives the 2020-on value as a labelled aside.
+- R5-2 (N6): generated caption under the PLAYBOOK §7 holdout-summary and by-year tables — an empty cell is NA (fewer than 20 blocks), never 1.0 or 0.
+- R5-3 (N5): `sessions.py` prints the gridded step-open summary (the column that decides `ok`) as the headline; ungridded and Thread B values are marked legacy comparisons.
+- A37 amended to name the 8-block PBO sensitivity variant already in `out/pbo.csv`.

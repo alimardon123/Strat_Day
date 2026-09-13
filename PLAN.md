@@ -17,7 +17,9 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 | 10 | Owner-proposed fair-value-gap midpoint setup on 5-minute bars (A36; pre-registered 2026-09-13 before any run; 8 trials; fleet unit `pipeline/units/fvg.py`) | 3 | fleet (one unit) | Fails the survival rule on the selection window → reported and killed; passes selection but fails 2020-07→2026-09 → reported, never promoted |
 | 11 | Owner's option C: leveraged-ETF close-rebalancing candidate (A38; pre-registered 2026-09-13 before any run; 1 trial; waits for `data/ext/letf_aum_2006_2026.csv` — NOT on GitHub, owner supplies via `tools/fetch_letf_aum_local.py`; the unit skips cleanly until then) | 3 | fleet (one unit) | Net ≤ 0 at 1 pt on the holdout, or not above the day-selection control or the price-only magnitude row |
 | 12 | Overnight-loss forced-liquidation rebound (A39; pre-registered 2026-09-13 before any run; 3 trials incl. timing fingerprint and mirror; runs on data on the branch) | 3 | fleet (one unit) | T1 fails any survival condition, or the fingerprint fails (T2 ≥ T1 or T3 > 0) |
-| — | Real 0DTE quotes, GEX filter, post-2018 cross-market | non-goal | — | Unobtainable in this environment (recorded in ACCEPTANCE.md) |
+| 13 | A41 real-price re-evaluation and k calibration on the owner's SPY 0DTE bars (pre-registered before any bar exists; waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`) | 3 | fleet (one unit) | Nothing promoted on the sub-window; model labelled optimistic/pessimistic per row |
+| 14 | A42 event-day long volatility (E1 daily baseline, E2 FOMC 13:30, E3 non-event control; family 39) | 3 | fleet (one unit) | E2 − E3 ≤ 0; E2 is UNDERPOWERED by construction |
+| — | GEX filter, post-2018 cross-market | non-goal | — | Unobtainable in this environment (recorded in ACCEPTANCE.md) |
 
 ## Two tracks (owner, 2026-09-13)
 

@@ -344,3 +344,43 @@ decision rule of A40/A40b are untouched):
 The owner's 34R and 5000R exports are demoted to context. For gold this means TEST must also be rebuilt from minute
 data — none exists after 2020-05 on the branch — so gold TRAIN/TEST become: TRAIN = Oanda XAU_USD 2006-03-19 →
 2016-12-31, TEST = 2017-01-01 → 2020-05-14 (rebuilt $5 bars, same rule), decided before any gold row exists.
+
+## Amendment A41 — real 0DTE prices: re-evaluation and model calibration (pre-registered 2026-09-13 15:40 UTC, before any real option bar exists on the branch)
+
+Input: `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz` (1-minute bars of same-day-expiry SPY contracts within ±3 % of
+the 09:30 price; UTC). SPY dollars; 1 SPX point = $0.10.
+- Calibration (diagnostic, no decision): for every session and every minute in {09:31, 10:00, 13:00, 15:00, 15:30}, the
+  nearest-to-2 %-ITM call and put: real bar close ÷ Black-Scholes premium at k = 1 × prior-close VIX (D4's model with
+  k = 1) = the implied k. Report the median and interquartile range of k by VIX tercile and by minute, and the share
+  of contracts with no bar in that minute (illiquidity). Output `out/realopt_calibration.csv`. If the median k at
+  15:00/15:30 differs from 1.3 by more than 0.3, the playbook's k = 1.3 base case is re-labelled with the measured
+  value; the 1.0/1.3/1.6 sensitivity table stays.
+- Re-evaluation (the decision): every option leg previously priced by the model on sessions ≥ 2024-02-01 is re-priced
+  with real bars — the D4 holdout rows (both pre-registered signals, 2 % ITM), the 15 POST-SELECTION rows, A39 T1/T2/T3 —
+  entry = close of the option's 1-minute bar at the entry minute (next bar's open where the entry bar is missing; the
+  trade is skipped and counted if neither exists), exit = the 15:59 bar close (SPY 0DTE settle physically at 16:00; the
+  15:59 close is the last tradable print), costs: the same 1 and 2 SPX-point round trips ($0.10 / $0.20) on top of the
+  bar prices, plus a third row at zero added cost since bar closes already sit inside the spread. Same survival rule,
+  same labels; the trial count does not grow (these are re-pricings of counted trials, not new trials). Output
+  `out/realopt_reeval.csv`, PLAYBOOK §12.
+- Kill / promotion: nothing is promoted on the sub-window alone; a re-priced row that is positive where the model row was
+  negative is reported as "model pessimistic here" and the reverse as "model optimistic here". The playbook's first
+  paragraph is rewritten to state which numbers are real-priced and from which date.
+
+## Amendment A42 — event-day long volatility on real 0DTE prices (pre-registered 2026-09-13 15:40 UTC, before any real option bar exists)
+
+Question: does a long call plus a long put (two separate long positions; the owner must confirm the account treats them
+as two naked longs, not a spread — if not, A42 is reported for the own-account track only) bought before a scheduled
+announcement earn more than its premium, i.e. is 0DTE implied volatility too LOW into events? Mechanism: the announcement
+forces repricing at a known minute; the counterparty is the 0DTE premium seller.
+- Trials (exactly three, all counted; family 36 → 39):
+  E1 baseline: every session, nearest-ATM call and put bought at the 09:31 bar close, held to the 15:59 close.
+  E2 FOMC: statement days only (14:00 ET), bought at the 13:30 bar close, held to the 15:59 close. FOMC dates are the
+  published schedule (2024: Jan 31, Mar 20, May 1, Jun 12, Jul 31, Sep 18, Nov 7, Dec 18; 2025: Jan 29, Mar 19, May 7,
+  Jun 18, Jul 30, Sep 17, Oct 29, Dec 10; 2026: Jan 28, Mar 18, Apr 29, Jun 17, Jul 29). n ≈ 20 → UNDERPOWERED by
+  construction; reported, never promoted on this sample.
+  E3 non-event control: E2's rule on every non-FOMC session (the matched day-selection control, also a trial).
+- Scoring: P&L in % of premium and in SPY dollars, costs as A41; day-block bootstrap p; calendar-day Sharpe; DSR at
+  N = 39; the six-condition survival rule (E2 fails n ≥ 200 by construction and is reported as UNDERPOWERED).
+- Prior LOW for E1 (0DTE premium is on average rich; the baseline is expected negative) and LOW-MEDIUM for E2 minus E3.
+- Kill: E2 − E3 ≤ 0, or E1 alone claimed as anything.

@@ -140,3 +140,7 @@
 - Judge's re-measurement of A40c's diagnostics: monotone minimum 14.71 and close path 144.7 bars per session on the minute file (typed 14.6 / 143 in A40c, which stays append-only); ratio 7.12, correlation 0.998979 and the ±$1.02/1.08 discontinuity quantiles reproduce exactly.
 - Process notes accepted: the gapliq timing-control seed and gold's weekly session rule were not named in their amendments (neither is a survival input); DSR N wording drifted 35/36/37 (units use 37).
 
+## 2026-09-13 — Owner is fetching real SPY 0DTE bars; A41 (re-evaluation + calibration) and A42 (event-day long volatility) pre-registered before any bar exists
+- `tools/fetch_spy_0dte_local.py` fixed after the owner's first run: a trailing `/v2` in the base URL doubled the path (404); expired contracts are queried as `inactive`; OCC symbols are constructed as a fallback.
+- Real 0DTE quotes leave the non-goal list once the file lands; the k × VIX model stays for sessions before 2024-02-01.
+

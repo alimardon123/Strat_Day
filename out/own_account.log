@@ -1,43 +1,46 @@
+BAB universe: 928 raw tickers (data/raw/stocks_daily.parquet)
+BAB universe: 656 after history>=1200d / price>=$5 / dollar-vol>=$5e6 (it5.py:36-37)
+BAB universe: dropped 30 chronic reverse-split/delisting symbols (it5b.py:5-9) -> 626 names (Thread A reports 626, ASSESSMENT_iteration5_FINAL.md §1)
 ETF panel: Kaggle mirror to 2017-11-10 | VXX/VXZ bridge correlations: {'vxx_vs_vixy': 0.998715730340893, 'vxz_vs_vixm': 0.987453890201087}
 sleeve data ends: {'S1_MEANREV': '2026-03-20', 'S2_TSMOM': '2017-11-10', 'S3_XSMOM': '2017-11-10', 'S5_VOLMGD': '2026-03-20', 'S6_STREV': '2017-11-10', 'S8_BAB': '2026-03-20', 'S12_GAPUP': '2020-05-13', 'S13_VOLTS': '2017-11-10'}
-baseline mean pairwise sleeve correlation 0.121 -> n_eff 4.34
+baseline mean pairwise sleeve correlation 0.123 -> n_eff 4.30
                     window                label    cagr    vol  sharpe   maxdd  n_days  sleeves_mean
 BASELINE 2006-2017-11 full           S1_MEANREV  0.0794 0.1021  0.7995 -0.1789    2987           NaN
 BASELINE 2006-2017-11 full             S2_TSMOM  0.0421 0.1019  0.4556 -0.1681    2987           NaN
 BASELINE 2006-2017-11 full             S3_XSMOM  0.0256 0.1033  0.2968 -0.2808    2987           NaN
 BASELINE 2006-2017-11 full            S5_VOLMGD  0.0492 0.1008  0.5269 -0.2641    2987           NaN
 BASELINE 2006-2017-11 full             S6_STREV -0.0115 0.1051 -0.0575 -0.3057    2987           NaN
-BASELINE 2006-2017-11 full               S8_BAB  0.0491 0.1015  0.5235 -0.4602    2989           NaN
+BASELINE 2006-2017-11 full               S8_BAB  0.0469 0.1005  0.5059 -0.4142    2989           NaN
 BASELINE 2006-2017-11 full            S12_GAPUP  0.0224 0.1023  0.2677 -0.3115    2987           NaN
 BASELINE 2006-2017-11 full            S13_VOLTS  0.0282 0.0517  0.5640 -0.0571    2212           NaN
-BASELINE 2006-2017-11 full EQUAL_available(1-8)  0.0387 0.0506  0.7757 -0.0677    2989        7.7360
+BASELINE 2006-2017-11 full EQUAL_available(1-8)  0.0385 0.0508  0.7687 -0.0645    2989        7.7360
 BASELINE 2006-2017-11 full             BUCKET_A  0.0518 0.0580  0.8999 -0.0943    2987        7.7405
-BASELINE 2006-2017-11 full             BUCKET_B  0.0341 0.0625  0.5668 -0.1270    2989        7.7360
-BASELINE 2006-2017-11 full     TWO_BUCKET_50_50  0.0435 0.0492  0.8900 -0.0605    2989        7.7360
+BASELINE 2006-2017-11 full             BUCKET_B  0.0336 0.0627  0.5576 -0.1158    2989        7.7360
+BASELINE 2006-2017-11 full     TWO_BUCKET_50_50  0.0432 0.0494  0.8824 -0.0585    2989        7.7360
       BASELINE train <2012           S1_MEANREV  0.0666 0.0936  0.7357 -0.1789    1511           NaN
       BASELINE train <2012             S2_TSMOM  0.0282 0.1003  0.3278 -0.1681    1511           NaN
       BASELINE train <2012             S3_XSMOM -0.0205 0.1021 -0.1521 -0.2448    1511           NaN
       BASELINE train <2012            S5_VOLMGD  0.0259 0.0983  0.3091 -0.2641    1511           NaN
       BASELINE train <2012             S6_STREV  0.0128 0.1048  0.1735 -0.1536    1511           NaN
-      BASELINE train <2012               S8_BAB -0.0067 0.1043 -0.0125 -0.4602    1513           NaN
+      BASELINE train <2012               S8_BAB -0.0149 0.1037 -0.0929 -0.4142    1513           NaN
       BASELINE train <2012            S12_GAPUP  0.0822 0.1145  0.7469 -0.1775    1511           NaN
       BASELINE train <2012            S13_VOLTS  0.0310 0.0492  0.6451 -0.0441     736           NaN
-      BASELINE train <2012 EQUAL_available(1-8)  0.0299 0.0529  0.5829 -0.0677    1513        7.4785
+      BASELINE train <2012 EQUAL_available(1-8)  0.0290 0.0528  0.5672 -0.0645    1513        7.4785
       BASELINE train <2012             BUCKET_A  0.0741 0.0651  1.1317 -0.0815    1511        7.4871
-      BASELINE train <2012             BUCKET_B  0.0110 0.0633  0.2041 -0.1270    1513        7.4785
-      BASELINE train <2012     TWO_BUCKET_50_50  0.0427 0.0524  0.8245 -0.0605    1513        7.4785
+      BASELINE train <2012             BUCKET_B  0.0093 0.0629  0.1786 -0.1158    1513        7.4785
+      BASELINE train <2012     TWO_BUCKET_50_50  0.0419 0.0524  0.8093 -0.0585    1513        7.4785
 BASELINE test 2012-2017-11           S1_MEANREV  0.0927 0.1101  0.8598 -0.1612    1476           NaN
 BASELINE test 2012-2017-11             S2_TSMOM  0.0565 0.1035  0.5824 -0.1491    1476           NaN
 BASELINE test 2012-2017-11             S3_XSMOM  0.0752 0.1044  0.7468 -0.1948    1476           NaN
 BASELINE test 2012-2017-11            S5_VOLMGD  0.0736 0.1033  0.7393 -0.1260    1476           NaN
 BASELINE test 2012-2017-11             S6_STREV -0.0357 0.1054 -0.2926 -0.3057    1476           NaN
-BASELINE test 2012-2017-11               S8_BAB  0.1097 0.0984  1.1072 -0.1880    1476           NaN
+BASELINE test 2012-2017-11               S8_BAB  0.1142 0.0970  1.1628 -0.1486    1476           NaN
 BASELINE test 2012-2017-11            S12_GAPUP -0.0354 0.0879 -0.3653 -0.2777    1476           NaN
 BASELINE test 2012-2017-11            S13_VOLTS  0.0268 0.0530  0.5268 -0.0571    1476           NaN
-BASELINE test 2012-2017-11              EQUAL_8  0.0478 0.0482  0.9944 -0.0537    1476        8.0000
+BASELINE test 2012-2017-11              EQUAL_8  0.0483 0.0487  0.9939 -0.0557    1476        8.0000
 BASELINE test 2012-2017-11             BUCKET_A  0.0294 0.0496  0.6079 -0.0943    1476        8.0000
-BASELINE test 2012-2017-11             BUCKET_B  0.0583 0.0618  0.9478 -0.0747    1476        8.0000
-BASELINE test 2012-2017-11     TWO_BUCKET_50_50  0.0443 0.0457  0.9712 -0.0484    1476        8.0000
+BASELINE test 2012-2017-11             BUCKET_B  0.0590 0.0625  0.9488 -0.0795    1476        8.0000
+BASELINE test 2012-2017-11     TWO_BUCKET_50_50  0.0446 0.0461  0.9711 -0.0489    1476        8.0000
 
 EXTENDED / POST-BASELINE:
                                 window                label    cagr    vol  sharpe   maxdd      start        end  sleeves_mean  sleeves_min
@@ -46,54 +49,54 @@ EXTENDED (each sleeve to its data end)             S2_TSMOM  0.0421 0.1019  0.45
 EXTENDED (each sleeve to its data end)             S3_XSMOM  0.0256 0.1033  0.2968 -0.2808 2006-01-03 2017-11-10           NaN          NaN
 EXTENDED (each sleeve to its data end)            S5_VOLMGD  0.0597 0.1032  0.6133 -0.2641 2006-01-03 2026-03-20           NaN          NaN
 EXTENDED (each sleeve to its data end)             S6_STREV -0.0115 0.1051 -0.0575 -0.3057 2006-01-03 2017-11-10           NaN          NaN
-EXTENDED (each sleeve to its data end)               S8_BAB  0.0127 0.0972  0.1781 -0.4602 2006-01-03 2026-03-20           NaN          NaN
+EXTENDED (each sleeve to its data end)               S8_BAB  0.0218 0.0957  0.2737 -0.4142 2006-01-03 2026-03-20           NaN          NaN
 EXTENDED (each sleeve to its data end)            S12_GAPUP  0.0197 0.1049  0.2378 -0.3402 2006-01-03 2020-05-13           NaN          NaN
 EXTENDED (each sleeve to its data end)            S13_VOLTS  0.0282 0.0517  0.5640 -0.0571 2009-01-30 2017-11-10           NaN          NaN
-EXTENDED (each sleeve to its data end) EQUAL_available(1-8)  0.0371 0.0526  0.7191 -0.0858 2006-01-03 2026-03-20        5.9062       1.0000
+EXTENDED (each sleeve to its data end) EQUAL_available(1-8)  0.0396 0.0528  0.7628 -0.0645 2006-01-03 2026-03-20        5.9062       1.0000
 EXTENDED (each sleeve to its data end)             BUCKET_A  0.0513 0.0782  0.6792 -0.1546 2006-01-03 2026-03-20        5.9082       3.0000
-EXTENDED (each sleeve to its data end)             BUCKET_B  0.0285 0.0607  0.4924 -0.1400 2006-01-03 2026-03-20        5.9062       1.0000
-EXTENDED (each sleeve to its data end)     TWO_BUCKET_50_50  0.0408 0.0551  0.7532 -0.0858 2006-01-03 2026-03-20        5.9062       1.0000
+EXTENDED (each sleeve to its data end)             BUCKET_B  0.0334 0.0608  0.5716 -0.1158 2006-01-03 2026-03-20        5.9062       1.0000
+EXTENDED (each sleeve to its data end)     TWO_BUCKET_50_50  0.0433 0.0553  0.7942 -0.0695 2006-01-03 2026-03-20        5.9062       1.0000
             POST-BASELINE 2017-11-13 →           S1_MEANREV  0.0684 0.1063  0.6759 -0.1546 2017-11-13 2026-03-20           NaN          NaN
             POST-BASELINE 2017-11-13 →             S2_TSMOM     NaN    NaN     NaN     NaN        NaN        NaN           NaN          NaN
             POST-BASELINE 2017-11-13 →             S3_XSMOM     NaN    NaN     NaN     NaN        NaN        NaN           NaN          NaN
             POST-BASELINE 2017-11-13 →            S5_VOLMGD  0.0747 0.1065  0.7301 -0.1350 2017-11-13 2026-03-20           NaN          NaN
             POST-BASELINE 2017-11-13 →             S6_STREV     NaN    NaN     NaN     NaN        NaN        NaN           NaN          NaN
-            POST-BASELINE 2017-11-13 →               S8_BAB -0.0371 0.0906 -0.3725 -0.3310 2017-11-13 2026-03-20           NaN          NaN
+            POST-BASELINE 2017-11-13 →               S8_BAB -0.0128 0.0883 -0.1016 -0.2303 2017-11-13 2026-03-20           NaN          NaN
             POST-BASELINE 2017-11-13 →            S12_GAPUP  0.0067 0.1169  0.1149 -0.1780 2017-11-13 2020-05-13           NaN          NaN
             POST-BASELINE 2017-11-13 →            S13_VOLTS     NaN    NaN     NaN     NaN        NaN        NaN           NaN          NaN
-            POST-BASELINE 2017-11-13 → EQUAL_available(3-4)  0.0348 0.0553  0.6467 -0.0858 2017-11-13 2026-03-20        3.2993       3.0000
+            POST-BASELINE 2017-11-13 → EQUAL_available(3-4)  0.0412 0.0555  0.7566 -0.0585 2017-11-13 2026-03-20        3.2993       3.0000
             POST-BASELINE 2017-11-13 →             BUCKET_A  0.0507 0.1002  0.5437 -0.1546 2017-11-13 2026-03-20        3.2993       3.0000
-            POST-BASELINE 2017-11-13 →             BUCKET_B  0.0205 0.0581  0.3790 -0.1400 2017-11-13 2026-03-20        3.2993       3.0000
-            POST-BASELINE 2017-11-13 →     TWO_BUCKET_50_50  0.0370 0.0626  0.6113 -0.0858 2017-11-13 2026-03-20        3.2993       3.0000
+            POST-BASELINE 2017-11-13 →             BUCKET_B  0.0333 0.0579  0.5942 -0.1003 2017-11-13 2026-03-20        3.2993       3.0000
+            POST-BASELINE 2017-11-13 →     TWO_BUCKET_50_50  0.0434 0.0628  0.7076 -0.0695 2017-11-13 2026-03-20        3.2993       3.0000
 
 by regime (annualised mean):
            EQUAL_available  BUCKET_A  BUCKET_B  TWO_BUCKET_50_50  sleeves_mean
 regime                                                                        
-downtrend          -0.0005    0.0003   -0.0003           -0.0000        6.6127
-high_vol            0.0347    0.0888    0.0058            0.0473        5.4844
-uptrend             0.0469    0.0442    0.0486            0.0464        5.9956
+downtrend          -0.0047    0.0003   -0.0069           -0.0033        6.6127
+high_vol            0.0363    0.0888    0.0083            0.0486        5.4844
+uptrend             0.0511    0.0442    0.0569            0.0505        5.9956
 
 by year (sum of daily returns):
       EQUAL_available  BUCKET_A  BUCKET_B  TWO_BUCKET_50_50  sleeves_mean  sleeves_min
 year                                                                                  
-2006           0.0594    0.0268    0.0725            0.0497        7.0000            7
-2007           0.0151    0.1468   -0.0375            0.0546        6.9526            1
-2008           0.0028    0.1275   -0.0470            0.0402        7.0000            7
-2009           0.0408    0.0713    0.0243            0.0478        7.9246            7
-2010           0.0435   -0.0303    0.0878            0.0288        8.0000            8
-2011           0.0235    0.0994   -0.0225            0.0385        7.9960            7
-2012           0.0583   -0.0152    0.1024            0.0436        8.0000            8
-2013           0.1377    0.0427    0.1946            0.1187        8.0000            8
-2014          -0.0024   -0.0085    0.0013           -0.0036        8.0000            8
-2015           0.0208    0.0295    0.0156            0.0225        8.0000            8
-2016           0.0043    0.0570   -0.0273            0.0148        8.0000            8
-2017           0.0764    0.0639    0.0926            0.0782        7.4741            4
-2018          -0.0363   -0.0144   -0.0583           -0.0363        4.0000            4
-2019           0.0970    0.1240    0.0701            0.0970        4.0000            4
-2020           0.0795    0.1102    0.0413            0.0758        3.3636            3
-2021           0.0460    0.0722    0.0329            0.0525        3.0000            3
-2022           0.0081   -0.0005    0.0124            0.0060        3.0000            3
-2023           0.0258    0.0219    0.0278            0.0248        3.0000            3
-2024           0.0515    0.0364    0.0590            0.0477        3.0000            3
-2025           0.0309    0.1176   -0.0124            0.0526        3.0000            3
-2026          -0.0194   -0.0065   -0.0259           -0.0162        3.0000            3
+2006           0.0579    0.0268    0.0704            0.0486        7.0000            7
+2007           0.0120    0.1468   -0.0419            0.0524        6.9526            1
+2008           0.0183    0.1275   -0.0254            0.0510        7.0000            7
+2009           0.0340    0.0713    0.0136            0.0424        7.9246            7
+2010           0.0385   -0.0303    0.0798            0.0248        8.0000            8
+2011           0.0191    0.0994   -0.0289            0.0352        7.9960            7
+2012           0.0615   -0.0152    0.1075            0.0461        8.0000            8
+2013           0.1297    0.0427    0.1819            0.1123        8.0000            8
+2014          -0.0040   -0.0085   -0.0013           -0.0049        8.0000            8
+2015           0.0286    0.0295    0.0281            0.0288        8.0000            8
+2016           0.0035    0.0570   -0.0285            0.0142        8.0000            8
+2017           0.0828    0.0639    0.1047            0.0843        7.4741            4
+2018          -0.0069   -0.0144    0.0005           -0.0069        4.0000            4
+2019           0.1190    0.1240    0.1140            0.1190        4.0000            4
+2020           0.0716    0.1102    0.0272            0.0687        3.3636            3
+2021           0.0525    0.0722    0.0426            0.0574        3.0000            3
+2022          -0.0032   -0.0005   -0.0046           -0.0025        3.0000            3
+2023           0.0226    0.0219    0.0230            0.0225        3.0000            3
+2024           0.0567    0.0364    0.0669            0.0517        3.0000            3
+2025           0.0347    0.1176   -0.0067            0.0555        3.0000            3
+2026          -0.0165   -0.0065   -0.0215           -0.0140        3.0000            3

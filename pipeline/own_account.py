@@ -104,10 +104,49 @@ def spy_ohlc():
     return d[["date", "open", "high", "low", "close"]].reset_index(drop=True)
 
 
+def clean_universe(panel, min_rows=1200):
+    """Thread A's it5b cleaning of the 928-stock big_movers panel down to the 626-name
+    universe that `it11.build_sleeves` (S8 BAB) was built for (it11.py:6, "the 626-name
+    single-stock panel"). `panel_clean.pkl` itself is not in the bundle, so the rules are
+    reconstructed here, verbatim, from the two scripts that produced it (research/ is not
+    edited):
+      - history >= 1200 rows, price floor close.median() >= 5 (it5.py:36, `load_panel`:
+        "if len(df) < 1200 or df.close.median() < 5: continue")
+      - liquidity floor (close*volume).median() >= 5e6 (it5.py:37: "(df.close *
+        df.volume).median() < 5e6: continue")
+      - drop symbols with > 5 days of |daily return| > 50%, reverse-split/delisting
+        artifacts (it5b.py:5-8: "chronic = (r.abs()>0.5).sum(); drop =
+        chronic[chronic>5].index"), documented as "drop the 30 symbols with more than
+        five such days" in ASSESSMENT_iteration5_FINAL.md section 1.
+    `panel` is the long-form frame (ticker, date, open, high, low, close, volume) as loaded
+    from data/raw/stocks_daily.parquet. Returns the cleaned close-price panel; the remaining
+    per-day artifact mask (it5b.py:11-12) is already applied inline by `it11.build_sleeves`
+    ("R = R.where(R.abs() < 0.5)  # artifact mask, as iteration 5").
+    """
+    n0 = panel["ticker"].nunique()
+    print(f"BAB universe: {n0} raw tickers (data/raw/stocks_daily.parquet)")
+    keep = []
+    for sym, g in panel.groupby("ticker"):
+        g = g.sort_values("date").drop_duplicates("date")
+        if len(g) < min_rows or g["close"].median() < 5:            # it5.py:36
+            continue
+        if (g["close"] * g["volume"]).median() < 5e6:               # it5.py:37
+            continue
+        keep.append(sym)
+    print(f"BAB universe: {len(keep)} after history>={min_rows}d / price>=$5 / dollar-vol>=$5e6 (it5.py:36-37)")
+    C = panel[panel["ticker"].isin(keep)].pivot(index="date", columns="ticker", values="close").sort_index()
+    r = C.pct_change(fill_method=None)
+    chronic = (r.abs() > 0.5).sum()                                 # it5b.py:6
+    drop = chronic[chronic > 5].index                                # it5b.py:7
+    keep2 = [s for s in C.columns if s not in drop]
+    print(f"BAB universe: dropped {len(drop)} chronic reverse-split/delisting symbols (it5b.py:5-9) "
+          f"-> {len(keep2)} names (Thread A reports 626, ASSESSMENT_iteration5_FINAL.md §1)")
+    return C[keep2]
+
+
 def stock_closes(min_rows=1200):
     s = pd.read_parquet("data/raw/stocks_daily.parquet")
-    C = s.pivot(index="date", columns="ticker", values="close").sort_index()
-    return C.loc[:, C.notna().sum() >= min_rows]
+    return clean_universe(s, min_rows=min_rows)
 
 
 # --------------------------------------------------------------------------- sleeves

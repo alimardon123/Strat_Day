@@ -248,10 +248,14 @@ def own_account():
               f"with the SPY daily panel's final partial year in `out/vrp_vix_minus_rv.csv`: last row {v_last['year']} has "
               f"n = {int(v_last['n'])}.", "", md(v), ""]
     L += ["## Known differences from Thread A's published baseline", "",
-          "Thread A: 8 sleeves Sharpe 1.12 full / 1.35 test, maxDD −6.10%; two buckets 1.20 / 1.40, −5.26%. Here the BAB sleeve "
-          "runs on the raw 928-stock big_movers panel with a |return| < 0.5 mask because Thread A's cleaned 626-stock panel is not "
-          "in the bundle, and S12 is the pipeline's gap-up signal rather than Thread A's scan cell; test-window Sharpes of S2, S3 "
-          "and S13 match Thread A's published values.", ""]
+          "Thread A: 8 sleeves Sharpe 1.12 full / 1.35 test, maxDD −6.10%; two buckets 1.20 / 1.40, −5.26%. The BAB sleeve's "
+          "universe is now cleaned by `pipeline.own_account.clean_universe`, reconstructed from it5.py/it5b.py (history/price/"
+          "dollar-volume filters, then drop symbols with >5 days of |return|>50%) since `panel_clean.pkl` itself is not in the "
+          "bundle: 928 raw tickers -> 626, matching Thread A's reported count. This does not close the gap to the published "
+          "portfolio Sharpes: the BASELINE test-window Sharpe is materially unchanged (EQUAL_8 0.994, TWO_BUCKET 0.971, both "
+          "within 0.001 of the raw-universe run), so an uncleaned BAB universe is not the explanation for D5's shortfall. S12 is "
+          "the pipeline's gap-up signal rather than Thread A's scan cell; test-window Sharpes of S2, S3 and S13 match Thread A's "
+          "published values.", ""]
     open("OWN_ACCOUNT.md", "w").write("\n".join(L))
 
 

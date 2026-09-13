@@ -144,3 +144,6 @@
 - `tools/fetch_spy_0dte_local.py` fixed after the owner's first run: a trailing `/v2` in the base URL doubled the path (404); expired contracts are queried as `inactive`; OCC symbols are constructed as a fallback.
 - Real 0DTE quotes leave the non-goal list once the file lands; the k × VIX model stays for sessions before 2024-02-01.
 
+## 2026-09-13 — A41 and A42 units built (fleet coders), tested (3/3 each), wired into `make all` (28 steps), verified deterministic
+- Both skip cleanly until `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz` exists; PLAYBOOK §12/§13 print wait notices. `make all` + `make repeat` byte-identical; family still 36. The owner's fetch is in progress (helper fixed at 5472df7).
+

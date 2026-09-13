@@ -22,7 +22,6 @@ import pandas as pd
 
 from pipeline.units import letf
 
-SCRATCHPAD = "/tmp/claude-0/-home-user-Strat-Day/250d22e7-eaa6-56c1-9e1f-f33caa6e9b02/scratchpad"
 
 
 def test_demand_formula():
@@ -39,7 +38,7 @@ def test_demand_formula():
         ("SDS", "2024-01-03", 49_000_000.0, 8.20, 401_800_000.0),
         ("ZZZ", "2024-01-02", 1_000_000.0, 5.00, 5_000_000.0),
     ], columns=["ticker", "date", "shares_outstanding", "nav", "net_assets"])
-    tmp_dir = tempfile.mkdtemp(dir=SCRATCHPAD)
+    tmp_dir = tempfile.mkdtemp()
     path = os.path.join(tmp_dir, "letf_demand_fixture.csv")
     try:
         fixture.to_csv(path, index=False)
@@ -66,7 +65,7 @@ def test_skip_path():
     """main() with a deliberately-missing assets_path writes both output files with a header row
     only (matching OUT_COLS/TRADE_COLS exactly) and returns normally (no exception, no out/ or
     data/ writes)."""
-    tmp_dir = tempfile.mkdtemp(dir=SCRATCHPAD)
+    tmp_dir = tempfile.mkdtemp()
     out_path = os.path.join(tmp_dir, "letf_candidates.csv")
     trades_path = os.path.join(tmp_dir, "letf_candidates_trades.csv")
     missing_assets = os.path.join(tmp_dir, "does_not_exist_letf_aum.csv")

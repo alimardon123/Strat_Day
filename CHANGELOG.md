@@ -135,3 +135,8 @@
 - Gold $5 range bars rebuilt from the Oanda minutes (gate 3/3), 8 trials on TRAIN 2006–2016 / TEST 2017 → 2020-05: winner FAILED, every row negative; family FDR over 24 rows 0 pass. `TRACK_B.md` renders both instruments.
 - Track B steps and the A38 unit are `make all` steps; the 39 MB per-trade file is gitignored (regenerated per run).
 
+## 2026-09-13 — Judge round 6 (A38 skip path, A39, Track B SPY + gold): ITERATE on six text items → applied; science verified clean
+- SCORECARD/DATA/PLAN doc lags corrected (gold run, sweep-finding wording, A40c gate and windows); `test_letf.py` no longer hardcodes a session path; the applied wiring note removed from `pipeline/`.
+- Judge's re-measurement of A40c's diagnostics: monotone minimum 14.71 and close path 144.7 bars per session on the minute file (typed 14.6 / 143 in A40c, which stays append-only); ratio 7.12, correlation 0.998979 and the ±$1.02/1.08 discontinuity quantiles reproduce exactly.
+- Process notes accepted: the gapliq timing-control seed and gold's weekly session rule were not named in their amendments (neither is a survival input); DSR N wording drifted 35/36/37 (units use 37).
+

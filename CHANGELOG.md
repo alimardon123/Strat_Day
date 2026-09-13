@@ -71,3 +71,7 @@
 - Notes closed: the "Frozen gate values" line is relabelled as the `vixmove_fixed` reference boundaries (the winner has none); the contract-size example states S = 6,500 as an assumption; the VRP table caption carries its coverage end; SCORECARD/ASSESSMENT headers and counts refreshed; A31 names the 2 holdout tests (family 25 with the ext feed) and excludes the POST-SELECTION rows; ASSESSMENT finding 5 carries the measured time-value bound.
 - Class watch (recorded, not looped): typed prose beside generated tables appeared in three rounds at falling severity (7.37 → A7 bound → this round's notes); every playbook TABLE has been a byte-identical re-render since Phase 5.
 
+## 2026-09-13 — Data-acquisition sweep and BLOCKED.md
+- Web search is reachable from the container (plan mode had only probed vendor APIs). Two Sonnet agents searched GitHub for post-2020 minute bars and the ETF panel; a Haiku scout inventoried the local panels. Nothing usable exists (DATA.md, BLOCKED.md). Substitutes the mission forbids were not used.
+- BLOCKED.md records the gap, the root cause (network policy), what was tried, and three owner options; PLAN.md invokes the plateau rule.
+

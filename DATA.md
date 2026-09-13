@@ -60,3 +60,13 @@ one-block swaps for ES or SPX).
 
 If Phase 3 starts without them, the run stops at the end of Phase 2 with everything
 committed and this file updated.
+
+## Acquisition sweep of 2026-09-13 (post-judge) — nothing usable found
+
+Two Sonnet agents searched GitHub (web search, `git ls-remote`, shallow clones) for the two missing
+files. Minute bars: only a broker CFD feed (`USA500IDXUSD_M1`, Feb–Sep 2023, 200,000-bar cap,
+placeholder volume) and single-day yfinance dumps exist; no SPY/SPX/ES 1-minute series covers any
+part of 2020-05 → 2026-09. ETF panel: no repository carries the 29 tickers; the local panels hold
+only SPY (to 2026-03-20) and SLV after 2017-11-10. Vendor hosts remain 403. The block stands; see
+BLOCKED.md for the owner's options.
+

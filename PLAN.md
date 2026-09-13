@@ -28,4 +28,5 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 - 2026-09-13 Post-judge data sweep (2 Sonnet agents + 1 Haiku scout): no public source for the post-2020 minute bars or the ETF panel; BLOCKED.md written with options A/B/C. Plateau rule: no in-scope task can improve without the owner's input; nothing further is started.
 - 2026-09-13 D5 fidelity: BAB universe cleaning reconstructed (626 names exact); portfolio Sharpe unchanged → hypothesis killed, next hypothesis recorded in ASSESSMENT. Plateau rule stands for everything holdout-dependent.
 - 2026-09-13 Stop-hook loop (3×): condition unsatisfiable without owner input; no further agents launched (plateau rule + BLOCKED.md). Option D (daily open-to-close 0DTE search) recorded as owner-only because it overrides a mission non-goal.
+- 2026-09-13 Owner decision: retro findings confirmed (RETRO.md); option A chosen — the owner pushes `data/ext/` to this branch, then the run resumes at the holdout (`make all`, verifier, judge). A watch on the branch is armed.
 

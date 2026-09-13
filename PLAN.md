@@ -27,7 +27,7 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 | Rank | Task | Phase | Owner | What would kill it |
 |---|---|---|---|---|
 | B1 | Range-bar rebuild from 1-minute SPY at $0.34 and $1.00; gate B-a against the owner's 34R export | 2 | fleet (one coder) | Bars/session outside ±15 % or resampled-close correlation < 0.999 → rebuild rule wrong, fix before any signal runs |
-| B2 | Sweep/continuation family (24 trials, A40) on TRAIN, lock, TEST once; random-entry control; B-family FDR; DSR N = 24 — SPY first; gold under A40b (TRAIN Oanda 2006–2020 rebuilt bars, TEST the owner's file) | 3 | fleet (one unit) | No trial passes on TEST → killed; the pattern table stays as the finding |
+| B2 | Sweep/continuation family (24 trials, A40) — KILLED 2026-09-13: SPY winner FAILED on TEST (all 16 rows negative after costs), gold winner FAILED (all 8 rows negative), FDR 0/24; the pattern tables stand as the finding (a sub-cost 1-bar effect after sweeps on SPY, after close-throughs on gold) | 3 | fleet (one unit) | No trial passes on TEST → killed; the pattern table stays as the finding |
 | B3 | `TRACK_B.md` generated from `out/trackB_*.csv`; tribunal (reviewer + judge, fresh context) | 4–7 | single owner | Any typed number, any parameter changed after the lock |
 
 ## Status log

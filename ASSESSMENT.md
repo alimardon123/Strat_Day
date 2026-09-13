@@ -94,7 +94,13 @@ The pattern table (`out/trackB_pattern_table.csv`) answers the owner's question 
 prior 10-bar extreme on $0.34 bars the NEXT bar moves +0.16 bar-ranges in the rejection's direction
 (+0.011 %) against +0.005 unconditional, p < 0.001, and after a close-through
 +0.05 bar-ranges; by 20 bars the difference is gone. The swing start is measurable, but its
-size (≈ $0.05–0.07 on SPY) is a quarter of the round-trip cost, so it is a description of price, not a trade. Gold runs under A40b/A40c.
+size (≈ $0.05–0.07 on SPY) is a quarter of the round-trip cost, so it is a description of price, not a trade.
+Gold (A40c: $5 bars rebuilt from Oanda minutes, TRAIN 2006–2016, TEST 2017 → 2020-05; gate 3/3 PASS, 48,077 bars): all 8 TEST
+rows negative at 1 bp/side (best -0.0147 %, worst -0.0343 %); winner `continuation|L20|R2` FAILED (n 864,
+-0.0275 %, p 1.00). Pattern table on gold: after a close-through the next bar moves +0.022 bar-ranges
+vs +0.005 unconditional (p 0.032); the reversal shape carries nothing on gold
+(+0.008, p 1.00). Family FDR over all 24 TEST rows: 0 pass. Track B is killed in PLAN; the two
+pattern tables are its finding.
 
 ## Probability of backtest overfitting of the selection itself (A37)
 

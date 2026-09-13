@@ -131,3 +131,7 @@
 ## 2026-09-13 — Track B SPY run (fleet coder, Sonnet; terminated by a session rate limit after the outputs were written)
 - `pipeline/units/rangebars.py` (gate B-a PASS under A40c), `pipeline/units/sweep.py` (16 SPY trials, locked windows), `pipeline/report_b.py` → `TRACK_B.md`. Winner FAILED on TEST; all rows negative after costs; the pattern table shows a significant but sub-cost 1-bar effect after sweeps. Wiring into `make all` and the gold run follow.
 
+## 2026-09-13 — Track B gold run (A40b/A40c) and pipeline wiring
+- Gold $5 range bars rebuilt from the Oanda minutes (gate 3/3), 8 trials on TRAIN 2006–2016 / TEST 2017 → 2020-05: winner FAILED, every row negative; family FDR over 24 rows 0 pass. `TRACK_B.md` renders both instruments.
+- Track B steps and the A38 unit are `make all` steps; the 39 MB per-trade file is gitignored (regenerated per run).
+

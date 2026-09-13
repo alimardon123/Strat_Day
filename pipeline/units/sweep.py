@@ -8,17 +8,20 @@ data/raw/trackB_spy_r100.parquet); does not rebuild bars itself.
 
 Family (A40): type {reversal, continuation} x L {10, 20} x R {1, 2} x series {SPY $0.34,
 SPY $1.00, XAUUSD $5} = 24 trials, all counted, none dropped, FDR-controlled on its own (a
-family separate from Track A's). *** SCOPE for THIS run only (Amendment A40b, mid-run,
-2026-09-13): *** a longer 2006-03..2020-05 Oanda XAU_USD minute source was found after this
-family was first pre-registered, so the gold trials will run separately with TRAIN = a rebuild of
-that source and TEST = the owner's whole 5000R file, kept UNSEEN until that TRAIN rebuild exists.
-This run therefore evaluates the 16 SPY trials only (type x L x R x {spy034, spy100}); `SERIES`
-below is a module constant listing only those two so the third (gold) entry can be switched on
-later without touching any other logic. `DSR_N`/the `dsr_N24` column name and the decision rule's
-`N = 24` are kept at the PRE-REGISTERED family size regardless (A40b's own instruction) --
-`out/trackB_trials.csv`'s BH-FDR, by contrast, can only be computed over the rows that actually
-exist in a given run (16 now, 24 once the gold trials are appended); this is stated again at that
-column's construction below.
+family separate from Track A's). Gold is now ENABLED (A40c, mid-run re-registration, before any
+gold row existed): `SERIES` below lists all three series, and both the SPY and the gold trials run
+in this pass. Gold's own TRAIN/TEST are both rebuilds of the 2006-03..2020-05 Oanda XAU_USD minute
+source found under A40b (`pipeline.units.rangebars`'s `build_range_bars_gold`,
+`data/raw/trackB_xau_r5.parquet`) -- A40c replaced A40b's plan to use the owner's untouched 5000R
+file as TEST, because no minute source overlaps it (A40b's own finding: "no overlap exists between
+the two sources"); the owner's 5000R export is therefore CONTEXT ONLY from here on (never read by
+this unit) and gold's own decision (below) is taken exactly like SPY's, on a TRAIN/TEST rebuilt the
+same way. `DSR_N`/the `dsr_N24` column name and the decision rule's `N = 24` were always the
+PRE-REGISTERED family size (A40b) and now literally equal the number of trials this run evaluates
+(3 series x 8 trials/series = 24). `out/trackB_trials.csv`'s BH-FDR is computed over every TEST row
+that exists in this run -- now the full 24-row family, both instruments together (A40b: "Gold and
+SPY are decided separately (different instruments, same family for FDR)"); this is stated again at
+that column's construction below.
 
 Causal swing level (A40, literal): prior swing high at bar t = max(high) over the L bars STRICTLY
 BEFORE t (bars[t-L..t-1]), excluding bar t itself; prior swing low symmetric. Computed with
@@ -67,13 +70,16 @@ Costs: SPY 2 bp/side, XAUUSD 1 bp/side (dormant, see above) -- round trip = 2 si
 cost_pct1 = 2 x bp_per_side x 0.01 (e.g. SPY: 2 x 2.0 x 0.01 = 0.04%); cost_pct2 = 2 x cost_pct1.
 `win` is the GROSS (pre-cost) win rate (this codebase's precedent, fvg.py's `win` column).
 
-Windows (A40): SPY TRAIN 2020-07-27..2023-06-30, TEST 2023-07-01..2026-09-11 (`SPY_WINDOWS`,
-shared by both SPY series this run); XAUUSD TRAIN 2025-06-08..2025-12-31, TEST
-2026-01-01..2026-03-18 (`XAU_WINDOWS`, defined but unused while XAU is dormant). DSR's per-window
-SR0 pool spans EVERY trial evaluated in THIS run for that window (all series together, since
-`series` is itself a family dimension, exactly mirroring fvg.py's/gapliq.py's own precedent of
-pooling every trial the standalone unit can see) -- with only SERIES populated this run, that pool
-is the 16 SPY trials' per-trade Sharpes in that window.
+Windows: SPY TRAIN 2020-07-27..2023-06-30, TEST 2023-07-01..2026-09-11 (`SPY_WINDOWS`, A40,
+shared by both SPY series this run); XAUUSD TRAIN 2006-03-19..2016-12-31, TEST
+2017-01-01..2020-05-14 (`XAU_WINDOWS`, A40c -- replaces A40b's original 2025-06..2026-03-18 TEST
+window built from the owner's file, since gold TEST must also be a minute-data rebuild, per
+A40c's own text). DSR's per-window SR0 pool spans EVERY trial evaluated in THIS run for that
+window (all series together, since `series` is itself a family dimension, exactly mirroring
+fvg.py's/gapliq.py's own precedent of pooling every trial the standalone unit can see) -- with
+gold now enabled, that pool is all 24 trials' (16 SPY + 8 gold) per-trade Sharpes in that window,
+matching `DSR_N`'s pre-registered N=24 exactly (state per the task brief: DSR at N=24 now uses
+the per-trade-Sharpe dispersion of all 24 trials, not just SPY's 16).
 
 Random-entry control (A40, "same stop/target structure", 200 seeds, seed 11): for the matched
 window's real trades, 200 draws from ONE seeded generator (seed 11 -- this codebase's precedent
@@ -92,18 +98,24 @@ win, net_pct_cost1, net_pct_cost2, mean_bars_held, sharpe_calday, p_boot_day, p_
 below 20 month blocks -- `stats.one_sided_p`'s own floor, A26), control_win, control_net_pct,
 frac_seeds_beaten, expected_rw_win, dsr_N24, spec.
 
-Decision (pre-registered, A40): on SPY TRAIN, among trials with n >= 100, pick the single highest
-`sharpe_calday` (ties broken by original (type, L, R) enumeration order -- A40 gives Track B no
-tie-break rule of its own, unlike D1's explicit one; this is the conservative default). On TEST,
-that SAME (series, trial) is checked against all six conditions: net_pct_cost1 > 0, p_boot_day <
-0.05, BH-FDR pass at 10% within the TEST-row family (16 rows this run, see the SCOPE note above),
+Decision (pre-registered, A40; per-instrument split per A40b): SPY and gold are decided
+SEPARATELY -- two calls to `decide()`, one per instrument, each restricted to that instrument's
+own series/trials, sharing the SAME already-computed `fdr_pass_10pct` column (the 24-row family is
+one BH-FDR run; only the winner-selection and the other five conditions are per-instrument). For
+each instrument: on that instrument's own TRAIN rows, among trials with n >= 100, pick the single
+highest `sharpe_calday` (ties broken by original (type, L, R) enumeration order -- A40 gives Track
+B no tie-break rule of its own, unlike D1's explicit one; this is the conservative default). On
+TEST, that SAME (series, trial) is checked against all six conditions: net_pct_cost1 > 0,
+p_boot_day < 0.05, BH-FDR pass at 10% within the TEST-row family (all 24 rows, both instruments),
 net_pct_cost1 > control_net_pct, dsr_N24 > 0.95, n >= 200. n < 200 forces verdict UNDERPOWERED
 regardless of the other five (ACCEPTANCE's own convention: "Below 200 holdout trades ... label
-UNDERPOWERED"); otherwise SURVIVES iff all six hold, else FAILED. Written to
-`out/trackB_decision.csv`.
+UNDERPOWERED" -- A40b: "XAUUSD is reported under the same rule and labelled UNDERPOWERED where
+n < 200"); otherwise SURVIVES iff all six hold, else FAILED. Written to `out/trackB_decision.csv`,
+one row per instrument (`instrument` column: SPY / XAU).
 
 Pattern table (`out/trackB_pattern_table.csv`, A40: "the pattern table the owner asked for ...
-measured even when no trade survives costs"): for each series and L (SPY only this run), the next
+measured even when no trade survives costs"): for each series and L (SPY and, now enabled, gold),
+the next
 1/5/20-bar return after (a) a REVERSAL-shaped sweep, (b) a CONTINUATION-shaped close-through, (c)
 unconditional (every bar) -- a pure census over EVERY qualifying bar (no busy-until gating, no R,
 no cost: this is a pattern-frequency question, not a trading simulation) pooling the WHOLE cached
@@ -145,15 +157,16 @@ import pandas as pd
 from pipeline import stats
 from pipeline.units import _gh
 
-SPY_CACHE = {"spy034": "data/raw/trackB_spy_r034.parquet", "spy100": "data/raw/trackB_spy_r100.parquet"}
+SERIES_CACHE = {"spy034": "data/raw/trackB_spy_r034.parquet", "spy100": "data/raw/trackB_spy_r100.parquet",
+                 "xau5": "data/raw/trackB_xau_r5.parquet"}
 R_SIZE = {"spy034": 0.34, "spy100": 1.00, "xau5": 5.0}
 COST_BP_SIDE = {"spy034": 2.0, "spy100": 2.0, "xau5": 1.0}
-# A40b (2026-09-13, mid-run scope amendment): XAUUSD is deferred to a separate run once the
-# 2006-2020 Oanda XAU_USD TRAIN rebuild exists (data/raw/trackB_xau_r5000.parquet stays cached,
-# unseen, by rangebars.py); add "xau5" back here (and give it its own cache-path entry above, e.g.
-# a rebuilt-TRAIN + owner-TEST concatenation) to re-enable the third family leg -- nothing else in
-# this file needs to change.
-SERIES = ["spy034", "spy100"]
+# A40c (2026-09-13, mid-run re-registration, before any gold row existed): gold ENABLED -- both
+# TRAIN and TEST are rebuilds of the 2006-2020 Oanda XAU_USD minute source
+# (`pipeline.units.rangebars.build_range_bars_gold`, data/raw/trackB_xau_r5.parquet); the owner's
+# 5000R file is context only from here on (never read by this unit).
+SERIES = ["spy034", "spy100", "xau5"]
+INSTRUMENT_SERIES = {"SPY": ["spy034", "spy100"], "XAU": ["xau5"]}   # A40b: decided separately per instrument
 
 TYPES = ["reversal", "continuation"]
 L_VALUES = [10, 20]
@@ -161,9 +174,9 @@ R_VALUES = [1, 2]
 TIME_STOP_BARS = 50
 N_SEEDS = 200
 CONTROL_SEED = stats.SEED   # 11, per A40's own text ("200 seeds, seed 11")
-DSR_N = 24                  # fixed pre-registered family size (A40b); this run's pool is its own 16 trials
+DSR_N = 24                  # pre-registered family size (A40b); this run's pool is now all 24 trials
 SPY_WINDOWS = [("TRAIN", "2020-07-27", "2023-06-30"), ("TEST", "2023-07-01", "2026-09-11")]
-XAU_WINDOWS = [("TRAIN", "2025-06-08", "2025-12-31"), ("TEST", "2026-01-01", "2026-03-18")]  # dormant
+XAU_WINDOWS = [("TRAIN", "2006-03-19", "2016-12-31"), ("TEST", "2017-01-01", "2020-05-14")]  # A40c
 WINDOWS_BY_SERIES = {"spy034": SPY_WINDOWS, "spy100": SPY_WINDOWS, "xau5": XAU_WINDOWS}
 HORIZONS = [1, 5, 20]
 
@@ -174,8 +187,8 @@ OUT_COLS = ["series", "trial", "type", "L", "R", "window", "n", "win", "net_pct_
 TEST_COLS = OUT_COLS[:-1] + ["fdr_pass_10pct", "spec"]
 TRADE_COLS = ["series", "trial", "window", "date", "direction", "entry_ts", "entry_px", "exit_ts",
               "exit_px", "exit_reason", "bars_held", "gross_ret_pct", "net_pct_cost1", "stop_px", "tp_px"]
-DECISION_COLS = ["winner_series", "winner_trial", "winner_type", "winner_L", "winner_R", "train_n",
-                  "train_sharpe_calday", "test_n", "test_net_pct_cost1", "test_p_boot_day",
+DECISION_COLS = ["instrument", "winner_series", "winner_trial", "winner_type", "winner_L", "winner_R",
+                  "train_n", "train_sharpe_calday", "test_n", "test_net_pct_cost1", "test_p_boot_day",
                   "test_control_net_pct", "test_dsr_N24", "cond_net_pos", "cond_p_boot_day",
                   "cond_fdr_pass_10pct", "cond_beats_control", "cond_dsr_gt_095", "cond_n_ge_200",
                   "verdict", "spec"]
@@ -183,8 +196,8 @@ PATTERN_COLS = ["series", "L", "horizon", "pattern", "n", "mean_range", "median_
                  "median_pct", "p_vs_unconditional"]
 
 SPEC_NOTE = (
-    "FIXED (pre-registration, A40; SCOPE per A40b mid-run amendment 2026-09-13 -- XAUUSD deferred, "
-    "16 SPY trials only this run, DSR_N and the decision's N held at 24). Causal swing: prior swing "
+    "FIXED (pre-registration, A40; gold ENABLED per A40c re-registration 2026-09-13, before any "
+    "gold row existed -- all 24 trials run: 16 SPY + 8 XAU). Causal swing: prior swing "
     "high/low = rolling max/min of the L bars strictly before bar t (shift(1) then rolling(L)), "
     "computed continuously across the whole series (no session reset -- range bars are event-"
     "driven; only the BUILD resets at sessions). REVERSAL: high>prior_high & close<prior_high -> "
@@ -198,15 +211,17 @@ SPEC_NOTE = (
     "exit date routinely is not). Costs: SPY 2bp/side, XAU 1bp/side, round trip = 2 sides; "
     "cost2 = 2x cost1. Random-entry control: 200 draws from one generator seeded 11, without "
     "replacement, from the SAME window's bars, same direction/stop-distance/R as the matched real "
-    "trade, net of cost1 only. DSR at N=24 uses the per-trade-Sharpe dispersion of THIS RUN'S OWN "
-    "16 trials in the same window as SR0's pool (the 8 gold trials are not available to this "
-    "standalone unit, and are not yet run at all per A40b). Windows: SPY TRAIN "
-    "2020-07-27..2023-06-30, TEST 2023-07-01..2026-09-11. Decision: SPY-TRAIN winner = highest "
+    "trade, net of cost1 only. DSR at N=24 uses the per-trade-Sharpe dispersion of ALL 24 TRIALS "
+    "(16 SPY + 8 gold) in the same window as SR0's pool -- N=24 is both the pre-registered family "
+    "size and, now that gold is enabled, the exact size of the pool. Windows: SPY TRAIN "
+    "2020-07-27..2023-06-30, TEST 2023-07-01..2026-09-11; XAU TRAIN 2006-03-19..2016-12-31, TEST "
+    "2017-01-01..2020-05-14 (A40c, both rebuilt from minute data, same rule as SPY). Decision: "
+    "SPY and gold decided SEPARATELY (A40b) -- on each instrument's own TRAIN, winner = highest "
     "sharpe_calday among n>=100 trials; TEST verdict = SURVIVES iff net_pct_cost1>0 & p_boot_day<"
-    "0.05 & BH-FDR pass @10% (this run's TEST-row family) & net_pct_cost1>control_net_pct & "
-    "dsr_N24>0.95 & n>=200; n<200 forces UNDERPOWERED regardless of the other five. Exception "
-    "handling for this unit only: header-only outputs, exit 0 (not _gh.run's usual empty-file/exit "
-    "2 -- see module docstring).")
+    "0.05 & BH-FDR pass @10% (the full 24-row TEST family, both instruments) & "
+    "net_pct_cost1>control_net_pct & dsr_N24>0.95 & n>=200; n<200 forces UNDERPOWERED regardless "
+    "of the other five. Exception handling for this unit only: header-only outputs, exit 0 (not "
+    "_gh.run's usual empty-file/exit 2 -- see module docstring).")
 
 
 def add_swing_levels(bars, L):
@@ -485,11 +500,15 @@ def _bars_arrays(bars):
                 ts_close=bars["ts_close"].to_numpy(), session_date=bars["session_date"].to_numpy())
 
 
-def decide(res, test_fdr):
+def decide(res, test_fdr, instrument):
+    """A40b: SPY and gold are decided SEPARATELY. `res`/`test_fdr` are already restricted to
+    `instrument`'s own series (see `main`); `test_fdr`'s `fdr_pass_10pct` column, however, was
+    computed once over the FULL 24-row family (both instruments), so the FDR condition below is
+    still family-wide even though the winner search is not."""
     train = res[(res["window"] == "TRAIN") & (res["n"] >= 100)]
     if train.empty:
-        return dict(winner_series="NONE", winner_trial="NONE", winner_type="", winner_L=np.nan,
-                    winner_R=np.nan, train_n=0, train_sharpe_calday=np.nan, test_n=0,
+        return dict(instrument=instrument, winner_series="NONE", winner_trial="NONE", winner_type="",
+                    winner_L=np.nan, winner_R=np.nan, train_n=0, train_sharpe_calday=np.nan, test_n=0,
                     test_net_pct_cost1=np.nan, test_p_boot_day=np.nan, test_control_net_pct=np.nan,
                     test_dsr_N24=np.nan, cond_net_pos=False, cond_p_boot_day=False,
                     cond_fdr_pass_10pct=False, cond_beats_control=False, cond_dsr_gt_095=False,
@@ -505,9 +524,9 @@ def decide(res, test_fdr):
     cond_n = bool(t["n"] >= 200)
     verdict = "UNDERPOWERED" if not cond_n else ("SURVIVES" if (cond_net and cond_p and cond_fdr
                                                                  and cond_ctrl and cond_dsr) else "FAILED")
-    return dict(winner_series=winner["series"], winner_trial=winner["trial"], winner_type=winner["type"],
-                winner_L=int(winner["L"]), winner_R=int(winner["R"]), train_n=int(winner["n"]),
-                train_sharpe_calday=winner["sharpe_calday"], test_n=int(t["n"]),
+    return dict(instrument=instrument, winner_series=winner["series"], winner_trial=winner["trial"],
+                winner_type=winner["type"], winner_L=int(winner["L"]), winner_R=int(winner["R"]),
+                train_n=int(winner["n"]), train_sharpe_calday=winner["sharpe_calday"], test_n=int(t["n"]),
                 test_net_pct_cost1=t["net_pct_cost1"], test_p_boot_day=t["p_boot_day"],
                 test_control_net_pct=t["control_net_pct"], test_dsr_N24=t["dsr_N24"],
                 cond_net_pos=cond_net, cond_p_boot_day=cond_p, cond_fdr_pass_10pct=cond_fdr,
@@ -520,7 +539,7 @@ def main(inp, out):
         raise ValueError(f"pipeline.units.sweep only supports --in extended (got {inp!r})")
     all_bars, all_arrays, td_by_series = {}, {}, {}
     for sid in SERIES:
-        b = pd.read_parquet(SPY_CACHE[sid]).sort_values("ts_close").reset_index(drop=True)
+        b = pd.read_parquet(SERIES_CACHE[sid]).sort_values("ts_close").reset_index(drop=True)
         all_bars[sid] = b
         all_arrays[sid] = _bars_arrays(b)
         td_by_series[sid] = sorted(pd.unique(b["session_date"]))
@@ -572,15 +591,22 @@ def main(inp, out):
         if len(test_rows) else np.array([], dtype=bool)
     test_rows[TEST_COLS].to_csv("out/trackB_trials.csv", index=False, float_format="%.6f")
 
-    dec = decide(res, test_rows)
-    pd.DataFrame([dec])[DECISION_COLS].to_csv("out/trackB_decision.csv", index=False, float_format="%.6f")
+    decisions = []
+    for instrument, series_ids in INSTRUMENT_SERIES.items():
+        present = [s for s in series_ids if s in SERIES]
+        if not present:
+            continue
+        sub_res = res[res["series"].isin(present)]
+        sub_test = test_rows[test_rows["series"].isin(present)]
+        decisions.append(decide(sub_res, sub_test, instrument))
+    pd.DataFrame(decisions)[DECISION_COLS].to_csv("out/trackB_decision.csv", index=False, float_format="%.6f")
 
     pat_frames = [pattern_table_for_series(sid, all_bars[sid], R_SIZE[sid]) for sid in SERIES]
     pat = pd.concat(pat_frames, ignore_index=True) if pat_frames else pd.DataFrame(columns=PATTERN_COLS)
     pat.to_csv("out/trackB_pattern_table.csv", index=False, float_format="%.6f")
 
     print(res.to_string(index=False, float_format=lambda x: f"{x:.4f}"))
-    print("\nDECISION:", dec)
+    print("\nDECISIONS:", decisions)
 
 
 def _empty_outputs(out):

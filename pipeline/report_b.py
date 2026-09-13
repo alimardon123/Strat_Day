@@ -10,20 +10,22 @@ other deliverable in this repository: does a "liquidation" of a prior swing extr
 chart (a stop-hunt beyond it) mark the START of a swing, either by REVERSAL (price rejects back
 inside the level) or by CONTINUATION (price closes through it)? It is bound to the SAME statistical
 guards as Track A (block bootstrap, its own BH-FDR family, a random-entry control, a deflated
-Sharpe) but not to the account constraint, and it is scored in raw SPY dollars / % return, not SPX
-points. The train/test LOCK is fixed and never re-opened: a single SPY winner is chosen on TRAIN
-by the highest calendar-day Sharpe among trials with at least 100 trades, then checked ONCE on
-TEST against six survival conditions; no parameter here may be re-tuned after seeing a TEST number,
-and the range values, the causal swing lookback, the stop/target construction and the 24-trial
-family enumeration were all pre-registered before `pipeline.units.rangebars`/`pipeline.units.sweep`
-ever ran. XAUUSD is DEFERRED to a later, separate run (Amendments A40b/A40c, mid-run scope
-changes): a longer 2006-2020 Oanda gold minute source was found after this family was first
-pre-registered, so the gold trials wait for a TRAIN rebuild of that source, with the owner's own
-5000R export reserved, unseen, as the TEST-only window; this report is therefore SPY-only (16 of
-the pre-registered 24 trials). Gate B-a was itself amended mid-run (A40c) once the owner's own
-34R TradingView export was found not to be a faithful range-bar series in its own right (see the
-gate table below); the rebuild's construction rule was NOT changed in response -- only what
-"correct" means for the gate was.
+Sharpe) but not to the account constraint, and it is scored in raw price-level dollars / % return,
+not SPX points. The train/test LOCK is fixed and never re-opened: SPY and XAUUSD winners are each
+chosen SEPARATELY on their own TRAIN window by the highest calendar-day Sharpe among trials with at
+least 100 trades (A40b), then each checked ONCE on its own TEST window against six survival
+conditions that share one thing across instruments -- the BH-FDR pass column, computed once over
+the full 24-row TEST family; no parameter here may be re-tuned after seeing a TEST number, and the
+range values, the causal swing lookback, the stop/target construction and the 24-trial family
+enumeration were all pre-registered before `pipeline.units.rangebars`/`pipeline.units.sweep` ever
+ran. Gold's own TRAIN/TEST windows were re-registered TWICE before any gold result existed (A40b
+found the 2006-2020 Oanda XAU_USD minute source; A40c then replaced A40b's TEST window -- the
+owner's untouched 5000R export -- with a second rebuild from that same minute source, since no
+independent minute source exists to gate the owner's file against); the owner's 5000R export is
+CONTEXT ONLY throughout this report, never a trial input. Gate B-a was itself amended mid-run
+(A40c) once the owner's own 34R TradingView export was found not to be a faithful range-bar series
+in its own right (see the gate table below); the rebuild's construction rule was NOT changed in
+response -- only what "correct" means for the gate was, for both instruments.
 
 This unit does not fit `pipeline.report`'s `pipeline.units._gh.run`/A32 convention (its inputs are
 `pipeline.units.sweep`'s own header-only-on-exception outputs, not a fleet unit's); like
@@ -49,10 +51,10 @@ TRIAL_COLS = ["series", "trial", "n", "win", "net_pct_cost1", "net_pct_cost2", "
               "sharpe_calday", "p_boot_day", "p_boot_month", "control_win", "control_net_pct",
               "frac_seeds_beaten", "expected_rw_win", "dsr_N24"]
 TEST_TABLE_COLS = TRIAL_COLS + ["fdr_pass_10pct"]
-DECISION_TABLE_COLS = ["winner_series", "winner_trial", "train_n", "train_sharpe_calday", "test_n",
-                        "test_net_pct_cost1", "test_p_boot_day", "test_control_net_pct", "test_dsr_N24",
-                        "cond_net_pos", "cond_p_boot_day", "cond_fdr_pass_10pct", "cond_beats_control",
-                        "cond_dsr_gt_095", "cond_n_ge_200", "verdict"]
+DECISION_TABLE_COLS = ["instrument", "winner_series", "winner_trial", "train_n", "train_sharpe_calday",
+                        "test_n", "test_net_pct_cost1", "test_p_boot_day", "test_control_net_pct",
+                        "test_dsr_N24", "cond_net_pos", "cond_p_boot_day", "cond_fdr_pass_10pct",
+                        "cond_beats_control", "cond_dsr_gt_095", "cond_n_ge_200", "verdict"]
 PATTERN_TABLE_COLS = ["series", "L", "horizon", "pattern", "n", "mean_range", "median_range",
                        "mean_pct", "median_pct", "p_vs_unconditional"]
 INT_COLS = ("L", "horizon", "n", "train_n", "test_n", "winner_L", "winner_R")
@@ -67,33 +69,40 @@ def gate_sentence(gate):
     n_pass = int(gating["ok"].apply(_isyes).sum())
     verdict = "PASS" if n_pass == len(gating) else "FAIL"
     return (f"Gate B-a (`pipeline.units.rangebars`, redefined as Amendment A40c mid-run) checks "
-            f"the SPY rebuild's OWN internal consistency (every completed bar's high-low equals "
-            "its range to the cent and threads with no gap within a session, and every session "
-            "has at least as many bars as its own high-low span requires) plus determinism "
-            "(rebuilding twice yields byte-identical parquet) -- NOT a byte match against the "
-            "owner's TradingView 34R export, which A40c's own diagnostic found is not a faithful "
-            f"range-bar series in its own right: {n_pass} of {len(gating)} checks pass, so "
-            f"`GATE (B-a): {verdict}`. The remaining rows are CONTEXT ONLY (never gating): the "
-            "rebuild's own and the owner's own bars-per-session, and the correlation between "
-            "their 5-minute-resampled close series, on their overlap.")
+            f"the SPY and XAUUSD rebuilds' OWN internal consistency (every completed bar's "
+            "high-low equals its own range to the cent and threads with no gap within a session "
+            "-- the NYSE trading day for SPY, the trading WEEK for gold -- and every session/week "
+            "has at least as many bars as its own high-low span requires) plus determinism for "
+            "both series (rebuilding twice yields byte-identical parquet) -- NOT a byte match "
+            "against either owner TradingView export: A40c's own diagnostic found the SPY 34R "
+            "export is not a faithful range-bar series in its own right, and no minute source "
+            "exists to gate the gold 5000R export against at all (A40b). "
+            f"{n_pass} of {len(gating)} checks pass, so `GATE (B-a): {verdict}`. The remaining "
+            "rows are CONTEXT ONLY (never gating): the SPY rebuild's own and the owner 34R file's "
+            "own bars-per-session and the correlation between their 5-minute-resampled close "
+            "series on their overlap; and, for gold, the rebuild's own and the owner 5000R file's "
+            "own bars-per-week, packed into a single row per the task brief.")
 
 
 def decision_sentence(dec):
-    row = dec.iloc[0]
-    conds = [("net_pct_cost1 > 0 at 1x cost", row["cond_net_pos"]),
-             ("day-block bootstrap p < 0.05", row["cond_p_boot_day"]),
-             ("passes BH-FDR at 10% within this run's TEST-row family", row["cond_fdr_pass_10pct"]),
-             ("beats the random-entry control", row["cond_beats_control"]),
-             ("deflated Sharpe (N=24) > 0.95", row["cond_dsr_gt_095"]),
-             ("at least 200 TEST trades", row["cond_n_ge_200"])]
-    passed = [c for c, ok in conds if _isyes(ok)]
-    failed = [c for c, ok in conds if not _isyes(ok)]
-    passed_txt = "; ".join(passed) if passed else "none"
-    failed_txt = "; ".join(failed) if failed else "none"
-    return (f"The pre-registered SPY-TRAIN winner (highest calendar-day Sharpe among TRAIN trials "
-            f"with at least 100 trades) is `{row['winner_series']} {row['winner_trial']}`, checked "
-            f"exactly once on TEST: **verdict {row['verdict']}**. Conditions met: {passed_txt}. "
-            f"Conditions not met: {failed_txt}.")
+    lines = []
+    for _, row in dec.iterrows():
+        conds = [("net_pct_cost1 > 0 at 1x cost", row["cond_net_pos"]),
+                 ("day-block bootstrap p < 0.05", row["cond_p_boot_day"]),
+                 ("passes BH-FDR at 10% within the 24-trial TEST family", row["cond_fdr_pass_10pct"]),
+                 ("beats the random-entry control", row["cond_beats_control"]),
+                 ("deflated Sharpe (N=24) > 0.95", row["cond_dsr_gt_095"]),
+                 ("at least 200 TEST trades", row["cond_n_ge_200"])]
+        passed = [c for c, ok in conds if _isyes(ok)]
+        failed = [c for c, ok in conds if not _isyes(ok)]
+        passed_txt = "; ".join(passed) if passed else "none"
+        failed_txt = "; ".join(failed) if failed else "none"
+        lines.append(f"**{row['instrument']}**: the pre-registered TRAIN winner (highest "
+                      f"calendar-day Sharpe among that instrument's own TRAIN trials with at "
+                      f"least 100 trades) is `{row['winner_series']} {row['winner_trial']}`, "
+                      f"checked exactly once on TEST: **verdict {row['verdict']}**. Conditions "
+                      f"met: {passed_txt}. Conditions not met: {failed_txt}.")
+    return "\n\n".join(lines)
 
 
 def pattern_sentence(series_id, sub):
@@ -130,22 +139,24 @@ def track_b():
          "independent of the 0DTE prop-account constraint governing every other deliverable in "
          "this repository, but bound to the same statistical guards (block bootstrap, its own "
          "family-wide BH-FDR, a random-entry control, a deflated Sharpe). The TRAIN/TEST lock is "
-         "fixed and never re-opened: one SPY winner is chosen on TRAIN by the highest "
-         "calendar-day Sharpe among trials with at least 100 trades, then checked EXACTLY ONCE on "
-         "TEST; no parameter may be re-tuned after seeing a TEST number. XAUUSD is DEFERRED to a "
-         "separate, later run (mid-run Amendments A40b/A40c): a longer Oanda gold minute source "
-         "was found after this family was pre-registered, so the gold trials wait for a TRAIN "
-         "rebuild of it, with the owner's own 5000R export reserved, unseen, as the TEST-only "
-         "window -- this report and the family below are SPY-only. Whatever the verdict, the "
-         "pattern table at the end stands as the finding (A40's own instruction).", "",
-         "## Gate B-a (range-bar rebuild)", "",
+         "fixed and never re-opened: SPY and XAUUSD winners are each chosen SEPARATELY, on their "
+         "own TRAIN window, by the highest calendar-day Sharpe among trials with at least 100 "
+         "trades (A40b), then each checked EXACTLY ONCE on their own TEST window; no parameter may "
+         "be re-tuned after seeing a TEST number. Gold's windows were re-registered twice before "
+         "any gold result existed: A40b found a 2006-2020 Oanda XAU_USD minute source; A40c then "
+         "replaced A40b's planned TEST window (the owner's untouched 5000R export) with a second "
+         "rebuild from that same minute source, since no independent minute source exists to gate "
+         "the owner's file against -- the owner's 5000R export is CONTEXT ONLY throughout this "
+         "report. Whatever the verdict, the pattern table at the end stands as the finding (A40's "
+         "own instruction).", "",
+         "## Gate B-a (range-bar rebuild, SPY and gold)", "",
          gate_sentence(gate), "", md(gate[GATE_COLS], fmt="{:.6f}"), ""]
 
-    L += ["## SPY sweep family — TRAIN (`out/trackB_sweep_candidates.csv`)", ""]
+    L += ["## Sweep family — TRAIN (SPY + XAU, `out/trackB_sweep_candidates.csv`)", ""]
     train = cand[cand["window"] == "TRAIN"]
     L += [md(train[[c for c in TRIAL_COLS if c in train]], fmt="{:.4f}", int_cols=INT_COLS), ""]
 
-    L += ["## SPY sweep family — TEST (`out/trackB_trials.csv`, this run's own BH-FDR family)", ""]
+    L += ["## Sweep family — TEST (SPY + XAU, `out/trackB_trials.csv`, this run's own 24-row BH-FDR family)", ""]
     L += [md(trials[[c for c in TEST_TABLE_COLS if c in trials]], fmt="{:.4f}", int_cols=INT_COLS), ""]
 
     L += ["## Decision (`out/trackB_decision.csv`)", "",

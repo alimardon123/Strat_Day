@@ -65,4 +65,7 @@ Family-wide BH-FDR at 10 % over 36 trials: 0 pass (`out/trials.csv`).
 | TEST verdict | FAILED: n 1933, -0.024 %/trade, p 1.00, DSR 0.00; 0 of 16 pass FDR |
 | All 16 TEST rows | net negative at 2 bp/side; win rates within 3 points of stop ÷ (stop + target) |
 | Pattern finding | 1-bar continuation after a sweep-and-reject: +0.16 bar-ranges vs +0.005 unconditional (p < 0.001); gone by 20 bars |
+| Gold (A40c) gate | PASS 3/3 (48,077 bars, 741 weeks); context: rebuild 25.5 bars/week vs the owner's export 175 |
+| Gold TRAIN winner → TEST | `continuation|L20|R2` FAILED: n 864, -0.0275 %/trade, p 1.00; all 8 gold rows negative |
+| Family FDR (24 TEST rows) | 0 pass; DSR at N = 24 ≈ 0 for every row |
 

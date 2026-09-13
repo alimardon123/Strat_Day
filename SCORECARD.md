@@ -74,7 +74,7 @@ Family-wide BH-FDR at 10 % over 39 trials (36 before A42's three joined): 0 pass
 | Item | Result |
 |---|---|
 | Calibration at 2 % ITM (`out/realopt_calibration.csv`) | median implied k 1.002, IQR 0.016; k unidentifiable at 2 % ITM; missing-minute share 80 % |
-| Re-evaluation at +$0.10 (`out/realopt_reeval.csv`) | D1 winner +0.87 % (model +1.23); gap-up -2.69 % (-2.08); T1 +2.54 % (+3.27); all signs unchanged, all p > 0.2, sub-window |
+| Re-evaluation at +$0.10 (`out/realopt_reeval.csv`, after the round-7 clarification) | D1 winner +0.92 % (model +1.39; n 59); gap-up -2.78 % (-2.08; n 178); T1 +1.60 % (+3.73); all signs unchanged, all p > 0.2, sub-window; fill delay median 3 min, p90 31, 78 of 401 trades ≥ 15 min late |
 | A42 E1 daily straddle 09:31 | n 646, -7.0 % of premium, p 1.00 — premium rich, as registered |
 | A42 E2 FOMC 13:30 vs E3 non-FOMC | E2 n 20 -1.6 %, E3 n 608 -17.2 %, difference +15.7 pts, p 0.64; UNDERPOWERED, not promoted |
 

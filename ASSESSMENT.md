@@ -109,13 +109,18 @@ The owner's real SPY 0DTE bars (2024-02-01 → 2026-09-11) answer the two questi
 1.001) against the model at k = 1 — at 2 % ITM the option is intrinsic ± the spread and k cannot be identified, exactly
 as `out/options_timevalue.csv` implied; the playbook's k = 1.3 label is therefore a sensitivity, not a measured parameter. The real
 deviation from the model is liquidity, not volatility: no trade printed in the exact minute for 80 % of the checked
-session-minutes, and the re-evaluation filled at the next printed bar (median delay 1 minute, maximum 4, measured from
-`out/realopt_reeval_trades.csv` entry_mod minus the signal minute).
-**A41 re-evaluation** on sessions ≥ 2024-02-01 at +$0.10 round trip (1 SPX point), real versus the model on the same trades:
-D1 winner n 61, +0.87 % of premium vs model +1.23 %; gap-up call n 183, -2.69 % vs -2.08 %;
-A39 T1 n 53, +2.54 % vs +3.27 %; T2 +4.94 % vs +5.81 %; T3 +2.76 % vs +6.91 %. The model
+session-minutes, and the re-evaluation filled at the next printed bar (the next print itself came a median of 1 minute after the signal; the
+bar actually used is later still, see below).
+**A41 re-evaluation** on sessions ≥ 2024-02-01 at +$0.10 round trip (1 SPX point), real versus the model on the same trades, after the
+round-7 clarification (causal strike availability; entry bar must precede exit bar):
+D1 winner n 59, +0.92 % of premium vs model +1.39 %; gap-up call n 178, -2.78 % vs -2.08 %;
+A39 T1 n 52, +1.60 % vs +3.73 %; T2 +2.16 % vs +5.81 %; T3 +2.42 % vs +6.91 %. The model
 was optimistic by roughly half a point to four points of premium per trade once the spread is paid, never pessimistic enough to
 hide an edge: every sign is unchanged, every p-value stays above 0.2, and the rows carry "sub-window, not a verdict".
+Fill timing, measured from the bar actually used against the signal's own minute (`out/realopt_reeval_trades.csv`, entry_bar_mod −
+entry_mod, 401 trades): median 3 min, 90th percentile 31 min, maximum 179 min, 78 trades at least 15 minutes late — the
+2 %-ITM chain rarely prints at the named minute, so a re-priced trade is often a materially later trade; that is the liquidity
+finding, and it is the reason a live 0DTE fill must be taken at the quote, not waited for at the print.
 **A42 event-day long volatility** (nearest-ATM call + put, both legs bought, +$0.10 per pair): E1 every session at 09:31 →
 15:59, n 646, -7.0 % of premium (p 1.00); E3 non-FOMC sessions at 13:30, n 608, -17.2 %; E2 FOMC days at 13:30,
 n 20, -1.6 %, E2 − E3 = +15.7 points of premium, two-sample p 0.64, UNDERPOWERED by construction. Reading: the

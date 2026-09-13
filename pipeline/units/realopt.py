@@ -96,6 +96,20 @@ Every ambiguity the amendment left open is fixed here and restated in the `spec`
     print"); if no bar exists before 15:59 either, OR no listed contract exists for the needed
     (date, right) at all, the trade is skipped and counted in the SAME `n_skipped_missing` -- the
     amendment names one skip counter, not several.
+(9a) A41 clarification (judge round 7, 2026-09-13 17:32 UTC), read causally and mechanically, no
+     date special-casing: (i) "nearest listed strike ... available in the file that day" means the
+     CANDIDATE strikes for `nearest_listed` are restricted to contracts with at least one bar
+     printed AT OR BEFORE the entry minute that session (a strike whose first print comes later
+     is never a candidate, since it could not have been dealt at entry time) -- this narrows the
+     strike search in `reprice_trades` only, not the calibration strike search (docstring point 4
+     already reads calibration's own "listed that day" literally, unclarified); (ii) once both bars
+     are resolved (docstring point 9's fallback rule), the trade is skipped and counted in
+     `n_skipped_missing` unless the entry bar ACTUALLY USED (`entry_bar_mod`) is strictly earlier
+     than the exit bar ACTUALLY USED (`exit_bar_mod`) -- a same-bar or inverted fill (the entry
+     fallback's "any distance later" landing at/after the fixed 15:59 exit, or beyond it) is not a
+     real trade. `entry_bar_mod`/`exit_bar_mod` (the used bars' own minutes-of-day, NOT the
+     signal's nominal `entry_mod`/`exit_mod`) are written to `TRADE_COLS` so both rules are
+     auditable per trade, per the clarification's own text.
 (10) Costs are a flat dollar amount subtracted from the option's own real dollar P&L (+$0.00 /
      +$0.10 / +$0.20), per the amendment's literal text -- NOT `pipeline.options`'s bid/ask-spread
      mechanism (entry AND exit spread halves), because real bar closes already sit inside the
@@ -123,6 +137,12 @@ Every ambiguity the amendment left open is fixed here and restated in the `spec`
 (15) 0DTE guard: rows in the option file whose `expiry` differs from its own session `date`
      (should not occur given the file's own same-day-expiry spec, unverifiable before the file
      exists) are dropped defensively before any pricing.
+(16) `option_shards(ext_path)` globs `EXT_OPT_GLOB` only when `ext_path` is the module's OWN
+     default (`EXT_OPT_PATH`) or `None`; a caller-supplied path that is anything else is looked up
+     BY ITSELF, never widened to the glob (judge round 7: once real shards existed under
+     `data/ext/`, the skip-path unit test's deliberately-missing tempfile path was silently
+     overridden by the glob, so the "file missing" test re-priced the real file instead of
+     exercising the skip path).
 """
 import argparse
 import os
@@ -141,8 +161,15 @@ EXT_OPT_GLOB = "data/ext/spy_0dte_1min_*.csv.gz"                  # or per-year 
 
 def option_shards(ext_path=EXT_OPT_PATH):
     """The option file as one path or as per-year shards (tools/fetch_spy_0dte_local.py writes
-    <prefix><year>.csv.gz so no file exceeds GitHub's 100 MB); sorted, temp files excluded."""
+    <prefix><year>.csv.gz so no file exceeds GitHub's 100 MB); sorted, temp files excluded. The
+    glob only runs for the module's OWN default path (or None, its logical equivalent) -- a
+    caller-supplied path that is NOT the default is looked up by itself, never widened to the
+    glob, so a deliberately-missing test path yields [] instead of picking up whatever real
+    shards happen to sit under data/ext/ (judge round 7: this is what let test_skip_path silently
+    re-price the real file instead of exercising the skip path once real shards existed)."""
     import glob
+    if ext_path is not None and ext_path != EXT_OPT_PATH:
+        return [ext_path] if os.path.exists(ext_path) else []
     paths = sorted(q for q in glob.glob(EXT_OPT_GLOB) if not q.endswith(".tmp.csv"))
     if ext_path and os.path.exists(ext_path) and ext_path not in paths:
         paths.append(ext_path)
@@ -164,8 +191,9 @@ CALIB_SUMMARY_COLS = ["group_type", "group_value", "n", "median_implied_k", "iqr
 OUT_COLS = ["signal", "cost_label", "added_cost_dollars", "n", "n_skipped_missing", "win",
             "mean_pct_of_premium", "median_pct", "worst_pct", "model_mean_pct", "label",
             "p_boot_day", "sharpe_calday", "note", "spec"]
-TRADE_COLS = ["signal", "date", "entry_mod", "kind", "strike", "entry_close", "exit_close",
-              "entry_fallback", "exit_fallback", "raw_pnl_dollars", "pct_raw", "model_pct"]
+TRADE_COLS = ["signal", "date", "entry_mod", "kind", "strike", "entry_close", "entry_bar_mod",
+              "exit_close", "exit_bar_mod", "entry_fallback", "exit_fallback", "raw_pnl_dollars",
+              "pct_raw", "model_pct"]
 
 SPEC_NOTE = (
     "FIXED (pre-registration, A41): calibration -- for every session in the option file and each "
@@ -178,8 +206,12 @@ SPEC_NOTE = (
     "per-trade file, A39 T1/T2/T3) is re-priced with real bars: entry = the option's exact-minute "
     "bar close at the trade's own entry minute (next later bar's open if missing), exit = the "
     "exact 15:59 bar close (last bar at/before 15:59 if missing); a trade with neither is skipped "
-    "and counted in n_skipped_missing. Strike = nearest LISTED strike that day to the unrounded 2% "
-    "ITM model target. Costs: +$0.00/+$0.10/+$0.20 flat, three rows per signal. model_mean_pct is "
+    "and counted in n_skipped_missing. Strike = nearest LISTED strike that day, among strikes with "
+    "a bar printed at or before the entry minute (causal availability, A41 clarification, judge "
+    "round 7), to the unrounded 2% ITM model target; a trade is additionally skipped and counted "
+    "in n_skipped_missing when the entry bar actually used (entry_bar_mod) is not strictly earlier "
+    "than the exit bar actually used (exit_bar_mod) -- both are written to the per-trade file for "
+    "audit. Costs: +$0.00/+$0.10/+$0.20 flat, three rows per signal. model_mean_pct is "
     "pipeline.options.trade's own number on the exact same re-priced trades (k=1.0 for the D1 "
     "winner/POST-SELECTION rows, k=1.3 for the 13:00 gap-up call and A39 T1/T2/T3, matching each "
     "signal's existing convention elsewhere in this codebase), never the D4 sensitivity sweep. "
@@ -323,56 +355,70 @@ def write_calibration(path, calib, summary):
 # ---------------------------------------------------------------------------------------------
 
 def _entry_price(contract, mod):
+    """(price, bar_mod_used, is_fallback); bar_mod_used is the minute-of-day of the bar actually
+    used (never `mod` itself on the fallback branch -- see the A41 clarification, docstring point
+    9a) so the caller can check it lands strictly before the exit bar actually used."""
     exact = contract[contract["mod"] == mod]
     if len(exact):
-        return float(exact["close"].iloc[0]), False
+        return float(exact["close"].iloc[0]), mod, False
     later = contract[contract["mod"] > mod].sort_values("mod")
     if len(later):
-        return float(later["open"].iloc[0]), True
-    return None, False
+        return float(later["open"].iloc[0]), int(later["mod"].iloc[0]), True
+    return None, None, False
 
 
 def _exit_price(contract, mod):
+    """(price, bar_mod_used, is_fallback); see `_entry_price`."""
     exact = contract[contract["mod"] == mod]
     if len(exact):
-        return float(exact["close"].iloc[0]), False
+        return float(exact["close"].iloc[0]), mod, False
     earlier = contract[contract["mod"] < mod].sort_values("mod")
     if len(earlier):
-        return float(earlier["close"].iloc[-1]), True
-    return None, False
+        return float(earlier["close"].iloc[-1]), int(earlier["mod"].iloc[-1]), True
+    return None, None, False
 
 
 def reprice_trades(signal, dates, entry_mods, exit_mods, kinds, entry_px_pts, exit_px_pts, vix_prevs, opt_df, model_k):
     """Re-price one signal's trades with real bars; returns (trades_df, n_skipped) — see docstring
-    points 7 and 9 for the entry/exit fallback rule and what counts as a skip."""
+    points 7 and 9 for the entry/exit fallback rule and what counts as a skip, and point 9a (A41
+    clarification, judge round 7) for the two rules added here: (i) candidate strikes are causal --
+    only strikes with a bar printed at or before the entry minute that session -- and (ii) a trade
+    is skipped when the entry bar actually used is not strictly earlier than the exit bar actually
+    used."""
     rows, n_skipped = [], 0
     opt_by_date = {d: g for d, g in opt_df.groupby("date")}
     for date, entry_mod, exit_mod, kind, epts, xpts, vix_prev in zip(
             dates, entry_mods, exit_mods, kinds, entry_px_pts, exit_px_pts, vix_prevs):
         date = pd.Timestamp(date)
+        entry_mod = int(entry_mod)
         right = "C" if kind == "c" else "P"
         og = opt_by_date.get(date)
         S = float(epts) / 10.0
         target = target_strike(S, kind)
-        strikes = og.loc[og["right"] == right, "strike"] if og is not None else pd.Series([], dtype=float)
+        strikes = (og.loc[(og["right"] == right) & (og["mod"] <= entry_mod), "strike"]
+                  if og is not None else pd.Series([], dtype=float))
         K = nearest_listed(strikes, target)
         if og is None or K is None:
             n_skipped += 1
             continue
         contract = og[(og["right"] == right) & (og["strike"] == K)]
-        entry_close, entry_fb = _entry_price(contract, int(entry_mod))
+        entry_close, entry_bar_mod, entry_fb = _entry_price(contract, entry_mod)
         if entry_close is None:
             n_skipped += 1
             continue
-        exit_close, exit_fb = _exit_price(contract, REAL_EXIT_MOD)
+        exit_close, exit_bar_mod, exit_fb = _exit_price(contract, REAL_EXIT_MOD)
         if exit_close is None:
             n_skipped += 1
             continue
-        model_ret, _, _ = options.trade(epts, xpts, int(entry_mod), int(exit_mod), vix_prev, kind,
+        if not entry_bar_mod < exit_bar_mod:
+            n_skipped += 1
+            continue
+        model_ret, _, _ = options.trade(epts, xpts, entry_mod, int(exit_mod), vix_prev, kind,
                                         k=model_k, itm=0.02, spread_pts=1.0, grid=options.GRID["SPX"], settle="cash")
-        rows.append(dict(signal=signal, date=date, entry_mod=int(entry_mod), kind=kind, strike=K,
-                         entry_close=entry_close, exit_close=exit_close, entry_fallback=entry_fb,
-                         exit_fallback=exit_fb, raw_pnl_dollars=exit_close - entry_close,
+        rows.append(dict(signal=signal, date=date, entry_mod=entry_mod, kind=kind, strike=K,
+                         entry_close=entry_close, entry_bar_mod=entry_bar_mod, exit_close=exit_close,
+                         exit_bar_mod=exit_bar_mod, entry_fallback=entry_fb, exit_fallback=exit_fb,
+                         raw_pnl_dollars=exit_close - entry_close,
                          pct_raw=(exit_close / entry_close - 1) * 100, model_pct=model_ret * 100))
     return pd.DataFrame(rows, columns=TRADE_COLS), n_skipped
 

@@ -399,43 +399,47 @@ Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.
 
 6410 (date, minute, right) calibration rows over 646 sessions.
 
+A41's k = 1.3 re-label conditional against the 0.3 threshold: |1.3 − median implied k| = 0.299 at 15:00 and 0.299 at 15:30 — the conditional did not fire: the label stands on the rule and on unidentifiability.
+
 ### Re-evaluation: real 1-minute option bars replace the k×VIX model on every counted trial's sessions ≥ 2024-02-01 (the two pre-registered D4 holdout signals, A39 T1/T2/T3, and any POST-SELECTION row with a per-trade file), at three added-cost rows (`out/realopt_reeval.csv`, per-trade detail in `out/realopt_reeval_trades.csv`)
 
 | signal | cost_label | n | n_skipped_missing | win | mean_pct_of_premium | median_pct | worst_pct | model_mean_pct | label | p_boot_day | sharpe_calday |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 15:00\|both\|vixmove_exp | +$0.00 | 61 | 0 | 62.2951 | 1.7028 | 2.9966 | -45.5186 | 1.2332 | model pessimistic here | 0.2420 | 0.4171 |
-| 15:00\|both\|vixmove_exp | +$0.10 | 61 | 0 | 59.0164 | 0.8705 | 2.1404 | -46.5257 | 1.2332 | model optimistic here | 0.3603 | 0.2136 |
-| 15:00\|both\|vixmove_exp | +$0.20 | 61 | 0 | 57.3770 | 0.0382 | 1.2842 | -47.5327 | 1.2332 | model optimistic here | 0.4950 | 0.0094 |
-| 13:00\|call\|gap>0.3% | +$0.00 | 183 | 2 | 49.1803 | -1.8378 | 0.0000 | -99.7382 | -2.0830 | model pessimistic here | 1.0000 | -0.5947 |
-| 13:00\|call\|gap>0.3% | +$0.10 | 183 | 2 | 46.4481 | -2.6856 | -0.8005 | -102.3560 | -2.0830 | model optimistic here | 1.0000 | -0.8664 |
-| 13:00\|call\|gap>0.3% | +$0.20 | 183 | 2 | 44.8087 | -3.5335 | -1.4418 | -104.9738 | -2.0830 | model optimistic here | 1.0000 | -1.1355 |
-| T1 | +$0.00 | 53 | 0 | 52.8302 | 3.3926 | 2.3932 | -99.9119 | 3.2734 | model pessimistic here | 0.2632 | 0.3739 |
-| T1 | +$0.10 | 53 | 0 | 50.9434 | 2.5449 | 1.5385 | -100.7930 | 3.2734 | model optimistic here | 0.3222 | 0.2808 |
-| T1 | +$0.20 | 53 | 0 | 50.9434 | 1.6972 | 0.6838 | -101.6740 | 3.2734 | model optimistic here | 0.3807 | 0.1874 |
-| T2 | +$0.00 | 53 | 0 | 58.4906 | 5.7772 | 8.0108 | -99.9139 | 5.8052 | model optimistic here | 0.2040 | 0.5298 |
-| T2 | +$0.10 | 53 | 0 | 56.6038 | 4.9406 | 7.1107 | -100.7752 | 5.8052 | model optimistic here | 0.2452 | 0.4539 |
-| T2 | +$0.20 | 53 | 0 | 54.7170 | 4.1041 | 6.2106 | -101.6365 | 5.8052 | model optimistic here | 0.2807 | 0.3775 |
-| T3 | +$0.00 | 59 | 0 | 44.0678 | 3.6008 | -1.7148 | -56.6038 | 6.9080 | model optimistic here | 0.2507 | 0.4115 |
-| T3 | +$0.10 | 59 | 0 | 44.0678 | 2.7585 | -2.6173 | -57.4614 | 6.9080 | model optimistic here | 0.2990 | 0.3157 |
-| T3 | +$0.20 | 59 | 0 | 42.3729 | 1.9163 | -3.5199 | -58.3190 | 6.9080 | model optimistic here | 0.3558 | 0.2195 |
+| 15:00\|both\|vixmove_exp | +$0.00 | 59 | 2 | 62.7119 | 1.7546 | 3.8889 | -45.5186 | 1.3887 | model pessimistic here | 0.2487 | 0.4157 |
+| 15:00\|both\|vixmove_exp | +$0.10 | 59 | 2 | 61.0169 | 0.9227 | 3.0952 | -46.5257 | 1.3887 | model optimistic here | 0.3588 | 0.2190 |
+| 15:00\|both\|vixmove_exp | +$0.20 | 59 | 2 | 59.3220 | 0.0907 | 2.3016 | -47.5327 | 1.3887 | model optimistic here | 0.4860 | 0.0215 |
+| 13:00\|call\|gap>0.3% | +$0.00 | 178 | 7 | 50.0000 | -1.9353 | -0.0266 | -99.7382 | -2.0764 | model pessimistic here | 1.0000 | -0.6159 |
+| 13:00\|call\|gap>0.3% | +$0.10 | 178 | 7 | 47.1910 | -2.7833 | -0.8471 | -102.3560 | -2.0764 | model optimistic here | 1.0000 | -0.8828 |
+| 13:00\|call\|gap>0.3% | +$0.20 | 178 | 7 | 45.5056 | -3.6312 | -1.5600 | -104.9738 | -2.0764 | model optimistic here | 1.0000 | -1.1470 |
+| T1 | +$0.00 | 52 | 1 | 53.8462 | 2.4394 | 2.8141 | -99.9119 | 3.7262 | model optimistic here | 0.3225 | 0.2689 |
+| T1 | +$0.10 | 52 | 1 | 51.9231 | 1.5989 | 1.9110 | -100.7930 | 3.7262 | model optimistic here | 0.3840 | 0.1763 |
+| T1 | +$0.20 | 52 | 1 | 51.9231 | 0.7584 | 1.0079 | -101.6740 | 3.7262 | model optimistic here | 0.4450 | 0.0837 |
+| T2 | +$0.00 | 53 | 0 | 58.4906 | 3.0398 | 5.7143 | -99.8924 | 5.8052 | model optimistic here | 0.3265 | 0.2921 |
+| T2 | +$0.10 | 53 | 0 | 58.4906 | 2.1554 | 3.8095 | -100.9688 | 5.8052 | model optimistic here | 0.3715 | 0.2072 |
+| T2 | +$0.20 | 53 | 0 | 54.7170 | 1.2710 | 1.9048 | -102.0452 | 5.8052 | model optimistic here | 0.4215 | 0.1222 |
+| T3 | +$0.00 | 59 | 0 | 42.3729 | 3.2589 | -2.2886 | -56.6038 | 6.9080 | model optimistic here | 0.2760 | 0.3567 |
+| T3 | +$0.10 | 59 | 0 | 40.6780 | 2.4167 | -2.9243 | -57.4614 | 6.9080 | model optimistic here | 0.3295 | 0.2648 |
+| T3 | +$0.20 | 59 | 0 | 40.6780 | 1.5745 | -3.5601 | -58.3190 | 6.9080 | model optimistic here | 0.3862 | 0.1726 |
 
-- 15:00|both|vixmove_exp at +$0.00: model pessimistic here (n=61, real mean +1.70% of premium vs model +1.23%; sub-window, not a verdict).
-- 15:00|both|vixmove_exp at +$0.10: model optimistic here (n=61, real mean +0.87% of premium vs model +1.23%; sub-window, not a verdict).
-- 15:00|both|vixmove_exp at +$0.20: model optimistic here (n=61, real mean +0.04% of premium vs model +1.23%; sub-window, not a verdict).
-- 13:00|call|gap>0.3% at +$0.00: model pessimistic here (n=183, real mean -1.84% of premium vs model -2.08%; sub-window, not a verdict).
-- 13:00|call|gap>0.3% at +$0.10: model optimistic here (n=183, real mean -2.69% of premium vs model -2.08%; sub-window, not a verdict).
-- 13:00|call|gap>0.3% at +$0.20: model optimistic here (n=183, real mean -3.53% of premium vs model -2.08%; sub-window, not a verdict).
-- T1 at +$0.00: model pessimistic here (n=53, real mean +3.39% of premium vs model +3.27%; sub-window, not a verdict).
-- T1 at +$0.10: model optimistic here (n=53, real mean +2.54% of premium vs model +3.27%; sub-window, not a verdict).
-- T1 at +$0.20: model optimistic here (n=53, real mean +1.70% of premium vs model +3.27%; sub-window, not a verdict).
-- T2 at +$0.00: model optimistic here (n=53, real mean +5.78% of premium vs model +5.81%; sub-window, not a verdict).
-- T2 at +$0.10: model optimistic here (n=53, real mean +4.94% of premium vs model +5.81%; sub-window, not a verdict).
-- T2 at +$0.20: model optimistic here (n=53, real mean +4.10% of premium vs model +5.81%; sub-window, not a verdict).
-- T3 at +$0.00: model optimistic here (n=59, real mean +3.60% of premium vs model +6.91%; sub-window, not a verdict).
-- T3 at +$0.10: model optimistic here (n=59, real mean +2.76% of premium vs model +6.91%; sub-window, not a verdict).
-- T3 at +$0.20: model optimistic here (n=59, real mean +1.92% of premium vs model +6.91%; sub-window, not a verdict).
+- 15:00|both|vixmove_exp at +$0.00: model pessimistic here (n=59, real mean +1.75% of premium vs model +1.39%; sub-window, not a verdict).
+- 15:00|both|vixmove_exp at +$0.10: model optimistic here (n=59, real mean +0.92% of premium vs model +1.39%; sub-window, not a verdict).
+- 15:00|both|vixmove_exp at +$0.20: model optimistic here (n=59, real mean +0.09% of premium vs model +1.39%; sub-window, not a verdict).
+- 13:00|call|gap>0.3% at +$0.00: model pessimistic here (n=178, real mean -1.94% of premium vs model -2.08%; sub-window, not a verdict).
+- 13:00|call|gap>0.3% at +$0.10: model optimistic here (n=178, real mean -2.78% of premium vs model -2.08%; sub-window, not a verdict).
+- 13:00|call|gap>0.3% at +$0.20: model optimistic here (n=178, real mean -3.63% of premium vs model -2.08%; sub-window, not a verdict).
+- T1 at +$0.00: model optimistic here (n=52, real mean +2.44% of premium vs model +3.73%; sub-window, not a verdict).
+- T1 at +$0.10: model optimistic here (n=52, real mean +1.60% of premium vs model +3.73%; sub-window, not a verdict).
+- T1 at +$0.20: model optimistic here (n=52, real mean +0.76% of premium vs model +3.73%; sub-window, not a verdict).
+- T2 at +$0.00: model optimistic here (n=53, real mean +3.04% of premium vs model +5.81%; sub-window, not a verdict).
+- T2 at +$0.10: model optimistic here (n=53, real mean +2.16% of premium vs model +5.81%; sub-window, not a verdict).
+- T2 at +$0.20: model optimistic here (n=53, real mean +1.27% of premium vs model +5.81%; sub-window, not a verdict).
+- T3 at +$0.00: model optimistic here (n=59, real mean +3.26% of premium vs model +6.91%; sub-window, not a verdict).
+- T3 at +$0.10: model optimistic here (n=59, real mean +2.42% of premium vs model +6.91%; sub-window, not a verdict).
+- T3 at +$0.20: model optimistic here (n=59, real mean +1.57% of premium vs model +6.91%; sub-window, not a verdict).
 
 FIXED (pre-registration, A41): calibration -- for every session in the option file and each of {09:31,10:00,13:00,15:00,15:30} ET, the nearest-to-2%-ITM call/put's real 1-minute bar close (exact-minute match on the branch's session-builder frame, /10 to dollars) divided by pipeline.options.price at k=1 x prior-close VIX = implied k; median/IQR by VIX tercile (over the file's own sessions) and by minute, plus the missing (no-bar) share, in a second block of the same csv. Re-evaluation -- every option leg already priced by the model on sessions >= 2024-02-01 (the two pre-registered D4 holdout signals, any POST-SELECTION row with a per-trade file, A39 T1/T2/T3) is re-priced with real bars: entry = the option's exact-minute bar close at the trade's own entry minute (next later bar's open if missing), exit = the exact 15:59 bar close (last bar at/before 15:59 if missing); a trade with neither is skipped and counted in n_skipped_missing.
+
+Fill-delay profile (entry bar actually used vs. the signal's own entry minute, all 401 re-priced trades, `out/realopt_reeval_trades.csv`): median 3 minutes, 90th percentile 31 minutes, maximum 179 minutes, 78 trades ≥ 15 minutes late.
 
 Sub-window, not a verdict: nothing above is promoted, added to the trial family (A41: "the trial count does not grow"), or scored against BH-FDR.
 

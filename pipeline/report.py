@@ -230,6 +230,43 @@ def realopt_labels(df):
     return lines
 
 
+def k13_relabel_clause(calib_summary):
+    """A41: "if the median k at 15:00/15:30 differs from 1.3 by more than 0.3, the playbook's k = 1.3
+    base case is re-labelled with the measured value" — generated from out/realopt_calibration.csv's
+    own by-minute summary rows (never typed). The conditional is evaluated at EACH of the two named
+    minutes independently (the amendment names one threshold checked at two minutes, not which of the
+    two wins a tie): it fires if EITHER |1.3 - median_implied_k| exceeds 0.3. Empty string if either
+    minute's summary row is missing (calibration hasn't run)."""
+    minute = calib_summary[calib_summary["group_type"] == "minute"] if len(calib_summary) else calib_summary
+    row_1500 = minute[minute["group_value"] == "15:00"] if len(minute) else minute
+    row_1530 = minute[minute["group_value"] == "15:30"] if len(minute) else minute
+    if not len(row_1500) or not len(row_1530):
+        return ""
+    d1500 = abs(1.3 - float(row_1500["median_implied_k"].iloc[0]))
+    d1530 = abs(1.3 - float(row_1530["median_implied_k"].iloc[0]))
+    fired = d1500 > 0.3 or d1530 > 0.3
+    verdict = ("fired: the playbook's k = 1.3 base case is re-labelled with the measured value"
+              if fired else
+              "did not fire: the label stands on the rule and on unidentifiability")
+    return (f"A41's k = 1.3 re-label conditional against the 0.3 threshold: |1.3 − median implied k| "
+            f"= {d1500:.3f} at 15:00 and {d1530:.3f} at 15:30 — the conditional {verdict}.")
+
+
+def fill_delay_clause(trades):
+    """A41 clarification (judge round 7): the fill-delay profile of every re-priced trade's entry
+    fill against its own signal minute — `entry_bar_mod` (the bar actually used) minus `entry_mod`
+    (the signal's nominal entry minute), both new TRADE_COLS columns added by the round-7 fix to
+    `pipeline.units.realopt.reprice_trades` — read from out/realopt_reeval_trades.csv, never typed.
+    Empty string if the trades file lacks the new columns (an older run) or has no rows."""
+    if "entry_bar_mod" not in trades or "entry_mod" not in trades or not len(trades):
+        return ""
+    delay = trades["entry_bar_mod"] - trades["entry_mod"]
+    return (f"Fill-delay profile (entry bar actually used vs. the signal's own entry minute, all "
+            f"{len(trades)} re-priced trades, `out/realopt_reeval_trades.csv`): median "
+            f"{delay.median():.0f} minutes, 90th percentile {delay.quantile(0.9):.0f} minutes, "
+            f"maximum {delay.max():.0f} minutes, {int((delay >= 15).sum())} trades ≥ 15 minutes late.")
+
+
 EVENTVOL_COLS = ["trial", "cost", "n", "n_skipped", "win", "mean_pct", "median_pct", "worst_pct",
                  "mean_usd", "p_boot_day", "sharpe_calday", "dsr_N39", "e2_minus_e3_pct",
                  "p_e2_vs_e3", "underpowered"]
@@ -526,6 +563,9 @@ def playbook():
                   md(calib_summary, fmt="{:.4f}") if len(calib_summary) else "No calibration rows.", ""]
             L += [f"{len(calib)} (date, minute, right) calibration rows over {calib['date'].nunique() if len(calib) else 0} "
                   "sessions." if len(calib) else "", ""]
+            k13_clause = k13_relabel_clause(calib_summary)
+            if k13_clause:
+                L += [k13_clause, ""]
             L += ["### Re-evaluation: real 1-minute option bars replace the k×VIX model on every counted "
                   "trial's sessions ≥ 2024-02-01 (the two pre-registered D4 holdout signals, A39 T1/T2/T3, "
                   "and any POST-SELECTION row with a per-trade file), at three added-cost rows "
@@ -535,6 +575,11 @@ def playbook():
             cap = realopt_caption(reeval)
             if cap:
                 L += [cap, ""]
+            trades_path = "out/realopt_reeval_trades.csv"
+            if os.path.exists(trades_path) and os.path.getsize(trades_path) > 0:
+                delay_clause = fill_delay_clause(pd.read_csv(trades_path))
+                if delay_clause:
+                    L += [delay_clause, ""]
             L += ["Sub-window, not a verdict: nothing above is promoted, added to the trial family (A41: "
                   "\"the trial count does not grow\"), or scored against BH-FDR.", ""]
         else:

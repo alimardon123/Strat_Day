@@ -52,7 +52,7 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
             "out/xmarket_SPXUSD.csv", "out/xmarket_GRXEUR.csv", "out/xmarket_ETXEUR.csv",
             "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/fvg_candidates.csv", "out/gapliq_candidates.csv",
             "out/letf_candidates.csv",
-            "out/realopt_reeval.csv",
+            "out/realopt_reeval.csv", "out/realopt_calibration.csv",
             "out/eventvol_candidates.csv",
             "out/trials.csv", "out/options_timevalue.csv",
             "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md",

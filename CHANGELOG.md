@@ -152,3 +152,6 @@
 - A41: median implied k 1.002 at 2 % ITM (unidentifiable; the model is intrinsic ± spread there); 80 % of checked minutes have no print; re-priced legs keep every sign, model optimistic by ½–4 points of premium after the spread. The playbook's first paragraph is now generated from the calibration file (A41 requirement).
 - A42: daily straddle -7.0 % of premium per day at +$0.10, non-FOMC 13:30 straddle -17.2 %, FOMC -1.6 % (n 20, UNDERPOWERED); family 39, FDR 0. Nothing promoted.
 
+## 2026-09-13 — Judge round 7 fixes applied (fleet coder): causal strike availability, entry-before-exit rule, loader path honoured (tests 3/3), calibration in EXPECTED, generated k-rule and fill-delay clauses in §12
+- Gap-up call n 183 → 178 (-2.78 % at +$0.10), D1 winner n 61 → 59 (+0.92 %); every sign unchanged; T1's $0-cost label flipped to "model optimistic" when one trade was dropped. Fill delay from the bar used: median 3 min, p90 31, max 179, 78/401 ≥ 15 min. Calibration's own strike search left as the diagnostic it is (non-causal, unchanged).
+

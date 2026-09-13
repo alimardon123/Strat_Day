@@ -125,6 +125,44 @@ def gapliq_caption(df):
     return " ".join(parts[:2])
 
 
+LETF_COLS = ["trial", "n_sessions_with_assets", "n_signal", "n_skipped", "n", "win", "net_pts_cost1",
+             "net_pts_cost2", "net_pct_cost1", "worst_trade_pts_cost1", "worst_day_pts_cost1", "sharpe_calday",
+             "p_boot_day", "p_boot_month", "control_mean_pts_cost1", "frac_seeds_beaten",
+             "magnitude_row_net_pts", "beats_magnitude_row", "opt_mean_pct_s1", "dsr_N37"]
+
+
+def letf_verdict(sub):
+    """Generated per-window verdict for the A38 letf trial: the same four programmatic survival
+    checks as fvg_verdict/gapliq_verdict (net > 0 at 1 pt, p_day < 0.05, excess over the day-
+    selection control > 0, n >= 200; DSR at N=37 is reported in the table, not a survival condition
+    here either), PLUS the amendment's own kill rule (net <= 0 at 1 pt on the holdout, OR not above
+    the day-selection control, OR not above the price-only magnitude row)."""
+    row = sub.iloc[0]
+    net_pos = bool(row["net_pts_cost1"] > 0) if pd.notna(row["net_pts_cost1"]) else False
+    p_sig = bool(row["p_boot_day"] < 0.05) if pd.notna(row["p_boot_day"]) else False
+    excess = row["net_pts_cost1"] - row["control_mean_pts_cost1"]
+    beats_control = bool(excess > 0) if pd.notna(excess) else False
+    n_ok = bool(row["n"] >= 200)
+    beats_mag = bool(row["beats_magnitude_row"]) if pd.notna(row.get("beats_magnitude_row")) else False
+    survives = net_pos and p_sig and beats_control and n_ok
+    killed = (not net_pos) or (not beats_control) or (not beats_mag)
+    return (f"net {'>' if net_pos else '<='} 0 at 1 pt, p_day {'<' if p_sig else '>='} 0.05, excess over the "
+            f"day-selection control {'>' if beats_control else '<='} 0, n {'>=' if n_ok else '<'} 200 -> "
+            f"{'SURVIVES' if survives else 'does not survive'} the four programmatic checks (DSR at N=37 is "
+            f"reported in the table above, not a survival condition). Beats the price-only magnitude row "
+            f"(`15:30|both|mag`): {'yes' if beats_mag else 'no'}. A38 kill rule (net <= 0 at 1 pt, OR not above "
+            f"the day-selection control, OR not above the magnitude row): {'KILLED' if killed else 'not triggered'}.")
+
+
+def letf_caption(df):
+    """First two sentences of the `spec` column (identical on every row — the fixed pre-
+    registration), generated rather than typed (D7)."""
+    if "spec" not in df or not len(df):
+        return ""
+    parts = re.split(r"(?<=\.)\s+", str(df["spec"].iloc[0]).strip())
+    return " ".join(parts[:2])
+
+
 def describe(label):
     hm, direction, gate = label.split("|")
     g = {"mag": "|open → entry| above the expanding 70th percentile of prior sessions",
@@ -353,6 +391,29 @@ def playbook():
         cap = gapliq_caption(gapliq)
         if cap:
             L += [cap, ""]
+    if os.path.exists("out/letf_candidates.csv"):
+        letf = pd.read_csv("out/letf_candidates.csv")
+        L += ["## 11. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial", ""]
+        if len(letf):
+            L += ["1 trial (`15:30|both|letf_demand`) from `pipeline.units.letf` (`out/letf_candidates.csv`), "
+                  "reported on three windows, each over sessions with leveraged-ETF assets data only. Only the "
+                  "SELECTION-window row is counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); "
+                  "CONTEXT is background and HOLDOUT is this same trial's out-of-sample row, reported here, not "
+                  "double-counted.", ""]
+            for win_name, win_label in (("CONTEXT", "CONTEXT (2005-01-01 → 2012-12-31)"),
+                                         ("SELECTION", "SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family"),
+                                         ("HOLDOUT", "HOLDOUT (2020-07-27 → 2026-09-11)")):
+                sub = letf[letf["window"] == win_name]
+                if not len(sub):
+                    continue
+                L += [f"### {win_label}", "",
+                      md(sub[[c for c in LETF_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS), "",
+                      letf_verdict(sub), ""]
+            cap = letf_caption(letf)
+            if cap:
+                L += [cap, ""]
+        else:
+            L += ["Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.", ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 

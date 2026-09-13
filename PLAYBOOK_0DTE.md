@@ -376,3 +376,7 @@ T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0,
 T1: net > 0 at 1 pt, p_day >= 0.05, excess over the day-selection control > 0, n < 200 -> does not survive the four programmatic checks (DSR at N=37 is reported in the table above, not a survival condition). Fingerprint: T2 < T1 (holds); T3 > 0 at 1 pt (fails). Promotion: T1 does not survive, not promoted.
 
 FIXED (pre-registration, A39): signal = overnight return (prior session's last RTH close -> this session's first RTH open) <= the expanding 10th percentile (T1/T2) / >= the expanding 90th percentile (T3, mirror) of overnight returns over all strictly prior sessions, min 250 prior sessions, no fitted parameter. T1 long call entry 10:00 bar close; T2 same days as T1, long call entry 09:31 bar close; T3 mirror signal, long put, entry 10:00 bar close; all exit at the 16:00 close.
+
+## 11. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial
+
+Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.

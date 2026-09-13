@@ -77,7 +77,7 @@ def splice_vol(C, old, new, proxy, out=None):
     """A13: chain `old` (original ETN, ends 2017-11-10) -> `proxy` (VIXY/VIXM, continuous) -> `new`
     (the 2018 Series B note, present only when the ext panel is supplied) by daily returns.
     Returns (price-like series, dict of bridge correlations); the bridge is refused (returns
-    the old series only) if any correlation on an overlap is below 0.99."""
+    the old series only) if any correlation on an overlap is below BRIDGE_MIN_CORR (0.98, A13)."""
     corr = {}
     o = C[old].dropna() if old in C else pd.Series(dtype=float)
     p = C[proxy].dropna() if proxy in C else pd.Series(dtype=float)
@@ -273,9 +273,13 @@ def main():
     V.to_csv("out/own_account_sleeves.csv", float_format="%.8f")
     P.to_csv("out/own_account_portfolios.csv", float_format="%.8f")
     reg = regimes(P.index)
-    by_reg = P.groupby(reg).mean() * 252
+    Pl = P.rename(columns={"EQUAL_8": "EQUAL_available"})             # the book holds fewer than 8 sleeves outside 2012-2017 (Phase 4 defect 4)
+    by_reg = Pl.groupby(reg).mean() * 252
+    by_reg["sleeves_mean"] = ns.groupby(reg).mean()
     by_reg.to_csv("out/own_account_by_regime.csv", float_format="%.6f")
-    by_year = P.groupby(P.index.year).sum()
+    by_year = Pl.groupby(Pl.index.year).sum()
+    by_year["sleeves_mean"] = ns.groupby(ns.index.year).mean()
+    by_year["sleeves_min"] = ns.groupby(ns.index.year).min()
     by_year.to_csv("out/own_account_by_year.csv", float_format="%.6f")
     print("ETF panel:", note, "| VXX/VXZ bridge correlations:", bridge or "old series only (ext panel absent)")
     print("sleeve data ends:", {k: str(v)[:10] for k, v in ends.items()})

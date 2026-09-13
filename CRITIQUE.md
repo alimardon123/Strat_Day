@@ -64,3 +64,16 @@ None from this round. Next tribunal: Phase 4, on the Phase 3 build.
 | 14 | 2 | Nits: timing-control crash on 13:00, hard-coded observability check, missing timing column, A7 bound, NA printed as nan, typed 7.37, window 954, ranking unit | — | ADOPTED all: timing window [decision − 120, decision), perturbation test for causality, timing column printed, A7 bound 0.08 pt, "NA (< 20 blocks)", years computed, window ends 15:55, Units section amended (rank verified identical under points) |
 
 Refuted: none. Unverified by the reviewer and now covered: `make repeat` byte-identity is re-run after the repairs; PLAYBOOK/OWN_ACCOUNT are rendered by `pipeline/report.py`.
+
+## Phase 6 judge (fleet judge, fresh context) — decision ITERATE (round 1), 6 items
+
+| # | Finding (short) | Root cause | Disposition |
+|---|---|---|---|
+| 1 | `make all` had no holdout step; ASSESSMENT's "when the file lands, make all produces the holdout tables" was false as coded | Deferred wiring | ADOPTED: conditional `holdout_d2` step in `run_all.py` when the ext minute file exists; holdout outputs added to EXPECTED |
+| 2 | Holdout prefix mangled to `out/holdout_holdout_*`; `out/holdout_pooled.csv` never written | Prefix arithmetic | ADOPTED: D2 tables at fixed names `out/holdout_{summary,by_year,pooled}.csv`; D3/D4 holdout tables at `out/holdout_d4_*` |
+| 3 | Survival-rule condition 3 (family-wide FDR) absent from the coded verdict | Verdict computed before the family exists | ADOPTED: label "SURVIVES (pending FDR)" from insample; `trials.py` adds the holdout rows to the family FDR and writes `label_final` |
+| 4 | Markdown tables mis-render candidate labels containing `\|` | No escaping | ADOPTED: `md()` escapes pipes |
+| 5 | Six stale per-trade files of the superseded winner still tracked; `make repeat` cannot see orphans | Copy-before-run | ADOPTED: files removed; `run_all` clears `out/insample_*` and `out/holdout_*` first |
+| 6 | Bridge correlations not printed; by-year/by-regime columns still headed EQUAL_8; MAE missing from the playbook table; manifests never committed (`data/raw/` shadowed the negation); docstring 0.99 | Partial repairs | ADOPTED all: bridge table in OWN_ACCOUNT.md; `EQUAL_available` + `sleeves_mean` columns; `mae_worst` column; `.gitignore` uses `data/raw/*` + `!manifest`; docstring fixed |
+
+Same-defect-class watch: "holdout path unwired" (Phase 4 defect 1 → judge item 1/2) is at its second appearance; if it survives the next judge pass the protocol says ESCALATE, not loop.

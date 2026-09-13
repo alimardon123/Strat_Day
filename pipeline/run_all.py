@@ -1,11 +1,15 @@
 """Regenerate every table under out/ from data/raw (+ data/ext when present), in order.
 Fails (exit 1) on any empty expected output or any *.error file (ACCEPTANCE A32, D7).
-`make repeat` runs this a second time and diffs out/ against the first run."""
+Stale per-run tables (insample_*, holdout_*) are removed first so `make repeat` can detect
+orphans. The holdout (D2) step runs only when the ext minute file exists."""
 import glob
 import os
 import subprocess
 import sys
 
+from pipeline import sessions
+
+EXT_MIN = "data/ext/spx_1min_2020-05_2026-09.csv.gz"
 STEPS = [
     ("gate_b_oanda", ["python", "-m", "pipeline.sessions", "oanda", "data/raw/oanda_SPX500_USD.parquet"], "out/gate_b_oanda.log"),
     ("gate_b_histdata", ["python", "-m", "pipeline.sessions", "histdata", "data/raw/histdata_SPXUSD.parquet"], "out/gate_b_histdata.log"),
@@ -14,6 +18,8 @@ STEPS = [
     ("reconcile", ["python", "-m", "pipeline.reconcile"], "out/reconcile.log"),
     ("insample_d3_d4", ["python", "-m", "pipeline.insample", "2013-01-01", "2020-05-13", "IN-SAMPLE 2013-01..2020-05-13",
                         "out/insample"], "out/insample.log"),
+    ("holdout_d2", ["python", "-m", "pipeline.insample", "2020-06-01", "2026-09-11", "HOLDOUT 2020-06-01..2026-09-11",
+                    "out/holdout"], "out/holdout.log"),
     ("own_account_d5", ["python", "-m", "pipeline.own_account"], "out/own_account.log"),
     ("xmarket_SPXUSD", ["python", "-m", "pipeline.units.xmarket", "--in", "SPXUSD", "--out", "out/xmarket_SPXUSD.csv"], "out/xmarket_SPXUSD.log"),
     ("xmarket_GRXEUR", ["python", "-m", "pipeline.units.xmarket", "--in", "GRXEUR", "--out", "out/xmarket_GRXEUR.csv"], "out/xmarket_GRXEUR.log"),
@@ -24,24 +30,31 @@ STEPS = [
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
 ]
 EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_histdata.csv", "out/calendar_histdata.csv",
-            "out/gate_c.csv", "out/reconcile_candidates.csv", "out/reconcile_decision.md",
+            "out/gate_c.csv", "out/gate_e.csv", "out/reconcile_candidates.csv", "out/reconcile_decision.md",
             "out/insample_execution.csv", "out/insample_summary.csv", "out/insample_sizing.csv",
-            "out/own_account_summary.csv", "out/own_account_by_year.csv", "out/own_account_by_regime.csv",
+            "out/own_account_summary.csv", "out/own_account_by_year.csv", "out/own_account_by_regime.csv", "out/own_account_bridge.csv",
             "out/xmarket_SPXUSD.csv", "out/xmarket_GRXEUR.csv", "out/xmarket_ETXEUR.csv",
-            "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md"]
+            "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/trials.csv", "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md"]
+EXPECTED_HOLDOUT = ["out/holdout_summary.csv", "out/holdout_by_year.csv", "out/holdout_pooled.csv",
+                    "out/holdout_d4_execution.csv", "out/holdout_d4_summary.csv", "out/holdout_d4_sizing.csv"]
 
 
 def main():
     os.makedirs("out", exist_ok=True)
-    for err in glob.glob("out/*.error"):
-        os.remove(err)
-    for name, cmd, log in STEPS:
+    ext = sessions.ext_present()
+    for pat in ("out/*.error", "out/insample_*", "out/holdout_*"):
+        for f in glob.glob(pat):
+            os.remove(f)
+    steps = [s for s in STEPS if s[0] != "holdout_d2" or ext]
+    expected = EXPECTED + (EXPECTED_HOLDOUT if ext else [])
+    print(f"ext feed: {'present (manifest + minute file) — holdout step enabled' if ext else 'absent — holdout step skipped (DATA.md)'}")
+    for name, cmd, log in steps:
         with open(log, "w") as f:
             r = subprocess.run(cmd, stdout=f, stderr=subprocess.STDOUT)
         print(f"{name}: exit {r.returncode}")
         if r.returncode != 0:
             open(log.replace(".log", ".error"), "w").write(f"exit {r.returncode}; see {log}\n")
-    bad = [p for p in EXPECTED if not os.path.exists(p) or os.path.getsize(p) == 0] + glob.glob("out/*.error")
+    bad = [p for p in expected if not os.path.exists(p) or os.path.getsize(p) == 0] + glob.glob("out/*.error")
     if bad:
         print("FAIL: empty or missing outputs / error files:", bad)
         sys.exit(1)

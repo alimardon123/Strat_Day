@@ -1,0 +1,8 @@
+{
+ "url": "https://raw.githubusercontent.com/datasets/finance-vix/main/data/vix-daily.csv",
+ "sha256": "40dcf4b4a7450f361d5ab518df10949cbf64d7b0aa7a8f724acbdd6e627591c2",
+ "rows": 9271,
+ "date_min": "1990-01-02 00:00:00",
+ "date_max": "2026-09-11 00:00:00",
+ "fetched_at": "2026-09-12T19:41:22+00:00"
+}

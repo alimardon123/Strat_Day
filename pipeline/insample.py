@@ -49,7 +49,8 @@ def holdout_tables(sel, day, frame, td, start, end, out_prefix):
         conds = dict(net_positive=bool(net_pts.mean() > 0), p_month_lt_005=bool(p_month < 0.05) if p_month == p_month else False,
                      excess_over_control=bool(excess > 0) if excess == excess else False, psr_gt_095=bool(psr > 0.95) if psr == psr else False,
                      n_ge_200=bool(len(t) >= 200))
-        label = "SURVIVES" if all(conds.values()) else ("UNDERPOWERED" if not conds["n_ge_200"] and conds["net_positive"] else "FAILED")
+        # survival rule 3 (family-wide BH-FDR) is applied afterwards by pipeline/trials.py, which finalises the label
+        label = "SURVIVES (pending FDR)" if all(conds.values()) else ("UNDERPOWERED" if not conds["n_ge_200"] and conds["net_positive"] else "FAILED")
         rows.append(dict(signal=name, n=len(t), win=100 * (t["pts"] > 0).mean(), net_pts=net_pts.mean(), net_pct=net_pct.mean(),
                          worst_trade_pts=net_pts.min(), p_month=p_month, p_day=stats.one_sided_p(net_pct.to_numpy(), stats.day_blocks(t["date"])),
                          p_half1_month=stats.one_sided_p((h1["ret_pct"] - 100 * COST_PTS / h1["entry_px"]).to_numpy(), stats.month_blocks(h1["date"])) if len(h1) else np.nan,
@@ -62,7 +63,9 @@ def holdout_tables(sel, day, frame, td, start, end, out_prefix):
             years.append(dict(signal=name, year=int(y), n=len(g_), win=100 * (g_["pts"] > 0).mean(), net_pts=(g_["pts"] - COST_PTS).mean(),
                               net_pct=npct.mean(), worst_trade_pts=(g_["pts"] - COST_PTS).min(),
                               p_day=stats.one_sided_p(npct.to_numpy(), stats.day_blocks(g_["date"]))))
-    pd.DataFrame(rows).to_csv(f"{out_prefix}_summary.csv", index=False, float_format="%.6f")
+    summ = pd.DataFrame(rows)
+    summ.to_csv(f"{out_prefix}_summary.csv", index=False, float_format="%.6f")
+    summ.to_csv(f"{out_prefix}_pooled.csv", index=False, float_format="%.6f")          # ACCEPTANCE D2's named evidence file
     pd.DataFrame(years).to_csv(f"{out_prefix}_by_year.csv", index=False, float_format="%.6f")
     print("\nD2 holdout verdicts:")
     print(pd.DataFrame(rows).to_string(index=False, float_format=lambda x: f"{x:.4f}"))
@@ -86,7 +89,8 @@ def main(start, end, label, out_prefix="out/playbook", winner=None):
     print(f"window {start}..{end} ({label}; {'HOLDOUT' if is_holdout else 'IN-SAMPLE'}; ext feed: {meta['instrument'] if meta else 'absent'}): "
           + ", ".join(f"{k}: {len(v)} trades" for k, v in sel.items()))
     if is_holdout:
-        holdout_tables(sel, day, frame, td, start, end, out_prefix.replace("playbook", "holdout") if "playbook" in out_prefix else out_prefix + "_holdout")
+        holdout_tables(sel, day, frame, td, start, end, "out/holdout")     # D2 tables: fixed names (out/holdout_summary|by_year|pooled.csv)
+        out_prefix = "out/holdout_d4"                                        # D3/D4 tables for the holdout window
     ex = execution.evaluate(fr, pd.concat(sel.values(), ignore_index=True))
     ex.insert(0, "window", label)
     print("\nD3 execution model (underlying points per signal, net; improvement split into cost assumption and price effect):")

@@ -1,0 +1,11 @@
+{
+ "repo": "willhjw/big_movers",
+ "commit": "8ccb831aca1cda6a5d01471f7968e11552d88007",
+ "files_read": 928,
+ "files_skipped": [],
+ "rows": 3265511,
+ "date_min": "2000-01-03 00:00:00",
+ "date_max": "2026-03-20 00:00:00",
+ "tickers": 928,
+ "fetched_at": "2026-09-12T19:48:36+00:00"
+}

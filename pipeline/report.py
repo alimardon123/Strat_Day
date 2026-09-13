@@ -23,7 +23,7 @@ def md(df, cols=None, fmt="{:.3f}"):
             if isinstance(v, (float, np.floating)):
                 cells.append("" if np.isnan(v) else fmt.format(v))
             else:
-                cells.append(str(v))
+                cells.append(str(v).replace("|", "\\|"))
         lines.append("| " + " | ".join(cells) + " |")
     return "\n".join(lines)
 
@@ -52,7 +52,7 @@ def playbook():
     ex = pd.read_csv("out/insample_execution.csv")
     dec = open("out/reconcile_decision.md").read()
     thr = re.search(r"15:00 VIX>([\d.]+) & \|move\|>([\d.]+)%; 15:30 VIX>([\d.]+) & \|move\|>([\d.]+)%", dec)
-    hold_files = sorted(glob.glob("out/holdout_summary.csv"))
+    hold_files = [f for f in ("out/holdout_summary.csv",) if os.path.exists(f)]
     L = []
     L += ["# PLAYBOOK_0DTE.md — the constrained book, every number measured", "",
           "**Account constraint.** 0DTE options only, long-only, naked calls or puts; no selling, spreads, futures, shares or "
@@ -86,7 +86,9 @@ def playbook():
           "15:00 entry with the expanding-tercile rule. No trial passes BH-FDR at 10% across the family (`out/trials.csv`).", ""]
     L += ["## 3. Option-level results — IN-SAMPLE (% of premium per trade)", "",
           md(summ[["signal", "spread", "settle", "k", "n", "trades_per_year", "win", "mean", "median", "worst_trade", "worst_day",
-                   "full_loss_trades", "premium_mean"]]), "",
+                   "mae_worst", "full_loss_trades", "premium_mean"]]), "",
+          "mae_worst is the worst intraday excursion of the underlying against the position during the hold, in % of premium, "
+          "capped at −100% (what a prop desk marks; ACCEPTANCE budgets).", "",
           "## 4. Sizing — IN-SAMPLE, % of account", "",
           "Position size = daily limit ÷ worst-trade loss with a 100% floor (a hold-to-close option has no stop). The combined "
           "book sizes on the worst day when both signals fire.", "",
@@ -105,10 +107,24 @@ def playbook():
           "## 7. Holdout — what decides whether this is tradeable", ""]
     if hold_files:
         h = pd.read_csv(hold_files[0])
-        L += [md(h), ""]
+        L += ["Survival-rule verdict per pre-registered signal (`out/holdout_summary.csv`; `label_final` includes the family-wide FDR):", "",
+              md(h[[c for c in ["signal", "n", "win", "net_pts", "net_pct", "worst_trade_pts", "p_month", "p_day", "p_half1_month", "p_half2_month",
+                                "excess_over_control_pct", "psr", "sharpe_calday", "fdr_pass_10pct_family", "label_final"] if c in h]]), ""]
+        if os.path.exists("out/holdout_by_year.csv"):
+            L += ["By calendar year (`out/holdout_by_year.csv`):", "", md(pd.read_csv("out/holdout_by_year.csv")), ""]
+        if os.path.exists("out/holdout_d4_summary.csv"):
+            hs = pd.read_csv("out/holdout_d4_summary.csv")
+            L += ["Option-level results on the HOLDOUT (% of premium; `out/holdout_d4_summary.csv`) — THE HEADLINE:", "",
+                  md(hs[["signal", "spread", "settle", "k", "n", "trades_per_year", "win", "mean", "median", "worst_trade", "worst_day",
+                         "mae_worst", "full_loss_trades", "premium_mean"]]), ""]
+        if os.path.exists("out/holdout_d4_sizing.csv"):
+            L += ["Sizing on the HOLDOUT (% of account; `out/holdout_d4_sizing.csv`):", "", md(pd.read_csv("out/holdout_d4_sizing.csv")), ""]
+        if os.path.exists("out/holdout_d4_execution.csv"):
+            L += ["Execution on the HOLDOUT (`out/holdout_d4_execution.csv`):", "", md(pd.read_csv("out/holdout_d4_execution.csv")), ""]
     else:
-        L += [f"PENDING `{EXT_MIN}`. When it arrives: `python -m pipeline.insample 2020-06-01 2026-09-11 HOLDOUT out/holdout` "
-              "and the survival rule in ACCEPTANCE.md decides. If the pre-registered signal fails, that is the result; no re-tuning.", ""]
+        L += [f"PENDING `{EXT_MIN}`. When it arrives, `make all` runs the holdout step (`python -m pipeline.insample 2020-06-01 "
+              "2026-09-11 HOLDOUT`), the family-wide FDR in `pipeline/trials.py` finalises the labels, and this section is generated "
+              "from `out/holdout_*.csv`. If the pre-registered signal fails, that is the result; no re-tuning.", ""]
     L += ["## 8. Before any live capital (both threads' rule)", "",
           "Measure ten real 2%-ITM 0DTE fills at the mid; above 1.5 index points round-trip nothing here works. Paper-trade "
           "≥ 60 qualifying days. Real 0DTE IV runs above 30-day VIX; the 13:00 leg is the only one where that matters.", ""]
@@ -132,6 +148,11 @@ def own_account():
     L += ["## By year (sum of daily returns at 10% sleeve vol)", "", md(yr), "",
           "## By regime (annualised mean; uptrend = SPY above a rising 200-day average, high-vol = prior VIX above its expanding upper tercile)", "",
           md(reg), ""]
+    if os.path.exists("out/own_account_bridge.csv"):
+        b = pd.read_csv("out/own_account_bridge.csv")
+        L += ["## VXX / VXZ bridge (A13): daily-return correlations on the overlaps", "",
+              "Old VXX ↔ VIXY and old VXZ ↔ VIXM are measurable now; new-VXX ↔ VIXY and new-VXZ ↔ VIXM need the ext panel. The bridge is "
+              "refused below 0.98.", "", md(b, fmt="{:.4f}"), ""]
     if os.path.exists("out/vrp_vix_minus_rv.csv"):
         v = pd.read_csv("out/vrp_vix_minus_rv.csv")
         L += ["## VIX − realised vol (variance risk premium), measured not traded", "",

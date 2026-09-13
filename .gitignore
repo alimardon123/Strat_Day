@@ -1,8 +1,7 @@
-data/raw/
+data/raw/*
+!data/raw/manifest_*.json
 out_repeat/
 __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
-
-!data/raw/manifest_*.json

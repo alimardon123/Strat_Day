@@ -75,6 +75,13 @@ def build(feed, path, trading_days=None):
     return _sessionize(_load(feed, path), feed, trading_days)
 
 
+def ext_present(ext_dir="data/ext"):
+    """True when the user-supplied ext feed is usable: ext_manifest.json AND at least one spx_1min_*.csv.gz (DATA.md)."""
+    import glob
+    import os
+    return os.path.exists(os.path.join(ext_dir, "ext_manifest.json")) and bool(glob.glob(os.path.join(ext_dir, "spx_1min_*.csv.gz")))
+
+
 def load_ext(ext_dir="data/ext"):
     """The user-supplied post-May-2020 minute file, per DATA.md and ACCEPTANCE A6. Refuses to
     run without ext_manifest.json; converts SPY to SPX-point scale (×10) so every downstream
@@ -120,9 +127,8 @@ def build_extended(oanda_path="data/raw/oanda_SPX500_USD.parquet", ext_dir="data
     so expanding thresholds keep expanding through the holdout. For an SPX cash-index feed the
     session's first bar is 09:31 (the 09:30 print is stale, A6). Returns (frame, dropped, meta);
     meta is None when data/ext is absent."""
-    import os
     base, dropped = build("oanda", oanda_path, trading_days)
-    if not os.path.exists(os.path.join(ext_dir, "ext_manifest.json")):
+    if not ext_present(ext_dir):
         return base, dropped, None
     raw, meta = load_ext(ext_dir)
     e, dropped_e = _sessionize(raw, "ext", trading_days, first_mod=RTH_START + 1 if meta["instrument"] == "SPX" else RTH_START)

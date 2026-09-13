@@ -27,4 +27,5 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 - 2026-09-13 Phase 6 judge round 3: DONE (all nine round-2 items verified; six notes ≤ sev 5, all closed the same day). Phase 7 shipped for the data that exists; D2, the D4 headline and the ETF-dependent sleeves wait on `data/ext/` (DATA.md).
 - 2026-09-13 Post-judge data sweep (2 Sonnet agents + 1 Haiku scout): no public source for the post-2020 minute bars or the ETF panel; BLOCKED.md written with options A/B/C. Plateau rule: no in-scope task can improve without the owner's input; nothing further is started.
 - 2026-09-13 D5 fidelity: BAB universe cleaning reconstructed (626 names exact); portfolio Sharpe unchanged → hypothesis killed, next hypothesis recorded in ASSESSMENT. Plateau rule stands for everything holdout-dependent.
+- 2026-09-13 Stop-hook loop (3×): condition unsatisfiable without owner input; no further agents launched (plateau rule + BLOCKED.md). Option D (daily open-to-close 0DTE search) recorded as owner-only because it overrides a mission non-goal.
 

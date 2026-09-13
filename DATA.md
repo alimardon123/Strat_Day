@@ -91,3 +91,8 @@ Additional hosts probed 2026-09-13 and refused by the proxy (403 on CONNECT): hi
 
 Six CSVs (time = Unix seconds UTC; TradingView caps each export near 10,000 bars): SPY 1-min 2026-02-17 → 2026-03-25; SPY 5-min 2025-09 → 2026-03; SPY 1D 1993 → 2026-03-13; SPY 34R range bars ($0.34) 2025-06-09 → 2026-03-17; XAUUSD 5000R ($5) 2025-06-08 → 2026-03-18; XAUUSD 2000R ($2) 2026-03-08 → 2026-03-18. Use: the 34R file is the ground truth for the range-bar rebuild (gate B-a); the XAUUSD 5000R file is Track B's only gold input unless a longer GitHub minute source exists (search in progress); the time-based SPY files are cross-checks only — the branch carries longer series of each.
 
+## 2026-09-13 — searches for A38 assets history and gold minute data (two fleet agents, GitHub only)
+
+- Leveraged-ETF shares outstanding / net assets (A38): NOT FOUND on GitHub after 12 web-search queries and verified clones of every lead (price-only leveraged-ETF repos, a semiconductor-ETF AUM tracker, Chinese ETF flows, scraper tools without committed history). A38 waits for the owner's `data/ext/letf_aum_2006_2026.csv`; sponsors' own downloads or a terminal are the realistic sources; SEC N-PORT gives monthly, not daily, values.
+- Gold: FutureSharks/financial-data carries Oanda XAU_USD 1-minute 2006-03-19 → 2020-05-14 (`pyfinancialdata/data/currencies/oanda/XAU_USD/<year>/oanda-XAU_USD-<year>-<month>.csv`, columns time,close,high,low,open,volume; ≈ 1.5–1.8 M rows). Used as Track B's gold TRAIN (A40b). The gap 2020-05 → 2025-06 is not bridged; the owner's TradingView file is the TEST. Note for future fetches: a blobless clone of that repository grows past 5 GB once blobs are pulled on demand — fetch the XAU_USD directory only.
+

@@ -15,7 +15,7 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 | 7b | D5 addendum: VIX − realised vol through 2026-09 (Thread B step11 method), labelled not-tradeable-as-measured; the defined-risk VRP sleeve with real option prices is a recorded non-goal | 3 | single owner | — |
 | 9 | Flow-with-a-deadline candidates, last hour only — KILLED 2026-09-12: month-end, opex and Russell-day last-hour trades are all negative in-sample and below their controls (`out/flow_candidates.csv`); the 15:50 imbalance needs data that is unobtainable | 3 | single owner | — |
 | 10 | Owner-proposed fair-value-gap midpoint setup on 5-minute bars (A36; pre-registered 2026-09-13 before any run; 8 trials; fleet unit `pipeline/units/fvg.py`) | 3 | fleet (one unit) | Fails the survival rule on the selection window → reported and killed; passes selection but fails 2020-07→2026-09 → reported, never promoted |
-| 11 | Owner's option C: leveraged-ETF close-rebalancing candidate (A38; pre-registered 2026-09-13 before any run; 1 trial; waits for `data/ext/letf_aum_2006_2026.csv`) | 3 | fleet (one unit) | Net ≤ 0 at 1 pt on the holdout, or not above the day-selection control or the price-only magnitude row |
+| 11 | Owner's option C: leveraged-ETF close-rebalancing candidate (A38; pre-registered 2026-09-13 before any run; 1 trial; waits for `data/ext/letf_aum_2006_2026.csv` — NOT on GitHub, owner supplies via `tools/fetch_letf_aum_local.py`; the unit skips cleanly until then) | 3 | fleet (one unit) | Net ≤ 0 at 1 pt on the holdout, or not above the day-selection control or the price-only magnitude row |
 | 12 | Overnight-loss forced-liquidation rebound (A39; pre-registered 2026-09-13 before any run; 3 trials incl. timing fingerprint and mirror; runs on data on the branch) | 3 | fleet (one unit) | T1 fails any survival condition, or the fingerprint fails (T2 ≥ T1 or T3 > 0) |
 | — | Real 0DTE quotes, GEX filter, post-2018 cross-market | non-goal | — | Unobtainable in this environment (recorded in ACCEPTANCE.md) |
 
@@ -27,7 +27,7 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 | Rank | Task | Phase | Owner | What would kill it |
 |---|---|---|---|---|
 | B1 | Range-bar rebuild from 1-minute SPY at $0.34 and $1.00; gate B-a against the owner's 34R export | 2 | fleet (one coder) | Bars/session outside ±15 % or resampled-close correlation < 0.999 → rebuild rule wrong, fix before any signal runs |
-| B2 | Sweep/continuation family (24 trials, A40) on TRAIN, lock, TEST once; random-entry control; B-family FDR; DSR N = 24 | 3 | fleet (one unit) | No trial passes on TEST → killed; the pattern table stays as the finding |
+| B2 | Sweep/continuation family (24 trials, A40) on TRAIN, lock, TEST once; random-entry control; B-family FDR; DSR N = 24 — SPY first; gold under A40b (TRAIN Oanda 2006–2020 rebuilt bars, TEST the owner's file) | 3 | fleet (one unit) | No trial passes on TEST → killed; the pattern table stays as the finding |
 | B3 | `TRACK_B.md` generated from `out/trackB_*.csv`; tribunal (reviewer + judge, fresh context) | 4–7 | single owner | Any typed number, any parameter changed after the lock |
 
 ## Status log

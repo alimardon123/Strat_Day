@@ -305,3 +305,21 @@ manifest inside). Track B is NOT bound to the 0DTE constraint; it is bound to th
   1/5/20-bar return after a sweep (reversal-shaped and continuation-shaped) versus the unconditional one, by
   instrument, so the "liquidate then reverse or continue" claim is measured even when no trade survives costs.
 - Kill: no trial passes on TEST → Track B is killed in PLAN with the pattern table as the finding.
+
+### A40b — gold windows re-registered 2026-09-13 12:32 UTC, before any gold result was computed or read
+
+A GitHub search (fleet agent, WebSearch + verified clones) found Oanda XAU_USD 1-minute bars 2006-03-19 → 2020-05-14
+in FutureSharks/financial-data — the same provenance as the SPX500_USD series already used — and nothing else usable
+(a 90-day Dukascopy file for 2026-02 → 2026-05 is a different vendor and is not used). The owner's 5000R file is
+OANDA:XAUUSD, so the two are the same broker's prices. Gold is therefore re-registered as follows, replacing A40's
+gold windows; the Track B coder was instructed to exclude gold from the first run before any gold row existed:
+- TRAIN = $5 range bars rebuilt (same rule as SPY, gated by B-a) from Oanda XAU_USD 1-minute 2006-03-19 → 2020-05-14,
+  all trading hours; TEST = the owner's `OANDA_XAUUSD_5000R.csv` in full (2025-06-08 → 2026-03-18), never touched
+  before the single TEST run. The 8 gold trials (type × L × R at $5) keep their place in the 24-trial family;
+  DSR N = 24 unchanged; BH-FDR runs once over all 24 TEST rows when both halves exist.
+- Gold decision rule: the gold winner is the trial with the highest net calendar-day Sharpe on TRAIN with n ≥ 100,
+  confirmed on TEST under the same six conditions (n ≥ 200 on TEST or UNDERPOWERED). Gold and SPY are decided
+  separately (different instruments, same family for FDR).
+- Rebuild gate for gold: no overlap exists between the two sources, so the rule is validated on SPY (B-a) and
+  gold gets a self-consistency check only: every rebuilt bar's high − low equals $5 and bars per day on the
+  TRAIN side are reported next to the owner's file's bars per day (2025–26) as context, not a gate.

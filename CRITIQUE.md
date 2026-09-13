@@ -178,3 +178,21 @@ Science verified clean: every pre-registration committed before its first run (A
 
 Round 6 confirmation (same judge, on commit b7d4772): **DONE** for the option C batch (A38 skip path, A39, Track B SPY + gold). All six items verified with evidence; no output, label, window or pre-registration moved; ACCEPTANCE diff empty; TRACK_B.md byte-identical under re-render; tree clean. One severity-1 note (a stale docstring phrase in test_letf.py) swept into this commit.
 
+## Phase 6 judge round 7 (fleet judge, fresh context, on commit 3bddd9b: A41 and A42 on the owner's real 0DTE bars) — decision ITERATE (2 defects, 2 stale numbers, 2 sentences; 5 notes)
+
+Science verified: pre-registration order by commit timestamps (amendments 15:40 → units 15:58/15:59 → shards 16:44 → first data rows 17:14; neither unit touched after the data landed); FOMC list equal to A42's; data integrity on 9,476,392 rows (expiry = date of ts everywhere; session-bounded timestamps; 0.44 % legacy fractional strikes); three calibration rows and all nine summary rows recomputed to 1e-6; every re-eval row and all 409 entry/exit prices re-derived from the shards with 0 mismatches; A42 populations partition exactly (675 = 646 + 29 = 20 + 608 + 47) and every statistic recomputed; family 39, holdout labels unchanged; lookahead audit clean on prices.
+
+| # | Sev | Finding (short) | Root cause | Disposition |
+|---|---|---|---|---|
+| R7-1 | 4 | 2 of 183 gap-up re-pricings had the fallback entry bar (a post-16:00 print) AFTER the exit bar (last bar before 15:59): they sold before they bought; 7 more had entry bar = exit bar | Uncapped "next later bar" entry fallback met an at-or-before exit fallback | ADOPTED: entry bar must precede exit bar or the trade is skipped and counted; used bar minutes written to the per-trade file (A41 clarification, committed before the re-run) |
+| R7-2 | 3 | `option_shards()` ignored its path argument after the sharding change, so both skip-path unit tests ran on the real shards (2/3 each) | Loader globbed unconditionally; the tests are not a `make all` step | ADOPTED: the path argument is honoured; tests back to 3/3 |
+| R7-3 | 2 | `out/realopt_calibration.csv` (an A41 output) missing from run_all EXPECTED | Wiring omission | ADOPTED |
+| R7-4 | 1 | SCORECARD said "36 trials" beside a 39-row file; CHANGELOG said "27 steps" for a 28-step run | Doc lag | ADOPTED |
+| R7-5 | 2 | ASSESSMENT gave the delay from the signal minute to the NEXT print (median 1 min) but not from the signal to the bar actually used (median 4, p90 40, max 349 min; 95 of 409 ≥ 15 min late) | Two different delays; only the smaller was reported | ADOPTED: both reported; the sentence is generated in PLAYBOOK §12 from the new columns |
+| R7-6 | 1 | The k = 1.3 re-label conditional was evaluated (0.299 vs 0.3, did not fire) but not stated | Omission | ADOPTED: generated clause in §12 |
+| R7-N1 | 2 | 282 of 409 exits and 318 of 409 entries needed a fallback bar: the re-pricing blends the strategy with a materially later one (T3 on-time +7.05 % vs late −3.65 %) | The 2 %-ITM chain rarely prints at the minute | ADOPTED as a sentence in §12; this IS the liquidity finding |
+| R7-N2 | 2 | Strike choice conditioned on ex-post print availability (43 of 409 trades chose a strike that had not yet printed) | "Available in the file that day" read non-causally | ADOPTED before the re-run: causal availability (A41 clarification) |
+| R7-N3 | 1 | One-trade rounding difference in `win` at $0.10 (a gross of exactly $0.10) | Float round-trip | ACCEPTED |
+| R7-N4 | — | The real prices retire the k question rather than answer it: at 2 % ITM the premium is intrinsic, the 1.0/1.3/1.6 axis has no width for the 15:00/15:30 legs, and the measurable deviation is whether a print exists in the named minute | Finding | ACCEPTED; stated in §12 and the first paragraph |
+| R7-N5 | — | The straddle bleed grows toward the close (−7.0 % at 09:31, −17.2 % at 13:30, n 608); E2 − E3 has the "events underpriced" sign but is a lottery profile (20 % hit rate, median −45.7 %) carried by two or three repricings; the durable result is the sell-side variance premium the account forbids | Finding | ACCEPTED; nothing promoted |
+

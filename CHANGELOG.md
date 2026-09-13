@@ -148,3 +148,7 @@
 - Both skip cleanly until `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz` exists; PLAYBOOK §12/§13 print wait notices. `make all` + `make repeat` byte-identical; family still 36. The owner's fetch is in progress (helper fixed at 5472df7).
 - Owner's full 0DTE fetch succeeded (≈ 92 contracts and ≈ 15,000 bars per session through 2026-09-11) but the final gzip step ran out of memory on their machine: the helper now streams the temp file into per-year shards (< 100 MB each) with `--finalize-only`, validates in chunks, and both units read the shards.
 
+## 2026-09-13 — Real SPY 0DTE bars landed (owner, commit ae5a397); A41 and A42 ran for the first time; make all (27 steps) + make repeat byte-identical
+- A41: median implied k 1.002 at 2 % ITM (unidentifiable; the model is intrinsic ± spread there); 80 % of checked minutes have no print; re-priced legs keep every sign, model optimistic by ½–4 points of premium after the spread. The playbook's first paragraph is now generated from the calibration file (A41 requirement).
+- A42: daily straddle -7.0 % of premium per day at +$0.10, non-FOMC 13:30 straddle -17.2 %, FOMC -1.6 % (n 20, UNDERPOWERED); family 39, FDR 0. Nothing promoted.
+

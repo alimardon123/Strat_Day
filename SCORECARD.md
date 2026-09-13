@@ -69,3 +69,12 @@ Family-wide BH-FDR at 10 % over 36 trials: 0 pass (`out/trials.csv`).
 | Gold TRAIN winner → TEST | `continuation|L20|R2` FAILED: n 864, -0.0275 %/trade, p 1.00; all 8 gold rows negative |
 | Family FDR (24 TEST rows) | 0 pass; DSR at N = 24 ≈ 0 for every row |
 
+## A41 / A42 — real SPY 0DTE prices (2024-02-01 → 2026-09-11; family 39; nothing promoted)
+
+| Item | Result |
+|---|---|
+| Calibration at 2 % ITM (`out/realopt_calibration.csv`) | median implied k 1.002, IQR 0.016; k unidentifiable at 2 % ITM; missing-minute share 80 % |
+| Re-evaluation at +$0.10 (`out/realopt_reeval.csv`) | D1 winner +0.87 % (model +1.23); gap-up -2.69 % (-2.08); T1 +2.54 % (+3.27); all signs unchanged, all p > 0.2, sub-window |
+| A42 E1 daily straddle 09:31 | n 646, -7.0 % of premium, p 1.00 — premium rich, as registered |
+| A42 E2 FOMC 13:30 vs E3 non-FOMC | E2 n 20 -1.6 %, E3 n 608 -17.2 %, difference +15.7 pts, p 0.64; UNDERPOWERED, not promoted |
+

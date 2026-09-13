@@ -180,6 +180,31 @@ def realopt_calibration_blocks(path):
     return calib, summary
 
 
+def real_price_clause():
+    """A41: the first paragraph states which numbers are real-priced and from which date; every figure
+    is read from out/realopt_calibration.csv (per-row block for the date range, summary block for the
+    overall median k, IQR and missing share). Without real bars the original sentence stands."""
+    path = "out/realopt_calibration.csv"
+    if not os.path.exists(path) or os.path.getsize(path) == 0:
+        return "No real 0DTE quotes were obtainable. "
+    try:
+        calib, summary = realopt_calibration_blocks(path)
+    except Exception:
+        return "No real 0DTE quotes were obtainable. "
+    if calib.empty or summary.empty or "date" not in calib:
+        return "No real 0DTE quotes were obtainable. "
+    ov = summary[summary["group_type"] == "overall"]
+    if ov.empty:
+        return "No real 0DTE quotes were obtainable. "
+    ov = ov.iloc[0]
+    return (f"Real SPY 0DTE 1-minute option bars supplied by the owner cover {calib['date'].min()} → {calib['date'].max()}; "
+            f"§12 re-prices every option leg on those sessions with them and §13 uses them directly. Calibration at the "
+            f"2 %-ITM strikes the playbook trades: median implied k {ov['median_implied_k']:.3f} (IQR {ov['iqr_implied_k']:.3f}) "
+            f"against the model at k = 1, i.e. at 2 % ITM the model is intrinsic ± the spread and k is not identifiable; the real "
+            f"deviation is illiquidity — no trade printed in the exact minute for {100 * ov['missing_share']:.0f} % of the "
+            f"session-minutes checked (`out/realopt_calibration.csv`). ")
+
+
 def realopt_caption(df):
     """First two sentences of the `spec` column (identical on every row — the fixed pre-
     registration), generated rather than typed (D7)."""
@@ -297,7 +322,7 @@ def playbook():
     L += ["# PLAYBOOK_0DTE.md — the constrained book, every number measured", "",
           "**Account constraint.** 0DTE options only, long-only, naked calls or puts; no selling, spreads, futures, shares or "
           "overnight holds; daily loss limit 3–5% (base case 4%) on marked intraday P&L.", "",
-          "**Pricing model, stated first.** No real 0DTE quotes were obtainable. Every option number below is Black-Scholes with "
+          "**Pricing model, stated first.** " + real_price_clause() + "Every option number outside §12–§13 is Black-Scholes with "
           "r = 0 and IV = k × prior-close VIX (both prior threads used k = 1.0 and called it generous). At 2% in the money with "
           f"less than an hour to expiry that model is intrinsic value ± the spread ({tv_clause}), "
           "so k only matters for the 13:00 leg and the spread is the real sensitivity axis. SPX/XSP are PM cash-settled: buy at "

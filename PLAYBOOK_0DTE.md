@@ -2,7 +2,7 @@
 
 **Account constraint.** 0DTE options only, long-only, naked calls or puts; no selling, spreads, futures, shares or overnight holds; daily loss limit 3–5% (base case 4%) on marked intraday P&L.
 
-**Pricing model, stated first.** No real 0DTE quotes were obtainable. Every option number below is Black-Scholes with r = 0 and IV = k × prior-close VIX (both prior threads used k = 1.0 and called it generous). At 2% in the money with less than an hour to expiry that model is intrinsic value ± the spread (time value ≤ 0.000 index points at 60 minutes for VIX ≤ 40 and ≤ 0.159 at VIX 83, `out/options_timevalue.csv`), so k only matters for the 13:00 leg and the spread is the real sensitivity axis. SPX/XSP are PM cash-settled: buy at the ask (half the quoted spread), settle at intrinsic. SPY is physically settled and must be sold by 15:55 with both spread halves paid; SPY rows are for that exit.
+**Pricing model, stated first.** Real SPY 0DTE 1-minute option bars supplied by the owner cover 2024-02-01 → 2026-09-11; §12 re-prices every option leg on those sessions with them and §13 uses them directly. Calibration at the 2 %-ITM strikes the playbook trades: median implied k 1.002 (IQR 0.016) against the model at k = 1, i.e. at 2 % ITM the model is intrinsic ± the spread and k is not identifiable; the real deviation is illiquidity — no trade printed in the exact minute for 80 % of the session-minutes checked (`out/realopt_calibration.csv`). Every option number outside §12–§13 is Black-Scholes with r = 0 and IV = k × prior-close VIX (both prior threads used k = 1.0 and called it generous). At 2% in the money with less than an hour to expiry that model is intrinsic value ± the spread (time value ≤ 0.000 index points at 60 minutes for VIX ≤ 40 and ≤ 0.159 at VIX 83, `out/options_timevalue.csv`), so k only matters for the 13:00 leg and the spread is the real sensitivity axis. SPX/XSP are PM cash-settled: buy at the ask (half the quoted spread), settle at intrinsic. SPY is physically settled and must be sold by 15:55 with both spread halves paid; SPY rows are for that exit.
 
 ## 1. The pre-registered specification
 
@@ -45,7 +45,7 @@ Thread A's gap-up call, same selection window (pre-registered by Thread A, not p
 |---|---|---|---|---|---|---|---|
 | 13:00\|call\|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 36 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
+Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 39 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
@@ -383,8 +383,78 @@ Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.
 
 ## 12. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered 2026-09-13
 
-Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.
+### Calibration (diagnostic, no decision): implied k = real bar close ÷ Black-Scholes premium at k=1 × prior-close VIX, by VIX tercile and by minute (`out/realopt_calibration.csv`)
+
+| group_type | group_value | n | median_implied_k | iqr_implied_k | missing_share |
+|---|---|---|---|---|---|
+| vix_tercile | T1 | 2124 | 1.0010 | 0.0123 | 0.8498 |
+| vix_tercile | T2 | 2138 | 1.0008 | 0.0154 | 0.8326 |
+| vix_tercile | T3 | 2148 | 1.0052 | 0.0219 | 0.7039 |
+| minute | 09:31 | 1292 | 1.0032 | 0.0214 | 0.7283 |
+| minute | 10:00 | 1286 | 1.0059 | 0.0217 | 0.7737 |
+| minute | 13:00 | 1264 | 1.0036 | 0.0150 | 0.8932 |
+| minute | 15:00 | 1280 | 1.0011 | 0.0126 | 0.8664 |
+| minute | 15:30 | 1288 | 1.0010 | 0.0121 | 0.7166 |
+| overall | ALL | 6410 | 1.0025 | 0.0162 | 0.7952 |
+
+6410 (date, minute, right) calibration rows over 646 sessions.
+
+### Re-evaluation: real 1-minute option bars replace the k×VIX model on every counted trial's sessions ≥ 2024-02-01 (the two pre-registered D4 holdout signals, A39 T1/T2/T3, and any POST-SELECTION row with a per-trade file), at three added-cost rows (`out/realopt_reeval.csv`, per-trade detail in `out/realopt_reeval_trades.csv`)
+
+| signal | cost_label | n | n_skipped_missing | win | mean_pct_of_premium | median_pct | worst_pct | model_mean_pct | label | p_boot_day | sharpe_calday |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 15:00\|both\|vixmove_exp | +$0.00 | 61 | 0 | 62.2951 | 1.7028 | 2.9966 | -45.5186 | 1.2332 | model pessimistic here | 0.2420 | 0.4171 |
+| 15:00\|both\|vixmove_exp | +$0.10 | 61 | 0 | 59.0164 | 0.8705 | 2.1404 | -46.5257 | 1.2332 | model optimistic here | 0.3603 | 0.2136 |
+| 15:00\|both\|vixmove_exp | +$0.20 | 61 | 0 | 57.3770 | 0.0382 | 1.2842 | -47.5327 | 1.2332 | model optimistic here | 0.4950 | 0.0094 |
+| 13:00\|call\|gap>0.3% | +$0.00 | 183 | 2 | 49.1803 | -1.8378 | 0.0000 | -99.7382 | -2.0830 | model pessimistic here | 1.0000 | -0.5947 |
+| 13:00\|call\|gap>0.3% | +$0.10 | 183 | 2 | 46.4481 | -2.6856 | -0.8005 | -102.3560 | -2.0830 | model optimistic here | 1.0000 | -0.8664 |
+| 13:00\|call\|gap>0.3% | +$0.20 | 183 | 2 | 44.8087 | -3.5335 | -1.4418 | -104.9738 | -2.0830 | model optimistic here | 1.0000 | -1.1355 |
+| T1 | +$0.00 | 53 | 0 | 52.8302 | 3.3926 | 2.3932 | -99.9119 | 3.2734 | model pessimistic here | 0.2632 | 0.3739 |
+| T1 | +$0.10 | 53 | 0 | 50.9434 | 2.5449 | 1.5385 | -100.7930 | 3.2734 | model optimistic here | 0.3222 | 0.2808 |
+| T1 | +$0.20 | 53 | 0 | 50.9434 | 1.6972 | 0.6838 | -101.6740 | 3.2734 | model optimistic here | 0.3807 | 0.1874 |
+| T2 | +$0.00 | 53 | 0 | 58.4906 | 5.7772 | 8.0108 | -99.9139 | 5.8052 | model optimistic here | 0.2040 | 0.5298 |
+| T2 | +$0.10 | 53 | 0 | 56.6038 | 4.9406 | 7.1107 | -100.7752 | 5.8052 | model optimistic here | 0.2452 | 0.4539 |
+| T2 | +$0.20 | 53 | 0 | 54.7170 | 4.1041 | 6.2106 | -101.6365 | 5.8052 | model optimistic here | 0.2807 | 0.3775 |
+| T3 | +$0.00 | 59 | 0 | 44.0678 | 3.6008 | -1.7148 | -56.6038 | 6.9080 | model optimistic here | 0.2507 | 0.4115 |
+| T3 | +$0.10 | 59 | 0 | 44.0678 | 2.7585 | -2.6173 | -57.4614 | 6.9080 | model optimistic here | 0.2990 | 0.3157 |
+| T3 | +$0.20 | 59 | 0 | 42.3729 | 1.9163 | -3.5199 | -58.3190 | 6.9080 | model optimistic here | 0.3558 | 0.2195 |
+
+- 15:00|both|vixmove_exp at +$0.00: model pessimistic here (n=61, real mean +1.70% of premium vs model +1.23%; sub-window, not a verdict).
+- 15:00|both|vixmove_exp at +$0.10: model optimistic here (n=61, real mean +0.87% of premium vs model +1.23%; sub-window, not a verdict).
+- 15:00|both|vixmove_exp at +$0.20: model optimistic here (n=61, real mean +0.04% of premium vs model +1.23%; sub-window, not a verdict).
+- 13:00|call|gap>0.3% at +$0.00: model pessimistic here (n=183, real mean -1.84% of premium vs model -2.08%; sub-window, not a verdict).
+- 13:00|call|gap>0.3% at +$0.10: model optimistic here (n=183, real mean -2.69% of premium vs model -2.08%; sub-window, not a verdict).
+- 13:00|call|gap>0.3% at +$0.20: model optimistic here (n=183, real mean -3.53% of premium vs model -2.08%; sub-window, not a verdict).
+- T1 at +$0.00: model pessimistic here (n=53, real mean +3.39% of premium vs model +3.27%; sub-window, not a verdict).
+- T1 at +$0.10: model optimistic here (n=53, real mean +2.54% of premium vs model +3.27%; sub-window, not a verdict).
+- T1 at +$0.20: model optimistic here (n=53, real mean +1.70% of premium vs model +3.27%; sub-window, not a verdict).
+- T2 at +$0.00: model optimistic here (n=53, real mean +5.78% of premium vs model +5.81%; sub-window, not a verdict).
+- T2 at +$0.10: model optimistic here (n=53, real mean +4.94% of premium vs model +5.81%; sub-window, not a verdict).
+- T2 at +$0.20: model optimistic here (n=53, real mean +4.10% of premium vs model +5.81%; sub-window, not a verdict).
+- T3 at +$0.00: model optimistic here (n=59, real mean +3.60% of premium vs model +6.91%; sub-window, not a verdict).
+- T3 at +$0.10: model optimistic here (n=59, real mean +2.76% of premium vs model +6.91%; sub-window, not a verdict).
+- T3 at +$0.20: model optimistic here (n=59, real mean +1.92% of premium vs model +6.91%; sub-window, not a verdict).
+
+FIXED (pre-registration, A41): calibration -- for every session in the option file and each of {09:31,10:00,13:00,15:00,15:30} ET, the nearest-to-2%-ITM call/put's real 1-minute bar close (exact-minute match on the branch's session-builder frame, /10 to dollars) divided by pipeline.options.price at k=1 x prior-close VIX = implied k; median/IQR by VIX tercile (over the file's own sessions) and by minute, plus the missing (no-bar) share, in a second block of the same csv. Re-evaluation -- every option leg already priced by the model on sessions >= 2024-02-01 (the two pre-registered D4 holdout signals, any POST-SELECTION row with a per-trade file, A39 T1/T2/T3) is re-priced with real bars: entry = the option's exact-minute bar close at the trade's own entry minute (next later bar's open if missing), exit = the exact 15:59 bar close (last bar at/before 15:59 if missing); a trade with neither is skipped and counted in n_skipped_missing.
+
+Sub-window, not a verdict: nothing above is promoted, added to the trial family (A41: "the trial count does not grow"), or scored against BH-FDR.
 
 ## 13. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials
 
-Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.
+3 trials (E1 baseline every session, E2 FOMC statement days, E3 the E2 rule on every non-FOMC session) from `pipeline.units.eventvol` (`out/eventvol_candidates.csv`), each at three round-trip costs ($0, $0.10, $0.20 per two-leg trade). All three are counted trials (family 36 -> 39); only the $0.10 row per trial is counted in the trial family ledger (`pipeline/trials.py`, `out/trials.csv`) — the $0 and $0.20 rows are a cost sensitivity, not additional trials. This is the whole file's one out-of-sample window by construction (2024-02-01 onward), not a CONTEXT/SELECTION/HOLDOUT split.
+
+| trial | cost | n | n_skipped | win | mean_pct | median_pct | worst_pct | mean_usd | p_boot_day | sharpe_calday | dsr_N39 | e2_minus_e3_pct | p_e2_vs_e3 | underpowered |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| E1 | 0.0000 | 646 | 29 | 39.3189 | -3.5506 | -21.6681 | -90.7850 | -0.1212 | 1.0000 | -0.6835 | 0.0000 |  |  | False |
+| E2 | 0.0000 | 20 | 0 | 25.0000 | 1.0393 | -43.1166 | -86.3636 | -0.3785 | 0.4835 | 0.1097 | 0.2124 | 12.0388 | 0.7000 | True |
+| E3 | 0.0000 | 608 | 47 | 32.0724 | -10.9995 | -27.9666 | -83.8509 | -0.1794 | 1.0000 | -2.4610 | 0.0000 |  |  | False |
+| E1 | 0.1000 | 646 | 29 | 37.7709 | -6.9583 | -24.9434 | -94.1980 | -0.2212 | 1.0000 | -1.3398 | 0.0000 |  |  | False |
+| E2 | 0.1000 | 20 | 0 | 20.0000 | -1.5897 | -45.7377 | -88.5281 | -0.4785 | 1.0000 | -0.1681 | 0.1155 | 15.6533 | 0.6405 | True |
+| E3 | 0.1000 | 608 | 47 | 28.7829 | -17.2430 | -34.2766 | -90.0621 | -0.2794 | 1.0000 | -3.8499 | 0.0000 |  |  | False |
+| E1 | 0.2000 | 646 | 29 | 35.6037 | -10.3660 | -28.4834 | -97.6109 | -0.3212 | 1.0000 | -1.9957 | 0.0000 |  |  | False |
+| E2 | 0.2000 | 20 | 0 | 20.0000 | -4.2187 | -48.3588 | -90.6926 | -0.5785 | 1.0000 | -0.4468 | 0.0581 | 19.2678 | 0.5875 | True |
+| E3 | 0.2000 | 608 | 47 | 26.1513 | -23.4866 | -40.4479 | -100.0000 | -0.3794 | 1.0000 | -5.2245 | 0.0000 |  |  | False |
+
+E2 (FOMC) is UNDERPOWERED by construction (n ~ 20 < 200) at every cost and is never promoted on this sample regardless of sign or significance. E2 - E3: at cost $0.00: E2 - E3 = 12.0388 pct-pts (positive), p_e2_vs_e3 = 0.7000; at cost $0.10: E2 - E3 = 15.6533 pct-pts (positive), p_e2_vs_e3 = 0.6405; at cost $0.20: E2 - E3 = 19.2678 pct-pts (positive), p_e2_vs_e3 = 0.5875. Nothing in this family is promoted here (pre-registered as reported-only, A42).
+
+FIXED (pre-registration, A42): E1 every session, nearest-ATM call and put at the 09:31 bar close, held to 15:59; E2 the published FOMC-statement-day schedule (21 dates, 2024-2026), nearest-ATM call and put at the 13:30 bar close, held to 15:59 (n ~ 20 -> UNDERPOWERED by construction, never promoted); E3 the E2 rule on every non-FOMC session (E2 and E3 exactly partition E1's day population). Nearest-ATM strike: the day's SPX-point minute close at the trial's own entry minute (sessions.build_extended), divided by 10 for a SPY-dollar reference, nearest available strike among either right that day, ties toward the smaller strike; the SAME strike prices both legs.

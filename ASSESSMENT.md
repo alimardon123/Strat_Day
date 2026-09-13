@@ -102,6 +102,27 @@ vs +0.005 unconditional (p 0.032); the reversal shape carries nothing on gold
 (+0.008, p 1.00). Family FDR over all 24 TEST rows: 0 pass. Track B is killed in PLAN; the two
 pattern tables are its finding.
 
+## Real 0DTE prices (A41, A42) — the model was honest; the premium is rich; nothing is promoted
+
+The owner's real SPY 0DTE bars (2024-02-01 → 2026-09-11) answer the two questions the k × VIX model could not.
+**A41 calibration** at the 2 %-ITM strikes the playbook trades: median implied k 1.002 (IQR 0.016; at 15:00
+1.001) against the model at k = 1 — at 2 % ITM the option is intrinsic ± the spread and k cannot be identified, exactly
+as `out/options_timevalue.csv` implied; the playbook's k = 1.3 label is therefore a sensitivity, not a measured parameter. The real
+deviation from the model is liquidity, not volatility: no trade printed in the exact minute for 80 % of the checked
+session-minutes, and the re-evaluation filled at the next printed bar (median delay 1 minute, maximum 4, measured from
+`out/realopt_reeval_trades.csv` entry_mod minus the signal minute).
+**A41 re-evaluation** on sessions ≥ 2024-02-01 at +$0.10 round trip (1 SPX point), real versus the model on the same trades:
+D1 winner n 61, +0.87 % of premium vs model +1.23 %; gap-up call n 183, -2.69 % vs -2.08 %;
+A39 T1 n 53, +2.54 % vs +3.27 %; T2 +4.94 % vs +5.81 %; T3 +2.76 % vs +6.91 %. The model
+was optimistic by roughly half a point to four points of premium per trade once the spread is paid, never pessimistic enough to
+hide an edge: every sign is unchanged, every p-value stays above 0.2, and the rows carry "sub-window, not a verdict".
+**A42 event-day long volatility** (nearest-ATM call + put, both legs bought, +$0.10 per pair): E1 every session at 09:31 →
+15:59, n 646, -7.0 % of premium (p 1.00); E3 non-FOMC sessions at 13:30, n 608, -17.2 %; E2 FOMC days at 13:30,
+n 20, -1.6 %, E2 − E3 = +15.7 points of premium, two-sample p 0.64, UNDERPOWERED by construction. Reading: the
+0DTE straddle loses about 7 % of its premium per day from the open and about 17 % from 13:30 — the variance risk premium is
+large and lives on the SELL side, which the prop account forbids; FOMC afternoons are priced closer to fair (the loss shrinks
+to near zero) but 20 days cannot establish an edge. Family 39, FDR 0 pass. Nothing is promoted.
+
 ## Probability of backtest overfitting of the selection itself (A37)
 
 `out/pbo.csv`: with 12 rankable configurations on the selection window, CSCV over 16 blocks (12,870

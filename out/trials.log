@@ -1,5 +1,5 @@
 holdout labels finalised: {'15:00|both|vixmove_exp': 'FAILED', '13:00|call|gap>0.3%': 'FAILED'}
-trials counted: 36 (families: {'momentum': 16, 'fvg': 8, 'xmarket': 3, 'gapliq': 3, 'flow': 3, 'holdout': 2, 'gapup': 1}); FDR passes at 10%: 0
+trials counted: 39 (families: {'momentum': 16, 'fvg': 8, 'flow': 3, 'xmarket': 3, 'eventvol': 3, 'gapliq': 3, 'holdout': 2, 'gapup': 1}); FDR passes at 10%: 0
   family                                    trial   n  p_for_fdr  fdr_pass_10pct_family
 momentum                 15:00|both|vixmove_fixed  92     0.0630                  False
 momentum                 15:30|both|vixmove_fixed  92     0.0833                  False
@@ -35,5 +35,8 @@ momentum                   15:30|both|vixmove_lit 252     0.1140                
   gapliq                                GAPLIQ T1 121     1.0000                  False
   gapliq                                GAPLIQ T2 121     1.0000                  False
   gapliq                                GAPLIQ T3 132     1.0000                  False
+eventvol                              EVENTVOL E1 646     1.0000                  False
+eventvol                              EVENTVOL E2  20     1.0000                  False
+eventvol                              EVENTVOL E3 608     1.0000                  False
  holdout           HOLDOUT 15:00|both|vixmove_exp 274     1.0000                  False
  holdout              HOLDOUT 13:00|call|gap>0.3% 452     1.0000                  False

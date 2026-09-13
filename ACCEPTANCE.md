@@ -76,7 +76,9 @@ Configurations (16 = entry × direction × gate): entry ∈ {15:00, 15:30}; dire
   its 17.06 / 0.665 are exactly the upper-tercile boundaries of histdata 2010–2018, verified
   in Phase 2 — turned into a rule that uses only prior sessions);
 - `vixmove_fixed` — the same boundaries computed once on Oanda 2005-01→2012-12 and frozen
-  (22.81 / 0.845%);
+  (the values are generated, not typed: `out/reconcile_decision.md`, line "vixmove_fixed
+  thresholds"; gate (c)'s Thread-A reproduction path prints its own pair because it uses Thread
+  A's prior-bar reference rather than A34's prior-NYSE-day reference — by design, A30);
 - `vixmove_lit` — Thread B's literal 17.06 / 0.665, which are in-sample on 2013–2018;
   REPORTED, never ranked.
 
@@ -89,7 +91,10 @@ rule has none (mag 0, vixmove_exp 0), frozen boundaries count (vixmove_fixed 2) 
 higher Sharpe (Phase 4 defect 2). Exactly ONE configuration — the top-ranked — is
 tested on the 2020-06-01→2026-09-11 holdout. If it fails the survival rule, D1's outcome is
 "no reconciled specification survives". The other 15 holdout rows are still published in
-`out/reconcile_candidates.csv`, labelled POST-SELECTION, and never promoted. Expanding rules
+`out/reconcile_candidates.csv` (rows with `window` = 2020-06-01..2026-09-11, `label` =
+POST-SELECTION; the winner's row is labelled PRE-REGISTERED; the selection rows carry `label` =
+SELECTION), written by `python -m pipeline.reconcile holdout` when the ext feed is present, never
+promoted and not counted in the trial family (they are published, not tested). Expanding rules
 keep expanding through the holdout using strictly prior sessions (a rule, not a fitted
 parameter); the variant with thresholds frozen at 2020-05-13 is a separate, counted trial if
 run.
@@ -128,7 +133,7 @@ edits to files under `research/` (copy, then change).
 | A4 | Sessions: tz-aware America/New_York, 09:30–16:00, sessions with < 300 bars dropped and listed; sessions whose date is not an NYSE trading day (VIX daily calendar, current to 2026-09-11) dropped and listed | Both threads' rule; CFD feeds print bars on some closed days |
 | A5 | Timestamp conventions: Oanda = UTC; histdata = Eastern with DST (both verified by the sustained-step DST probe: open at 09:30 in every Jan/Jul month, 47 of 47) | Direct inspection |
 | A6 | `data/ext/ext_manifest.json` declares instrument (SPX / ES / SPY), source, `adjusted`, and for ES the roll dates or a contract column; the session builder refuses to run without it and checks the declared instrument against the price level. SPY: prior close adjusted by the dividend on ex-dates; 1 SPX point = $0.10 SPY. ES: any signal whose reference price and decision price come from different contracts is dropped and listed. SPX cash: open = first print at or after 09:31, close = last print before 16:00 (the official close is not in a bar file), recorded in DATA.md | CRITIQUE #6, #23 |
-| A7 | Option pricing: Black-Scholes, r = 0, IV = k × prior-close VIX, T = minutes to 16:00 / (365×24×60); k = 1.0 for every reproduction, k = 1.3 base for the playbook's 13:00 leg with 1.0 / 1.6 shown; for the 15:00 and 15:30 legs the model is intrinsic ± spread (time value < 0.08 pt — max observed 2020-03-17 at VIX 83; the book mean moves 11.48% → 11.31% between k = 1.0 and 1.6) and k is not a sensitivity axis | `step15_odte.py:76`; options sanity check; Phase 4 |
+| A7 | Option pricing: Black-Scholes, r = 0, IV = k × prior-close VIX, T = minutes to 16:00 / (365×24×60); k = 1.0 for every reproduction, k = 1.3 base for the playbook's 13:00 leg with 1.0 / 1.6 shown; for the 15:00 and 15:30 legs the model is intrinsic ± spread (time value at 60 minutes, 2% ITM, S = 4000, k = 1.0: ≤ 0.001 pt for VIX ≤ 40 and 0.16 pt at VIX 83 — generated in `out/options_timevalue.csv` by `python -m pipeline.options`; judge round 2 corrected the earlier typed "< 0.08 pt"; the book mean moves 11.48% → 11.31% between k = 1.0 and 1.6) and k is not a sensitivity axis | `step15_odte.py:76`; `out/options_timevalue.csv`; Phase 4; judge round 2 N5 |
 | A8 | 2% ITM: K = S × 0.98 (calls) / S × 1.02 (puts), rounded AWAY from spot to the instrument's grid (5 pts SPX, $1 SPY/XSP); unrounded for the Thread A reproduction | CRITIQUE #26 |
 | A9 | Thread A it22 magnitude gate: expanding 70th percentile of \|open → 15:00\| over strictly prior sessions; put on down days only | `ASSESSMENT_iteration22:57-59` |
 | A10 | Thread A gap-up signal: open / prior close − 1 > 0.3%; entry at the first bar open after 13:00; 2% ITM call; hold to settlement | `HANDOFF.md:161` |

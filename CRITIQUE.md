@@ -77,3 +77,21 @@ Refuted: none. Unverified by the reviewer and now covered: `make repeat` byte-id
 | 6 | Bridge correlations not printed; by-year/by-regime columns still headed EQUAL_8; MAE missing from the playbook table; manifests never committed (`data/raw/` shadowed the negation); docstring 0.99 | Partial repairs | ADOPTED all: bridge table in OWN_ACCOUNT.md; `EQUAL_available` + `sleeves_mean` columns; `mae_worst` column; `.gitignore` uses `data/raw/*` + `!manifest`; docstring fixed |
 
 Same-defect-class watch: "holdout path unwired" (Phase 4 defect 1 → judge item 1/2) is at its second appearance; if it survives the next judge pass the protocol says ESCALATE, not loop.
+
+## Phase 6 judge round 2 (fleet judge, fresh context) — decision ITERATE (2 blocking, 7 notes)
+
+The judge re-ran gates (c) 14/14 and (e) 6/6, re-rendered both playbooks byte-identically, reproduced the decision rule from the CSV, and proved the holdout path end to end by dropping a synthetic SPY-scaled `data/ext` into a copy and running `make all` + `make repeat` (95 files, byte-identical): the six round-1 items are VERIFIED and the "holdout path unwired" class is closed (no escalation).
+
+| # | Sev | Finding (short) | Root cause | Disposition |
+|---|---|---|---|---|
+| N1 | 5 | `out/holdout_by_year.csv` lacks three of D2's per-year quantities (option return at spreads 1/2/3, worst day, MAE) | Per-year loop written before the option layer existed | ADOPTED: `opt_mean_s1/s2/s3`, `worst_day_pts`, `mae_worst_pct` per (signal, year) via `playbook.price_table/summarise/mae` |
+| N2 | 5 | The 15 POST-SELECTION holdout rows promised at ACCEPTANCE "Decision rule" are computed by nothing | `reconcile.py` clips to the selection window; no holdout mode | ADOPTED: `python -m pipeline.reconcile holdout` (conditional step after `holdout_d2`) appends the 16 holdout rows with `window` and `label` (PRE-REGISTERED / POST-SELECTION) to `out/reconcile_candidates.csv`; not in the trial family; ACCEPTANCE wording amended to name the columns |
+| N3 | 3 | Timing control not reported on the holdout summary; `frame` parameter dead | Omission | ADOPTED: `timing_control_pct` column |
+| N4 | 3 | `report.py` still keyed on one fixed ext file name | Missed call site in the unification | ADOPTED: `sessions.ext_present()` |
+| N5 | 3 | Two asserted statistics live in the renderer (FDR sentence; time-value bound) and A7's "< 0.08 pt at VIX 83" is below the model's own value | Prose typed from a one-off check | ADOPTED: FDR sentence generated from `out/trials.csv`; new `out/options_timevalue.csv` (`python -m pipeline.options`) drives the time-value sentence; A7 amended to the measured value |
+| N6 | 2 | Three printed values for the frozen `vixmove_fixed` boundary (ACCEPTANCE, decision file, gate c log) | ACCEPTANCE typed a Phase-3 value; gate (c)'s Thread-A path uses Thread A's prior-bar reference (A30), not A34's | ADOPTED doc-side: ACCEPTANCE now references the generated file and explains the gate-(c) pair; code unchanged (the reproduction must keep Thread A's convention to reproduce Thread A's numbers) |
+| N7 | 2 | Holdout halves split at the arithmetic midpoint, not at 2023-07-01 | Convenience | ADOPTED: fixed split date |
+| N8 | 2 | D4's "IN-SAMPLE + HOLDOUT" full-sample table not produced | Step never added | ADOPTED: conditional `fullsample_d4` step (`out/fullsample_*`) rendered in the playbook |
+| N9 | 1 | `rank` and `days_with_two_positions` render as floats | NaNs elsewhere in the column | ADOPTED: explicit `int_cols` allow-list in `report.md()` (no auto-detection of integral floats) |
+
+Refuted: none. Open after this round: none (judge round 3 is the done-gate).

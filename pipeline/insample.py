@@ -11,10 +11,12 @@ import sys
 import numpy as np
 import pandas as pd
 
-from pipeline import execution, playbook, sessions, signals, stats
+from pipeline import execution, options, playbook, sessions, signals, stats
 
 COST_PTS = 1.0
 HOLDOUT_START = pd.Timestamp("2020-06-01")
+HOLDOUT_HALF = pd.Timestamp("2023-07-01")   # ACCEPTANCE D2's two named halves (2020-06->2023-06 / 2023-07->2026-09),
+                                             # not the arithmetic midpoint of the window passed in
 
 
 def winner_from_decision(path="out/reconcile_decision.md"):
@@ -31,7 +33,7 @@ def parse_label(lbl):
 def holdout_tables(sel, day, frame, td, start, end, out_prefix):
     """D2: per-year rows, pooled + halves, controls, survival-rule verdict per signal."""
     rows, years = [], []
-    mid = pd.Timestamp(start) + (pd.Timestamp(end) - pd.Timestamp(start)) / 2
+    frame_window = frame[(frame["date"] >= start) & (frame["date"] <= end)]
     for name, t in sel.items():
         if t.empty:
             rows.append(dict(signal=name, n=0, label="NO TRADES"))
@@ -44,8 +46,11 @@ def holdout_tables(sel, day, frame, td, start, end, out_prefix):
         ctrl_net = ctrl - 100 * COST_PTS / t["entry_px"].mean()
         excess = net_pct.mean() - ctrl_net.mean() if len(ctrl) else np.nan
         p_month = stats.one_sided_p(net_pct.to_numpy(), stats.month_blocks(t["date"]))
-        h1, h2 = t[t["date"] < mid], t[t["date"] >= mid]
+        h1, h2 = t[t["date"] < HOLDOUT_HALF], t[t["date"] >= HOLDOUT_HALF]
         psr = stats.deflated_sharpe(net_pct.to_numpy(), n=1)[0]
+        # A16 timing control (reported only, survival rule 4): same call convention as reconcile.py::window_stats
+        tim = signals.timing_control(frame_window, t, n_seeds=50)
+        timing_control_pct = np.nanmean(tim) - 100 * COST_PTS / t["entry_px"].mean()
         conds = dict(net_positive=bool(net_pts.mean() > 0), p_month_lt_005=bool(p_month < 0.05) if p_month == p_month else False,
                      excess_over_control=bool(excess > 0) if excess == excess else False, psr_gt_095=bool(psr > 0.95) if psr == psr else False,
                      n_ge_200=bool(len(t) >= 200))
@@ -56,13 +61,33 @@ def holdout_tables(sel, day, frame, td, start, end, out_prefix):
                          p_half1_month=stats.one_sided_p((h1["ret_pct"] - 100 * COST_PTS / h1["entry_px"]).to_numpy(), stats.month_blocks(h1["date"])) if len(h1) else np.nan,
                          p_half2_month=stats.one_sided_p((h2["ret_pct"] - 100 * COST_PTS / h2["entry_px"]).to_numpy(), stats.month_blocks(h2["date"])) if len(h2) else np.nan,
                          control_mean_pct=ctrl_net.mean() if len(ctrl) else np.nan, excess_over_control_pct=excess,
+                         timing_control_pct=timing_control_pct,
                          psr=psr, sharpe_calday=stats.calendar_day_sharpe(net_pct.to_numpy(), t["date"], [x for x in td if pd.Timestamp(start) <= x <= pd.Timestamp(end)]),
                          **conds, label=label, note="FDR across the family is in out/trials.csv"))
         for y, g_ in t.groupby(pd.to_datetime(t["date"]).dt.year):
             npct = g_["ret_pct"] - 100 * COST_PTS / g_["entry_px"]
-            years.append(dict(signal=name, year=int(y), n=len(g_), win=100 * (g_["pts"] > 0).mean(), net_pts=(g_["pts"] - COST_PTS).mean(),
-                              net_pct=npct.mean(), worst_trade_pts=(g_["pts"] - COST_PTS).min(),
-                              p_day=stats.one_sided_p(npct.to_numpy(), stats.day_blocks(g_["date"]))))
+            net_pts_y = g_["pts"] - COST_PTS
+            # D4 pricing conventions (playbook.build): settle="cash", grid SPX, k=1.0 for the 15:00/15:30 legs,
+            # k=1.3 for the 13:00 gap-up leg (A7); % of premium mean at each quoted spread, and mae_worst at spread 1.0
+            k = 1.3 if int(g_["decision_mod"].iloc[0]) == 780 else 1.0
+            t_y = g_.copy()
+            t_y["mae_pts"] = playbook.mae(frame, t_y)
+            opt_means, mae_worst_pct = {}, np.nan
+            for spread in playbook.SPREADS:
+                o = playbook.price_table(t_y, spread, "cash", k, options.GRID["SPX"])
+                if o.empty:
+                    opt_means[spread] = np.nan
+                    continue
+                o["mae_pts"] = t_y.set_index("date").loc[o["date"], "mae_pts"].to_numpy()
+                s = playbook.summarise(o, years_span=1.0)   # years_span only feeds trades_per_year, unused here
+                opt_means[spread] = s["mean"]
+                if spread == 1.0:
+                    mae_worst_pct = s["mae_worst"]
+            years.append(dict(signal=name, year=int(y), n=len(g_), win=100 * (g_["pts"] > 0).mean(), net_pts=net_pts_y.mean(),
+                              net_pct=npct.mean(), worst_trade_pts=net_pts_y.min(),
+                              p_day=stats.one_sided_p(npct.to_numpy(), stats.day_blocks(g_["date"])),
+                              opt_mean_s1=opt_means[1.0], opt_mean_s2=opt_means[2.0], opt_mean_s3=opt_means[3.0],
+                              worst_day_pts=net_pts_y.groupby(g_["date"]).sum().min(), mae_worst_pct=mae_worst_pct))
     summ = pd.DataFrame(rows)
     summ.to_csv(f"{out_prefix}_summary.csv", index=False, float_format="%.6f")
     summ.to_csv(f"{out_prefix}_pooled.csv", index=False, float_format="%.6f")          # ACCEPTANCE D2's named evidence file

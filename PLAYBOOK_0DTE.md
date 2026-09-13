@@ -2,7 +2,7 @@
 
 **Account constraint.** 0DTE options only, long-only, naked calls or puts; no selling, spreads, futures, shares or overnight holds; daily loss limit 3–5% (base case 4%) on marked intraday P&L.
 
-**Pricing model, stated first.** No real 0DTE quotes were obtainable. Every option number below is Black-Scholes with r = 0 and IV = k × prior-close VIX (both prior threads used k = 1.0 and called it generous). At 2% in the money with less than an hour to expiry that model is intrinsic value ± the spread (time value < 0.02 index points for VIX ≤ 40), so k only matters for the 13:00 leg and the spread is the real sensitivity axis. SPX/XSP are PM cash-settled: buy at the ask (half the quoted spread), settle at intrinsic. SPY is physically settled and must be sold by 15:55 with both spread halves paid; SPY rows are for that exit.
+**Pricing model, stated first.** No real 0DTE quotes were obtainable. Every option number below is Black-Scholes with r = 0 and IV = k × prior-close VIX (both prior threads used k = 1.0 and called it generous). At 2% in the money with less than an hour to expiry that model is intrinsic value ± the spread (time value ≤ 0.000 index points at 60 minutes for VIX ≤ 40 and ≤ 0.159 at VIX 83, `out/options_timevalue.csv`), so k only matters for the 13:00 leg and the spread is the real sensitivity axis. SPX/XSP are PM cash-settled: buy at the ask (half the quoted spread), settle at intrinsic. SPY is physically settled and must be sold by 15:55 with both spread halves paid; SPY rows are for that exit.
 
 **Holdout status: PENDING.** The post-May-2020 minute file (`data/ext/spx_1min_2020-05_2026-09.csv.gz`) has not been supplied, so the holdout (2020-06-01 → 2026-09-11) has not run. Every table below is measured on the 2013-01-01 → 2020-05-13 SELECTION WINDOW and is labelled IN-SAMPLE. It is not the headline and must not be traded on. The headline block will be generated from `out/holdout_*.csv` when the file arrives.
 
@@ -19,18 +19,18 @@ Strike: 2% in the money, rounded away from spot to the grid (5 points SPX, $1 SP
 
 | rank | candidate | params | n | win | net_pts | net_pct | sharpe_calday | p_boot_month | p_boot_day | excess_over_control_pct | timing_control_pct | dsr_N12 | dsr_N42 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1.000 | 15:00\|both\|vixmove_fixed | 2 | 92 | 64.130 | 5.272 | 0.194 | 0.557 |  | 0.063 | 0.206 | 0.416 | 0.756 | 0.662 |
-| 2.000 | 15:30\|both\|vixmove_fixed | 2 | 92 | 59.783 | 3.880 | 0.149 | 0.515 |  | 0.083 | 0.168 | 0.425 | 0.714 | 0.617 |
-| 3.000 | 15:00\|both\|vixmove_exp | 0 | 145 | 62.759 | 3.115 | 0.112 | 0.489 | 0.179 | 0.095 | 0.124 | 0.303 | 0.613 | 0.476 |
-| 4.000 | 15:30\|both\|vixmove_exp | 0 | 146 | 59.589 | 2.382 | 0.091 | 0.467 | 0.115 | 0.102 | 0.111 | 0.302 | 0.587 | 0.451 |
-| 5.000 | 15:30\|put\|mag | 0 | 182 | 57.143 | 0.771 | 0.033 | 0.260 | 0.255 | 0.238 | 0.072 | 0.241 | 0.334 | 0.217 |
-| 6.000 | 15:30\|put\|vixmove_exp | 0 | 62 | 51.613 | 1.542 | 0.054 | 0.170 |  | 0.314 | 0.086 | 0.287 | 0.414 | 0.332 |
-| 7.000 | 15:00\|put\|vixmove_fixed | 2 | 42 | 54.762 | 2.412 | 0.080 | 0.159 |  | 0.335 | 0.116 | 0.342 | 0.447 | 0.376 |
-| 8.000 | 15:00\|put\|vixmove_exp | 0 | 58 | 55.172 | 1.740 | 0.055 | 0.145 |  | 0.351 | 0.085 | 0.286 | 0.393 | 0.313 |
-| 9.000 | 15:00\|put\|mag | 0 | 189 | 52.381 | 0.324 | 0.017 | 0.125 | 0.362 | 0.374 | 0.062 | 0.226 | 0.202 | 0.112 |
-| 10.000 | 15:30\|put\|vixmove_fixed | 2 | 43 | 51.163 | 1.116 | 0.033 | 0.079 |  | 0.409 | 0.074 | 0.312 | 0.364 | 0.298 |
-| 11.000 | 15:30\|both\|mag | 0 | 371 | 54.717 | 0.067 | 0.002 | 0.023 | 0.478 | 0.470 | 0.036 | 0.211 | 0.055 | 0.016 |
-| 12.000 | 15:00\|both\|mag | 0 | 371 | 50.943 | -0.033 | 0.001 | 0.008 | 0.493 | 0.492 | 0.039 | 0.188 | 0.050 | 0.014 |
+| 1 | 15:00\|both\|vixmove_fixed | 2 | 92 | 64.130 | 5.272 | 0.194 | 0.557 |  | 0.063 | 0.206 | 0.416 | 0.756 | 0.662 |
+| 2 | 15:30\|both\|vixmove_fixed | 2 | 92 | 59.783 | 3.880 | 0.149 | 0.515 |  | 0.083 | 0.168 | 0.425 | 0.714 | 0.617 |
+| 3 | 15:00\|both\|vixmove_exp | 0 | 145 | 62.759 | 3.115 | 0.112 | 0.489 | 0.179 | 0.095 | 0.124 | 0.303 | 0.613 | 0.476 |
+| 4 | 15:30\|both\|vixmove_exp | 0 | 146 | 59.589 | 2.382 | 0.091 | 0.467 | 0.115 | 0.102 | 0.111 | 0.302 | 0.587 | 0.451 |
+| 5 | 15:30\|put\|mag | 0 | 182 | 57.143 | 0.771 | 0.033 | 0.260 | 0.255 | 0.238 | 0.072 | 0.241 | 0.334 | 0.217 |
+| 6 | 15:30\|put\|vixmove_exp | 0 | 62 | 51.613 | 1.542 | 0.054 | 0.170 |  | 0.314 | 0.086 | 0.287 | 0.414 | 0.332 |
+| 7 | 15:00\|put\|vixmove_fixed | 2 | 42 | 54.762 | 2.412 | 0.080 | 0.159 |  | 0.335 | 0.116 | 0.342 | 0.447 | 0.376 |
+| 8 | 15:00\|put\|vixmove_exp | 0 | 58 | 55.172 | 1.740 | 0.055 | 0.145 |  | 0.351 | 0.085 | 0.286 | 0.393 | 0.313 |
+| 9 | 15:00\|put\|mag | 0 | 189 | 52.381 | 0.324 | 0.017 | 0.125 | 0.362 | 0.374 | 0.062 | 0.226 | 0.202 | 0.112 |
+| 10 | 15:30\|put\|vixmove_fixed | 2 | 43 | 51.163 | 1.116 | 0.033 | 0.079 |  | 0.409 | 0.074 | 0.312 | 0.364 | 0.298 |
+| 11 | 15:30\|both\|mag | 0 | 371 | 54.717 | 0.067 | 0.002 | 0.023 | 0.478 | 0.470 | 0.036 | 0.211 | 0.055 | 0.016 |
+| 12 | 15:00\|both\|mag | 0 | 371 | 50.943 | -0.033 | 0.001 | 0.008 | 0.493 | 0.492 | 0.039 | 0.188 | 0.050 | 0.014 |
 
 Literal Thread B thresholds (17.06 / 0.665, in-sample on 2013–2018, reported not ranked):
 
@@ -40,9 +40,14 @@ Literal Thread B thresholds (17.06 / 0.665, in-sample on 2013–2018, reported n
 | 15:00\|both\|vixmove_lit | 251 | 58.566 | 2.168 | 0.084 | 0.603 | 0.117 | 0.046 |
 | 15:30\|put\|vixmove_lit | 104 | 58.654 | 1.770 | 0.071 | 0.360 | 0.059 | 0.163 |
 | 15:30\|both\|vixmove_lit | 252 | 59.127 | 1.425 | 0.057 | 0.484 | 0.114 | 0.088 |
+
+Thread A's gap-up call, same selection window (pre-registered by Thread A, not part of this ranking — see §1):
+
+| candidate | n | win | net_pts | net_pct | sharpe_calday | p_boot_month | p_boot_day |
+|---|---|---|---|---|---|---|---|
 | 13:00\|call\|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. No trial passes BH-FDR at 10% across the family (`out/trials.csv`).
+Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 23 trials pass BH-FDR at 10% across the family (`out/trials.csv`).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
@@ -87,9 +92,9 @@ Position size = daily limit ÷ worst-trade loss with a 100% floor (a hold-to-clo
 | 13:00\|call\|gap>0.3% | 3.000 | 3.000 | 100.000 | 1.900 | -5.403 | 10.339 |  |  |
 | 13:00\|call\|gap>0.3% | 4.000 | 4.000 | 100.000 | 2.533 | -7.204 | 13.786 |  |  |
 | 13:00\|call\|gap>0.3% | 5.000 | 5.000 | 100.000 | 3.167 | -9.005 | 17.232 |  |  |
-| COMBINED BOOK | 3.000 | 1.500 | 200.000 | 3.125 |  |  | 77.000 | -200.000 |
-| COMBINED BOOK | 4.000 | 2.000 | 200.000 | 4.167 |  |  | 77.000 | -200.000 |
-| COMBINED BOOK | 5.000 | 2.500 | 200.000 | 5.209 |  |  | 77.000 | -200.000 |
+| COMBINED BOOK | 3.000 | 1.500 | 200.000 | 3.125 |  |  | 77 | -200.000 |
+| COMBINED BOOK | 4.000 | 2.000 | 200.000 | 4.167 |  |  | 77 | -200.000 |
+| COMBINED BOOK | 5.000 | 2.500 | 200.000 | 5.209 |  |  | 77 | -200.000 |
 
 ## 5. Execution — IN-SAMPLE (underlying index points per signal; unfilled limits count as zero)
 

@@ -43,6 +43,6 @@ drift as well; it is reported, not a survival test (A16). params counts FITTED n
 
 Tie set within 0.10 Sharpe of the top: 15:00|both|vixmove_fixed (params 2), 15:30|both|vixmove_fixed (params 2), 15:00|both|vixmove_exp (params 0), 15:30|both|vixmove_exp (params 0).
 Winner: **15:00|both|vixmove_exp** (fewest fitted parameters among the tied, then highest Sharpe).
-This ONE configuration is tested on the 2020-06-01 → 2026-09-11 holdout when data/ext arrives. Thread A's gap-up call (13:00, gap > 0.3%) is the second pre-registered holdout signal. All other configurations' holdout rows will be published labelled POST-SELECTION and never promoted.
+This ONE configuration is tested on the 2020-06-01 → 2026-09-11 holdout when data/ext arrives. Thread A's gap-up call (13:00, gap > 0.3%) is the second pre-registered holdout signal. The other 15 holdout rows are published in `out/reconcile_candidates.csv` (`label` column: POST-SELECTION, `window` column: 2020-06-01..2026-09-11) by `python -m pipeline.reconcile holdout` when data/ext arrives, and never promoted.
 
 Written before any holdout data was read. Momentum trials this run: 16; historical N for DSR: 42 (gap-up: 1099).

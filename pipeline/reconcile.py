@@ -22,21 +22,24 @@ Outputs: out/reconcile_candidates.csv, out/reconcile_decision.md, out/reconcile_
          out/reconcile_trades_selection.csv, out/reconcile_ref_report.csv
 """
 import os
+import sys
 
 import numpy as np
 import pandas as pd
 
-from pipeline import sessions, signals, stats
+from pipeline import insample, sessions, signals, stats
 
 SEL_START, SEL_END = "2013-01-01", "2020-05-13"
+HOLD_START, HOLD_END = "2020-06-01", "2026-09-11"   # D1's post-selection publication window (ACCEPTANCE line ~92);
+                                                     # D2's own pre-registered test is pipeline/insample.py
 COST_PTS = 1.0
 N_HIST = 42          # 16 this run + 4 it22 setups + 22 step17 tests (ACCEPTANCE survival rule 5)
 N_GAP_HIST = 1099    # 1,092 scan cells + 6 conditions + 1
 PARAMS = {"mag": 0, "vixmove_exp": 0, "vixmove_fixed": 2, "vixmove_lit": 2}   # FITTED numbers only
 
 
-def window_stats(name, t, day, frame, entry_mod, direction, base, all_dates, years):
-    w = t[(t["date"] >= SEL_START) & (t["date"] <= SEL_END)].copy()
+def window_stats(name, t, day, frame, entry_mod, direction, base, all_dates, years, win_start=SEL_START, win_end=SEL_END):
+    w = t[(t["date"] >= win_start) & (t["date"] <= win_end)].copy()
     w["net_pts"] = w["pts"] - COST_PTS
     w["net_pct"] = w["ret_pct"] - 100 * COST_PTS / w["entry_px"]
     row = dict(candidate=name, n=len(w), trades_per_year=len(w) / years,
@@ -51,12 +54,12 @@ def window_stats(name, t, day, frame, entry_mod, direction, base, all_dates, yea
         row["sharpe_calday"] = stats.calendar_day_sharpe(w["net_pct"].to_numpy(), w["date"], all_dates)
         row["sr_trade"] = stats.per_trade_sharpe(w["net_pct"].to_numpy())
         row["sharpe_threadB_conv"] = stats.sharpe(w["net_pct"].to_numpy(), 252)
-        ctrl = signals.day_selection_control(day.loc[SEL_START:SEL_END], w, entry_mod, direction, base=base)
+        ctrl = signals.day_selection_control(day.loc[win_start:win_end], w, entry_mod, direction, base=base)
         ctrl_net = ctrl - 100 * COST_PTS / w["entry_px"].mean()
         row["control_mean_pct"] = ctrl_net.mean() if len(ctrl) else np.nan
         row["excess_over_control_pct"] = row["net_pct"] - row["control_mean_pct"]
         row["frac_seeds_beaten"] = (w["net_pct"].mean() > ctrl_net).mean() if len(ctrl) else np.nan
-        tim = signals.timing_control(frame[(frame["date"] >= SEL_START) & (frame["date"] <= SEL_END)], w, n_seeds=50)
+        tim = signals.timing_control(frame[(frame["date"] >= win_start) & (frame["date"] <= win_end)], w, n_seeds=50)
         row["timing_control_pct"] = np.nanmean(tim) - 100 * COST_PTS / w["entry_px"].mean()
     else:
         for k in keys:
@@ -64,8 +67,55 @@ def window_stats(name, t, day, frame, entry_mod, direction, base, all_dates, yea
     return row, w
 
 
-def main():
+def holdout_main():
+    """D1's post-selection publication (ACCEPTANCE line ~92, N2): the same window_stats row for
+    all 16 momentum configurations (12 rankable + 4 literal) on the 2020-06-01..2026-09-11
+    window, appended to out/reconcile_candidates.csv with `window`/`label` columns. Expanding
+    gates (mag, vixmove_exp) keep expanding through the holdout using strictly prior sessions
+    (a rule, not a fit); vixmove_fixed keeps the pre-2013 fit (fixed_thresholds' `end` default is
+    2013-01-01, unaffected by the window); vixmove_lit keeps the literal 17.06/0.665. Never
+    re-ranked — these rows carry no `rank` — and never added to the trial family in
+    pipeline/trials.py (they are never promoted). Thread A's gap-up call is not re-published here:
+    it is Thread A's own pre-registered signal and its holdout test is pipeline/insample.py's D2."""
+    cand_path = "out/reconcile_candidates.csv"
+    if not sessions.ext_present():
+        print("data/ext absent — `pipeline.reconcile holdout` is a no-op (DATA.md)")
+        return
+    if not os.path.exists(cand_path):
+        raise FileNotFoundError(f"{cand_path} missing — run `python -m pipeline.reconcile` (in-sample) first")
+    existing = pd.read_csv(cand_path)
+    vix = pd.read_parquet("data/raw/vix_daily.parquet")
+    td = sessions.trading_days_from_vix()
+    frame, _, meta = sessions.build_extended(trading_days=td)
+    day = signals.day_table(frame, vix, dividends=meta["dividends"] if meta else None, trading_days=td,
+                            roll_dates=meta["roll_dates"] if meta else ())
+    fixed = {e: signals.fixed_thresholds(day, e) for e in (900, 930)}   # pre-2013 fit, exactly as constructed for the in-sample run
+    all_dates = [d for d in td if pd.Timestamp(HOLD_START) <= d <= pd.Timestamp(HOLD_END)]
+    years = (pd.Timestamp(HOLD_END) - pd.Timestamp(HOLD_START)).days / 365.25
+    rows = []
+    for e, d, g in signals.CANDIDATES:
+        t = signals.candidate(day, e, d, g, fixed=fixed.get(e))
+        name = signals.label(e, d, g)
+        row, _ = window_stats(name, t, day, frame, e, d, signals.gate_base(g), all_dates, years, win_start=HOLD_START, win_end=HOLD_END)
+        row.update(entry=f"{e // 60:02d}:{e % 60:02d}", direction=d, gate=g, rankable=g in signals.RANKABLE,
+                   params=PARAMS[g], family="momentum")
+        rows.append(row)
+    hold = pd.DataFrame(rows)
+    winner_name = insample.winner_from_decision()
+    hold["window"] = f"{HOLD_START}..{HOLD_END}"
+    hold["label"] = np.where(hold["candidate"] == winner_name, "PRE-REGISTERED", "POST-SELECTION")
+    # POST-SELECTION rows are published for transparency only, per ACCEPTANCE's decision rule; they carry no `rank`
+    # and are NOT added to pipeline/trials.py's trial family (D6/A31) — never promoted.
+    out = pd.concat([existing, hold], ignore_index=True, sort=False)
+    out.to_csv(cand_path, index=False, float_format="%.6f")
+    print(f"holdout rows appended: {len(hold)} configurations on {HOLD_START}..{HOLD_END}; PRE-REGISTERED: {winner_name}")
+
+
+def main(mode="insample"):
     os.makedirs("out", exist_ok=True)
+    if mode == "holdout":
+        holdout_main()
+        return
     vix = pd.read_parquet("data/raw/vix_daily.parquet")
     td = sessions.trading_days_from_vix()
     frame, _, meta = sessions.build_extended(trading_days=td)
@@ -111,6 +161,9 @@ def main():
     res["rank"] = res["candidate"].map({c: i + 1 for i, c in enumerate(rk["candidate"])})
     res["winner"] = res["candidate"] == winner["candidate"]
     res = res.sort_values(["family", "rankable", "rank"], ascending=[False, False, True])
+    res["window"] = f"{SEL_START}..{SEL_END}"
+    # the gap-up call is pre-registered by Thread A itself, not chosen by this ranking (see module docstring)
+    res["label"] = np.where(res["family"] == "gapup", "PRE-REGISTERED", "SELECTION")
     res.to_csv("out/reconcile_candidates.csv", index=False, float_format="%.6f")
     pd.concat([w.assign(candidate=n) for n, w in trades.items()]).to_csv("out/reconcile_trades_selection.csv", index=False, float_format="%.6f")
     res[["candidate", "family", "n", "p_boot_month", "p_boot_day", "sr_trade", "dsr_N12", "dsr_N42"]].to_csv(
@@ -140,8 +193,9 @@ def main():
              f"Tie set within 0.10 Sharpe of the top: {', '.join(f'{c} (params {p})' for c, p in zip(tied['candidate'], tied['params']))}.",
              f"Winner: **{winner['candidate']}** (fewest fitted parameters among the tied, then highest Sharpe).",
              "This ONE configuration is tested on the 2020-06-01 → 2026-09-11 holdout when data/ext arrives. Thread A's gap-up call "
-             "(13:00, gap > 0.3%) is the second pre-registered holdout signal. All other configurations' holdout rows will be "
-             "published labelled POST-SELECTION and never promoted.", "",
+             "(13:00, gap > 0.3%) is the second pre-registered holdout signal. The other 15 holdout rows are published in "
+             "`out/reconcile_candidates.csv` (`label` column: POST-SELECTION, `window` column: 2020-06-01..2026-09-11) by "
+             "`python -m pipeline.reconcile holdout` when data/ext arrives, and never promoted.", "",
              f"Written before any holdout data was read. Momentum trials this run: 16; historical N for DSR: {N_HIST} (gap-up: {N_GAP_HIST})."]
     with open("out/reconcile_decision.md", "w") as f:
         f.write("\n".join(lines) + "\n")
@@ -149,4 +203,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1] if len(sys.argv) > 1 else "insample")

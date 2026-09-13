@@ -20,6 +20,9 @@ STEPS = [
                         "out/insample"], "out/insample.log"),
     ("holdout_d2", ["python", "-m", "pipeline.insample", "2020-06-01", "2026-09-11", "HOLDOUT 2020-06-01..2026-09-11",
                     "out/holdout"], "out/holdout.log"),
+    ("reconcile_holdout", ["python", "-m", "pipeline.reconcile", "holdout"], "out/reconcile_holdout.log"),
+    ("fullsample_d4", ["python", "-m", "pipeline.insample", "2013-01-01", "2026-09-11", "IN-SAMPLE + HOLDOUT 2013-01..2026-09-11",
+                       "out/fullsample"], "out/fullsample.log"),
     ("own_account_d5", ["python", "-m", "pipeline.own_account"], "out/own_account.log"),
     ("xmarket_SPXUSD", ["python", "-m", "pipeline.units.xmarket", "--in", "SPXUSD", "--out", "out/xmarket_SPXUSD.csv"], "out/xmarket_SPXUSD.log"),
     ("xmarket_GRXEUR", ["python", "-m", "pipeline.units.xmarket", "--in", "GRXEUR", "--out", "out/xmarket_GRXEUR.csv"], "out/xmarket_GRXEUR.log"),
@@ -27,6 +30,7 @@ STEPS = [
     ("vrp", ["python", "-m", "pipeline.vrp"], "out/vrp.log"),
     ("flow", ["python", "-m", "pipeline.units.flow", "--in", "data/raw/oanda_SPX500_USD.parquet", "--out", "out/flow_candidates.csv"], "out/flow.log"),
     ("trials", ["python", "-m", "pipeline.trials"], "out/trials.log"),
+    ("options_timevalue", ["python", "-m", "pipeline.options"], "out/options_timevalue.log"),
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
 ]
 EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_histdata.csv", "out/calendar_histdata.csv",
@@ -34,18 +38,21 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
             "out/insample_execution.csv", "out/insample_summary.csv", "out/insample_sizing.csv",
             "out/own_account_summary.csv", "out/own_account_by_year.csv", "out/own_account_by_regime.csv", "out/own_account_bridge.csv",
             "out/xmarket_SPXUSD.csv", "out/xmarket_GRXEUR.csv", "out/xmarket_ETXEUR.csv",
-            "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/trials.csv", "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md"]
+            "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/trials.csv", "out/options_timevalue.csv",
+            "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md"]
 EXPECTED_HOLDOUT = ["out/holdout_summary.csv", "out/holdout_by_year.csv", "out/holdout_pooled.csv",
-                    "out/holdout_d4_execution.csv", "out/holdout_d4_summary.csv", "out/holdout_d4_sizing.csv"]
+                    "out/holdout_d4_execution.csv", "out/holdout_d4_summary.csv", "out/holdout_d4_sizing.csv",
+                    "out/fullsample_execution.csv", "out/fullsample_summary.csv", "out/fullsample_sizing.csv"]
+HOLDOUT_STEPS = {"holdout_d2", "reconcile_holdout", "fullsample_d4"}   # ext-only steps (skipped when data/ext is absent)
 
 
 def main():
     os.makedirs("out", exist_ok=True)
     ext = sessions.ext_present()
-    for pat in ("out/*.error", "out/insample_*", "out/holdout_*"):
+    for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*"):
         for f in glob.glob(pat):
             os.remove(f)
-    steps = [s for s in STEPS if s[0] != "holdout_d2" or ext]
+    steps = [s for s in STEPS if s[0] not in HOLDOUT_STEPS or ext]
     expected = EXPECTED + (EXPECTED_HOLDOUT if ext else [])
     print(f"ext feed: {'present (manifest + minute file) — holdout step enabled' if ext else 'absent — holdout step skipped (DATA.md)'}")
     for name, cmd, log in steps:

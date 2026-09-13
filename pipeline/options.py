@@ -76,3 +76,26 @@ if __name__ == "__main__":
     for k in (1.0, 1.3, 1.6):
         r, p0, K = trade(4000, 4000, 780, 959, 30.0, "c", k=k, grid=5.0)
         print(f"  k={k}: K={K:.0f} premium={p0:.2f} intrinsic {4000 - K:.2f} time value {p0 - 0.5 - (4000 - K):.3f} -> {100 * r:+.2f}%")
+
+    # Time-value sanity table backing ACCEPTANCE A7 (report.py derives its "time value < ..."
+    # sentence from this file instead of a hand-typed number). 2%-ITM options at spot S = 4000,
+    # SPX grid, both kinds; deterministic (no randomness, no wall-clock inputs).
+    import os
+
+    import pandas as pd
+
+    S = 4000.0
+    rows = []
+    for vix in (15, 20, 30, 40, 60, 83):
+        for k in (1.0, 1.3, 1.6):
+            for mins_to_close in (60, 30, 180):
+                for kind in ("c", "p"):
+                    K = strike(S, kind, itm=0.02, grid=GRID["SPX"])
+                    iv = k * vix / 100.0
+                    p = price(S, K, mins_to_close, iv, kind)
+                    intr = intrinsic(S, K, kind)
+                    rows.append(dict(S=S, vix=vix, k=k, mins_to_close=mins_to_close, kind=kind,
+                                      K=K, price=p, intrinsic=intr, time_value=p - intr))
+    os.makedirs("out", exist_ok=True)
+    pd.DataFrame(rows).to_csv("out/options_timevalue.csv", index=False, float_format="%.6f")
+    print("wrote out/options_timevalue.csv")

@@ -176,3 +176,5 @@ Science verified clean: every pre-registration committed before its first run (A
 | R6-N4 | 1 | DSR N wording: A38 says 35, A39 says 37, actual family 36, both units use 37 | Count drift across amendments | ACCEPTED: no result turns on it; the units' N = 37 is the conservative (larger) value |
 | R6-N5 | 1 | The `spec` prose column of the SPY TEST rows was rewritten when gold joined; the coder's "no column except fdr/dsr" claim omitted it | Imprecise claim | ACCEPTED: no numeric column changed |
 
+Round 6 confirmation (same judge, on commit b7d4772): **DONE** for the option C batch (A38 skip path, A39, Track B SPY + gold). All six items verified with evidence; no output, label, window or pre-registration moved; ACCEPTANCE diff empty; TRACK_B.md byte-identical under re-render; tree clean. One severity-1 note (a stale docstring phrase in test_letf.py) swept into this commit.
+

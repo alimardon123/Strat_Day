@@ -9,7 +9,7 @@ check, matching pipeline.sessions's own gate()-style `__main__` block. Two check
       features), not a reimplementation of the formula, so a regression in either function fails
       this test.
   (b) the skip path (assets file missing) writes a header-only CSV, never touching out/ or data/.
-Both checks write their temporary file(s), if any, under the session scratchpad and remove them
+Both checks write their temporary file(s), if any, under the system temporary directory and remove them
 immediately after use -- no fixture is left anywhere persistent (never under out/ or data/).
 """
 import os

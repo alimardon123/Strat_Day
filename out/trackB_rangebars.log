@@ -1,0 +1,19 @@
+SPY $0.34 range bars: 237,826 bars, 1,526 sessions (2020-07-27 00:00:00 -> 2026-09-11 00:00:00)
+SPY $1.00 range bars: 39,019 bars, 1,526 sessions (2020-07-27 00:00:00 -> 2026-09-11 00:00:00)
+XAUUSD $5.00 range bars (rebuild): 48,818 bars, 741 trading weeks (2006-03-20 00:00:00 -> 2020-05-14 00:00:00)
+XAUUSD 5000R gold cache: 10,089 bars, 243 UTC calendar days (2025-06-08 00:00:00 -> 2026-03-18 00:00:00)
+                                            check      value  threshold   ok  counts_toward_gate                                                                                                                                       note
+                           self_consistency_r0.34   0.000000        0.0 True                True                                                                  hl_bad=0/236300 completed bars, open_close_bad=0/236300 consecutive pairs
+                              min_bar_count_r0.34   0.000000        0.0 True                True                                                                                             sessions violating n_bars>=(H-L)/range: 0/1526
+                                determinism_r0.34   1.000000        1.0 True                True                                                                                                      rebuild twice, byte-identical parquet
+                           self_consistency_r1.00   0.000000        0.0 True                True                                                                    hl_bad=0/37493 completed bars, open_close_bad=0/37493 consecutive pairs
+                              min_bar_count_r1.00   0.000000        0.0 True                True                                                                                             sessions violating n_bars>=(H-L)/range: 0/1526
+                                determinism_r1.00   1.000000        1.0 True                True                                                                                                      rebuild twice, byte-identical parquet
+     context_bars_per_session_median_rebuild_r034 144.000000        NaN  NaN               False                                                                                                                    191 sessions in overlap
+        context_bars_per_session_median_owner_34R  16.000000        NaN  NaN               False                                                                                           194 sessions in overlap, 191 common with rebuild
+  context_resampled_5min_close_corr_r034_vs_owner   0.998979        NaN  NaN               False                                                                                                       2826 common 5-min buckets in overlap
+                          self_consistency_xau_r5   0.000000        0.0 True                True                                                 hl_bad=0/48077 completed bars, open_close_bad=0/48077 consecutive pairs (per trading week)
+                             min_bar_count_xau_r5   0.000000        0.0 True                True                                                                                                 weeks violating n_bars>=(H-L)/range: 0/741
+                               determinism_xau_r5   1.000000        1.0 True                True                                                                                                      rebuild twice, byte-identical parquet
+context_bars_per_week_rebuild_test_vs_owner_5000R  25.500000        NaN  NaN               False rebuild TEST (2017-2020, xau_r5) median bars/week=25.5 over 180 weeks; owner 5000R (2025-06..2026-03) median bars/week=175.0 over 43 weeks
+GATE (B-a): PASS

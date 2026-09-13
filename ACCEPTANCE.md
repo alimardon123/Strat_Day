@@ -208,3 +208,61 @@ mean and variance and is therefore a floor for near-duplicate configurations, no
 `out/pbo.csv` also carries an 8-block sensitivity variant (70 splits; PBO 0.91 actual, 0.80 null) so the reader can see how
 block count moves the estimate; only the 16-block headline is quoted in the playbook (judge round 5, note 5).
 
+
+## Amendment A38 — leveraged-ETF close-rebalancing candidate (owner's option C, pre-registered 2026-09-13 12:19 UTC, before any run)
+
+Owner decision 2026-09-13: "Go with option C, pre-register the leveraged-ETF candidate." Everything below is fixed
+now; the unit runs only once the assets file exists (DATA.md), and no number here may be changed after the first run.
+
+- Mechanism (who must trade, when): daily-reset leveraged and inverse S&P 500 funds must trade
+  (L² − L) × AUM × (day return) in the last part of the session to reset leverage before the 16:00 NAV
+  (Cheng & Madhavan 2009; Tuzun 2013). The size is forced; the sign is the sign of the day's move for
+  long AND inverse funds alike, so the aggregate demand is
+  D_t = Σ_i (L_i² − L_i) · NetAssets_{i,t−1} · r_t, with r_t = SPX prior close → 15:30 ET.
+- Funds (S&P 500 only; Nasdaq-100 funds are excluded because no NDX/QQQ minute data is on the branch):
+  SSO (2×, coefficient 2), SDS (−2×, 6), UPRO (3×, 6), SPXU (−3×, 12), SPXL (3×, 6), SPXS (−3×, 12), SH (−1×, 2).
+- Trial (exactly one): entry 15:30 ET at the bar close, direction = sign(r_t) (call if positive, put if
+  negative), gate = |D_t| ≥ the expanding 70th percentile of |D| over all prior sessions with assets data
+  (minimum 250 sessions before the first signal; no fitted parameter), exit at the 16:00 close. Costs 1.0 and
+  2.0 pts; option leg 2 % ITM at k × VIX as in D4.
+- Data: SPY/SPX minute bars already on the branch; MISSING `data/ext/letf_aum_2006_2026.csv` (spec in DATA.md).
+  The candidate runs on every session with assets data for at least one fund; sessions without are absent,
+  not filled. If only a partial history is obtainable the windows are reported as they fall and the verdict
+  is on the post-2020-07-27 sessions only.
+- Scoring: the six-condition survival rule; day-block bootstrap p (n_boot 2000, seed 11); day-selection control
+  (same count of random non-signal sessions, same direction rule, 200 seeds) and the on-file magnitude control
+  (the price-only `15:30|both|mag` row of `out/reconcile_candidates.csv`, which this candidate must beat);
+  calendar-day Sharpe; DSR at N = the family size at the time of the run (35 with A39, counted in `pipeline/trials.py`).
+- Kill: net ≤ 0 at 1 pt on the holdout, or not above the day-selection control, or not above the price-only
+  magnitude row. Honest prior MEDIUM-LOW: the price-only proxy of this mechanism failed this holdout; the
+  assets weighting changes only which sessions pass the gate.
+
+## Amendment A39 — overnight-loss forced-liquidation rebound (mechanism candidate runnable now, pre-registered 2026-09-13 12:19 UTC, before any run)
+
+Owner's standing instruction: keep looking for mechanism-based opportunities. This is the only candidate the scout's
+screen left that needs no new data and can reach 200 holdout trades. It is one hypothesis with a mechanism
+fingerprint, not a search; every parameter below is fixed before the first run.
+
+- Mechanism (who must trade, when): after a large overnight loss, margin calls issued on the prior close and
+  broker-forced liquidations of levered longs execute at and just after the open (Reg T calls are met or
+  liquidated before/at the next session's open; Brunnermeier & Pedersen 2009 funding spirals). The forced
+  selling is front-loaded in the first 30 minutes and then exhausted; the mechanism therefore predicts (i) a
+  positive drift from 10:00 to the close on those days, (ii) a LARGER drift from 10:00 than from 09:31 (the
+  liquidation window is adverse for a 09:31 entry), and (iii) NO mirror effect after large overnight gains
+  (no forced buyer). Related evidence: overnight-versus-intraday return reversal (Lou, Polk & Skouras 2019).
+- Signal day: overnight return (prior 16:00 close → 09:30 open) ≤ the expanding 10th percentile of overnight
+  returns over all prior sessions (minimum 250 sessions; no fitted parameter).
+- Trials (exactly three, all counted): T1 = long call, entry 10:00 bar close, exit 16:00 close (the
+  hypothesis); T2 = long call, entry 09:31 bar close, exit 16:00 (timing fingerprint; must be worse than T1);
+  T3 = mirror — overnight return ≥ the expanding 90th percentile, long put, entry 10:00 (must NOT be
+  positive if the mechanism, rather than a symmetric pattern, is at work). Costs 1.0 and 2.0 pts; option leg
+  2 % ITM at k × VIX as in D4.
+- Windows: CONTEXT 2005-01-01 → 2012-12-31, SELECTION 2013-01-01 → 2020-05-13, HOLDOUT 2020-07-27 → 2026-09-11
+  (as A36). SELECTION rows join the trial family (33 + 3 = 36; 37 with A38). The verdict is on the HOLDOUT.
+- Scoring: the six-condition survival rule; day-block bootstrap p (n_boot 2000, seed 11), month-block p where
+  ≥ 20 months; day-selection control (random non-signal sessions, same entry/exit, 200 seeds); timing control
+  (same days, random entry minute 09:31–15:00, 200 seeds); calendar-day Sharpe; DSR at N = 37.
+- Kill / promotion rule: T1 is promotable only if it passes all six conditions AND T2 < T1 AND T3 ≤ 0 at 1 pt.
+  A positive T1 with a failed fingerprint is reported as "pattern without its mechanism" and never promoted.
+  Honest prior LOW-MEDIUM: index-level overnight/intraday reversal is weak; the forced-liquidation timing is
+  the only part that could survive 1 pt.

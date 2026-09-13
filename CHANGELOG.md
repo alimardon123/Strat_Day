@@ -110,3 +110,10 @@
 - R5-3 (N5): `sessions.py` prints the gridded step-open summary (the column that decides `ok`) as the headline; ungridded and Thread B values are marked legacy comparisons.
 - A37 amended to name the 8-block PBO sensitivity variant already in `out/pbo.csv`.
 - Verified after the fixes: `make all` (22 steps, exit 0) then `make repeat` byte-identical; the eight numeric tables (holdout summary/pooled/by-year, reconcile candidates, trials, bridge, PBO, FVG) unchanged against the previous commit; gates (b) 3/3 ×2, (c) 14/14, (e) and (f) PASS; only the two gate (b) logs changed, by their headline text.
+
+## 2026-09-13 — Owner chose option C: two mechanism candidates pre-registered in their own commit before any run
+- A38 leveraged-ETF close rebalancing (assets-weighted forced demand, entry 15:30, one trial) — waits for the owner's assets file (DATA.md spec, local fetch helper).
+- A39 overnight-loss forced-liquidation rebound (expanding 10th-percentile overnight loss, long call from 10:00; timing-fingerprint and mirror trials as falsifiers) — runs now on the branch's data. Family 33 → 36 (37 once A38 runs).
+- Flow-candidate task (rank 9) reopened for these two only; new evidence = a named forced trader and a falsifiable timing fingerprint, absent from the three killed rows.
+- Requested the highest-value data addition: real SPY 0DTE 1-minute option bars (DATA.md), with a local fetch helper.
+

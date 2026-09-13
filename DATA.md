@@ -79,3 +79,11 @@ part of 2020-05 → 2026-09. ETF panel: no repository carries the 29 tickers; th
 only SPY (to 2026-03-20) and SLV after 2017-11-10. Vendor hosts remain 403. The block stands; see
 BLOCKED.md for the owner's options.
 Additional hosts probed 2026-09-13 and refused by the proxy (403 on CONNECT): histdata.com, alphavantage.co, financialmodelingprep.com, eodhd.com, api.marketdata.app, firstratedata.com, forexsb.com, barchart.com, investing.com, api.tradingview.com.
+
+## Requested 2026-09-13 for the owner's option C (A38) and the real-quote path — supplied under `data/ext/`
+
+| File | Columns | Coverage | Source the owner can use locally | Used by |
+|---|---|---|---|---|
+| `data/ext/letf_aum_2006_2026.csv` | `ticker,date,shares_outstanding,nav,net_assets` (net_assets = shares × NAV, USD; one row per fund per trading day) | SSO, SDS, SH from 2006-06; SPXL, SPXS from 2008-11; UPRO, SPXU from 2009-06; all to 2026-09-11 | Each sponsor's historical NAV / shares-outstanding download (ProShares and Direxion fund pages); `tools/fetch_letf_aum_local.py` documents the columns and validates the file. A partial history is accepted and labelled | A38 (`pipeline/units/letf.py`, to be written after the file lands) |
+| `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz` | `ts,expiry,strike,right,open,high,low,close,volume` — 1-minute bars of SPY same-day-expiry contracts within ±3 % of the 09:30 price, `ts` UTC | From the first date the owner's options feed serves history (Alpaca options bars: February 2024) to 2026-09-11 | `tools/fetch_spy_0dte_local.py` (Alpaca options data API; untested from this container — the proxy blocks the host) | Replaces the k × VIX model with real 0DTE prices for every candidate; enables an event-day long-volatility test that the model cannot price (recorded as the highest-value data addition) |
+

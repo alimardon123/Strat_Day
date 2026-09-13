@@ -69,4 +69,4 @@ placeholder volume) and single-day yfinance dumps exist; no SPY/SPX/ES 1-minute 
 part of 2020-05 → 2026-09. ETF panel: no repository carries the 29 tickers; the local panels hold
 only SPY (to 2026-03-20) and SLV after 2017-11-10. Vendor hosts remain 403. The block stands; see
 BLOCKED.md for the owner's options.
-
+Additional hosts probed 2026-09-13 and refused by the proxy (403 on CONNECT): histdata.com, alphavantage.co, financialmodelingprep.com, eodhd.com, api.marketdata.app, firstratedata.com, forexsb.com, barchart.com, investing.com, api.tradingview.com.

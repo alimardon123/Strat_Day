@@ -37,7 +37,13 @@ ETF universe exists.
      repo whose README asks not to be read by AI tools — not used, clone deleted. `big_movers`
      adds only SLV (2020→2026-03, no adjusted close).
    - Local panels: SPY to 2026-03-20 and SLV; all 27 other tickers end 2017-11-10.
-3. Substitutes explicitly refused by the mission: daily bars, synthetic data, 5-minute bars, a CFD
+3. 2026-09-13 reachability probe of every host not tested in plan mode: histdata.com (the original
+   source of Thread B's SPXUSD 1-minute series, still published monthly), alphavantage.co,
+   financialmodelingprep.com, eodhd.com, api.marketdata.app, firstratedata.com, forexsb.com,
+   barchart.com, investing.com, api.tradingview.com — all refused by the proxy
+   (`CONNECT tunnel failed, response 403`) while github.com answers. The network policy, not the
+   vendors, is the wall; option B below is the only in-environment fix.
+4. Substitutes explicitly refused by the mission: daily bars, synthetic data, 5-minute bars, a CFD
    proxy, re-tuning on pre-2020 data, a new pattern search over 2005–2020.
 
 ## Options (owner's decision)

@@ -1,0 +1,30 @@
+{
+ "repo": "FutureSharks/financial-data",
+ "commit": "7ba1d404aa8b0e1c0f71321acebadcbfb9bcca8d",
+ "source_url_pattern": "https://raw.githubusercontent.com/FutureSharks/financial-data/<commit>/pyfinancialdata/data/currencies/oanda/XAU_USD/<year>/oanda-XAU_USD-<year>-<month>.csv",
+ "files_expected": 171,
+ "files_read": 171,
+ "months_missing": [],
+ "rows": 4884366,
+ "duplicates_dropped": 0,
+ "ts_min": "2006-03-19 20:29:00+00:00",
+ "ts_max": "2020-05-14 07:59:00+00:00",
+ "rows_per_year": {
+  "2006": 224514,
+  "2007": 356768,
+  "2008": 357312,
+  "2009": 351756,
+  "2010": 345317,
+  "2011": 353303,
+  "2012": 344986,
+  "2013": 354942,
+  "2014": 347894,
+  "2015": 339008,
+  "2016": 348274,
+  "2017": 345089,
+  "2018": 349971,
+  "2019": 337103,
+  "2020": 128129
+ },
+ "fetched_at": "2026-09-13T12:56:09+00:00"
+}

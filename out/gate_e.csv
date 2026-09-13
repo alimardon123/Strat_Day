@@ -5,3 +5,4 @@ frozen thresholds identical on the extended frame,True
 DIVIDEND: reference close shifted by the dividend on the ex-date only,True
 ROLL: declared roll date excluded from prior-close signals,True
 REFUSAL: missing manifest refused; declared ES on SPY-level prices refused,True
+DIVIDEND SCOPE: an ex-date inside the native (Oanda) era leaves native prior closes and trades untouched (850 vs 850 trades),True

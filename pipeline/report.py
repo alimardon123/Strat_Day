@@ -162,9 +162,16 @@ def playbook():
           "## 7. Holdout — what decides whether this is tradeable", ""]
     if hold_files:
         h = pd.read_csv(hold_files[0])
+        if "data_first_date" in h:
+            r0 = h.iloc[0]
+            L += [f"Contract window {HOLDOUT}; minute data present {r0['data_first_date']} → {r0['data_last_date']} "
+                  f"({int(r0['sessions_in_window'])} sessions). Sessions before the first date have no minute data (the Oanda "
+                  "series ends 2020-05-13 and the supplied feed starts later, DATA.md); they are absent from every holdout "
+                  "table, not filled.", ""]
         L += ["Survival-rule verdict per pre-registered signal (`out/holdout_summary.csv`; `label_final` includes the family-wide FDR):", "",
               md(h[[c for c in ["signal", "n", "win", "net_pts", "net_pct", "worst_trade_pts", "p_month", "p_day", "p_half1_month", "p_half2_month",
-                                "excess_over_control_pct", "psr", "sharpe_calday", "fdr_pass_10pct_family", "label_final"] if c in h]],
+                                "excess_over_control_pct", "psr", "sharpe_calday", "fdr_pass_10pct_family", "label_final",
+                                "data_first_date", "data_last_date", "sessions_in_window"] if c in h]],
                  int_cols=INT_COLS), ""]
         hold_pub = cand[cand["window"] == HOLD_WINDOW] if "window" in cand else cand.iloc[0:0]
         if len(hold_pub):

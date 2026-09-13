@@ -34,9 +34,26 @@ def holdout_tables(sel, day, frame, td, start, end, out_prefix):
     """D2: per-year rows, pooled + halves, controls, survival-rule verdict per signal."""
     rows, years = [], []
     frame_window = frame[(frame["date"] >= start) & (frame["date"] <= end)]
+    data_first = frame_window["date"].min() if len(frame_window) else pd.NaT
+    data_last = frame_window["date"].max() if len(frame_window) else pd.NaT
+    data_first_date = data_first.strftime("%Y-%m-%d") if pd.notna(data_first) else None
+    data_last_date = data_last.strftime("%Y-%m-%d") if pd.notna(data_last) else None
+    sessions_in_window = int(frame_window["date"].nunique())
+    # honesty check: the ext feed can start well after `start` (e.g. the Oanda->ext gap, DATA.md);
+    # 5 trading days tolerates ordinary warm-up/reporting lag without flagging every holdout run
+    start_ts = pd.Timestamp(start)
+    gap_note = None
+    if pd.notna(data_first) and data_first > start_ts:
+        n_gap_td = sum(1 for x in td if start_ts <= x < data_first)
+        if n_gap_td > 5:
+            gap_note = f"data starts {data_first_date}"
     for name, t in sel.items():
         if t.empty:
-            rows.append(dict(signal=name, n=0, label="NO TRADES"))
+            r = dict(signal=name, n=0, label="NO TRADES", data_first_date=data_first_date,
+                     data_last_date=data_last_date, sessions_in_window=sessions_in_window)
+            if gap_note:
+                r["note"] = gap_note
+            rows.append(r)
             continue
         net_pct = t["ret_pct"] - 100 * COST_PTS / t["entry_px"]
         net_pts = t["pts"] - COST_PTS
@@ -63,10 +80,15 @@ def holdout_tables(sel, day, frame, td, start, end, out_prefix):
                          control_mean_pct=ctrl_net.mean() if len(ctrl) else np.nan, excess_over_control_pct=excess,
                          timing_control_pct=timing_control_pct,
                          psr=psr, sharpe_calday=stats.calendar_day_sharpe(net_pct.to_numpy(), t["date"], [x for x in td if pd.Timestamp(start) <= x <= pd.Timestamp(end)]),
-                         **conds, label=label, note="FDR across the family is in out/trials.csv"))
+                         **conds, label=label,
+                         note="FDR across the family is in out/trials.csv" + (f"; {gap_note}" if gap_note else ""),
+                         data_first_date=data_first_date, data_last_date=data_last_date, sessions_in_window=sessions_in_window))
         for y, g_ in t.groupby(pd.to_datetime(t["date"]).dt.year):
             npct = g_["ret_pct"] - 100 * COST_PTS / g_["entry_px"]
             net_pts_y = g_["pts"] - COST_PTS
+            year_days = frame_window.loc[pd.to_datetime(frame_window["date"]).dt.year == y, "date"]
+            y_first_date = year_days.min().strftime("%Y-%m-%d") if len(year_days) else None
+            y_last_date = year_days.max().strftime("%Y-%m-%d") if len(year_days) else None
             # D4 pricing conventions (playbook.build): settle="cash", grid SPX, k=1.0 for the 15:00/15:30 legs,
             # k=1.3 for the 13:00 gap-up leg (A7); % of premium mean at each quoted spread, and mae_worst at spread 1.0
             k = 1.3 if int(g_["decision_mod"].iloc[0]) == 780 else 1.0
@@ -87,13 +109,19 @@ def holdout_tables(sel, day, frame, td, start, end, out_prefix):
                               net_pct=npct.mean(), worst_trade_pts=net_pts_y.min(),
                               p_day=stats.one_sided_p(npct.to_numpy(), stats.day_blocks(g_["date"])),
                               opt_mean_s1=opt_means[1.0], opt_mean_s2=opt_means[2.0], opt_mean_s3=opt_means[3.0],
-                              worst_day_pts=net_pts_y.groupby(g_["date"]).sum().min(), mae_worst_pct=mae_worst_pct))
+                              worst_day_pts=net_pts_y.groupby(g_["date"]).sum().min(), mae_worst_pct=mae_worst_pct,
+                              data_first_date=y_first_date, data_last_date=y_last_date))
     summ = pd.DataFrame(rows)
+    # pandas orders columns by first appearance across `rows`; the NO-TRADES branch can introduce
+    # data_first_date/data_last_date/sessions_in_window/note before the full row does, so force
+    # them to the end and leave every other column's order untouched
+    tail = [c for c in ("note", "data_first_date", "data_last_date", "sessions_in_window") if c in summ.columns]
+    summ = summ[[c for c in summ.columns if c not in tail] + tail]
     summ.to_csv(f"{out_prefix}_summary.csv", index=False, float_format="%.6f")
     summ.to_csv(f"{out_prefix}_pooled.csv", index=False, float_format="%.6f")          # ACCEPTANCE D2's named evidence file
     pd.DataFrame(years).to_csv(f"{out_prefix}_by_year.csv", index=False, float_format="%.6f")
     print("\nD2 holdout verdicts:")
-    print(pd.DataFrame(rows).to_string(index=False, float_format=lambda x: f"{x:.4f}"))
+    print(summ.to_string(index=False, float_format=lambda x: f"{x:.4f}"))
 
 
 def main(start, end, label, out_prefix="out/playbook", winner=None):
@@ -111,7 +139,9 @@ def main(start, end, label, out_prefix="out/playbook", winner=None):
     sel = {k: v[(v["date"] >= start) & (v["date"] <= end)].reset_index(drop=True) for k, v in sel.items()}
     fr = frame[(frame["date"] >= start) & (frame["date"] <= end)]
     is_holdout = pd.Timestamp(start) >= HOLDOUT_START
-    print(f"window {start}..{end} ({label}; {'HOLDOUT' if is_holdout else 'IN-SAMPLE'}; ext feed: {meta['instrument'] if meta else 'absent'}): "
+    ext_span = (f"; ext data {meta['ext_first_date'].date()}..{meta['ext_last_date'].date()}"
+                if meta and pd.notna(meta.get("ext_first_date")) else "")
+    print(f"window {start}..{end} ({label}; {'HOLDOUT' if is_holdout else 'IN-SAMPLE'}; ext feed: {meta['instrument'] if meta else 'absent'}{ext_span}): "
           + ", ".join(f"{k}: {len(v)} trades" for k, v in sel.items()))
     if is_holdout:
         holdout_tables(sel, day, frame, td, start, end, "out/holdout")     # D2 tables: fixed names (out/holdout_summary|by_year|pooled.csv)

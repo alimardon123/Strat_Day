@@ -1,5 +1,13 @@
 # BLOCKED.md — the goal cannot be advanced further from inside this environment
 
+> **Update 2026-09-13 08:54 UTC — option A taken.** The owner pushed the four `data/ext/` files (commit
+> 781180b). The block is lifted; this file stays as the record. Two real-data defects surfaced at once
+> (dividend stamps with DST-varying offsets crashed `load_ext`; the DST probe's statistic failed on a feed
+> with pre-market bars) and are being repaired before the holdout runs; the feed begins 2020-07-27, so
+> the holdout's first eight weeks have no minute data and are reported as absent (DATA.md).
+>
+> **Closed 2026-09-13 10:10 UTC:** the holdout ran; both pre-registered signals FAILED (ASSESSMENT.md). This file is kept as the record of the block and its resolution.
+
 Written 2026-09-13 after judge round 3 (DONE for the data that exists) and a final data-acquisition
 sweep. This file exists because the Crucible protocol forbids silent shipping: the mission's
 decisive question — does the reconciled last-hour signal survive 2020-06 → 2026-09 — has not been

@@ -39,9 +39,9 @@ Updated 2026-09-12 (Phase 0).
 
 | File | Status | Spec |
 |---|---|---|
-| `data/ext/spx_1min_2020-05_2026-09.csv.gz` | **MISSING** | columns `ts,open,high,low,close,volume`; `ts` in UTC as `YYYY-MM-DD HH:MM:SS`; from **2020-05-14** (the Oanda series ends 2020-05-13; 2020-05-14→05-29 is warm-up, the holdout starts 2020-06-01); at least 09:30–16:00 ET each session (extended hours allowed, filtered out). Instrument: SPY (with `data/ext/spy_dividends.csv`: `ex_date,amount`), or ES front-month with a `contract` column or roll dates in the manifest, or SPX cash index |
-| `data/ext/ext_manifest.json` | **MISSING** | `{"instrument": "SPY" \| "ES" \| "SPX", "source": "...", "adjusted": false, "roll_dates": [...] (ES only)}` — the session builder refuses to run without it and checks the declared instrument against the price level (ACCEPTANCE A6). ES: signals whose reference price and decision price straddle a roll are dropped and listed. SPX cash: open = first print at or after 09:31, close = last print before 16:00 |
-| `data/ext/etf_daily_2017-11_2026-09.csv.gz` | **MISSING** | columns `ticker,date,open,high,low,close,adj_close,volume` for spy efa eem ewj ewz ewa tlt ief lqd hyg tip gld slv gdx dbc dba uso xop uup fxe fxy fxb vnq rwx iyr vxx vxz vixy vixm from 2017-11-01. Today's VXX/VXZ are the 2018 Series B notes with no pre-2018 history; the bridge to the Kaggle-mirror series runs through VIXY/VIXM (A13), so those two must be present from 2017-11-01 |
+| `data/ext/spx_1min_2020-05_2026-09.csv.gz` | **MISSING → supplied 2026-09-13 (see the section below)** | columns `ts,open,high,low,close,volume`; `ts` in UTC as `YYYY-MM-DD HH:MM:SS`; from **2020-05-14** (the Oanda series ends 2020-05-13; 2020-05-14→05-29 is warm-up, the holdout starts 2020-06-01); at least 09:30–16:00 ET each session (extended hours allowed, filtered out). Instrument: SPY (with `data/ext/spy_dividends.csv`: `ex_date,amount`), or ES front-month with a `contract` column or roll dates in the manifest, or SPX cash index |
+| `data/ext/ext_manifest.json` | **MISSING → supplied 2026-09-13 (see the section below)** | `{"instrument": "SPY" \| "ES" \| "SPX", "source": "...", "adjusted": false, "roll_dates": [...] (ES only)}` — the session builder refuses to run without it and checks the declared instrument against the price level (ACCEPTANCE A6). ES: signals whose reference price and decision price straddle a roll are dropped and listed. SPX cash: open = first print at or after 09:31, close = last print before 16:00 |
+| `data/ext/etf_daily_2017-11_2026-09.csv.gz` | **MISSING → supplied 2026-09-13 (see the section below)** | columns `ticker,date,open,high,low,close,adj_close,volume` for spy efa eem ewj ewz ewa tlt ief lqd hyg tip gld slv gdx dbc dba uso xop uup fxe fxy fxb vnq rwx iyr vxx vxz vixy vixm from 2017-11-01. Today's VXX/VXZ are the 2018 Series B notes with no pre-2018 history; the bridge to the Kaggle-mirror series runs through VIXY/VIXM (A13), so those two must be present from 2017-11-01 |
 
 Note: the bundle's `*.pkl` intermediates were written by pandas 3 and do not load under the
 pinned pandas 2.2.3; nothing in the pipeline reads them (every number is regenerated).
@@ -60,6 +60,15 @@ one-block swaps for ES or SPX).
 
 If Phase 3 starts without them, the run stops at the end of Phase 2 with everything
 committed and this file updated.
+
+## 2026-09-13 — the owner supplied `data/ext/` (commit 781180b)
+
+| File | Status | Verified facts (fleet verifier) |
+|---|---|---|
+| `data/ext/spx_1min_2020-05_2026-09.csv.gz` | PRESENT, partial coverage | SPY, Alpaca IEX 1-minute, UTC `YYYY-MM-DD HH:MM:SS`, 605,227 rows, sorted, no duplicates, no bad prices; **data begins 2020-07-27** (Alpaca's IEX history starts there) and ends 2026-09-11; 1,539 NY dates, median 388 regular-session bars, 1,526 dates with ≥ 300; extended-hours bars present (17,653) and filtered by the session builder. Consequence: 2020-05-14 → 2020-07-26 has no minute data from any source; the holdout's first eight weeks are absent and are reported as such, never filled |
+| `data/ext/ext_manifest.json` | PRESENT | `{"instrument": "SPY", "source": "Alpaca IEX feed, 1Min bars, adjustment=raw", "adjusted": false, "roll_dates": []}` |
+| `data/ext/spy_dividends.csv` | PRESENT | 135 ex-dates 1993 → 2026-06-18, 25 after 2020-05-14; stamps carry DST-varying offsets (`-05:00` / `-04:00`), which exposed a parsing defect in `sessions.load_ext` (fixed the same day; gate (e) now covers tz-aware stamps) |
+| `data/ext/etf_daily_2017-11_2026-09.csv.gz` | PRESENT, complete | all 29 tickers 2017-11-01 → 2026-09-11 (VXX/VXZ from 2018-01-25, the Series B relaunch), `adj_close` present, no NaN |
 
 ## Acquisition sweep of 2026-09-13 (post-judge) — nothing usable found
 

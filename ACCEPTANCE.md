@@ -162,3 +162,28 @@ edits to files under `research/` (copy, then change).
 | A31 | A trial is one (signal rule, parameter set, target series) tested for an edge. Reporting cuts (by year, spread, k, sizing) and execution variants of an already-counted signal are not trials. The family for BH-FDR is every trial this run tests: the 16 momentum configurations, the gap-up call, the 3 cross-market runs and the 3 flow candidates (23), plus the 2 pre-registered holdout tests when the ext feed is present (25); the 15 POST-SELECTION holdout rows are published, not tested, and are not in the family (`pipeline/trials.py`, `out/trials.csv`) | CRITIQUE #7; Phase 4 defect 8 |
 | A32 | Fleet unit failure: empty output AND `<out>.error` with the traceback, exit code 2; `run_all` and the gates fail on any empty expected output or any `*.error` | CRITIQUE #25 |
 | A33 | Reproduction runs never execute Thread B's scripts in place; `git status --porcelain research/` must be empty after every gate | CRITIQUE #29 |
+
+## Amendment A36 — owner-proposed fair-value-gap setup, pre-registered 2026-09-13 09:58 UTC (before any result was seen)
+
+Owner's description (5-minute SPY): after a breakout / break of structure the displacement leaves a three-bar
+fair value gap; draw the gap, extend the box to the close of the candle before the displacement, enter on a
+retrace to the box MIDPOINT, stop beyond the box, take profit on the other side. Fixed reading, implemented in
+`pipeline/units/fvg.py` (fleet unit, INDEPENDENT):
+
+- 5-minute bars from the 1-minute frame, regular session only, ≥ 3 minutes per bar; ATR = mean true range of
+  the previous 20 five-minute bars.
+- Bearish FVG at bar t: high[t] < low[t−2]; bullish: low[t] > high[t−2]. Displacement: |close − open| of bar
+  t−1 ≥ 1.5 × ATR. Break of structure (variant on): close[t−1] below the previous 12 bars' low (bearish) /
+  above their high (bullish); variant off: displacement only.
+- Box (bearish): bottom = high[t], top = max(low[t−2], close[t−2]); mirror for bullish; height ≥ 0.05 × ATR.
+- Entry: resting limit at the box midpoint after bar t closes, filled on the first later bar touching it, same
+  session, not after 15:30 ET; unfilled setups count as no-trade and are reported.
+- Stop: box top + 0.1 × ATR (mirror); take profit at R × the stop distance, R ∈ {1, 2}; stop assumed first
+  when both touch in one bar; otherwise exit at the close. One position per side at a time.
+- Cost 1.0 SPX point round trip (2.0 reported). Trials: side {short, long} × R {1, 2} × BOS {on, off} = 8,
+  all counted in the family (25 + 8 = 33 for DSR). Windows: selection 2013-01-01 → 2020-05-13; holdout
+  2020-07-27 → 2026-09-11; 2005–2012 for context. Controls: same-day random-bar entry with the same stop/TP
+  (200 seeds), day-block bootstrap p, month-block p where ≥ 20 months, calendar-day Sharpe, DSR at N = 33.
+- Survival rule unchanged. No parameter is varied beyond the eight trials; the ATR multiple, lookback, buffer,
+  minimum height and midpoint entry are fixed here and may not be re-tuned on any window.
+

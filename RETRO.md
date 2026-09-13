@@ -32,3 +32,8 @@ PENDING, because the input that decides the question never arrived.
 | 6 | EXECUTION (observation) | The account rate limit killed the first fleet fan-out (5 coders, 4 critics); the second half of the run delegated all implementation to Sonnet coders and a verifier without incident | ASSESSMENT gap table; CHANGELOG | None (budgeting note) | 1 |
 
 Fold-in rule: framework edits wait for a second occurrence of the same finding in a later run.
+
+## Addendum 2026-09-13 (after the owner's data landed)
+
+Finding 2 ("a synthetic stand-in that did not exercise the real format") recurred three times inside this run once real data arrived: tz-aware dividend stamps crashed the loader (R1), the DST probe's statistic failed on a feed with sparse pre-market prints (R2), and the SPY dividend series leaked into the SPX-index era and flipped the pre-registered winner (R4, severity 8, the class the Phase 4 tribunal had named). Occurrence count for finding 2 becomes 2 (one per run-phase where it bit: synthetic proof, real data). Counterfactual edit sharpened: a synthetic stand-in must be built from a real sample of the supplied format (a real dividends file, a real single-venue minute file) and the gate must assert that the native era is byte-identical with and without the stand-in.
+

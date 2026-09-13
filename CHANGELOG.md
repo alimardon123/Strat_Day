@@ -81,3 +81,16 @@
 - Result: baseline test-window EQUAL_8 Sharpe 0.9944 → 0.9939, two-bucket 0.9712 → 0.9711; BAB test Sharpe 1.11 → 1.16, maxDD −18.8% → −14.9%; extended book 0.72 → 0.76. The uncleaned universe was NOT the cause of the 0.99-vs-1.35 gap; ASSESSMENT's hypothesis is replaced. No threshold, weight or cost changed. Fleet coder (Sonnet) + verifier.
 - Sleeve-by-sleeve comparison (fleet scout, Sonnet) on the identical 2012→2017-11-10 test window explains the remaining gap: S12 gap-up is −0.37 here vs +0.32 in Thread A because Thread A costed ES at 0.35 bp per side (`it15.py:24`) while the contract charges 0.42 index points (A21); S1/S2/S3/S6/S13 match within 0.13, S5 is 0.19 low (layered vol targeting), S8 is 0.39 high. Bucket A (3 sleeves incl. S12) carries the whole portfolio shortfall. Thread A's 1.35 / 1.40 is therefore not reproducible under the contract's cost budget; 0.99 / 0.97 is the honest figure. No code change.
 
+## 2026-09-13 — Owner supplied `data/ext/` (781180b); real-data repairs before the first holdout run
+- Files verified against DATA.md by the fleet verifier: SPY 1-minute (Alpaca IEX) 2020-07-27 → 2026-09-11, 605,227 rows, clean; manifest; 135 dividends; ETF panel complete for all 29 tickers to 2026-09-11.
+- Two defects the synthetic proof had not exercised, fixed by a fleet coder: tz-aware dividend stamps crashed `load_ext` (root-cause fix + gate (e) fixture); the DST probe's raw \|Δclose\| step failed on a feed with sparse pre-market prints (now a forward-filled 1-minute grid; passes all three feeds, fails both shifted copies).
+- Holdout tables now carry the effective data window (`data_first_date`, `data_last_date`, `sessions_in_window`, `data starts …` note) and the playbook prints it beside the contract window (second fleet coder). The 2020-05-14 → 2020-07-26 gap is reported, never filled.
+- DATA.md and BLOCKED.md updated; option A taken.
+- First real holdout run (discarded): the SPY dividend series leaked into the Oanda SPX prior closes (27 ex-dates in the selection window), changed the in-sample rows and flipped the pre-registered winner to the 15:30 variant. Root cause fixed in `build_extended` (dividends scoped to ext sessions); gate (e) gains a DIVIDEND SCOPE test; the selection must be byte-identical to the committed rows before any holdout number is reported. Retro finding 2 ("a synthetic stand-in that does not exercise the real format") now has three data points in this run (R1, R2, R4).
+
+## 2026-09-13 10:10 UTC — the holdout ran on real data: FAILED × 2
+- After the dividend-scoping fix, `make all` + `make repeat` byte-identical (128 files); selection rows byte-identical to the pre-registration (0 mismatching columns, ex-dividend days 0, winner `15:00|both|vixmove_exp`).
+- Holdout 2020-07-27 → 2026-09-11: winner n 274, win 53.6 %, −0.14 pts/trade, cal-day Sharpe −0.14, p 1.0, option +0.08 % of premium at 1 pt → FAILED; gap-up call n 452, −1.90 pts, Sharpe −0.58 → FAILED. Family FDR (25 trials): 0 pass. Post-selection: every VIX-gated and 15:30 row negative; three magnitude rows positive, best `15:00|put|mag` +1.94 pts, p 0.10 (not promoted).
+- D5: the ETF panel extends S2/S3/S6/S13 to 2026-09-11 through the VXX/VXZ bridge (0.9987 / 0.9875); post-2017 EQUAL_available(4-8) Sharpe 0.52.
+- ASSESSMENT, SCORECARD, PLAN updated; BLOCKED.md closed.
+

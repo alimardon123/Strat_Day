@@ -14,6 +14,7 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 | 8 | D2b: cross-market check of the gap-up call on DAX/EuroStoxx 2010–2018 (histdata) | 3 | fleet (one unit per market) | Effect shrinks > 50% or flips sign → recorded as a finding, not a kill of D2 |
 | 7b | D5 addendum: VIX − realised vol through 2026-09 (Thread B step11 method), labelled not-tradeable-as-measured; the defined-risk VRP sleeve with real option prices is a recorded non-goal | 3 | single owner | — |
 | 9 | Flow-with-a-deadline candidates, last hour only — KILLED 2026-09-12: month-end, opex and Russell-day last-hour trades are all negative in-sample and below their controls (`out/flow_candidates.csv`); the 15:50 imbalance needs data that is unobtainable | 3 | single owner | — |
+| 10 | Owner-proposed fair-value-gap midpoint setup on 5-minute bars (A36; pre-registered 2026-09-13 before any run; 8 trials; fleet unit `pipeline/units/fvg.py`) | 3 | fleet (one unit) | Fails the survival rule on the selection window → reported and killed; passes selection but fails 2020-07→2026-09 → reported, never promoted |
 | — | Real 0DTE quotes, GEX filter, post-2018 cross-market | non-goal | — | Unobtainable in this environment (recorded in ACCEPTANCE.md) |
 
 ## Status log
@@ -29,4 +30,5 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 - 2026-09-13 D5 fidelity: BAB universe cleaning reconstructed (626 names exact); portfolio Sharpe unchanged → hypothesis killed, next hypothesis recorded in ASSESSMENT. Plateau rule stands for everything holdout-dependent.
 - 2026-09-13 Stop-hook loop (3×): condition unsatisfiable without owner input; no further agents launched (plateau rule + BLOCKED.md). Option D (daily open-to-close 0DTE search) recorded as owner-only because it overrides a mission non-goal.
 - 2026-09-13 Owner decision: retro findings confirmed (RETRO.md); option A chosen — the owner pushes `data/ext/` to this branch, then the run resumes at the holdout (`make all`, verifier, judge). A watch on the branch is armed.
+- 2026-09-13 10:10 UTC HOLDOUT RUN (real data): both pre-registered signals FAILED (winner n 274, −0.14 pts, Sharpe −0.14, p 1.0; gap-up n 452, −1.90 pts). D1 outcome: no reconciled specification survives. Only the magnitude-gated post-selection rows are positive (best p 0.10), reported, never promoted. Judge round 4 next; A36 fair-value-gap test running.
 

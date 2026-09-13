@@ -1,0 +1,51 @@
+window 2013-01-01..2026-09-11 (IN-SAMPLE + HOLDOUT 2013-01..2026-09-11; IN-SAMPLE; ext feed: SPY; ext data 2020-07-27..2026-09-11): 15:00|both|vixmove_exp: 419 trades, 13:00|call|gap>0.3%: 875 trades
+
+D3 execution model (underlying points per signal, net; improvement split into cost assumption and price effect):
+                                 window              candidate           entry  fill_rate  n_signals  mean_net_per_signal  mean_net_if_filled  improvement  improvement_cost_part  improvement_price_part  p_improvement  p_boot_day
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11    13:00|call|gap>0.3%          market     1.0000        875              -1.0500             -1.0500       0.0000                 0.0000                  0.0000            NaN      1.0000
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11    13:00|call|gap>0.3% limit -0.25 ATR     0.8480        875              -0.6061             -0.7148       0.4439                 0.3392                  0.1047         0.0350      1.0000
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11    13:00|call|gap>0.3% limit -0.50 ATR     0.7371        875              -0.5863             -0.7954       0.4637                 0.2949                  0.1688         0.0745      1.0000
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11    13:00|call|gap>0.3% limit -1.00 ATR     0.5589        875              -0.6866             -1.2286       0.3634                 0.2235                  0.1399         0.2215      1.0000
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11 15:00|both|vixmove_exp          market     1.0000        419               0.9842              0.9842       0.0000                 0.0000                  0.0000            NaN      0.2015
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11 15:00|both|vixmove_exp limit -0.25 ATR     0.8568        419               0.6985              0.8152      -0.2858                 0.3427                 -0.6285         1.0000      0.2482
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11 15:00|both|vixmove_exp limit -0.50 ATR     0.7279        419               0.3482              0.4784      -0.6360                 0.2912                 -0.9272         1.0000      0.3540
+IN-SAMPLE + HOLDOUT 2013-01..2026-09-11 15:00|both|vixmove_exp limit -1.00 ATR     0.5251        419               0.1156              0.2202      -0.8686                 0.2100                 -1.0786         1.0000      0.4435
+
+D4 pricing summary (% of premium):
+                signal  spread settle     k   n    win   mean  median  worst_trade  worst_day  mae_worst  full_loss_trades  premium_mean
+15:00|both|vixmove_exp   1.000   cash 1.000 419 55.847  2.595   2.522     -100.000   -100.000   -100.000                 6        77.771
+15:00|both|vixmove_exp   1.000   exit 1.000 419 52.745  1.209   0.655      -99.260    -99.260   -100.000                 0        80.396
+15:00|both|vixmove_exp   2.000   cash 1.000 419 54.654  1.866   1.963     -100.000   -100.000   -100.000                 6        78.271
+15:00|both|vixmove_exp   2.000   exit 1.000 419 47.733 -0.155  -0.773     -100.000   -100.000   -100.000                 2        80.896
+15:00|both|vixmove_exp   3.000   cash 1.000 419 53.222  1.149   1.394     -100.000   -100.000   -100.000                 6        78.771
+15:00|both|vixmove_exp   3.000   exit 1.000 419 45.346 -1.495  -1.990     -100.000   -100.000   -100.000                 2        81.396
+   13:00|call|gap>0.3%   1.000   cash 1.000 875 50.400 -0.091   0.265     -100.000   -100.000   -100.000                 7        76.750
+   13:00|call|gap>0.3%   1.000   cash 1.300 875 50.400 -0.131   0.265     -100.000   -100.000   -100.000                 7        76.767
+   13:00|call|gap>0.3%   1.000   cash 1.600 875 50.400 -0.206   0.265     -100.000   -100.000   -100.000                 7        76.807
+   13:00|call|gap>0.3%   1.000   exit 1.000 875 48.914 -0.934  -0.155     -100.000   -100.000   -100.000                 4        79.183
+   13:00|call|gap>0.3%   1.000   exit 1.300 875 48.914 -0.963  -0.155     -100.000   -100.000   -100.000                 4        79.199
+   13:00|call|gap>0.3%   1.000   exit 1.600 875 48.914 -1.022  -0.155     -100.000   -100.000   -100.000                 3        79.234
+   13:00|call|gap>0.3%   2.000   cash 1.000 875 48.686 -0.858  -0.429     -100.000   -100.000   -100.000                 7        77.250
+   13:00|call|gap>0.3%   2.000   cash 1.300 875 48.686 -0.897  -0.429     -100.000   -100.000   -100.000                 7        77.267
+   13:00|call|gap>0.3%   2.000   cash 1.600 875 48.571 -0.971  -0.429     -100.000   -100.000   -100.000                 7        77.307
+   13:00|call|gap>0.3%   2.000   exit 1.000 875 44.914 -2.394  -1.824     -100.000   -100.000   -100.000                 5        79.683
+   13:00|call|gap>0.3%   2.000   exit 1.300 875 44.914 -2.423  -1.824     -100.000   -100.000   -100.000                 4        79.699
+   13:00|call|gap>0.3%   2.000   exit 1.600 875 44.914 -2.481  -1.824     -100.000   -100.000   -100.000                 4        79.734
+   13:00|call|gap>0.3%   3.000   cash 1.000 875 46.629 -1.612  -1.130     -100.000   -100.000   -100.000                 7        77.750
+   13:00|call|gap>0.3%   3.000   cash 1.300 875 46.629 -1.650  -1.130     -100.000   -100.000   -100.000                 7        77.767
+   13:00|call|gap>0.3%   3.000   cash 1.600 875 46.629 -1.723  -1.132     -100.000   -100.000   -100.000                 7        77.807
+   13:00|call|gap>0.3%   3.000   exit 1.000 875 41.486 -3.828  -3.440     -100.000   -100.000   -100.000                 6        80.183
+   13:00|call|gap>0.3%   3.000   exit 1.300 875 41.486 -3.857  -3.440     -100.000   -100.000   -100.000                 5        80.199
+   13:00|call|gap>0.3%   3.000   exit 1.600 875 41.486 -3.915  -3.440     -100.000   -100.000   -100.000                 5        80.234
+
+D4 sizing (% of account):
+ limit  size_pct  worst_trade_loss_pct  exp_annual_pct  worst_year_pct  best_year_pct  size_by_worst_day_pct                 signal                                  window  spread settle     k  days_with_two_positions  worst_day_both_positions_pct
+ 3.000     3.000               100.000           2.386         -10.299         21.137                  3.000 15:00|both|vixmove_exp IN-SAMPLE + HOLDOUT 2013-01..2026-09-11   1.000   cash 1.000                      NaN                           NaN
+ 4.000     4.000               100.000           3.182         -13.732         28.183                  4.000 15:00|both|vixmove_exp IN-SAMPLE + HOLDOUT 2013-01..2026-09-11   1.000   cash 1.000                      NaN                           NaN
+ 5.000     5.000               100.000           3.977         -17.165         35.228                  5.000 15:00|both|vixmove_exp IN-SAMPLE + HOLDOUT 2013-01..2026-09-11   1.000   cash 1.000                      NaN                           NaN
+ 3.000     3.000               100.000          -0.251         -11.703         10.339                  3.000    13:00|call|gap>0.3% IN-SAMPLE + HOLDOUT 2013-01..2026-09-11   1.000   cash 1.300                      NaN                           NaN
+ 4.000     4.000               100.000          -0.335         -15.605         13.786                  4.000    13:00|call|gap>0.3% IN-SAMPLE + HOLDOUT 2013-01..2026-09-11   1.000   cash 1.300                      NaN                           NaN
+ 5.000     5.000               100.000          -0.419         -19.506         17.232                  5.000    13:00|call|gap>0.3% IN-SAMPLE + HOLDOUT 2013-01..2026-09-11   1.000   cash 1.300                      NaN                           NaN
+ 3.000     1.500               200.000           1.067             NaN            NaN                    NaN          COMBINED BOOK IN-SAMPLE + HOLDOUT 2013-01..2026-09-11     NaN    NaN   NaN                  205.000                      -200.000
+ 4.000     2.000               200.000           1.423             NaN            NaN                    NaN          COMBINED BOOK IN-SAMPLE + HOLDOUT 2013-01..2026-09-11     NaN    NaN   NaN                  205.000                      -200.000
+ 5.000     2.500               200.000           1.779             NaN            NaN                    NaN          COMBINED BOOK IN-SAMPLE + HOLDOUT 2013-01..2026-09-11     NaN    NaN   NaN                  205.000                      -200.000

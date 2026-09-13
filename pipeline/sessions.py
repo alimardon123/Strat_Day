@@ -115,8 +115,18 @@ def load_ext(ext_dir="data/ext"):
         dp = os.path.join(ext_dir, "spy_dividends.csv")
         if not os.path.exists(dp):
             raise FileNotFoundError(f"{dp} missing — required with a SPY feed (A6)")
-        dv = pd.read_csv(dp, parse_dates=["ex_date"])
-        dividends = pd.Series(dv["amount"].to_numpy(float) * scale, index=pd.to_datetime(dv["ex_date"]).dt.normalize())
+        dv = pd.read_csv(dp)
+        raw = dv["ex_date"].astype(str)
+        if raw.str.contains(r"[+-]\d{2}:?\d{2}$|Z$", regex=True).any():
+            # tz-aware ex-dates (real-feed spy_dividends.csv carries DST-varying offsets like
+            # -05:00 / -04:00; a bare second to_datetime() on an already-mixed-offset column
+            # raises "Tz-aware datetime.datetime cannot be converted ... unless utc=True" —
+            # Phase 6 defect 1). The ex-date is the NY calendar date the stamp falls on, matching
+            # how build_extended/day_table key every other date (a tz-naive midnight Timestamp).
+            ex = pd.to_datetime(raw, utc=True).dt.tz_convert(NY).dt.normalize().dt.tz_localize(None)
+        else:
+            ex = pd.to_datetime(raw).dt.normalize()   # naive strings (pre-existing synthetic format): already an NY date
+        dividends = pd.Series(dv["amount"].to_numpy(float) * scale, index=ex)
     meta = dict(instrument=inst, scale=scale, dividends=dividends, roll_dates=[pd.Timestamp(x) for x in man.get("roll_dates", [])],
                 source=man.get("source", ""), path=files[0])
     return d, meta
@@ -125,8 +135,14 @@ def load_ext(ext_dir="data/ext"):
 def build_extended(oanda_path="data/raw/oanda_SPX500_USD.parquet", ext_dir="data/ext", trading_days=None):
     """Oanda history + the ext feed for dates after the Oanda series ends, as ONE canonical frame
     so expanding thresholds keep expanding through the holdout. For an SPX cash-index feed the
-    session's first bar is 09:31 (the 09:30 print is stale, A6). Returns (frame, dropped, meta);
-    meta is None when data/ext is absent."""
+    session's first bar is 09:31 (the 09:30 print is stale, A6). meta["dividends"] (and, for
+    symmetry, meta["roll_dates"]) is scoped to ex-dates/roll-dates strictly after the Oanda end
+    AND not before the ext feed's first session — the owner's spy_dividends.csv runs 1993->2026,
+    and handing signals.day_table the unscoped series reindexes every SPY ex-date onto d.index,
+    which also covers the native Oanda/index sessions on that SAME calendar date, where no
+    dividend exists (an index does not drop on SPY's ex-dates). meta["dividends_all"] /
+    meta["dividends_ext"] record the count before/after this filter. Returns (frame, dropped,
+    meta); meta is None when data/ext is absent."""
     base, dropped = build("oanda", oanda_path, trading_days)
     if not ext_present(ext_dir):
         return base, dropped, None
@@ -135,6 +151,12 @@ def build_extended(oanda_path="data/raw/oanda_SPX500_USD.parquet", ext_dir="data
     e = e[e["date"] > base["date"].max()].reset_index(drop=True)
     frame = pd.concat([base, e], ignore_index=True)
     meta["ext_first_date"], meta["ext_last_date"] = (e["date"].min(), e["date"].max()) if len(e) else (pd.NaT, pd.NaT)
+    ext_era = lambda ts: (ts > base["date"].max()) & (ts >= meta["ext_first_date"])   # noqa: E731
+    meta["dividends_all"] = int(len(meta["dividends"])) if meta["dividends"] is not None else 0
+    if meta["dividends"] is not None:
+        meta["dividends"] = meta["dividends"][ext_era(meta["dividends"].index)]
+    meta["dividends_ext"] = int(len(meta["dividends"])) if meta["dividends"] is not None else 0
+    meta["roll_dates"] = [x for x in meta["roll_dates"] if ext_era(x)]
     return frame, pd.concat([dropped, dropped_e], ignore_index=True), meta
 
 
@@ -151,7 +173,10 @@ def detect_open(frame):
 def open_step(frame, candidates=(RTH_START - 60, RTH_START, RTH_START + 60)):
     """Sustained activity step at each candidate open: mean |Δclose| over the 15 minutes after
     the candidate minus the 15 minutes before. A one-hour timestamp error moves the winner to
-    08:30 or 10:30; a 1-3 minute economic release cannot sustain a 15-minute step."""
+    08:30 or 10:30; a 1-3 minute economic release cannot sustain a 15-minute step. Used as-is by
+    xmarket.py's local-session detector (24-hour CFD feeds, no gridding needed); dst_probe below
+    uses grid_step instead because raw |Δclose| is defeated by a feed with sparse pre-market
+    prints (Phase 6 defect 2)."""
     d = frame.copy()
     d["ar"] = d["close"].diff().abs()
     prof = d.groupby("mod")["ar"].mean()
@@ -159,9 +184,41 @@ def open_step(frame, candidates=(RTH_START - 60, RTH_START, RTH_START + 60)):
     return max(steps, key=steps.get), steps
 
 
+def grid_step(frame, candidates=(RTH_START - 60, RTH_START, RTH_START + 60)):
+    """Sustained activity step at each candidate open, like open_step, but |Δclose| is measured
+    on a complete per-session 1-minute-of-day grid (0..1439, close forward-filled) instead of on
+    consecutive PRINTED rows. On a feed with sparse extended-hours liquidity (Alpaca IEX ext:
+    bars present 04:00-20:00 ET but thin before 09:30) a plain row-to-row diff() attributes the
+    ENTIRE price change of a multi-minute quiet gap to whichever minute happens to print next, so
+    a handful of pre-market minutes can carry a bigger |Δclose| than the liquid RTH session and
+    open_step's step can go negative at the true open (Phase 6 defect 2). On the grid, a minute
+    with no print simply repeats the last close (Δclose = 0) instead of absorbing that jump, so
+    the pre-market mean collapses and the 09:30 step wins. On a 24-hour CFD feed (Oanda, histdata)
+    the grid is already dense — every minute has a real bar almost everywhere — so gridding
+    changes essentially nothing there and the statistic is unchanged (still 09:30). A one-hour
+    timestamp error still moves the winner to 08:30 or 10:30; a 1-3 minute news print still cannot
+    sustain a 15-minute step. A candidate whose whole 15-minute window has no session with any
+    ffilled bar at all (e.g. a month with zero prints before 08:15) is NaN, not zero, and never
+    wins (idxmax skips NaN; Python's plain max(dict, key=dict.get) would not — it can get stuck
+    on whichever key it happens to visit first once the running best is NaN, since every NaN
+    comparison is False)."""
+    d = frame.copy()
+    d["date"] = d["ts_ny"].dt.tz_localize(None).dt.normalize()
+    ar_by_session = []
+    for _, g in d.groupby("date"):
+        s = g.set_index("mod")["close"].reindex(range(1440)).ffill()
+        ar_by_session.append(s.diff().abs())
+    prof = pd.concat(ar_by_session, axis=1).mean(axis=1)
+    steps = pd.Series({c: prof.reindex(range(c, c + 15)).mean() - prof.reindex(range(c - 15, c)).mean() for c in candidates})
+    return int(steps.idxmax()), steps.to_dict()
+
+
 def dst_probe(feed, path):
     """Per year, January and July, on the UNFILTERED weekday frame: the sustained-step open
-    must be 09:30 (not 08:30 or 10:30) in BOTH months. Thread B's detect_open is reported too."""
+    must be 09:30 (not 08:30 or 10:30) in BOTH months. `ok` is decided by grid_step (Phase 6
+    defect 2: open_step's raw |Δclose| is defeated by a feed with sparse pre-market prints); the
+    step_* columns (open_step, ungridded) are still reported for comparability alongside the new
+    gridstep_* columns (grid_step) and Thread B's detect_open."""
     d = _load(feed, path)
     d["mod"] = d["ts_ny"].dt.hour * 60 + d["ts_ny"].dt.minute
     d["year"], d["month"] = d["ts_ny"].dt.year, d["ts_ny"].dt.month
@@ -172,13 +229,17 @@ def dst_probe(feed, path):
         if g["ts_ny"].dt.date.nunique() < 10:
             continue
         win, steps = open_step(g)
+        gwin, gsteps = grid_step(g)
         om = detect_open(g)
         sun = sundays[(sundays["year"] == y) & (sundays["month"] == m)]
         first = sun.groupby(sun["ts_ny"].dt.date)["mod"].min()
         anchor = f"{int(first.mode().iat[0]) // 60:02d}:{int(first.mode().iat[0]) % 60:02d}" if len(first) else "n/a"
         rows.append(dict(feed=feed, year=y, month=m, step_open=f"{win // 60:02d}:{win % 60:02d}",
                          step_0830=round(steps[RTH_START - 60], 4), step_0930=round(steps[RTH_START], 4),
-                         step_1030=round(steps[RTH_START + 60], 4), ok=win == RTH_START,
+                         step_1030=round(steps[RTH_START + 60], 4),
+                         gridstep_open=f"{gwin // 60:02d}:{gwin % 60:02d}",
+                         gridstep_0830=round(gsteps[RTH_START - 60], 4), gridstep_0930=round(gsteps[RTH_START], 4),
+                         gridstep_1030=round(gsteps[RTH_START + 60], 4), ok=gwin == RTH_START,
                          threadB_detect_open=f"{om // 60:02d}:{om % 60:02d}", sunday_first_bar=anchor,
                          sessions=g["ts_ny"].dt.date.nunique()))
     return pd.DataFrame(rows)

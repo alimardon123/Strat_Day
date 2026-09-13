@@ -1,4 +1,4 @@
-window 2013-01-01..2020-05-13 (IN-SAMPLE 2013-01..2020-05-13; IN-SAMPLE; ext feed: absent): 15:00|both|vixmove_exp: 145 trades, 13:00|call|gap>0.3%: 423 trades
+window 2013-01-01..2020-05-13 (IN-SAMPLE 2013-01..2020-05-13; IN-SAMPLE; ext feed: SPY; ext data 2020-07-27..2026-09-11): 15:00|both|vixmove_exp: 145 trades, 13:00|call|gap>0.3%: 423 trades
 
 D3 execution model (underlying points per signal, net; improvement split into cost assumption and price effect):
                        window              candidate           entry  fill_rate  n_signals  mean_net_per_signal  mean_net_if_filled  improvement  improvement_cost_part  improvement_price_part  p_improvement  p_boot_day

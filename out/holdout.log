@@ -1,0 +1,56 @@
+window 2020-06-01..2026-09-11 (HOLDOUT 2020-06-01..2026-09-11; HOLDOUT; ext feed: SPY; ext data 2020-07-27..2026-09-11): 15:00|both|vixmove_exp: 274 trades, 13:00|call|gap>0.3%: 452 trades
+
+D2 holdout verdicts:
+                signal   n     win  net_pts  net_pct  worst_trade_pts  p_month  p_day  p_half1_month  p_half2_month  control_mean_pct  excess_over_control_pct  timing_control_pct    psr  sharpe_calday  net_positive  p_month_lt_005  excess_over_control  psr_gt_095  n_ge_200  label                                                               note data_first_date data_last_date  sessions_in_window
+15:00|both|vixmove_exp 274 53.6496  -0.1434  -0.0106         -89.2000   1.0000 1.0000         1.0000            NaN           -0.0128                   0.0023              0.1203 0.3635        -0.1382         False           False                 True       False      True FAILED FDR across the family is in out/trials.csv; data starts 2020-07-27      2020-07-27     2026-09-11                1526
+   13:00|call|gap>0.3% 452 50.8850  -1.9037  -0.0377        -105.3000   1.0000 1.0000         1.0000         1.0000           -0.0182                  -0.0195             -0.0434 0.0668        -0.5783         False           False                False       False      True FAILED FDR across the family is in out/trials.csv; data starts 2020-07-27      2020-07-27     2026-09-11                1526
+
+D3 execution model (underlying points per signal, net; improvement split into cost assumption and price effect):
+                        window              candidate           entry  fill_rate  n_signals  mean_net_per_signal  mean_net_if_filled  improvement  improvement_cost_part  improvement_price_part  p_improvement  p_boot_day
+HOLDOUT 2020-06-01..2026-09-11    13:00|call|gap>0.3%          market     1.0000        452              -1.9037             -1.9037       0.0000                 0.0000                  0.0000            NaN      1.0000
+HOLDOUT 2020-06-01..2026-09-11    13:00|call|gap>0.3% limit -0.25 ATR     0.8407        452              -1.6585             -1.9727       0.2452                 0.3363                 -0.0911         0.2780      1.0000
+HOLDOUT 2020-06-01..2026-09-11    13:00|call|gap>0.3% limit -0.50 ATR     0.7323        452              -1.7938             -2.4495       0.1099                 0.2929                 -0.1830         0.4220      1.0000
+HOLDOUT 2020-06-01..2026-09-11    13:00|call|gap>0.3% limit -1.00 ATR     0.5619        452              -1.5918             -2.8326       0.3119                 0.2248                  0.0871         0.3307      1.0000
+HOLDOUT 2020-06-01..2026-09-11 15:00|both|vixmove_exp          market     1.0000        274              -0.1434             -0.1434       0.0000                 0.0000                  0.0000            NaN      1.0000
+HOLDOUT 2020-06-01..2026-09-11 15:00|both|vixmove_exp limit -0.25 ATR     0.8321        274              -0.6991             -0.8401      -0.5556                 0.3328                 -0.8885         1.0000      1.0000
+HOLDOUT 2020-06-01..2026-09-11 15:00|both|vixmove_exp limit -0.50 ATR     0.7007        274              -1.0951             -1.5628      -0.9517                 0.2803                 -1.2320         1.0000      1.0000
+HOLDOUT 2020-06-01..2026-09-11 15:00|both|vixmove_exp limit -1.00 ATR     0.5182        274              -1.5935             -3.0748      -1.4501                 0.2073                 -1.6574         1.0000      1.0000
+
+D4 pricing summary (% of premium):
+                signal  spread settle     k   n    win   mean  median  worst_trade  worst_day  mae_worst  full_loss_trades  premium_mean
+15:00|both|vixmove_exp   1.000   cash 1.000 274 52.555  0.084   1.536     -100.000   -100.000   -100.000                 1        91.086
+15:00|both|vixmove_exp   1.000   exit 1.000 274 51.825 -0.096   0.284      -88.492    -88.492   -100.000                 0        93.713
+15:00|both|vixmove_exp   2.000   cash 1.000 274 52.190 -0.481   0.981     -100.000   -100.000   -100.000                 1        91.586
+15:00|both|vixmove_exp   2.000   exit 1.000 274 47.810 -1.194  -0.777      -89.123    -89.123   -100.000                 0        94.213
+15:00|both|vixmove_exp   3.000   cash 1.000 274 51.095 -1.040   0.481     -100.000   -100.000   -100.000                 1        92.086
+15:00|both|vixmove_exp   3.000   exit 1.000 274 45.255 -2.280  -1.861      -89.748    -89.748   -100.000                 0        94.713
+   13:00|call|gap>0.3%   1.000   cash 1.000 452 50.000 -1.277  -0.085     -100.000   -100.000   -100.000                 3       101.902
+   13:00|call|gap>0.3%   1.000   cash 1.300 452 50.000 -1.282  -0.087     -100.000   -100.000   -100.000                 3       101.908
+   13:00|call|gap>0.3%   1.000   cash 1.600 452 50.000 -1.308  -0.100     -100.000   -100.000   -100.000                 3       101.936
+   13:00|call|gap>0.3%   1.000   exit 1.000 452 50.885 -1.874   0.360     -100.000   -100.000   -100.000                 1       104.358
+   13:00|call|gap>0.3%   1.000   exit 1.300 452 50.885 -1.876   0.356      -99.982    -99.982   -100.000                 1       104.363
+   13:00|call|gap>0.3%   1.000   exit 1.600 452 50.885 -1.895   0.334      -99.661    -99.661   -100.000                 0       104.386
+   13:00|call|gap>0.3%   2.000   cash 1.000 452 48.894 -1.784  -0.551     -100.000   -100.000   -100.000                 3       102.402
+   13:00|call|gap>0.3%   2.000   cash 1.300 452 48.894 -1.789  -0.551     -100.000   -100.000   -100.000                 3       102.408
+   13:00|call|gap>0.3%   2.000   cash 1.600 452 48.894 -1.815  -0.551     -100.000   -100.000   -100.000                 3       102.436
+   13:00|call|gap>0.3%   2.000   exit 1.000 452 48.451 -2.866  -0.578     -100.000   -100.000   -100.000                 1       104.858
+   13:00|call|gap>0.3%   2.000   exit 1.300 452 48.451 -2.867  -0.581     -100.000   -100.000   -100.000                 1       104.863
+   13:00|call|gap>0.3%   2.000   exit 1.600 452 48.451 -2.886  -0.616     -100.000   -100.000   -100.000                 1       104.886
+   13:00|call|gap>0.3%   3.000   cash 1.000 452 47.788 -2.286  -0.992     -100.000   -100.000   -100.000                 3       102.902
+   13:00|call|gap>0.3%   3.000   cash 1.300 452 47.788 -2.291  -0.992     -100.000   -100.000   -100.000                 3       102.908
+   13:00|call|gap>0.3%   3.000   cash 1.600 452 47.788 -2.317  -0.992     -100.000   -100.000   -100.000                 3       102.936
+   13:00|call|gap>0.3%   3.000   exit 1.000 452 46.239 -3.846  -1.560     -100.000   -100.000   -100.000                 2       105.358
+   13:00|call|gap>0.3%   3.000   exit 1.300 452 46.239 -3.848  -1.570     -100.000   -100.000   -100.000                 1       105.363
+   13:00|call|gap>0.3%   3.000   exit 1.600 452 46.239 -3.867  -1.628     -100.000   -100.000   -100.000                 1       105.386
+
+D4 sizing (% of account):
+ limit  size_pct  worst_trade_loss_pct  exp_annual_pct  worst_year_pct  best_year_pct  size_by_worst_day_pct                 signal                         window  spread settle     k  days_with_two_positions  worst_day_both_positions_pct
+ 3.000     3.000               100.000           0.113         -10.299         14.587                  3.000 15:00|both|vixmove_exp HOLDOUT 2020-06-01..2026-09-11   1.000   cash 1.000                      NaN                           NaN
+ 4.000     4.000               100.000           0.151         -13.732         19.449                  4.000 15:00|both|vixmove_exp HOLDOUT 2020-06-01..2026-09-11   1.000   cash 1.000                      NaN                           NaN
+ 5.000     5.000               100.000           0.188         -17.165         24.311                  5.000 15:00|both|vixmove_exp HOLDOUT 2020-06-01..2026-09-11   1.000   cash 1.000                      NaN                           NaN
+ 3.000     3.000               100.000          -2.840         -11.703          8.209                  3.000    13:00|call|gap>0.3% HOLDOUT 2020-06-01..2026-09-11   1.000   cash 1.300                      NaN                           NaN
+ 4.000     4.000               100.000          -3.786         -15.605         10.945                  4.000    13:00|call|gap>0.3% HOLDOUT 2020-06-01..2026-09-11   1.000   cash 1.300                      NaN                           NaN
+ 5.000     5.000               100.000          -4.733         -19.506         13.681                  5.000    13:00|call|gap>0.3% HOLDOUT 2020-06-01..2026-09-11   1.000   cash 1.300                      NaN                           NaN
+ 3.000     1.805               166.216          -1.641             NaN            NaN                    NaN          COMBINED BOOK HOLDOUT 2020-06-01..2026-09-11     NaN    NaN   NaN                  128.000                      -166.216
+ 4.000     2.407               166.216          -2.187             NaN            NaN                    NaN          COMBINED BOOK HOLDOUT 2020-06-01..2026-09-11     NaN    NaN   NaN                  128.000                      -166.216
+ 5.000     3.008               166.216          -2.734             NaN            NaN                    NaN          COMBINED BOOK HOLDOUT 2020-06-01..2026-09-11     NaN    NaN   NaN                  128.000                      -166.216

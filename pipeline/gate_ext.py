@@ -7,6 +7,11 @@ defect 1). Builds a synthetic data/ext in the scratch directory from the Oanda f
       nothing else.
   (3) ROLL: a declared ES roll date must drop that session from every prior-close signal.
   (4) REFUSAL: no manifest → refuse; declared instrument vs price level mismatch → refuse.
+  (5) DIVIDEND SCOPE: an ex-date inside the native (Oanda) era (before the ext feed's first
+      session) must leave that native session's prior close and every native-era trade
+      untouched, while an ex-date inside the ext window is still applied (severity 8: an
+      unscoped dividend series was subtracting a SPY ex-dividend amount from Oanda/index
+      sessions on the SAME calendar date, where no dividend exists).
 Writes out/gate_e.csv.
 """
 import gzip
@@ -35,10 +40,36 @@ def make_synthetic(tmp):
         e[c] = e[c] / 10.0
     with gzip.open(os.path.join(ext_dir, "spx_1min_2019-06_2020-05.csv.gz"), "wt") as f:
         e[["ts", "open", "high", "low", "close", "volume"]].to_csv(f, index=False)
-    pd.DataFrame(columns=["ex_date", "amount"]).to_csv(os.path.join(ext_dir, "spy_dividends.csv"), index=False)
+    # Both DST offsets (real spy_dividends.csv, DATA.md 2026-09-13, e.g. these exact stamps): one
+    # EST (-05:00) and one EDT (-04:00) ex-date, both at 09:30 local, so gate (e) exercises the
+    # tz-aware parsing path (Phase 6 defect 1) from now on, not just the empty-file case. Dated
+    # well before the synthetic minute file's 2019-06-01 start (real spy_dividends.csv likewise
+    # runs 1993-> while the minute feed starts later), so they reindex to zero over the IDENTITY
+    # window and cannot change which sessions gate (1) trades.
+    pd.DataFrame({"ex_date": ["1993-03-19 09:30:00-05:00", "1993-06-18 09:30:00-04:00"], "amount": [2.13, 3.18]}
+                 ).to_csv(os.path.join(ext_dir, "spy_dividends.csv"), index=False)
     json.dump({"instrument": "SPY", "source": "synthetic from Oanda (gate e)", "adjusted": False, "roll_dates": []},
               open(os.path.join(ext_dir, "ext_manifest.json"), "w"))
     return base_path, ext_dir
+
+
+NATIVE_EXD = pd.Timestamp("2018-03-16")   # real SPY ex-date, well inside the Oanda-only era (before CUT)
+EXT_EXD = pd.Timestamp("2019-06-17")      # inside the synthetic ext window
+
+
+def make_scoped_dividends(ext_dir):
+    """A copy of `ext_dir` whose spy_dividends.csv ALSO carries a nonzero ex-date inside the ext
+    window (EXT_EXD, proving build_extended keeps an in-scope dividend) and one inside the
+    Oanda-only era (NATIVE_EXD, a real SPY ex-date; Phase 6 defect: an unscoped dividend series
+    subtracted a SPY ex-dividend amount from the native Oanda/index sessions on the SAME
+    calendar date, where no dividend exists)."""
+    scope_dir = ext_dir + "_scope"
+    shutil.copytree(ext_dir, scope_dir)
+    pd.DataFrame({"ex_date": ["1993-03-19 09:30:00-05:00", "1993-06-18 09:30:00-04:00",
+                              f"{EXT_EXD.date()} 09:30:00-04:00", f"{NATIVE_EXD.date()} 09:30:00-04:00"],
+                 "amount": [2.13, 3.18, 0.30, 1.42]}
+                 ).to_csv(os.path.join(scope_dir, "spy_dividends.csv"), index=False)
+    return scope_dir
 
 
 def main():
@@ -91,6 +122,18 @@ def main():
         except ValueError:
             mismatch = True
         results.append(("REFUSAL: missing manifest refused; declared ES on SPY-level prices refused", refused and mismatch))
+        # (5) dividend scope
+        scope_dir = make_scoped_dividends(ext_dir)
+        scope_frame, _, scope_meta = sessions.build_extended(base_path, scope_dir, td)
+        ds = signals.day_table(scope_frame, vix, dividends=scope_meta["dividends"], trading_days=td, roll_dates=scope_meta["roll_dates"])
+        native_untouched = bool(np.isclose(ds.loc[NATIVE_EXD, "dividend"], 0.0))
+        fixed_s = {e: signals.fixed_thresholds(ds, e) for e in (900, 930)}
+        ts_ = signals.all_candidates(ds, fixed_s)
+        c = w(ts_)
+        scope_same_shape = len(a) == len(c) and (a["candidate"].to_numpy() == c["candidate"].to_numpy()).all() and (a["date"].to_numpy() == c["date"].to_numpy()).all()
+        scope_identity = scope_same_shape and np.allclose(a[["entry_px", "exit_px", "ret_pct", "pts"]].to_numpy(), c[["entry_px", "exit_px", "ret_pct", "pts"]].to_numpy(), atol=1e-6)
+        results.append((f"DIVIDEND SCOPE: an ex-date inside the native (Oanda) era leaves native prior closes and trades untouched ({len(a)} vs {len(c)} trades)",
+                        bool(native_untouched and scope_identity)))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     for name, ok in results:

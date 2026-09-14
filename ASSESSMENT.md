@@ -140,10 +140,19 @@ WINGS, themselves overpriced 0DTE options the seller must buy, give back -0.14 /
 +0.12 / +0.17 / +0.10 per share per day against $0.40 of spread per structure. Breakeven cost per leg is
 $0.030 / $0.042 / $0.025 for the four-leg structures and $0.13 / $0.12 / $0.07 for a naked two-leg straddle
 (undefined risk, not what a defined-risk account permits). Reading for the owner: at a realistic SPY 0DTE spread of $0.02–0.04
-per leg round trip the defined-risk structures are roughly breakeven, not an edge; the naked straddle would net about
-$0.20 per share per day (7 % of credit) with an unbounded tail — a market-maker's business, not a loophole. The tail table
+per leg round trip the defined-risk structures are roughly breakeven, not an edge; a naked two-leg straddle at a $0.03-per-leg cost, a cost row A43 never registered and a structure no
+defined-risk account permits, is quoted only to size the arithmetic: about $0.20 per share per day against an unbounded tail — a
+market-maker's income for bearing that tail, not a loophole. The tail table
 itself (5th-percentile day −$4,042, full-loss share 8 %, 10 % of days marked more than 100 % of credit underwater intraday)
-says a 4 % daily limit would be hit routinely. Any cost row other than the registered $0.10/$0.20 is a new pre-registration (A43b), not a re-read.
+says a 4 % daily limit would be hit routinely. The defined-risk cap itself did not hold in the marks: at $0.10 per leg 39 of 592
+(S1), 8 of 557 (S2) and 19 of 443 (S3) structures lost more than their registered max loss — 15 / 2 / 7 of them before costs,
+from legs marked up to 10 minutes apart at the exit — and 32 / 5 / 14 days breached the −$4,000 daily limit the sizing rule was
+meant to guarantee (`out/sellvol_trades.csv`, net_pnl_cost0 < −max_loss; pnl_usd_cost0 < −4000). The skipped sessions cut the
+other way: S1 skipped 83 of 675 sessions for missing wing prints, and on the 54 of those that A42's E1 did trade the buyer's
+gross mean was +36.5 % of premium against −7.2 % on the 592 kept sessions — the skipped days are the large-move days, so the
+seller's reported mean is flattered and the FAIL is conservative. At the registered costs S1's equity curve on a fixed $100,000
+ends at a loss of most of the account; the drawdown figures above understate ruin because the fixed sizing keeps trading at full
+size. Any cost row other than the registered $0.10/$0.20 is a new pre-registration (A43b), not a re-read.
 
 ## Probability of backtest overfitting of the selection itself (A37)
 

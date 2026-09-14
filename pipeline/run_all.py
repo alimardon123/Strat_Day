@@ -38,7 +38,7 @@ STEPS = [
     ("eventvol", ["python", "-m", "pipeline.units.eventvol", "--in", "extended",
                   "--out", "out/eventvol_candidates.csv"], "out/eventvol.log"),
     ("sellvol", ["python", "-m", "pipeline.units.sellvol", "--in", "extended",
-                "--out", "out/sellvol_candidates.csv"], "out/sellvol.log"),
+                "--out", "out/sellvol_candidates.csv", "out/sellvol_by_year.csv"], "out/sellvol.log"),
     ("trials", ["python", "-m", "pipeline.trials"], "out/trials.log"),
     ("options_timevalue", ["python", "-m", "pipeline.options"], "out/options_timevalue.log"),
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),

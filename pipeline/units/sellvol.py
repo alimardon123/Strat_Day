@@ -119,11 +119,9 @@ restated in the `spec` column (SPEC_NOTE below); worth flagging up front:
      reading; the per-day prior-close VIX itself reuses `signals.day_table`'s own merge_asof
      convention (`allow_exact_matches=False` -- strictly the prior session's close), computed
      directly here rather than by building a full `day_table` this unit does not otherwise need.
-(12) Determinism: no random draw anywhere in this unit (unlike sweep.py's random-entry control);
-     iteration order is fixed (module-level constant lists, sorted groupby keys); two runs are
-     byte-identical (fixed float_format, no wall-clock/PID in any output). Seed 11 is named in the
-     task brief for parity with the rest of the codebase but nothing here actually draws random
-     numbers.
+(12) Determinism: the only random draws are stats.one_sided_p's 2,000-sample day-block bootstrap for
+     p_boot_day, re-seeded at 11 on every call — which is why two runs are byte-identical; sorted iteration
+     everywhere else.
 """
 import argparse
 import os

@@ -54,7 +54,7 @@ Updated 2026-09-13 10:10 UTC — HOLDOUT RUN ON REAL DATA (owner's `data/ext/`, 
 | T2 call 09:31 (timing fingerprint) | 158 | +0.12 | 1.00 | — | — | not a candidate |
 | T3 put 10:00 after overnight gain (mirror) | 154 | +1.89 | 0.43 | — | positive → mechanism asymmetry absent | not a candidate |
 
-Family-wide BH-FDR at 10 % over 39 trials (36 before A42's three joined): 0 pass (`out/trials.csv`).
+Family-wide BH-FDR at 10 % over 42 trials (39 before A43's three joined): 0 pass (`out/trials.csv`).
 
 ## Track B — swing-start detector on range bars (A40/A40c; 24-trial family, FDR on its own; SPY 16 and gold 8 both run, 24 of 24 FAILED)
 

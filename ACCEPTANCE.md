@@ -395,3 +395,45 @@ with at least one printed bar at or before the entry minute on that session, nev
 The entry bar actually used must precede the exit bar actually used; otherwise the trade is skipped and counted in
 n_skipped_missing. The used entry-bar minute is written to the per-trade file so both rules are auditable. No other parameter
 changes; the judge showed the P&L effect is small and adverse (the honest direction).
+
+## Amendment A43 — Track C: defined-risk short 0DTE premium (owner's option E, pre-registered 2026-09-14 14:57 UTC, before any run)
+
+Owner 2026-09-14: "for E I don't have my own options account I think. But you can test it and strategize it too; if it is
+profitable I can get one." This track is for a stock account with options approval for defined-risk spreads, NOT the prop
+account; it is reported under its own heading and never enters the prop-account playbook. Reference class: the tail
+statistics a risk desk demands before allowing a short-premium book — worst day, worst month, full-loss frequency,
+intraday adverse excursion — not the mean. Everything below is fixed now.
+
+- Data: the owner's real SPY 0DTE 1-minute bars (2024-02-01 → 2026-09-11) as one out-of-sample window; no parameter is
+  fitted anywhere; results are also shown by calendar year and by prior-close VIX tercile (descriptive only).
+- Structures (three trials, family 39 → 42), all four legs are SPY same-day-expiry contracts:
+  S1 iron butterfly at 09:31: sell the nearest-ATM call and put, buy the call at +1 % and the put at −1 % of the 09:31
+     SPY price (nearest listed strikes); hold to the 15:59 bar and close all four legs there.
+  S2 the same structure sold at 13:30.
+  S3 iron condor at 09:31: sell the call at +0.5 % and the put at −0.5 %, buy the wings at +1.5 % and −1.5 %; close at 15:59.
+- Prices: a leg's entry price is its bar close at the entry minute, else the next print within 5 minutes; exit is the 15:59
+  bar close, else the last print within the previous 10 minutes; a structure with any leg missing is skipped and counted.
+  Every leg must have printed at or before the entry minute (causal). Costs: $0.10 per leg round trip ($0.40 per
+  structure), also at $0.20 per leg.
+- Defined risk: max loss = wing width − net credit (per share × 100 per contract), known at entry. Sizing rule for the
+  equity curve: contracts = floor(4 % of a $100,000 account ÷ max loss), so the worst possible day is the daily limit.
+- Scoring, per trial: n, n_skipped, win rate, mean and median net P&L per structure in $ and in % of max loss, worst
+  structure, worst day, worst month, 5th-percentile day, full-loss frequency (P&L ≤ −90 % of max loss), intraday MAE
+  (the worst minute-by-minute mark of the four legs' bar closes, in % of credit and of max loss) and the share of days
+  whose MAE exceeds 100 % and 200 % of the credit; calendar-day Sharpe at the sizing rule; maximum drawdown of that
+  equity curve; day-block bootstrap p (n_boot 2000, seed 11); DSR at N = 42; the six-condition survival rule.
+- Promotion rule (stricter than the survival rule, because the tail is the risk): a trial is promotable only if it passes
+  all six conditions AND its equity curve's maximum drawdown at the sizing rule is under 20 % AND the worst month is
+  better than −10 % AND the day-block p of the mean is < 0.01. Otherwise it is reported with the tail table and the
+  label that applies.
+- Non-goals: intraday adjustments, stops, delta hedging, VIX or event conditioning (each would be a new family), SPX or
+  XSP contracts (no bars on the branch), any claim for the prop account.
+- Honest prior: the mean is HIGH (buyers lost 7 % of premium at 09:31 and 17 % at 13:30 on average); the tail is
+  unknown and is the whole question; the window contains the August 2024 volatility spike and the April 2025 crash.
+
+## Amendment A44 — forward test of the overnight-gap trade (owner's option B, passive, pre-registered 2026-09-14 14:57 UTC)
+
+Symmetric spec, fixed now, judged only on sessions after 2026-09-11 as data accrues (the owner refreshes the minute
+file; nothing runs on existing data): overnight return ≤ expanding 10th percentile → long 2 % ITM call at the 10:00 bar
+close; ≥ expanding 90th percentile → long 2 % ITM put at 10:00; exit at the 16:00 close; costs 1 and 2 pts; the six
+conditions with n ≥ 200 before any verdict (≈ two years). Counted as one trial when it first runs (family 43).

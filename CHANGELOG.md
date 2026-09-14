@@ -155,3 +155,6 @@
 ## 2026-09-13 — Judge round 7 fixes applied (fleet coder): causal strike availability, entry-before-exit rule, loader path honoured (tests 3/3), calibration in EXPECTED, generated k-rule and fill-delay clauses in §12
 - Gap-up call n 183 → 178 (-2.78 % at +$0.10), D1 winner n 61 → 59 (+0.92 %); every sign unchanged; T1's $0-cost label flipped to "model optimistic" when one trade was dropped. Fill delay from the bar used: median 3 min, p90 31, max 179, 78/401 ≥ 15 min. T2 (+4.94 → +2.16 % at +$0.10) and T3 (+2.76 → +2.42 %) moved with zero trades dropped: that is the causal strike rule re-selecting strikes, not the ordering rule. Calibration's own strike search left as the diagnostic it is (non-causal, unchanged; it feeds no decision).
 
+## 2026-09-14 — Owner chose E (test the sell side; account only if profitable) and asked for a recommendation; A43 (Track C, defined-risk short premium) and A44 (passive forward test) pre-registered before any run
+- Recommendation recorded: E as the main line, B passive, C only if the assets file is easy, A as the fallback if E's tail fails.
+

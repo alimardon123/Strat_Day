@@ -19,6 +19,8 @@ Source ranking: `research/CLAUDE.md` §6, re-ordered by risk (hardest first) per
 | 12 | Overnight-loss forced-liquidation rebound (A39; pre-registered 2026-09-13 before any run; 3 trials incl. timing fingerprint and mirror; runs on data on the branch) | 3 | fleet (one unit) | T1 fails any survival condition, or the fingerprint fails (T2 ≥ T1 or T3 > 0) |
 | 13 | A41 real-price re-evaluation and k calibration on the owner's SPY 0DTE bars (pre-registered before any bar exists; waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`) | 3 | fleet (one unit) | Nothing promoted on the sub-window; model labelled optimistic/pessimistic per row |
 | 14 | A42 event-day long volatility (E1 daily baseline, E2 FOMC 13:30, E3 non-event control; family 39) | 3 | fleet (one unit) | E2 − E3 ≤ 0; E2 is UNDERPOWERED by construction |
+| 15 | Track C (A43, owner's option E): defined-risk short 0DTE premium on the real bars — S1/S2 iron butterfly 09:31/13:30, S3 iron condor 09:31; tail statistics, MAE, sizing at a 4 % daily limit; promotion needs drawdown < 20 %, worst month > −10 %, p < 0.01 | 3 | fleet (one unit) | Fails the tail conditions → reported, not promoted; the account decision is the owner's |
+| 16 | A44 forward test of the symmetric overnight-gap trade (owner's option B): passive; runs only on sessions after 2026-09-11 when the owner refreshes the minute file | — | single owner | n < 200 → no verdict |
 | — | GEX filter, post-2018 cross-market | non-goal | — | Unobtainable in this environment (recorded in ACCEPTANCE.md) |
 
 ## Two tracks (owner, 2026-09-13)

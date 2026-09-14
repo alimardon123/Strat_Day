@@ -39,3 +39,5 @@ Finding 2 ("a synthetic stand-in that did not exercise the real format") recurre
 
 Judge round 5 (2026-09-13) added a process finding for the ledger: twice in this run a close-out claim outran the diff (round-3 doc lag; round-4 notes N5/N6 recorded ADOPTED with no change behind them, caught by the next fresh-context judge). Candidate framework rule, pending a second run: the verifier diffs the claim against the change set, not only the tests. Count 1.
 
+Judge round 8 (2026-09-14) added a process finding: an orchestrator edit to run_all's step list appended a path to the wrong occurrence (the command line, not EXPECTED) and a clean `git status` hid it because out/ was not regenerated; caught only by the judge's confirmation pass. Standing guard: import run_all and execute the touched step once before committing any STEPS/EXPECTED edit. Count 1.
+

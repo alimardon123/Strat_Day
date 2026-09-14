@@ -150,9 +150,9 @@ from legs marked up to 10 minutes apart at the exit — and 32 / 5 / 14 days bre
 meant to guarantee (`out/sellvol_trades.csv`, net_pnl_cost0 < −max_loss; pnl_usd_cost0 < −4000). The skipped sessions cut the
 other way: S1 skipped 83 of 675 sessions for missing wing prints, and on the 54 of those that A42's E1 did trade the buyer's
 gross mean was +36.5 % of premium against −7.2 % on the 592 kept sessions — the skipped days are the large-move days, so the
-seller's reported mean is flattered and the FAIL is conservative. At the registered costs S1's equity curve on a fixed $100,000
-ends at a loss of most of the account; the drawdown figures above understate ruin because the fixed sizing keeps trading at full
-size. Any cost row other than the registered $0.10/$0.20 is a new pre-registration (A43b), not a re-read.
+seller's reported mean is flattered and the FAIL is conservative. At the registered costs S1's equity curve on a fixed $100,000 ends at
+−$92,411, S2 at −$4,097 and S3 at −$13,452 (`out/sellvol_equity.csv`, last row per trial at $0.10): the account is lost and, for S1,
+roughly as much again, which is what a 198 % drawdown means when the fixed sizing keeps trading at full size after ruin. Any cost row other than the registered $0.10/$0.20 is a new pre-registration (A43b), not a re-read.
 
 ## Probability of backtest overfitting of the selection itself (A37)
 

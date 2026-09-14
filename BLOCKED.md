@@ -163,3 +163,13 @@ Every candidate that can be built from the data on this branch has now been pre-
 - **E. Change the account constraint.** The only effect this programme measured that is large enough to pay costs is the premium collected by SELLING 0DTE straddles, which the prop account forbids. If the own-account track (a stock account with options approval) may hold DEFINED-RISK short premium (iron condors / short straddles with wings), a pre-registered sell-side test can run on the same real bars: tail risk is the whole question (worst day, margin, the 4 % daily-loss rule), not the mean. Say so and it will be pre-registered in its own commit before any run.
 
 No agent is launched against the automated stop hook; the run resumes on a letter or a file.
+
+## Status after Track C (2026-09-14): option E tested — FAILED at the registered costs
+
+| Item | Result | What would change it |
+|---|---|---|
+| A43 S1/S2/S3 (defined-risk short 0DTE premium) | All FAIL: -8.6 / -5.0 / -6.8 % of max loss per structure at $0.10/leg; drawdowns 198–198 % at the 4 % rule | Only a cost assumption near $0.03 per leg (breakeven) — a new pre-registration (A43b), and even then roughly breakeven, not an edge |
+| The premium itself | Real: the short legs earn +0.26/+0.24 per share per day; the wings give back -0.14/-0.07; the rest is spread | A naked straddle at ~$0.03/leg would net ≈ $0.20/share/day with an unbounded tail — not a defined-risk account's trade |
+
+Recommendation unchanged in direction, sharpened by the number: no account is worth opening for E. Options A (stop) and B (passive forward test, A44) remain; C waits for the assets file.
+

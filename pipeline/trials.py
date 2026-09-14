@@ -57,6 +57,16 @@ def main():
         for _, x in eventvol[np.isclose(eventvol["cost"], 0.10)].iterrows():
             rows.append(dict(family="eventvol", trial=f"EVENTVOL {x['trial']}", n=x["n"],
                              p=x["p_boot_day"], p_day=x["p_boot_day"]))
+    if os.path.exists("out/sellvol_candidates.csv"):
+        # A43: three trials (S1/S2 iron butterfly at 09:31/13:30, S3 iron condor at 09:31), each
+        # counted ONCE at cost_per_leg=$0.10 (mirrors the eventvol block above -- the $0.20 row is
+        # a cost-sensitivity sweep, not an additional trial); family becomes 42. This file always
+        # exists (pipeline.units.sellvol writes it header-only until the real 0DTE file lands), so
+        # a header-only file has zero rows and this loop adds nothing until then (ACCEPTANCE A43).
+        sellvol = pd.read_csv("out/sellvol_candidates.csv")
+        for _, x in sellvol[np.isclose(sellvol["cost_per_leg"], 0.10)].iterrows():
+            rows.append(dict(family="sellvol", trial=f"SELLVOL {x['trial']}", n=x["n"],
+                             p=x["p_boot_day"], p_day=x["p_boot_day"]))
     hold = pd.read_csv("out/holdout_summary.csv") if os.path.exists("out/holdout_summary.csv") else None
     if hold is not None:
         for _, x in hold.iterrows():

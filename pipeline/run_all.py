@@ -37,12 +37,15 @@ STEPS = [
     ("realopt", ["python", "-m", "pipeline.units.realopt", "--in", "extended", "--out", "out/realopt_reeval.csv"], "out/realopt.log"),
     ("eventvol", ["python", "-m", "pipeline.units.eventvol", "--in", "extended",
                   "--out", "out/eventvol_candidates.csv"], "out/eventvol.log"),
+    ("sellvol", ["python", "-m", "pipeline.units.sellvol", "--in", "extended",
+                "--out", "out/sellvol_candidates.csv"], "out/sellvol.log"),
     ("trials", ["python", "-m", "pipeline.trials"], "out/trials.log"),
     ("options_timevalue", ["python", "-m", "pipeline.options"], "out/options_timevalue.log"),
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
     ("trackB_rangebars", ["python", "-m", "pipeline.units.rangebars", "--in", "extended", "--out", "out/trackB_rangebars_gate.csv"], "out/trackB_rangebars.log"),
     ("trackB_sweep", ["python", "-m", "pipeline.units.sweep", "--in", "extended", "--out", "out/trackB_sweep_candidates.csv"], "out/trackB_sweep.log"),
     ("trackB_report", ["python", "-m", "pipeline.report_b"], "out/trackB_report.log"),
+    ("trackC_report", ["python", "-m", "pipeline.report_c"], "out/trackC_report.log"),
 ]
 EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_histdata.csv", "out/calendar_histdata.csv",
             "out/gate_c.csv", "out/gate_e.csv", "out/gate_etf.csv", "out/reconcile_candidates.csv", "out/reconcile_decision.md",
@@ -54,9 +57,11 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
             "out/letf_candidates.csv",
             "out/realopt_reeval.csv", "out/realopt_calibration.csv",
             "out/eventvol_candidates.csv",
+            "out/sellvol_candidates.csv",
             "out/trials.csv", "out/options_timevalue.csv",
             "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md",
-            "out/trackB_rangebars_gate.csv", "out/trackB_sweep_candidates.csv", "out/trackB_decision.csv", "TRACK_B.md"]
+            "out/trackB_rangebars_gate.csv", "out/trackB_sweep_candidates.csv", "out/trackB_decision.csv", "TRACK_B.md",
+            "TRACK_C.md"]
 EXPECTED_HOLDOUT = ["out/holdout_summary.csv", "out/holdout_by_year.csv", "out/holdout_pooled.csv",
                     "out/holdout_d4_execution.csv", "out/holdout_d4_summary.csv", "out/holdout_d4_sizing.csv",
                     "out/fullsample_execution.csv", "out/fullsample_summary.csv", "out/fullsample_sizing.csv"]
@@ -67,7 +72,7 @@ def main():
     os.makedirs("out", exist_ok=True)
     ext = sessions.ext_present()
     for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*", "out/fvg_*", "out/gapliq_*",
-                "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/trackB_*"):
+                "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/sellvol_*", "out/trackB_*"):
         for f in glob.glob(pat):
             os.remove(f)
     steps = [s for s in STEPS if s[0] not in HOLDOUT_STEPS or ext]

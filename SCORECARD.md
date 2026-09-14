@@ -78,3 +78,13 @@ Family-wide BH-FDR at 10 % over 39 trials (36 before A42's three joined): 0 pass
 | A42 E1 daily straddle 09:31 | n 646, -7.0 % of premium, p 1.00 — premium rich, as registered |
 | A42 E2 FOMC 13:30 vs E3 non-FOMC | E2 n 20 -1.6 %, E3 n 608 -17.2 %, difference +15.7 pts, p 0.64; UNDERPOWERED, not promoted |
 
+## Track C — A43 defined-risk short 0DTE premium (owner's option E; family 42; nothing promoted)
+
+| Trial ($0.10/leg) | n | Mean % of max loss | Win % | Worst day ($100k, 4 % rule) | Max drawdown | Verdict |
+|---|---|---|---|---|---|---|
+| S1 iron butterfly 09:31 | 592 | -8.6 | 50 | −$6,080 | 198 % | FAILED |
+| S2 iron butterfly 13:30 | 557 | -5.0 | 51 | −$5,035 | 104 % | FAILED |
+| S3 iron condor 09:31 | 443 | -6.8 | 52 | −$8,010 | 114 % | FAILED |
+
+Decomposition (per share, pre-cost): short legs +0.26 / +0.24 / +0.14; wings -0.14 / -0.07 / -0.04; breakeven cost per leg $0.030 / $0.042 / $0.025. FDR over 42 trials: 0 pass.
+

@@ -128,6 +128,23 @@ n 20, -1.6 %, E2 − E3 = +15.7 points of premium, two-sample p 0.64, UNDERPOWER
 large and lives on the SELL side, which the prop account forbids; FOMC afternoons are priced closer to fair (the loss shrinks
 to near zero) but 20 days cannot establish an edge. Family 39, FDR 0 pass. Nothing is promoted.
 
+## Track C (A43) — defined-risk short 0DTE premium on the real bars: the premium is real, tiny in dollars, and eaten by four legs of spread
+
+Owner's option E, pre-registered before the run (c7d62b1). Three structures on 2024-02-01 → 2026-09-11, $0.10 per leg round trip:
+S1 iron butterfly 09:31 n 592, -8.6 % of max loss per structure, win 50 %, worst day −$6,080 on $100k at the 4 % sizing rule,
+worst month −$35,952, max drawdown 198 %; S2 iron butterfly 13:30 n 557, -5.0 %, drawdown 104 %; S3 iron condor 09:31
+n 443, -6.8 %, drawdown 114 %. All three FAIL the survival rule and the promotion rule (p 1.0, DSR 0, FDR 0 of 42).
+Why, decomposed from `out/sellvol_trades.csv` (per share, before costs): the SHORT legs earn +0.26 (S1), +0.24 (S2), +0.14 (S3) —
+the variance risk premium is real and on the seller's side, exactly as A42 measured from the buyer's chair — but the protective
+WINGS, themselves overpriced 0DTE options the seller must buy, give back -0.14 / -0.07 / -0.04, leaving a gross of
++0.12 / +0.17 / +0.10 per share per day against $0.40 of spread per structure. Breakeven cost per leg is
+$0.030 / $0.042 / $0.025 for the four-leg structures and $0.13 / $0.12 / $0.07 for a naked two-leg straddle
+(undefined risk, not what a defined-risk account permits). Reading for the owner: at a realistic SPY 0DTE spread of $0.02–0.04
+per leg round trip the defined-risk structures are roughly breakeven, not an edge; the naked straddle would net about
+$0.20 per share per day (7 % of credit) with an unbounded tail — a market-maker's business, not a loophole. The tail table
+itself (5th-percentile day −$4,042, full-loss share 8 %, 10 % of days marked more than 100 % of credit underwater intraday)
+says a 4 % daily limit would be hit routinely. Any cost row other than the registered $0.10/$0.20 is a new pre-registration (A43b), not a re-read.
+
 ## Probability of backtest overfitting of the selection itself (A37)
 
 `out/pbo.csv`: with 12 rankable configurations on the selection window, CSCV over 16 blocks (12,870

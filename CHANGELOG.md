@@ -158,3 +158,6 @@
 ## 2026-09-14 — Owner chose E (test the sell side; account only if profitable) and asked for a recommendation; A43 (Track C, defined-risk short premium) and A44 (passive forward test) pre-registered before any run
 - Recommendation recorded: E as the main line, B passive, C only if the assets file is easy, A as the fallback if E's tail fails.
 
+## 2026-09-14 — A43 built and run (fleet coder): all three defined-risk short-premium structures FAIL at $0.10/leg; the premium is real on the short legs but the wings and four legs of spread consume it
+- `pipeline/units/sellvol.py` (~2 min, byte-identical twice), tests 4/4, `report_c.py` → `TRACK_C.md`, family 42 (FDR 0). Short legs +0.26/+0.24/+0.14 per share gross, wings -0.14/-0.07/-0.04, breakeven $0.030–$0.042 per leg. Recorded in ASSESSMENT and SCORECARD; nothing enters PLAYBOOK_0DTE.md.
+

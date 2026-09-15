@@ -196,3 +196,41 @@ trial family is unchanged at 42 (43 once A44 runs).
 
 No agent is launched against the automated stop hook; the run resumes on a letter (A–G) or a file.
 
+
+## Status after carrying A45 into the playbook (2026-09-15) — option F's delivery completed; no change to the block
+
+Option F was recorded as contract amendment A45 on 2026-09-15, but the rulebook never reached
+`PLAYBOOK_0DTE.md`, the document the account is actually traded from. A self-audit also found that §6 still
+asserted "no post-2020 price file is present" — false since the owner's minute feed landed on 2026-09-13 — and
+priced contracts at an assumed index level of 6,500 against a measured 7,641.40 SPX-equivalent points. Both are
+now fixed; a fresh-context adversarial review of the first attempt found six defects, all repaired
+(`CRITIQUE.md`, A45-propagation review round 1). No trial, window, gate or cost assumption moved: the family
+stays at 45 with 0 passing the family-wide FDR.
+
+**One number the owner should see before trading anything here.** Under the rule the owner adopted (A45 rule 1,
+x = 1 % of account equity per trade) the minimum account per contract is:
+
+| instrument | contract cost at the measured 2026-09-11 level | minimum account at x = 1 % |
+|---|---|---|
+| SPX | ≈ $15,283 | ≈ $1,528,280 |
+| XSP | ≈ $1,528 | ≈ $152,828 |
+| SPY (exited 15:55) | ≈ $1,528 | ≈ $152,828 |
+
+Generated from `out/sizing_forward.csv`; `PLAYBOOK_0DTE.md` §15. The adopted risk rule and the instrument choice
+interact: below roughly $1.5M of equity the SPX contract is not sizeable under A45 rule 1 at all, and the
+one-tenth-notional instruments are the only ones the rule permits. This is a consequence of the rulebook the
+owner adopted, not a new finding, and it was nowhere stated before now.
+
+### Owner options, unchanged
+
+- **A. Stop.** The finding stands on three data sets and 45 pre-registered trials: no long-only 0DTE mechanism
+  clears its cost.
+- **B. Forward test** the overnight-loss call (A44, symmetric spec, already pre-registered) on sessions after
+  2026-09-11. Needs the minute file refreshed; ≈ 2 years to reach n = 200.
+- **C/D. Leveraged-ETF candidate** (A38): built, wired and waiting for `data/ext/letf_aum_2006_2026.csv`.
+- **F. DELIVERED and now propagated** — A45 adopted, and as of this commit stated in `PLAYBOOK_0DTE.md` §15 with
+  the forward-sizing table above.
+- **G. DELIVERED** — A46 pre-registered, run once, FAILED (U1 n 144, −3.28 pts, p 1.00, dose-response inverted,
+  UNDERPOWERED, not promoted). `INVERSION.md` §5 now carries that outcome.
+
+No agent is launched against the automated stop hook; the run resumes on a letter or a file.

@@ -41,3 +41,32 @@ Judge round 5 (2026-09-13) added a process finding for the ledger: twice in this
 
 Judge round 8 (2026-09-14) added a process finding: an orchestrator edit to run_all's step list appended a path to the wrong occurrence (the command line, not EXPECTED) and a clean `git status` hid it because out/ was not regenerated; caught only by the judge's confirmation pass. Standing guard: import run_all and execute the touched step once before committing any STEPS/EXPECTED edit. Count 1.
 
+
+## Addendum 2026-09-15 (A45-propagation round) — two findings reach count 2, so both qualify for a framework edit
+
+**"A close-out claim outran the diff" reaches count 2.** Judge round 5 (2026-09-13) logged this at count 1. It
+recurred here as the review's highest-severity defect: the write-up asserted in `PLAYBOOK_0DTE.md` §15 that "the
+pre-A45 minimum account in §6 are NOT restated" while the same commit restated it ($325k → $382,070), and it
+published that new figure at the retired x = 4 % convention after A45 had taken force. Note the shape: the earlier
+instances were a claim outrunning an evidence FILE; this one outran the DIFF, in a sentence specifically about what
+the change did. Framework edit now earned, cheap and mechanical: **before asserting in any deliverable that
+something was left untouched, run `git diff` on that thing.** One command would have caught this. Count 2.
+
+**"A `run_all` list edit that a clean `git status` hides" reaches count 2.** Judge round 8 (2026-09-14) logged this
+at count 1 with the guard "import run_all and execute the touched step once before committing any STEPS/EXPECTED
+edit". It recurred here in a new form: `out/sizing_forward.csv` was added to the unconditional `EXPECTED` list while
+the unit writes a zero-byte file when `data/ext` is absent, and `EXPECTED` fails on empty files — so `make all`
+would have failed on a no-ext checkout. Caught by orchestrator review before the reviewer saw it. The round-8 guard
+would NOT have caught it: executing the touched step passes, because this container HAS `data/ext`. Guard sharpened:
+**a `run_all` STEPS/EXPECTED edit must be reasoned about, and where cheap exercised, in BOTH data configurations —
+with and without `data/ext` — because `EXPECTED` and `EXPECTED_HOLDOUT` encode exactly that distinction and the
+present configuration only ever exercises one of them.** Count 2.
+
+Both findings share a root: the checks that ran were the checks the change made easy to run. The two edits above are
+deliberately mechanical for that reason — `git diff` on the thing you claim you did not touch, and the configuration
+you are not currently in.
+
+Observation, not a finding: the round's largest defect was found by an adversarial reviewer that re-derived every
+published number and mutation-tested the new unit test, which proved two mutants survived a green suite (a wrong-bar
+level read, and a 4× understatement of required capital). A suite that only restates the implementation reports PASS
+on both. Mutation-testing a new test suite is now the cheapest known way to tell a real test from a tautology here.

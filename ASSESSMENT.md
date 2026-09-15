@@ -241,3 +241,40 @@ unchanged (n 144, -3.2826 pts, both before and after the fix); HOLDOUT U3 shifts
 -1.4976 → -1.2696 pts) purely because the same 4 corrected sessions feed the whole-history expanding-percentile
 pool every later threshold reads from — no HOLDOUT session itself starts late — and this does not change U1's
 verdict. Family 42 → 45 (FDR 0 of 45, `out/trials.csv`).
+
+## A45 carried into the playbook; contract sizing anchored to a measured level (2026-09-15, no new trial)
+
+Two defects in the owner-facing deliverable, found by self-audit rather than by a test. Neither is a strategy
+change: no window, gate, cost assumption or trial moved, and the family stays at 45 with 0 passing the
+family-wide FDR (`out/trials.csv`).
+
+1. **The adopted rulebook was not in the document the account is traded from.** The owner chose option F and the
+   eight rules were recorded as `ACCEPTANCE.md` amendment A45, whose rule 1 sets forward-trading risk at x = 1 %
+   of equity per trade (N = floor(D/x) full-loss attempts per day). `PLAYBOOK_0DTE.md` never said so. A reader
+   sizing from §4 or §6 would have taken 4 % per trade — four times the adopted risk. Fixed by new §15, which
+   states the rulebook (a typed transcription of a contract, marked as such) and carries the A45 forward-sizing
+   table generated from `out/sizing_forward.csv`.
+
+2. **§6 asserted "no post-2020 price file is present" and priced contracts at an assumed S = 6,500.** The claim
+   had been false since the owner's minute feed landed on 2026-09-13 (commit 781180b). The measured last
+   regular-session close of the canonical extended frame is 7,641.40 SPX-equivalent points on 2026-09-11
+   (390-bar session), so every dollar figure in §6 was understated by about 15 %.
+
+The operational consequence, which the playbook had not stated anywhere: at the adopted x = 1 %, one SPX contract
+needs ≈ $1,528,280 of equity; the one-tenth-notional instruments (XSP, SPY) need ≈ $152,828. The adopted risk rule
+and the instrument choice interact, and below roughly $1.5M the SPX contract is simply not sizeable under the
+rule the owner adopted.
+
+An adversarial fresh-context review of the first attempt returned CHANGES_REQUIRED on six defects (`CRITIQUE.md`,
+A45-propagation review round 1). The sharpest was mine: the first fix restated §6's minimum account ($325k →
+$382,070) and computed the new figure at the retired x = 4 % convention AFTER A45 had taken force, while §15
+simultaneously asserted §6 had not been restated. Resolved by retiring the minimum account from §6 altogether —
+§6 now gives the measured contract cost only (the price of one option is a market fact, not a sizing rule) and
+§15 is the single minimum-account statement. §4's sizing table and `TRACK_C.md`'s A43 table are genuinely
+untouched, as A45 rule 1 requires. The review also proved by mutation that the first test suite was a tautology:
+reading the level from the session's FIRST bar instead of its last, and understating required capital fourfold,
+both passed it. Three real checks were added and each mutant now fails.
+
+Gap that remains, stated plainly: this work makes the deliverable honest and correctly sized. It does not
+advance the mission. No long-only 0DTE mechanism in 45 pre-registered trials clears its cost, and the only large
+effect this programme measured is on the sell side of the 0DTE premium, which the account forbids.

@@ -253,33 +253,57 @@ def real_price_clause():
             f"session-minutes checked (`out/realopt_calibration.csv`). ")
 
 
-def contract_size_clause():
-    """Section 6 (D7): the 2%-ITM contract cost and minimum account, read from
-    `out/sizing_forward.csv` (`pipeline.units.sizing`) when the measured level is available, so
-    the dollar figures are anchored to the extended frame's own last regular-session close
-    instead of an assumed index level. Falls back to the original assumed-S wording (S = 6,500)
-    when the file is absent or empty -- reason given as "no measured level available", never the
-    retired "no post-2020 price file is present" claim (false since data/ext arrived
-    2026-09-13). The minimum account given here is the PRE-A45 convention at the 4% base limit,
-    explicitly labelled as such; A45 rule 1's own forward-sizing convention is §15, not restated
-    here (A45)."""
-    path = "out/sizing_forward.csv"
+def _csv_rows_or_none(path, filt=None):
+    """Read `path` and return the (optionally `filt`-filtered) DataFrame, or None when there is no
+    usable row: file missing, zero bytes, an unparsable CSV (`pd.errors.EmptyDataError`), or a
+    frame `filt` reduces to zero rows. A bare exists()/getsize() guard is not enough — a
+    header-only CSV (size > 0, zero data rows) is exactly the empty-output convention four sibling
+    fleet units (letf.py, realopt.py, eventvol.py, sellvol.py) already write in their own
+    no-data branch, and it still raises IndexError on the caller's `.iloc[0]`."""
     if not os.path.exists(path) or os.path.getsize(path) == 0:
-        return ("A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500 (S = 6,500 is an assumed current index "
-                "level, not measured here — no measured level available; every dollar figure scales linearly with S); "
-                "XSP is one tenth. At the base size (4% of account per trade, pre-A45 convention) one SPX contract needs "
-                "≈ $325k of account, one XSP contract ≈ $32.5k, one SPY contract ≈ $32.5k with the 15:55 exit. Max "
-                "positions per day: 2 (the two signals can coincide).")
-    sf = pd.read_csv(path)
-    pre4 = sf[(sf["convention"] == "pre_A45") & (sf["daily_limit_pct"] == 4.0)].iloc[0]
-    return (f"A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ ${pre4['cost_spx_usd']:,.0f} at the measured "
-            f"{pre4['level_date']} close S = {pre4['level_spx_pts']:,.2f} SPX-equivalent points "
+        return None
+    try:
+        df = pd.read_csv(path)
+    except pd.errors.EmptyDataError:
+        return None
+    if filt is not None:
+        df = filt(df)
+    return df if len(df) else None
+
+
+def contract_size_clause():
+    """Section 6 (D7): the 2%-ITM contract cost, read from `out/sizing_forward.csv`
+    (`pipeline.units.sizing`) when the measured level is available, so the dollar figures are
+    anchored to the extended frame's own last COMPLETE regular-session close instead of an assumed
+    index level. Falls back to the original assumed-S wording (S = 6,500) when the file is absent,
+    empty, or has no row -- reason given precisely: the post-May-2020 minute feed is absent
+    (`data/ext`, see DATA.md), never the false claim that no measured level exists when a stale
+    minute file (or a header-only daily parquet) is actually sitting there.
+
+    Per A45 rule 1, x = 1% of account equity per trade is the convention for every sizing figure
+    published after the amendment (2026-09-15); this section was recomputing a NEW minimum-account
+    figure at the OLD (pre-A45, 4%-of-equity) convention on every run, which is itself such a
+    figure. This section therefore STOPS publishing any minimum account: it states the measured
+    contract cost only (a market fact, not a sizing rule) and points to §15, the single place the
+    minimum account is stated, under the rule in force."""
+    sf = _csv_rows_or_none("out/sizing_forward.csv")
+    if sf is None:
+        return ("A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500 (an assumed current index level: "
+                "the post-May-2020 minute feed is absent, `data/ext`, see DATA.md, so no current level is measured "
+                "here and the figure falls back to this assumed S; every dollar figure scales linearly with S); XSP "
+                "and SPY are one tenth, SPY settled physically so its position is exited by 15:55, not held to the "
+                "close. The minimum account per contract for forward trading is given in §15 under A45 rule 1 (x = "
+                "1% of account equity per trade); the pre-A45 minimum account previously stated in this section is "
+                "superseded by that rule, not restated here. Max positions per day: 2 (the two signals can "
+                "coincide).")
+    row = sf.iloc[0]   # level and costs are identical on every row of this file (one measured level); any row will do
+    return (f"A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ ${row['cost_spx_usd']:,.0f} at the measured "
+            f"{row['level_date']} close S = {row['level_spx_pts']:,.2f} SPX-equivalent points "
             f"(`out/sizing_forward.csv`; every dollar figure scales linearly with S); XSP and SPY are one tenth "
-            f"(≈ ${pre4['cost_xsp_usd']:,.0f}). At the base size (4% of account per trade, PRE-A45 convention — A45 "
-            f"rule 1 raises the minimum account, see §15) one SPX contract needs ≈ ${pre4['min_account_spx_usd']:,.0f} "
-            f"of account, one XSP contract ≈ ${pre4['min_account_xsp_usd']:,.0f}, one SPY contract "
-            f"≈ ${pre4['min_account_spy_usd']:,.0f} with the 15:55 exit. Max positions per day: 2 (the two signals "
-            "can coincide).")
+            f"(≈ ${row['cost_xsp_usd']:,.0f}), SPY settled physically so its position is exited by 15:55, not held "
+            "to the close. The minimum account per contract for forward trading is given in §15 under A45 rule 1 "
+            "(x = 1% of account equity per trade); the pre-A45 minimum account previously stated in this section is "
+            "superseded by that rule, not restated here. Max positions per day: 2 (the two signals can coincide).")
 
 
 def realopt_caption(df):
@@ -388,21 +412,37 @@ def describe(label):
 
 
 # §15: the owner's 8-rule trading rulebook (ACCEPTANCE.md amendment A45), typed from the
-# amendment text (a contract, not a measured finding) -- never generated from out/.
-A45_RULES = [
-    {"#": 1, "rule": "Per-trade sizing (AMENDS the numeric budget): x = 1% of account equity per trade, "
-                     "N = floor(daily limit / x) full-loss attempts per day", "status": "NEW", "audit": "owner journal"},
-    {"#": 2, "rule": "No entries in the first 30 minutes (no entry before 10:00 ET)",
-     "status": "already in force", "audit": "pipeline"},
-    {"#": 3, "rule": "ITM-only strikes; no ATM or OTM contracts", "status": "already in force", "audit": "pipeline"},
-    {"#": 4, "rule": "No increase in size or trade frequency after a loss", "status": "NEW", "audit": "owner journal"},
-    {"#": 5, "rule": "Resting limit orders at the mid, not marketable orders", "status": "NEW",
-     "audit": "owner journal; not measurable until the no-live-execution non-goal is relaxed"},
-    {"#": 6, "rule": "Every rule and candidate is pre-registered and counted in the trial family before any run",
-     "status": "already in force", "audit": "pipeline"},
-    {"#": 7, "rule": "No trade taken only to satisfy a consistency or minimum-days rule", "status": "NEW", "audit": "owner journal"},
-    {"#": 8, "rule": "Unaudited prop-firm statistics are never used as facts", "status": "already in force", "audit": "pipeline"},
-]
+# amendment text (a contract, not a measured finding) -- never generated from out/, EXCEPT rule
+# 1's stated x, which is derived from out/sizing_forward.csv's own A45-convention x_pct column
+# (a45_rules() below) so the typed rule cannot silently drift from the generated sizing table it
+# sits above.
+def a45_rules(sf):
+    """The 8-rule table for §15. `sf` is `out/sizing_forward.csv` (or None, absent/empty) --
+    only rule 1's `x` is read from it (`x_pct` on its `A45`-convention rows, all identical by
+    construction); every other cell is a typed transcription of the amendment text, unchanged by
+    `sf`. A typed 1% default stands when `sf` is unavailable.
+
+    Rule 2's status cell states BOTH halves of ACCEPTANCE.md's own self-contradicting contract:
+    the A45 preamble lists rule 2 among those "already in force", but rule 2's own text calls
+    itself "NEW for the prop account" and names A42 E1 and A43 S1/S3 as registered candidates that
+    entered at 09:31, not 10:00. Silently picking one side would misstate the amendment; the other
+    seven rules' status/audit cells are faithful as typed and are unchanged here."""
+    a45_sz = sf[sf["convention"] == "A45"] if sf is not None and "convention" in sf else None
+    x_pct = float(a45_sz["x_pct"].iloc[0]) if a45_sz is not None and len(a45_sz) else 1.0
+    return [
+        {"#": 1, "rule": f"Per-trade sizing (AMENDS the numeric budget): x = {x_pct:g}% of account equity per trade, "
+                         "N = floor(daily limit / x) full-loss attempts per day", "status": "NEW", "audit": "owner journal"},
+        {"#": 2, "rule": "No entries in the first 30 minutes (no entry before 10:00 ET)",
+         "status": "already in force (A45 preamble); rule text marks it NEW for the prop account", "audit": "pipeline"},
+        {"#": 3, "rule": "ITM-only strikes; no ATM or OTM contracts", "status": "already in force", "audit": "pipeline"},
+        {"#": 4, "rule": "No increase in size or trade frequency after a loss", "status": "NEW", "audit": "owner journal"},
+        {"#": 5, "rule": "Resting limit orders at the mid, not marketable orders", "status": "NEW",
+         "audit": "owner journal; not measurable until the no-live-execution non-goal is relaxed"},
+        {"#": 6, "rule": "Every rule and candidate is pre-registered and counted in the trial family before any run",
+         "status": "already in force", "audit": "pipeline"},
+        {"#": 7, "rule": "No trade taken only to satisfy a consistency or minimum-days rule", "status": "NEW", "audit": "owner journal"},
+        {"#": 8, "rule": "Unaudited prop-firm statistics are never used as facts", "status": "already in force", "audit": "pipeline"},
+    ]
 
 
 def playbook():
@@ -719,17 +759,17 @@ def playbook():
         cap = flatten_caption(flatten)
         if cap:
             L += [cap, ""]
+    sf = _csv_rows_or_none("out/sizing_forward.csv")
     L += ["## 15. Trading rulebook in force (A45) — adopted 2026-09-15 (owner's option F)", "",
           "This is a contract the owner adopted, recorded in `ACCEPTANCE.md` amendment A45, not a measured finding; it "
           "governs how the signals above are traded, and every candidate registered after it must comply with rules 2 "
           "and 3 at registration time.", "",
           "The table below is typed from `ACCEPTANCE.md` amendment A45's own text, not generated from out/ — it is a "
-          "transcription of a contract, not a measured table.", "",
-          md(pd.DataFrame(A45_RULES)), ""]
-    sf_path = "out/sizing_forward.csv"
-    if os.path.exists(sf_path) and os.path.getsize(sf_path) > 0:
-        sf = pd.read_csv(sf_path)
-        a45_sz = sf[sf["convention"] == "A45"]
+          "transcription of a contract, not a measured table — except rule 1's stated x, read from "
+          "`out/sizing_forward.csv` when available so it cannot silently drift from the generated sizing table below it.", "",
+          md(pd.DataFrame(a45_rules(sf))), ""]
+    a45_sz = sf[sf["convention"] == "A45"] if sf is not None and "convention" in sf else None
+    if a45_sz is not None and len(a45_sz):
         r0 = a45_sz.iloc[0]
         L += [f"A45 forward-sizing table (rule 1), generated from `out/sizing_forward.csv`, anchored to the "
               f"{r0['level_date']} measured close (S = {r0['level_spx_pts']:,.2f} SPX-equivalent points):", "",
@@ -740,11 +780,12 @@ def playbook():
               "independently of the daily limit; the limit changes only how many full-loss attempts the day "
               "allows.", ""]
     else:
-        L += ["The measured level is unavailable (`out/sizing_forward.csv` is absent or empty), so the A45 "
-              "forward-sizing table is not produced.", ""]
-    L += ["Under A45 rule 1 the sizing table in §4 and the pre-A45 minimum account in §6 are NOT restated — they "
-          "remain labelled under the convention in force when they were computed; A45 rule 1 (x = 1% of equity per "
-          "trade) is the convention for forward trading.", ""]
+        L += ["The measured level is unavailable (`out/sizing_forward.csv` is absent, empty, or has no usable row), "
+              "so the A45 forward-sizing table is not produced.", ""]
+    L += ["§4's sizing table and `TRACK_C.md`'s A43 table are NOT restated and remain labelled under the convention "
+          "in force when they were computed. §6's pre-A45 minimum account has been RETIRED from §6 rather than "
+          "restated: A45 rule 1 (x = 1% of account equity per trade) governs any sizing figure published after the "
+          "amendment, and the table above is the single minimum-account statement for forward trading.", ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 

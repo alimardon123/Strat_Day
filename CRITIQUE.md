@@ -223,3 +223,28 @@ Round 8 confirmation (same judge, on commit ef2c113): **DONE** for A43 / Track C
 |---|---|
 | U3 self-audit: D6 rows in SCORECARD.md:26 and ASSESSMENT.md:54 carried the stale 33-trial count after A42/A43 raised the family to 42 — doc-lag class (see RETRO.md); fixed by an appended superseded-clause, not a rewrite. | FIXED |
 
+### Review round 1 (fresh-context reviewer, 2026-09-15): 13 defects in INVERSION.md, per u5_citation_audit.md
+
+| # | Finding | Disposition |
+|---|---|---|
+| D1 | Rule 8 cited an unsourced "FINRA 72%" figure; replaced with u2 §5's own two quoted UNVERIFIED examples ("5–10% pass"/"95% fail", FTMO "99.8%") and added a §1/file reference. | FIXED |
+| D2 | Row 6/Rule 2 wrongly credited `U2-S11` with the near-the-open timing claim (u2 §5 attributes it to S27) and wrongly claimed the programme "never fires at the open" (A42 E1, A43 S1/S3, A39 T2 all enter at 09:31); reattributed the citation and restated Rule 2 as NEW, not already-followed. | FIXED |
+| D3 | Row 5 stated "$241,000–$358,000/day" as an illegitimate range and row 3 invented a "Tuesday/Thursday-only" explanation with no source; replaced both with u5's resolution (two tagged figures from two paper versions, plus the $184,000/day original) and added u5 to §7 with its counts. | FIXED |
+| D4 | §5's n estimate mixed a full-window gate with shard-only option pricing; split into a PRIMARY (modelled pricing, full window) and SECONDARY (real-priced, shard sub-window) route, each with its own n, and dropped the "second selection" mischaracterization of counting gate triggers. | FIXED |
+| D5 | §5 undercounted the candidate as one trial; restated as three (main/mirror/timing fingerprint) per the A39 precedent, with corrected family totals (42→45 / 43→46) and DSR N. | FIXED |
+| D6 | Rule 1 read as if the prop account had no sizing rule; restated as a PROPOSED AMENDMENT naming the account's existing rule it would override (`ACCEPTANCE.md:108-112`, x=4%/N=1), and removed the own-account `TRACK_C.md:71` citation as prop-account status evidence in Rules 1 and 4. | FIXED |
+| D7 | Rules 1, 4, 5, 7 implied A44 measures owner-discretionary behaviour it structurally cannot observe; added a preamble stating these four are forward-journal-only and that Rule 5 additionally needs the no-live-execution non-goal relaxed first. | FIXED |
+| D8 | `U1-S21` and `U2-S08` are the same paper (SSRN 4682388) cited unmerged; added a merge line, cited both ids together in rows 1/3/4/18, and reported the $20bn-vs-$15bn dataset-size disagreement. | FIXED |
+| D9 | Rows 10–11 were labelled AVOID-ONLY for mechanisms this single-index account cannot structurally enact at all; reclassified NO with a "structurally inapplicable" reason, and updated the §1 and §6 counts to 3 YES / 11 AVOID-ONLY / 10 NO. | FIXED |
+| D10 | §5's gate used an unregistered 250-session warm-up instead of the programme's own ≥20-session A29 floor; switched to the A29 floor as the registered default, kept 250 as a labelled sensitivity only, and added a sentence noting the 11:00 entry time has no cited evidence behind it. | FIXED |
+| D11 | Several line citations were wrong (A39 T2 cited at T1's SCORECARD line, "FDR 0/42" citing `TRACK_C.md:71` instead of the line that actually states it, A42's "25 years" citing an unrelated `ACCEPTANCE.md` range); corrected each in place. | FIXED |
+| D12 | Rows 17/20 lacked a reason in the reachability cell, and rows 5/7/14/24 didn't name the branch file a completed test used; added both. | FIXED |
+| D13 | §7 undercounted u2's "what I could not verify" list at 6 items; corrected to 7, naming the missing item (S02's exact sample dates). | FIXED |
+
+Root cause noted on D1: the "FINRA 72%" clause did not originate in any evidence file. It entered
+`INVERSION.md` via the orchestrator's synthesis spec, itself relaying the U2 agent's verbal report,
+and was never grounded in `u1_retail_failures.md`, `u2_0dte_prop.md`, or `u3_self_audit.md`. This is
+the same failure class already logged in `RETRO.md:40` ("a close-out claim outran the diff") —
+here, a synthesis instruction outran the evidence file rather than a close-out claim outrunning a
+code diff, but it is the identical "claim outran the evidence" pattern.
+

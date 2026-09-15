@@ -164,4 +164,5 @@
 ## 2026-09-15 — Inversion research delivered; two doc-lag edits fixed
 - `INVERSION.md` added: synthesis of `notes/inversion/u1_retail_failures.md`, `u2_0dte_prop.md`, `u3_self_audit.md` (failure-mode taxonomy, our own record, a stop-doing rulebook, one LOW-prior candidate).
 - SCORECARD.md:26 and ASSESSMENT.md:54 (D6 rows): appended " — family count superseded: 42 since A43 (SCORECARD.md §Track C; TRACK_C.md:71; ACCEPTANCE.md A42/A43)" to each, per the CRITIQUE.md inversion-research-audit finding; the stale "33 trials" text was left in place, not rewritten.
+- review round 1: 13 defects fixed (D1–D13), see CRITIQUE.md.
 

@@ -45,36 +45,42 @@ Duplicates merged across the two files (named so nothing is silently double-coun
   `U2-S07`, `U2-S31` (row 1).
 - No-overnight mandate discarding the overnight return component: U2's §2b item 3 and its §3 Rule 6
   both cite `U2-S18` for the same overnight/intraday split (row 21).
+- Retail option-trade anatomy: `U1-S21` and `U2-S08` are the *same paper* (Bogousslavsky & Muravyev
+  2024, "An Anatomy of Retail Option Trading," SSRN id 4682388) cited under different ids in the two
+  files (rows 1, 3, 4, 18, cited together below). The two files disagree on the dataset's headline
+  size — U1 states "~$20 billion," U2 states "$15bn" — reported here as a disagreement, per the
+  introduction's promise above that where U1 and U2 disagree on a number for the same underlying
+  source, both values are reported.
 
 | # | Failure mode | Class | Strongest quantified evidence | Who profits and through what channel | The inverse, mechanism-shaped | Reachable under the constraint? | Already tested here? | Testable on branch data? |
 |---|---|---|---|---|---|---|---|---|
-| 1 | Bid-ask spread captured by market makers/wholesalers when retail crosses the spread; adverse selection on marketable orders | structural-cost | avg. 12.6% bid-ask spread on retail-preferred cheap/short-dated options (`U2-S01`); "virtually all" Taiwanese retail losses traced to aggressive orders, 3.8pp/yr aggregate penalty (`U1-S5`); avg. option trade −0.93% vs 3.7% typical spread (`U1-S21`) | Wholesalers (~90% of options PFOF to 3 firms, `U2-S01`) and brokers via PFOF rebates (28–42.7¢/100 shares, `U2-S31`); execution timing recovers only ~25% of the naive cost (`U2-S07`) | Continuously quote both sides and warehouse/hedge the resulting inventory | AVOID-ONLY — full capture requires being the intermediary/market maker (SELLING); resting limit orders at the mid can reduce, not capture, the cost | no — this programme has never tested being a liquidity provider | no data — option shards (`data/ext/spy_0dte_1min_2024/2025/2026.csv.gz`) are trade prints only, no bid/ask quotes (U3 §C) |
+| 1 | Bid-ask spread captured by market makers/wholesalers when retail crosses the spread; adverse selection on marketable orders | structural-cost | avg. 12.6% bid-ask spread on retail-preferred cheap/short-dated options (`U2-S01`); "virtually all" Taiwanese retail losses traced to aggressive orders, 3.8pp/yr aggregate penalty (`U1-S5`); avg. option trade −0.93% vs 3.7% typical spread (`U1-S21`/`U2-S08`) | Wholesalers (~90% of options PFOF to 3 firms, `U2-S01`) and brokers via PFOF rebates (28–42.7¢/100 shares, `U2-S31`); execution timing recovers only ~25% of the naive cost (`U2-S07`) | Continuously quote both sides and warehouse/hedge the resulting inventory | AVOID-ONLY — full capture requires being the intermediary/market maker (SELLING); resting limit orders at the mid can reduce, not capture, the cost | no — this programme has never tested being a liquidity provider | no data — option shards (`data/ext/spy_0dte_1min_2024/2025/2026.csv.gz`) are trade prints only, no bid/ask quotes (U3 §C) |
 | 2 | Retail overpays implied volatility ahead of scheduled events that don't fully materialize | behavioural + statistical-method | retail options losses of 5–9% (10–14% for high-expected-volatility announcements) around single-stock earnings (`U2-S02`) | Pre-event vega/theta sellers (option writers, often market makers laying off risk) who collect the gap between elevated IV and realized vol | Be short vega into the event and hold through the event window | NO — requires SELLING and typically OVERNIGHT | A42 E1/E3, killed: daily straddle loses 7.0% of premium, non-FOMC 13:30 straddle loses 17.2% — same direction as `U2-S02`'s overpaying story, from the buyer's side (`SCORECARD.md:78-79`; `ASSESSMENT.md:124-129`) | yes — `data/ext/spy_0dte_1min_2024/2025/2026.csv.gz` (already used, A42) |
-| 3 | Aggregate 0DTE retail losses are large and persistent (headline dollar figures disagree between the two files) | product-design | "$358,000 a day" since May 2022, >$125M cumulative, via Bloomberg coverage of Beckmeyer/Branger/Gayda (`U1-S20`) **vs.** "$241,000 on an average day," Feb 2021–Sept 2023, same SSRN working paper 4404704 (`U2-S03`) — BOTH values reported; U1's figure is specifically the post-May-2022, all-weekday-0DTE period while U2's window spans the earlier Tuesday/Thursday-only period too, so this may reflect different draft versions or different sample sub-windows of the same paper; neither is picked as authoritative here. Also: 0DTE trades underperform non-0DTE by 4.7pp, t=−10 (`U1-S21`) | The premium seller/wholesaler on the other side of the buy flow | Sell/write the 0DTE contracts retail is documented buying | NO — requires SELLING | consistent direction with A42 (buyer loses 7.0–17.2% of premium, `SCORECARD.md:78-79`) and A43 (seller side FAILS on cost, `SCORECARD.md:85-89`) | yes — `data/ext/spy_0dte_1min_2024/2025/2026.csv.gz` |
-| 4 | Long-only 0DTE buying is the minority pattern; documented "sophisticated" SPX 0DTE retail flow is dominated by short-premium, defined-risk structures | product-design + behavioural | 95% of SPX 0DTE retail trades use capped-risk strategies, >50% of notional is multi-leg, dominant strategies are short verticals/iron condors "rather than long-call lottery bets" (`U2-S11`); typical retail trade is a 1-day SPY call held ~1 hour with no evidence of compensating positive skew (`U2-S08`) | Whoever is short when the option expires worthless — the premium seller, market maker, or another retail trader running the opposite structure | Sell/write defined-risk multi-leg spreads (short verticals, iron condors/butterflies) | NO — requires SELLING and SPREADS | YES, directly — A43 (Track C) tests exactly this structure; S1/S2/S3 all FAIL at $0.10/leg (`SCORECARD.md:85-89`; `TRACK_C.md:55-67`) | yes — already tested (`data/ext/spy_0dte_1min` shards) |
-| 5 | Theta/time-decay acceleration compressed into the final session hours | structural-cost + risk-management | $241,000–$358,000/day aggregate 0DTE loss in an instrument whose full remaining time value decays within one session (`U1-S20` / `U2-S03`); a purpose-built ultra-short-tenor pricing model is needed because off-the-shelf models misstate the decay path (`U2-S05`) | The option writer, who collects the full decay whenever the underlying fails to move enough, fast enough | Be short the option (the writer), collecting decay | NO — requires SELLING | YES on both sides — A42 (buyer, confirms decay drag) and A43 (seller, FAILS on cost) (`SCORECARD.md:78-79`, `85-89`) | yes — already tested |
-| 6 | Trading concentrated at the market open, the session's widest effective spreads | behavioural + structural | retail options trades "cluster near market opens," with worse performance and more negative overnight returns than institutions (`U2-S27`); 58–77% of SPX 0DTE retail notional is complex orders commonly entered near the open (`U2-S11`) | Liquidity providers quoting their widest effective spreads at the open, capturing more spread on open-clustered orders | Be the compensated liquidity provider (quote/be short optionality) at the open | AVOID-ONLY — capturing the spread requires SELLING/being the intermediary; the account can avoid entering at the open | indirectly — A39 T2 (09:31 entry, +0.12 pts) underperforms T1 (10:00 entry, +2.20 pts) (`SCORECARD.md:53`); the programme's own entries (10:00/13:00/15:00/15:30) never fire at the open | partially — entry-timing effect testable on branch minute+option data; effective-spread widening itself needs quote data (no data) |
-| 7 | Lottery/skewness preference in security selection (buying positively-skewed, lottery-like payoffs) | behavioural | investors overweighting lottery-type stocks "typically earned 2 to 3 percent less than other investors" (`U1-S11`) | Deadweight loss from overpaying for skewness, plus whoever sells/issues the overpriced lottery-like security | Sell/short the overpriced skew | AVOID-ONLY — capturing the premium requires SELLING; the account can avoid instruments chosen for skew/lottery appeal | YES — the programme committed and then killed exactly this mistake: ATM 0DTE 17% win rate at −53%/trade; OTM median −50.6% vs ITM median −20.9%; killed, codified as a permanent non-goal (`research/CLAUDE.md:59,210`; `ACCEPTANCE.md:118`) | yes — already tested (pre-2020 Oanda feed / Thread A it22, Thread B step15) |
+| 3 | Aggregate 0DTE retail losses are large and persistent (headline dollar figures disagree between the two files) | product-design | "$358,000 a day" since May 2022, >$125M cumulative, via Bloomberg coverage of Beckmeyer/Branger/Gayda (`U1-S20`) and "$241,000 on an average day," Feb 2021–Sept 2023, same SSRN working paper 4404704 (`U2-S03`) — both real numbers, but different statistics, not a draft-version guess: per the independent citation audit (`notes/inversion/u5_citation_audit.md`), $358,000/day is the post-16-May-2022 subsample, present in both the paper's March-2023 original and its Dec-2023 revision; $241,000/day is the whole-sample figure of the Dec-2023 revision (Feb 2021–Sept 2023); the March-2023 original's own whole-sample figure was $184,000/day. Each figure is tagged to its own window/version here; none is picked as more authoritative. Also: 0DTE trades underperform non-0DTE by 4.7pp, t=−10 (`U1-S21`/`U2-S08`) | The premium seller/wholesaler on the other side of the buy flow | Sell/write the 0DTE contracts retail is documented buying | NO — requires SELLING | consistent direction with A42 (buyer loses 7.0–17.2% of premium, `SCORECARD.md:78-79`) and A43 (seller side FAILS on cost, `SCORECARD.md:85-89`) | yes — `data/ext/spy_0dte_1min_2024/2025/2026.csv.gz` |
+| 4 | Long-only 0DTE buying is the minority pattern; documented "sophisticated" SPX 0DTE retail flow is dominated by short-premium, defined-risk structures | product-design + behavioural | 95% of SPX 0DTE retail trades use capped-risk strategies, >50% of notional is multi-leg, dominant strategies are short verticals/iron condors "rather than long-call lottery bets" (`U2-S11`); typical retail trade is a one-day S&P 500 index call held ~1 hour with no evidence of compensating positive skew (`U1-S21`/`U2-S08`) | Whoever is short when the option expires worthless — the premium seller, market maker, or another retail trader running the opposite structure | Sell/write defined-risk multi-leg spreads (short verticals, iron condors/butterflies) | NO — requires SELLING and SPREADS | YES, directly — A43 (Track C) tests exactly this structure; S1/S2/S3 all FAIL at $0.10/leg (`SCORECARD.md:85-89`; `TRACK_C.md:55-67`) | yes — already tested (`data/ext/spy_0dte_1min` shards) |
+| 5 | Theta/time-decay acceleration compressed into the final session hours | structural-cost + risk-management | $241,000/day aggregate 0DTE loss (whole-sample, Feb 2021–Sept 2023, `U2-S03`; see row 3 and `notes/inversion/u5_citation_audit.md` for the window/version tagging of this figure) in an instrument whose full remaining time value decays within one session; a purpose-built ultra-short-tenor pricing model is needed because off-the-shelf models misstate the decay path (`U2-S05`) | The option writer, who collects the full decay whenever the underlying fails to move enough, fast enough | Be short the option (the writer), collecting decay | NO — requires SELLING | YES on both sides — A42 (buyer, confirms decay drag) and A43 (seller, FAILS on cost) (`SCORECARD.md:78-79`, `85-89`) | yes — already run, on `data/ext/spy_0dte_1min_2024/2025/2026.csv.gz` (A42/A43) |
+| 6 | Trading concentrated at the market open, the session's widest effective spreads | behavioural + structural | retail options trades "cluster near market opens," with worse performance and more negative overnight returns than institutions (`U2-S27`; mini-options data, u2's own caveat at u2:99); 58–77% of SPX 0DTE retail notional is complex orders (`U2-S11`) — U2 §5 (u2:228) attributes the near-the-open timing claim to S27, not S11; S11 supports only the complex-order-share statistic | Liquidity providers quoting their widest effective spreads at the open, capturing more spread on open-clustered orders | Be the compensated liquidity provider (quote/be short optionality) at the open | AVOID-ONLY — capturing the spread requires SELLING/being the intermediary; the account can avoid entering at the open | indirectly — A39 T2 (09:31 entry, +0.12 pts, `SCORECARD.md:54`) underperforms T1 (10:00 entry, +2.20 pts, `SCORECARD.md:53`); but "never fires at the open" is false — A42 E1 (`SCORECARD.md:78`), A43 S1/S3 (`SCORECARD.md:85,87`) and A39 T2 itself all enter at 09:31; only A39 T1 and A44 avoid the open by design | partially — entry-timing effect testable on branch minute+option data; effective-spread widening itself needs quote data (no data) |
+| 7 | Lottery/skewness preference in security selection (buying positively-skewed, lottery-like payoffs) | behavioural | investors overweighting lottery-type stocks "typically earned 2 to 3 percent less than other investors" (`U1-S11`) | Deadweight loss from overpaying for skewness, plus whoever sells/issues the overpriced lottery-like security | Sell/short the overpriced skew | AVOID-ONLY — capturing the premium requires SELLING; the account can avoid instruments chosen for skew/lottery appeal | YES — the programme committed and then killed exactly this mistake: ATM 0DTE 17% win rate at −53%/trade; OTM median −50.6% vs ITM median −20.9%; killed, codified as a permanent non-goal (`research/CLAUDE.md:59,210`; `ACCEPTANCE.md:118`) | yes — already run, on `data/raw/oanda_SPX500_USD.parquet` (pre-2020 Oanda feed; Thread A it22, Thread B step15) |
 | 8 | Disposition effect: selling winners early, holding losers too long | behavioural | investors "1.5 to 2 times more likely to sell winning stocks than losers" (`U2-S25`); strong preference for realizing winners over losers, costly after tax (`U1-S3`); resulting underreaction yields "monthly alphas of over 200 basis points" to those trading against it (`U1-S19`) | Momentum-style traders who exploit the predictable underreaction (`U1-S19`); the tax authority in the taxable-account version | Hold through the multi-week/month drift window and take the other side of the underreaction | NO — requires OVERNIGHT (multi-week hold) and SELLING (short leg); the account's same-day-exit mandate also makes it structurally unable to commit this mistake | no | no data — needs per-position unrealized-gain tracking across a multi-day hold and event/news flags not held on the branch |
 | 9 | Overconfidence-driven overtrading; turnover erodes returns | behavioural | most-active-trading households earned 11.4%/yr vs 17.9% market return (`U1-S1`); 93% of >1 crore Indian equity F&O traders lost money FY22–FY24, aggregate losses >₹1.8 lakh crore (`U2-S26`); bought stocks underperform sold stocks by ~3.3pp (`U1-S4`) | Brokers (commissions/fees) and market makers/liquidity providers capturing spread on every extra round-trip | Be the fee-collecting intermediary or standing liquidity provider on someone else's round-trips | AVOID-ONLY — the winning role is structurally an intermediary, not a peer trader; the account's own 0DTE/no-overnight mandate forces a full round-trip every trading day regardless (`U2` §2b item 1 caveat) | no — not tested as a hypothesis; the round-trip cost is unavoidable by design | no data — no counterparty-identification data on the branch's trade-only shards |
-| 10 | Attention-/sentiment-driven buying (chasing high-attention names) | behavioural | intense Robinhood buying forecasts −4.7% average 20-day abnormal returns for the day's most-bought names (`U1-S13` / `U2-S24`); sensation-seeking/overconfident investors trade more with no performance gain (`U1-S12`) | Sellers into the attention-driven spike (informed holders, market makers unwinding inventory) | Short into the attention spike and hold ~20 trading days | AVOID-ONLY — capturing the reversal requires SELLING and OVERNIGHT; the account can avoid chasing high-attention names | no | no data — no per-name attention/volume-spike flags on the branch; also an equities/SHARES finding, not options |
-| 11 | Correlated ("herding") retail order flow | behavioural | 37,000 German retail investors tend to be "on the same side of the market" over the same day/week/month/quarter; correlated flow predicts subsequent returns (`U1-S17`) | Institutional/informed counterparties who anticipate or trade against the correlated flow | Trade against a cohort's correlated flow, holding up to a quarter | AVOID-ONLY — capturing the profit requires OVERNIGHT (multi-day to multi-month); the account can independently avoid herding into its own signal choices | no | no data — no retail order-imbalance data on the branch |
+| 10 | Attention-/sentiment-driven buying (chasing high-attention names) | behavioural | intense Robinhood buying forecasts −4.7% average 20-day abnormal returns for the day's most-bought names (`U1-S13` / `U2-S24`); sensation-seeking/overconfident investors trade more with no performance gain (`U1-S12`) | Sellers into the attention-driven spike (informed holders, market makers unwinding inventory) | Short into the attention spike and hold ~20 trading days | NO — structurally inapplicable: single index underlying / equities-shares finding (no per-name selection is possible on a single-index 0DTE account, and capturing the reversal would in any case require SELLING and OVERNIGHT) | no | no data — no per-name attention/volume-spike flags on the branch; also an equities/SHARES finding, not options |
+| 11 | Correlated ("herding") retail order flow | behavioural | 37,000 German retail investors tend to be "on the same side of the market" over the same day/week/month/quarter; correlated flow predicts subsequent returns (`U1-S17`) | Institutional/informed counterparties who anticipate or trade against the correlated flow | Trade against a cohort's correlated flow, holding up to a quarter | NO — structurally inapplicable: single index underlying / equities-shares finding (a single account has no cohort to trade against or independently of, and capturing the profit would in any case require OVERNIGHT, multi-day to multi-month) | no | no data — no retail order-imbalance data on the branch |
 | 12 | Wealth transfer from small to large/informed households in bubble-crash cycles | behavioural | in China's 2014–15 bubble-crash, the top 0.5% of households gained while the bottom 85% lost 250B RMB, 30% of either group's initial equity wealth (`U1-S18`) | Large, well-capitalized households selling into the peak and/or buying the trough | Be a large household holding equity positions through weeks/months of the cycle | NO — requires SHARES and OVERNIGHT | no | no data — single-country administrative account data, not held on the branch |
 | 13 | Excess leverage / leveraged-product (CFD, retail FX) design amplifies losses | structural + risk-management + product-design | 2010 US FX leverage cap alleviated high-leverage traders' losses by 40% (`U1-S10` / `U2-S19`); EU CFD leverage cut 30:1→2:1; 74–89% of retail CFD accounts lose, avg loss €1,600–€29,000 (`U1-S15` / `U2-S20`); UK FCA: 82% of CFD clients lose, avg £2,200 (`U1-S16`) | Brokers/CFD dealers, often acting as principal counterparty, whose economics scale with client leverage and volume | Be the dealer/broker acting as principal counterparty to leveraged clients | AVOID-ONLY — capturing this requires being the intermediary/dealer; the account's own daily loss limit (3–5%, `ACCEPTANCE.md:9-12`) already targets the same over-leverage mechanism without selling, overnight holds, or shares | structural — the programme's numeric budget already sizes positions by "daily loss limit ÷ worst-trade loss" (`ACCEPTANCE.md:108`); not a separate trial | no data — design constraint, not an empirical trial |
-| 14 | Persistent day-trading unprofitability; only a tiny minority is skilled | statistical-method | 97% of Brazilian futures day traders who persisted >300 days lost money, only 1.1% beat minimum wage (`U1-S8`); <1% of Taiwanese day traders predictably profitable, 80% quit within 2 years (`U1-S7`); top 500 ranked Taiwanese day traders earn +37.9bps/day after fees vs bottom −28.9bps/day (`U1-S6`); ~2x as many US day traders lose as win, ~20% "more than marginally profitable" (`U1-S9`) | The small, persistent skilled minority, at the expense of the much larger unprofitable population | Be in the <1%–20% with a genuine, persistent forecasting edge | YES in principle — a property of the strategy's own forecasting ability, not of selling/overnight/shares; base-rate evidence says such capability is rare | this programme's entire 42-trial ledger (family-wide FDR 0/42 pass, `ACCEPTANCE.md:409`; `TRACK_C.md:71`) is itself evidence against finding one easily here | already the substance of every prior trial (U3 §A); no distinct new test needed |
+| 14 | Persistent day-trading unprofitability; only a tiny minority is skilled | statistical-method | 97% of Brazilian futures day traders who persisted >300 days lost money, only 1.1% beat minimum wage (`U1-S8`); <1% of Taiwanese day traders predictably profitable, 80% quit within 2 years (`U1-S7`); top 500 ranked Taiwanese day traders earn +37.9bps/day after fees vs bottom −28.9bps/day (`U1-S6`); ~2x as many US day traders lose as win, ~20% "more than marginally profitable" (`U1-S9`) | The small, persistent skilled minority, at the expense of the much larger unprofitable population | Be in the <1%–20% with a genuine, persistent forecasting edge | YES in principle — a property of the strategy's own forecasting ability, not of selling/overnight/shares; base-rate evidence says such capability is rare | this programme's entire 42-trial ledger (family-wide FDR 0/42 pass, `SCORECARD.md:89`; family count established at `ACCEPTANCE.md:409`) is itself evidence against finding one easily here | already run — across every branch dataset in U3 §C (e.g. `data/ext/spx_1min_2020-05_2026-09.csv.gz`); no distinct new test needed |
 | 15 | Belief in a harvestable dealer short-gamma edge that index-level evidence does not support (myth-correction) | statistical-method + risk-management | "high open interest gamma in 0DTEs does not propagate past volatility"; 0DTE volume shocks "do not amplify recent past index returns" (`U2-S04`); "no uptick in intraday gap moves," "market maker net exposure is fairly negligible" (`U2-S12`, Cboe-authored — flagged with a commercial conflict-of-interest caveat) | No one systematically — a myth-correction, not a wealth transfer, at the SPX index level | Not applicable — no reachable winning side is demonstrated at the index level | NO — no reachable side shown to exist | no — codified as a non-goal: "No GEX / dealer-positioning filters — no positioning data obtainable" (`ACCEPTANCE.md:119`) | no data — no GEX/dealer-positioning data obtainable; explicit non-goal |
 | 16 | Prop-firm daily loss limit mechanically caps the number of full-loss 0DTE attempts per day | risk-management + structural (DERIVED) | N = floor(D/x); at D=4% daily limit and x=1%/trade, N=4 consecutive full-loss buys ends the day regardless of a later setup's quality (U2 §3 Rule 1 arithmetic); daily drawdown "typically 4–5%" across firms (`U2-S30`) | No specific counterparty — the "winner" is whoever is not subject to the constraint | None required beyond arithmetic; the actionable response is disciplined per-trade sizing | AVOID-ONLY — the constraint cannot be occupied or captured, only managed around | no — informs the proposed §4 rule, not yet an adopted account rule | no data needed — arithmetic (N=floor(D/x)), not an empirical trial |
-| 17 | Trailing drawdown ratchets the risk budget tighter after every intraday gain | structural (DERIVED) | $100,000 account, 5% trailing max drawdown on intraday equity: a $3,000 intraday gain raises the floor to $98,000, so a reversal to $97,800 breaches the rule though the day's loss vs. the $100,000 starting balance is only 2.2% (U2 §3 Rule 2 arithmetic; `U2-S30`) | No specific counterparty — a mechanical consequence of the floor definition | None required — purely mechanical | AVOID-ONLY | no | no data needed — arithmetic illustration only |
-| 18 | Prop-firm consistency rules mechanically mismatch a convex, fat-tailed 0DTE payoff | structural (DERIVED) | example: 10 days, +$1,000 total profit, $700 from one large-move day → Consistency% = 70%, breaching even a lenient 50% cap (U2 §3 Rule 3 arithmetic; caps "usually 15–50%" per `U2-S30`); built on the capped-risk/multi-leg composition of "sophisticated" 0DTE flow (`U2-S11`) and the largely single-leg, short-duration shape of the typical retail trade (`U2-S08`) | The firm, which gates the payout on the ratio | None required — a structural mismatch between payoff shape and rule design | AVOID-ONLY — avoid manufacturing trades to satisfy the ratio | no | no data — depends on the owner's specific prop-firm rule set (not specified); arithmetic illustration only |
+| 17 | Trailing drawdown ratchets the risk budget tighter after every intraday gain | structural (DERIVED) | $100,000 account, 5% trailing max drawdown on intraday equity: a $3,000 intraday gain raises the floor to $98,000, so a reversal to $97,800 breaches the rule though the day's loss vs. the $100,000 starting balance is only 2.2% (U2 §3 Rule 2 arithmetic; `U2-S30`) | No specific counterparty — a mechanical consequence of the floor definition | None required — purely mechanical | AVOID-ONLY — no counterparty position to capture, only a mechanical rule to manage around | no | no data needed — arithmetic illustration only |
+| 18 | Prop-firm consistency rules mechanically mismatch a convex, fat-tailed 0DTE payoff | structural (DERIVED) | example: 10 days, +$1,000 total profit, $700 from one large-move day → Consistency% = 70%, breaching even a lenient 50% cap (U2 §3 Rule 3 arithmetic; caps "usually 15–50%" per `U2-S30`); built on the capped-risk/multi-leg composition of "sophisticated" 0DTE flow (`U2-S11`) and the largely single-leg, short-duration shape of the typical retail trade (`U1-S21`/`U2-S08`) | The firm, which gates the payout on the ratio | None required — a structural mismatch between payoff shape and rule design | AVOID-ONLY — avoid manufacturing trades to satisfy the ratio | no | no data — depends on the owner's specific prop-firm rule set (not specified); arithmetic illustration only |
 | 19 | Evaluation ("challenge") fee economics are negative-EV for the typical entrant | structural (DERIVED) | avg. spend $800/account across ~3 challenges; 14% pass; ~7% of all entrants ever get a payout; avg payout 4% of plan size → expected payout ≈ $70–$280 vs $800 spent, roughly −65% to −91% EV (`U2-S16`); FTMO discloses >$450M cumulative payouts but not entrant counts, so this arithmetic cannot be replicated for FTMO specifically (`U2-S17`) | The firm collecting challenge-fee revenue from the ~93% of accounts that never earn a payout | Be the firm collecting the fees | AVOID-ONLY — avoid paying into a negative-EV challenge product and avoid treating its pass-rate statistics as evidence | no | no data — single non-audited vendor dataset (`U2-S16`); treated as non-evidence, see §4 Rule 8 |
-| 20 | Minimum-trading-days / inactivity rules force trades that satisfy a day-count, not an opportunity | structural | "most firms require 5–10 trading days" to pass; some funded accounts void with no trade in a rolling 30-day window (`U2-S30`) | The firm (more qualifying days/fee cycles) | None required — a self-imposed activity requirement | AVOID-ONLY | no | no data — depends on a specific firm's rules, not specified |
+| 20 | Minimum-trading-days / inactivity rules force trades that satisfy a day-count, not an opportunity | structural | "most firms require 5–10 trading days" to pass; some funded accounts void with no trade in a rolling 30-day window (`U2-S30`) | The firm (more qualifying days/fee cycles) | None required — a self-imposed activity requirement | AVOID-ONLY — no counterparty position to capture, only a self-imposed rule to avoid triggering by not trading purely to satisfy a day-count | no | no data — depends on a specific firm's rules, not specified |
 | 21 | No-overnight / 0DTE-only mandate discards the overnight return component of documented strategies entirely | structural | across 14 equity strategies, returns are earned "either entirely overnight... or entirely intraday," typically with opposite signs (`U2-S18`) | Whoever holds the exposure through the specific period (overnight or intraday) carrying the compensated component | Hold through the close-to-open gap | NO — requires OVERNIGHT, explicitly forbidden (`ACCEPTANCE.md:9-12`) | structural — every trial on this branch is same-day by construction; this is the account's own defining rule, not a separate test | no data needed / moot — testing would require holding overnight, forbidden by the mandate itself |
 | 22 | Loss-chasing / revenge trading after a losing streak (bigger size, more frequency) | behavioural | after a losing streak, traders "increase position size" and "increase how frequently they trade" (`U2-S29`, SURVEY-grade, not peer-reviewed) | Whoever is counterparty on the incremental, lower-quality trades — the writer/wholesaler collecting extra spread and decay | Be "the house" on the extra flow generated by someone else's tilt | AVOID-ONLY — capturing it requires SELLING/market-making; the account can simply not increase size or frequency after losses | no — but A43's registered sizing (fixed 4% of a FIXED $100,000 account, recomputed fresh each day, never compounded) already structurally prevents size escalation (`TRACK_C.md:71`) | no data — behavioural sequences not held; the programme's own sizing rule already avoids this by construction |
 | 23 | Position sizing without a ruin constraint (Kelly criterion / variance drag): oversizing destroys compounded growth despite positive per-trade expectancy | statistical-method + risk-management | DERIVED example: a +25%/trade average-expectancy bet (50% win 1.5x, 50% lose 1.0x) sized at a fixed 75% of capital per trade has expected geometric growth ≈ −31.6% per trade — capital shrinks toward zero despite positive simple expectancy (`U2-S28`, theory) | No specific counterparty — capital is destroyed by compounding volatility itself; in a prop context it transfers to the firm via forfeited fees | None required — a mathematical property of geometric compounding, not a someone-must-sell mechanism | YES — pure position-sizing discipline, no forbidden mechanism | consistent with — A43's sizing rule already recomputes contracts fresh each day at a fixed % of a fixed account base, never compounded (`TRACK_C.md:71`) | no data needed — arithmetic/theory, already reflected in the programme's own sizing convention |
-| 24 | Strategy-hopping / indicator overfitting after losing stretches (data-snooping) | statistical-method | of 95 "modern" technical-trading studies, 56 positive / 20 negative / 19 mixed, with data-snooping flagged as pervasive (`U2-S21`); the best of ~7,846 DJIA trading rules fails out-of-sample once data-snooping is corrected for (`U2-S22`) | Brokers/exchanges (extra fees/spread from extra volume) and indicator/signal vendors | None required — a pure statistical-inference failure, not a counterparty mechanism | YES — avoidable via pre-registration discipline; already practiced here | YES, directly — A37 measures PBO of the D1 selection itself: 0.73 (`SCORECARD.md:39`; `ACCEPTANCE.md:200-209`); fixed pre-registration and family-wide BH-FDR guards exist specifically for this (U3 §B rows 1–3) | already tested (A37; U3 §B rows 1–3) |
+| 24 | Strategy-hopping / indicator overfitting after losing stretches (data-snooping) | statistical-method | of 95 "modern" technical-trading studies, 56 positive / 20 negative / 19 mixed, with data-snooping flagged as pervasive (`U2-S21`); the best of ~7,846 DJIA trading rules fails out-of-sample once data-snooping is corrected for (`U2-S22`) | Brokers/exchanges (extra fees/spread from extra volume) and indicator/signal vendors | None required — a pure statistical-inference failure, not a counterparty mechanism | YES — avoidable via pre-registration discipline; already practiced here | YES, directly — A37 measures PBO of the D1 selection itself: 0.73 (`SCORECARD.md:39`; `ACCEPTANCE.md:200-209`); fixed pre-registration and family-wide BH-FDR guards exist specifically for this (U3 §B rows 1–3) | already run — `data/raw/oanda_SPX500_USD.parquet` (A37's PBO diagnostic on the D1 ranking, `out/pbo.csv`); U3 §B rows 1–3 |
 
-Of the 24 merged failure modes: **3 are YES** (rows 14, 23, 24), **13 are AVOID-ONLY** (rows 1, 6,
-7, 9, 10, 11, 13, 16, 17, 18, 19, 20, 22), and **8 are NO** (rows 2, 3, 4, 5, 8, 12, 15, 21). None of
+Of the 24 merged failure modes: **3 are YES** (rows 14, 23, 24), **11 are AVOID-ONLY** (rows 1, 6,
+7, 9, 13, 16, 17, 18, 19, 20, 22), and **10 are NO** (rows 2, 3, 4, 5, 8, 10, 11, 12, 15, 21). None of
 the three YES rows describes an exploitable market-side effect: two of them (position sizing and
 avoiding overfitting) are internal risk-management/statistical disciplines this programme already
 follows, and the third (a genuine forecasting capability) is a property this account has not
@@ -163,11 +169,14 @@ side of several of them, though largely by design constraint rather than demonst
   loss limit divided by the worst-trade loss in % of premium, denominated on the worst day of the
   combined book (`ACCEPTANCE.md:108`) — the same discipline §1 rows 13/16/23 describe as the
   reachable inverse of leverage-amplified and unconstrained-sizing losses.
-- **It entered at 10:00, not 09:31.** A39's own timing fingerprint shows T2 (09:31 entry, +0.12 pts)
-  underperforming T1 (10:00 entry, +2.20 pts) (`SCORECARD.md:53`), consistent in direction with
-  U2's open-cluster spread evidence (`U2-S27`, `U2-S11`, §1 row 6) that the market's widest effective
-  spreads sit at the open — though this programme never tested the spread-widening mechanism
-  itself, only the resulting timing fingerprint.
+- **A39 T1 and A44 enter at 10:00, not 09:31 — but that is not a programme-wide rule.** A39's own
+  timing fingerprint shows T2 (09:31 entry, +0.12 pts, `SCORECARD.md:54`) underperforming T1
+  (10:00 entry, +2.20 pts, `SCORECARD.md:53`) — a deliberate fingerprint test, not evidence the
+  programme avoids the open generally: A42 E1 (`SCORECARD.md:78`) and A43 S1/S3 (`SCORECARD.md:85,87`),
+  both sell-side/own-account tests, entered at 09:31 on purpose. The T1/T2 contrast is consistent in
+  direction with U2's open-cluster spread evidence (`U2-S27`, §1 row 6) that the market's widest
+  effective spreads sit at the open — though this programme never tested the spread-widening
+  mechanism itself, only the resulting timing fingerprint.
 
 It is also worth stating plainly, with U3 references, where the largest measured effect in this
 programme actually sits: the single largest number in the whole ledger is on the sell side, and it
@@ -186,57 +195,73 @@ premium was real and still could not clear its own cost.
 
 ## 4. Rules we adopt (the "stop doing" list)
 
+Rules 1, 4, 5 and 7 below govern the owner's own discretionary trading, not a mechanical pipeline
+signal. None of the four is measurable inside A44 as registered: A44 takes at most one mechanical
+trade per day, at a fixed size, with no live or paper fills (`ACCEPTANCE.md:434-439`), so it cannot
+observe a discretionary sizing fraction, a frequency-after-loss pattern, a resting-order fill, or a
+manufactured consistency-rule trade. Compliance with these four can only be measured in an
+owner-kept forward trade journal outside the pipeline. Rule 5 additionally requires the codified
+"no live or paper execution" non-goal (`ACCEPTANCE.md:118-119`) to be relaxed by its own amendment
+before any mid-quote/fill-price/slippage number could be recorded at all. Rules 2, 3, 6 and 8 remain
+measurable as stated below (entry time, moneyness, family inclusion, source tags) because A44 and
+the pipeline can check each of those directly.
+
 1. **Size each trade as a small, fixed fraction of the daily loss limit, and cap the number of
-   full-loss attempts per day.** Inverts §1 rows 16, 23 (and discourages row 9/22 overtrading and
-   loss-chasing). Evidence: U2 §3 Rule 1 arithmetic (`N = floor(D/x)`), `U2-S28` (Kelly, variance
-   drag). Status: partially followed — A43's sizing already fixes 4% of a fixed $100,000 account,
-   recomputed fresh each day, never compounded (`TRACK_C.md:71`); there is no per-trade
-   fraction/attempt-count rule yet for the prop account. **Proposal, not fact, for the owner:** at
-   the base-case D=4% daily limit (`ACCEPTANCE.md:10`), risk x=1% of account equity per trade
-   (≤25% of the daily limit), giving N=4 maximum full-loss attempts per day; at x=0.5%, N=8. A44
-   measurement: log `risk_pct_of_daily_limit` and a running `full_loss_attempts_today` column per
-   trade; flag any day where attempts exceed the chosen N.
-2. **No entries in the first 30 minutes of the session.** Inverts §1 row 6. Evidence: `U2-S27`,
-   `U2-S11`. Status: already followed — A39 enters at 10:00, not 09:31, and the T2 fingerprint
-   test measured the earlier alternative as weaker (`SCORECARD.md:53`). A44 measurement: log
+   full-loss attempts per day — a PROPOSED AMENDMENT to the account's existing sizing rule.**
+   Inverts §1 rows 16, 23 (and discourages row 9/22 overtrading and loss-chasing). Evidence: U2 §3
+   Rule 1 arithmetic (`N = floor(D/x)`), `U2-S28` (Kelly, variance drag). Status: the prop account
+   already has a sizing rule (`ACCEPTANCE.md:108-112`): position size = daily loss limit ÷
+   worst-trade loss in % of premium, floor 100%; at the base case D=4% this implies x=4% per trade
+   and N=1 full-loss attempt per day. **Proposal, not fact, for the owner:** override that base
+   case with a smaller per-trade fraction — x=1% of account equity per trade (≤25% of the daily
+   limit), giving N=4 maximum full-loss attempts per day; or x=0.5%, N=8. This names exactly what
+   it overrides (the existing 4%/N=1 base case) and needs the owner's decision plus its own
+   `ACCEPTANCE.md` amendment before it takes effect. Measurement: see the preamble above.
+2. **No entries in the first 30 minutes of the session.** Inverts §1 row 6. Evidence: `U2-S27`.
+   Status: NEW for the prop account, not already followed — A39 T1 and A44, the prop-account-relevant
+   candidates, enter at 10:00, but A42 E1 and A43 S1/S3 (sell-side/own-account tests, not prop-account
+   trades) entered at 09:31, and A39 T2 was a deliberate 09:31 timing fingerprint, not an accidental
+   early entry; no cross-programme rule has actually been adopted yet, only the practice of two
+   candidates. The T2-vs-T1 fingerprint (T2 +0.12 pts, `SCORECARD.md:54`, vs T1 +2.20 pts,
+   `SCORECARD.md:53`) is the programme's own evidence for adopting it. A44 measurement: log
    `entry_time`; audit that every trade's `entry_time` is ≥ 10:00 ET.
 3. **ITM-only strikes; no ATM or OTM "lottery" contracts.** Inverts §1 rows 4, 7. Evidence:
-   `U1-S11`, `U2-S11`, `U2-S08`; this programme's own numbers, ATM −53%/trade at 17% win rate and
-   OTM median −50.6% vs ITM median −20.9% (`research/CLAUDE.md:59,210`; `ACCEPTANCE.md:118`).
+   `U1-S11`, `U2-S11`, `U1-S21`/`U2-S08`; this programme's own numbers, ATM −53%/trade at 17% win
+   rate and OTM median −50.6% vs ITM median −20.9% (`research/CLAUDE.md:59,210`; `ACCEPTANCE.md:118`).
    Status: already followed — codified as a permanent non-goal after the ATM/OTM family was
    killed. A44 measurement: log strike moneyness (% ITM) per trade; reject/flag any trade at or
    beyond at-the-money.
 4. **No increase in size or trade frequency after a loss.** Inverts §1 rows 22, 9. Evidence:
-   `U2-S29` (SURVEY-grade, flagged as such — not peer-reviewed). Status: partially followed — A43's
-   fixed, non-compounding daily sizing structurally prevents size increases (`TRACK_C.md:71`); no
-   explicit frequency cap exists yet for the prop account. A44 measurement: log running trade count
-   per day and each trade's size relative to the immediately preceding trade's outcome; flag any
-   size or frequency increase directly following a loss.
+   `U2-S29` (SURVEY-grade, flagged as such — not peer-reviewed). Status: new for the prop account —
+   the account's existing sizing rule (`ACCEPTANCE.md:108-112`) fixes position size to the daily
+   loss limit divided by the worst-trade loss (floor 100%) but places no explicit cap on trade
+   frequency or on increasing size specifically after a loss; no such rule exists yet for the prop
+   account. Measurement: see the preamble above.
 5. **Rest limit orders at the mid rather than sending marketable orders.** Inverts §1 row 1.
    Evidence: `U1-S5` (passive orders profitable at short horizons vs. aggressive ones), `U2-S01`,
    `U2-S07` (execution timing recovers ~25% of the naive spread cost). Status: new — and it cannot
    be backtested here: the branch's option shards (`data/ext/spy_0dte_1min_2024/2025/2026.csv.gz`)
-   contain trade prints only, no bid/ask quotes (U3 §C), so this must be measured forward. A44
-   measurement: log the prevailing mid-quote at signal time (from the live broker feed) and the
-   actual fill price, to compute realized slippage vs. mid going forward.
+   contain trade prints only, no bid/ask quotes (U3 §C). Measurement: see the preamble above — this
+   rule additionally requires the "no live or paper execution" non-goal (`ACCEPTANCE.md:118-119`)
+   to be relaxed by its own amendment before any mid-quote/fill-price/slippage number could be
+   recorded at all; until then it is a forward-journal discipline, not a measured one.
 6. **Every rule and candidate is pre-registered and counted in the trial family before any run.**
    Inverts §1 row 24 (and is the cross-cutting guard behind U3 §B rows 1–3). Evidence: U3 §B rows
    1, 2, 3. Status: already followed — the six-condition survival rule's condition 3 requires
    passing BH-FDR at 10% across every trial in the run (`ACCEPTANCE.md:58`), with the trial
    definition fixed by A31 (`ACCEPTANCE.md:162`). Family count: any new candidate joins a Track-A
-   family of 42 already-run trials (43 counting A44, pre-designated `ACCEPTANCE.md:439`)
-   (`ACCEPTANCE.md:409`; `TRACK_C.md:71`). A44 measurement: confirm inclusion in `out/trials.csv`
-   and the family-wide BH-FDR pass before any promotion claim.
+   family of 42 already-run trials (43 counting A44, pre-designated `ACCEPTANCE.md:439`;
+   `ACCEPTANCE.md:409`); family-wide BH-FDR 0/42 pass (`SCORECARD.md:89`). A44 measurement: confirm
+   inclusion in `out/trials.csv` and the family-wide BH-FDR pass before any promotion claim.
 7. **Do not trade to satisfy a consistency or minimum-days rule.** Inverts §1 rows 18, 20.
-   Evidence: U2 §3 Rules 3 and 5, `U2-S30`, `U2-S11`, `U2-S08`. Status: new — no explicit rule yet
-   for the prop account. A44 measurement: log a boolean column, "trade taken only to satisfy a
-   day-count/consistency requirement," which should read False/blank on every row; any True value
-   is itself a violation to review.
-8. **Treat unaudited prop-firm statistics, and the "FINRA 72%" figure, as non-evidence.** Inverts
-   nothing in §1 directly — it is a source-hygiene rule guarding against the sources §1 rows 16–20
-   lean on. Evidence: U2 §5 flags generic prop-firm pass-rate figures as UNVERIFIED and not used as
+   Evidence: U2 §3 Rules 3 and 5, `U2-S30`, `U2-S11`, `U1-S21`/`U2-S08`. Status: new — no explicit
+   rule yet for the prop account. Measurement: see the preamble above.
+8. **Treat unaudited prop-firm statistics as non-evidence — for example, the generic "5–10% pass" /
+   "95% fail" prop-firm figures and FTMO's "99.8%" payout claim (u2 §5).** Inverts nothing in §1
+   directly — it is a source-hygiene rule guarding against the sources §1 rows 16–20 (the prop-firm
+   rows) lean on. Evidence: U2 §5 flags these figures, and 5 others, as UNVERIFIED and not used as
    facts; U1 §4 found no peer-reviewed prop-firm outcome study and marked industry-aggregator
-   statistics UNVERIFIED; `U2-S16`/`U2-S17` are themselves labelled single-vendor/non-audited even
+   statistics UNVERIFIED. `U2-S16`/`U2-S17` are themselves labelled single-vendor/non-audited even
    where used. Status: already followed — this synthesis uses no UNVERIFIED number as a fact
    anywhere above. A44 measurement: any future citation of a prop-firm statistic in A44
    documentation must carry a VERIFIED/UNVERIFIED tag; an UNVERIFIED number is never used to size
@@ -266,8 +291,11 @@ logic derived in §1 row 16 (U2 §3 Rule 1).
 
 **Entry, direction, gate, exit.**
 - Gate: open→11:00 SPY move at or below the expanding 10th percentile of all prior sessions'
-  open→11:00 moves (requiring ≥250 prior sessions before the percentile is well-defined — an
-  expanding-percentile gate, no fitted threshold).
+  open→11:00 moves (requiring ≥20 prior sessions before the percentile is well-defined — the
+  registered expanding-threshold floor A29/A39/A44 use, `ACCEPTANCE.md:160`; an expanding-percentile
+  gate, no fitted threshold). The 11:00 entry time itself has no cited evidence behind it in U1 or
+  U2; the 09:45 fingerprint below is the only test of the timing, and exactly one entry time
+  (11:00) is registered.
 - Entry: long call at 11:00.
 - Exit: 15:59 close.
 - Mirror trial (tests the predicted asymmetry): after an open→11:00 move at or above the expanding
@@ -293,21 +321,30 @@ and the screened FOMC/pension/Treasury-auction/ETF-creation variants, `SCORECARD
 `BLOCKED.md:89,125`) is triggered by the calendar, not by realized price action, and this candidate
 is triggered only by a data-dependent percentile threshold with no fixed date.
 
-**Data file.** `data/ext/spx_1min_2020-05_2026-09.csv.gz` (actual content SPY, Alpaca IEX) for the
-gate and signal (U3 §C); `data/ext/spy_0dte_1min_2024/2025/2026.csv.gz` shards for realistic
-option entry/exit pricing, the same convention A41/A42/A43 used.
+**Data file.** Two pricing routes, named explicitly because they give different n (see below).
+PRIMARY: `data/ext/spx_1min_2020-05_2026-09.csv.gz` (actual content SPY, Alpaca IEX) for the gate,
+signal, AND modelled option pricing (Black-Scholes at k×VIX, `ACCEPTANCE.md:136` A7 — the same
+route A39 used), over the full window it covers (U3 §C). SECONDARY: `data/ext/spy_0dte_1min_2024/
+2025/2026.csv.gz` shards for real-priced option entry/exit pricing, as a sub-window check, the
+convention A41 established (`ACCEPTANCE.md` Amendment A41).
 
-**Honest n estimate.** The window `data/ext/` covers 2020-07-27→2026-09-11, 1,526 sessions
-(`DATA.md:68`). With a 250-session expanding warm-up, 1,276 sessions are eligible; a 10th-percentile
-gate should trigger on roughly 10% of eligible sessions by construction, giving an *estimated*
-n ≈ 128 — this is a proportionality estimate from the gate's own definition, not a measured count,
-because computing the actual historical trigger count before pre-registration would itself be the
-"second selection" U3 §B row 3 forbids (`CRITIQUE.md:12`). n ≈ 128 is below the ≥200 floor
-(`ACCEPTANCE.md:66`), so this candidate would register as UNDERPOWERED on the existing holdout, the
-same outcome A39 T1 had at n=158. Reaching n≥200 would need roughly 2,000 eligible sessions
-(200 ÷ 10%), i.e. about 724 more sessions beyond the current 1,276 — on the order of 3 more years
-of forward data, comparable to or somewhat longer than A44's own ≈2-year forward horizon
-(`ACCEPTANCE.md:438`).
+**Honest n estimate.** PRIMARY route: the full window `data/ext/spx_1min_2020-05_2026-09.csv.gz`
+covers 2020-07-27→2026-09-11, 1,526 sessions (`DATA.md:68`). With the registered ≥20-prior-session
+expanding-threshold floor (A29, `ACCEPTANCE.md:160`), 1,526 − 20 = 1,506 sessions are eligible; a
+10th-percentile gate should trigger on roughly 10% of eligible sessions by construction, giving an
+*estimated* n ≈ 151. SECONDARY route: the option shards cover 2024-02-01→2026-09-11
+(`DATA.md:100-102`; u3 §C), about 675 sessions, giving an estimated n ≈ 65–68 real-priced. Both
+figures are an expectation from the gate's own definition, not a measured historical trigger count;
+counting signals without observing outcomes is not a "second selection" (U3 §B row 3 is about
+re-tuning after seeing outcomes, not about counting how often a fixed rule would have fired) — the
+actual trigger count will be reported at registration time. PRIMARY's n ≈ 151 is below the ≥200
+floor (`ACCEPTANCE.md:66`), so this candidate would register as UNDERPOWERED on the existing
+holdout, the same outcome A39 T1 had at n=158. Reaching n≥200 on the PRIMARY route would need
+roughly 2,000 eligible sessions (200 ÷ 10%), i.e. about 494 more sessions beyond the current 1,506 —
+on the order of 2 more years of forward data, comparable to A44's own ≈2-year forward horizon
+(`ACCEPTANCE.md:438`). Sensitivity only, not a registered gate: at a 250-session warm-up instead of
+the registered 20-session floor, 1,276 sessions would be eligible, giving n ≈ 128 — reported only to
+show the estimate is not sensitive to the choice of warm-up length.
 
 **Honest prior: LOW.** No source retrieved in U1 or U2 quantifies prop-firm or margin-call-driven
 forced-selling flow at the SPX/SPY index level; the mechanism is analogical (from the general
@@ -321,17 +358,22 @@ fingerprint failure analogous to A39's (the mirror put trial showing the same si
 call, or the 09:45 fingerprint entry performing as well as or better than 11:00) — either would mean
 "pattern without its mechanism," as A39's own mirror result was read (`SCORECARD.md:53-55`).
 
-**Family count after registration.** Joins the Track-A family currently at 42 run trials (43
-counting A44 once it runs; `ACCEPTANCE.md:409`; `TRACK_C.md:71`); pre-registering this candidate
-now would make it trial 44 (or 43 if registered before A44 first runs), tightening the BH-FDR bar
-for every trial already in the family.
+**Family count after registration.** Per the A39 precedent — three trials (main, mirror, timing
+fingerprint) join the family together, not one (`ACCEPTANCE.md:255-261`, "33 + 3 = 36") — this
+candidate registers as three trials: the main gate, the mirror trial, and the 09:45 timing
+fingerprint. Joins the Track-A family currently at 42 run trials (43 counting A44 once it runs;
+`ACCEPTANCE.md:409`; family-wide BH-FDR 0/42 pass, `SCORECARD.md:89`); pre-registering these three
+trials would move the family from 42 → 45 if registered before A44 first runs, or from 43 → 46 if
+registered after, tightening the BH-FDR bar for every trial already in the family; DSR at N = 45 or
+46 accordingly.
 
 ### Considered and rejected
 
 - **Post-macro-release intraday drift** (e.g., CPI/NFP/FOMC). Not assessed — neither U1 nor U2
   quantifies how quickly SPX/SPY completes its post-macro-release move; the one closely related
   test already run here, A42's FOMC-afternoon trial, is underpowered by calendar (n=20 at ~8 FOMC
-  meetings/year; reaching n≥200 would take roughly 25 years, `ACCEPTANCE.md:380-381`), and any
+  meetings/year; reaching n≥200 would take roughly 25 years, `notes/inversion/u3_self_audit.md` §E
+  (A42 item); `ASSESSMENT.md:124-129`), and any
   macro-release variant inherits the same calendar-driven underpowering. Fails screen (e).
 - **Option-quote limit-order capture** (be the resting counterparty at the mid). Fails screen
   (d): the branch's option shards are trade prints only, with no bid/ask quotes (U3 §C); it also
@@ -352,22 +394,22 @@ The inversion lens confirms this programme's existing negative result rather tha
 Nothing in U1 or U2 identifies a documented winning role this account can occupy without selling,
 holding overnight, holding shares, or being the market-making/firm intermediary — the same
 conclusion the 42-trial ledger's family-wide 0-of-42 FDR pass rate already implies
-(`ACCEPTANCE.md:409`; `TRACK_C.md:71`). What the lens adds is threefold: (1) the "stop doing" list
+(`SCORECARD.md:89`; family count established at `ACCEPTANCE.md:409`). What the lens adds is threefold: (1) the "stop doing" list
 in §4, an explicit, pre-registered rulebook for the forward log rather than an implicit set of
 habits; (2) exactly one new, LOW-prior, mechanism-based candidate (§5) that is distinct from every
 family already run or killed here, ready to pre-register if the owner chooses; and (3) a concrete
 measurement plan tying every §4 rule to a specific A44 forward-log column, so compliance is audited
 rather than assumed. What it cannot do is create expectancy under a long-only 0DTE mandate: §1's
-count (3 YES, 13 AVOID-ONLY, 8 NO out of 24 merged failure modes) shows the documented profitable
+count (3 YES, 11 AVOID-ONLY, 10 NO out of 24 merged failure modes) shows the documented profitable
 roles are almost all foreclosed by construction, and the one YES row that names an actual market
 mechanism (a genuine forecasting capability, row 14) is a property this account has not
 demonstrated, not one the inversion exercise can supply. The owner's decision points from here:
 whether to adopt the eight rules in §4 (several are already followed; three — resting-order
 measurement, the per-trade/attempt-count cap, and the consistency/min-days flag — are new and cost
 nothing to start logging); whether to pre-register the §5 candidate, given its LOW prior and its
-~3-year path to an unambiguous n≥200 verdict; and that A38 (leveraged-ETF data) and A44 (the
-overnight-gap forward test) remain pending on the owner's own data supply, independent of anything
-in this document (`BLOCKED.md:142`; `ACCEPTANCE.md:434-439`).
+~2-year path (on the PRIMARY modelled-pricing route) to an unambiguous n≥200 verdict; and that
+A38 (leveraged-ETF data) and A44 (the overnight-gap forward test) remain pending on the owner's
+own data supply, independent of anything in this document (`BLOCKED.md:142`; `ACCEPTANCE.md:434-439`).
 
 ## 7. Sources
 
@@ -379,10 +421,16 @@ in this document (`BLOCKED.md:142`; `ACCEPTANCE.md:434-439`).
 - `notes/inversion/u2_0dte_prop.md` — 31 sources (`S01`–`S31`): 29 tabled VERIFIED, 1 tabled SURVEY
   / practitioner-data (`S29`, not peer-reviewed), and 1 tabled INDUSTRY-DOC (`S30`, mechanism
   corroborated across independent sites but not one audited primary source); a separate "what I
-  could not verify" section lists 6 additional claims explicitly excluded from use (generic
+  could not verify" section lists 7 additional claims explicitly excluded from use (generic
   prop-firm pass-rate figures, an unsourced FTMO payout-rate figure, a spread/decay/direction loss
   decomposition, trading-journal improvement statistics, an industry-wide consistency-rule
-  standard, and an unpinned intraday volume-clustering claim).
+  standard, an unpinned intraday volume-clustering claim, and the exact sample dates for de
+  Silva/Smith/So, `S02`).
 - `notes/inversion/u3_self_audit.md` — does not use a VERIFIED/UNVERIFIED tagging scheme; instead
   every claim carries a `file:line` or `out/` path reference by design, per its own header
   ("Every claim below carries a `file:line` reference or an `out/` path").
+- `notes/inversion/u5_citation_audit.md` — independent, fresh-search citation audit of 12 claims
+  drawn from U1/U2 plus 1 negative claim: 11 CONFIRMED, 1 PARTIAL (the Beckmeyer/Branger/Gayda
+  0DTE daily-loss figure — real numbers, but two different statistics/versions of the same paper,
+  resolved in §1 rows 3 and 5 above), 0 NOT FOUND; the negative claim (CFTC v. My Forex Funds
+  dismissal, `U2-S15`) also CONFIRMED.

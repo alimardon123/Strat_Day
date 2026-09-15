@@ -36,6 +36,13 @@ def main():
         gapliq = pd.read_csv("out/gapliq_candidates.csv")
         for _, x in gapliq[gapliq["window"] == "SELECTION"].iterrows():
             rows.append(dict(family="gapliq", trial=f"GAPLIQ {x['trial']}", n=x["n"], p=x["p_boot_month"], p_day=x["p_boot_day"]))
+    if os.path.exists("out/flatten_candidates.csv"):
+        # A46/A46a: only the SELECTION-window rows are trials (mirrors the gapliq block above);
+        # CONTEXT is background and HOLDOUT is these same 3 trials' out-of-sample rows (reported in
+        # the flatten table, not re-counted -- the verdict itself is judged on HOLDOUT there).
+        flatten = pd.read_csv("out/flatten_candidates.csv")
+        for _, x in flatten[flatten["window"] == "SELECTION"].iterrows():
+            rows.append(dict(family="flatten", trial=f"FLATTEN {x['trial']}", n=x["n"], p=x["p_boot_month"], p_day=x["p_boot_day"]))
     if os.path.exists("out/letf_candidates.csv"):
         # A38: only the SELECTION-window row is a trial (mirrors the fvg/gapliq blocks above); this
         # file always exists (pipeline.units.letf writes it header-only until data/ext/

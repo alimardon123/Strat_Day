@@ -45,7 +45,7 @@ Thread A's gap-up call, same selection window (pre-registered by Thread A, not p
 |---|---|---|---|---|---|---|---|
 | 13:00\|call\|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 42 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
+Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 45 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
@@ -377,11 +377,47 @@ T1: net > 0 at 1 pt, p_day >= 0.05, excess over the day-selection control > 0, n
 
 FIXED (pre-registration, A39): signal = overnight return (prior session's last RTH close -> this session's first RTH open) <= the expanding 10th percentile (T1/T2) / >= the expanding 90th percentile (T3, mirror) of overnight returns over all strictly prior sessions, min 250 prior sessions, no fitted parameter. T1 long call entry 10:00 bar close; T2 same days as T1, long call entry 09:31 bar close; T3 mirror signal, long put, entry 10:00 bar close; all exit at the 16:00 close.
 
-## 11. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial
+## 11. Intraday forced-flattening rebound (A46/A46a) — pre-registered 2026-09-15, 3 trials
+
+3 trials (U1 long call entry 11:00 on days with open->11:00 return <= the expanding 10th pct, U2 long call entry 11:00 on the mild-decline band -- <= the expanding 30th pct AND > the expanding 10th pct, A46a's causal replacement for the registered-but-defective 09:45 timing fingerprint -- U3 mirror signal long put entry 11:00 on days >= the expanding 90th pct) from `pipeline.units.flatten` (`out/flatten_candidates.csv`), reported on three windows. Only the SELECTION-window rows are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); CONTEXT is background and HOLDOUT is these same 3 trials' out-of-sample rows, reported here, not double-counted -- the amendment's verdict is judged on HOLDOUT.
+
+### CONTEXT (2005-01-01 → 2012-12-31)
+
+| trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N45 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| U1 | call | 11:00 | 254 | 0 | 254 | 43.7008 | -2.3047 | -3.3047 | -0.1708 | -61.6000 | -61.6000 | -0.5898 | 1.0000 | 1.0000 | -1.0410 | 0.0000 | -3.5034 | 1.0000 | -3.8627 | 0.0008 |
+| U2 | call | 11:00 | 326 | 0 | 326 | 54.6012 | -0.7239 | -1.7239 | -0.0426 | -37.7000 | -37.7000 | -0.3308 | 1.0000 | 1.0000 | -1.0868 | 0.8350 | -1.2253 | 0.9950 | 0.0873 | 0.0021 |
+| U3 | put | 11:00 | 247 | 0 | 247 | 41.2955 | -2.1745 | -3.1745 | -0.1933 | -63.6000 | -63.6000 | -0.8391 | 1.0000 | 1.0000 | -0.9144 | 0.0000 | -3.4869 | 1.0000 | -5.8510 | 0.0000 |
+
+U1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0, n >= 200 -> does not survive the four programmatic checks (DSR at N=45 is reported in the table above, not a survival condition). Fingerprint: U2 >= U1 (fails); U3 <= 0 at 1 pt (holds). Promotion: U1 does not survive, not promoted.
+
+### SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family
+
+| trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N45 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| U1 | call | 11:00 | 102 | 0 | 102 | 50.9804 | 1.6686 | 0.6686 | 0.0684 | -73.8000 | -73.8000 | 0.1883 | 0.3065 | 0.2970 | -0.7403 | 0.9800 | -1.5166 | 1.0000 | 4.7489 | 0.1499 |
+| U2 | call | 11:00 | 343 | 0 | 343 | 54.5189 | -1.1717 | -2.1717 | -0.0462 | -66.8000 | -66.8000 | -0.4802 | 1.0000 | 1.0000 | -0.7561 | 0.2100 | -1.9234 | 0.9850 | -1.1136 | 0.0000 |
+| U3 | put | 11:00 | 107 | 0 | 107 | 44.8598 | 1.6766 | 0.6766 | 0.0513 | -70.4000 | -70.4000 | 0.1586 | 0.3340 | 0.2655 | -1.2015 | 0.9900 | -1.0726 | 0.9950 | 3.3743 | 0.1233 |
+
+U1: net > 0 at 1 pt, p_day >= 0.05, excess over the day-selection control > 0, n < 200 -> does not survive the four programmatic checks (DSR at N=45 is reported in the table above, not a survival condition). Fingerprint: U2 < U1 (holds); U3 > 0 at 1 pt (fails). Promotion: U1 does not survive, not promoted.
+
+### HOLDOUT (2020-07-27 → 2026-09-11) — the verdict window (A46)
+
+| trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N45 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| U1 | call | 11:00 | 144 | 0 | 144 | 47.9167 | -3.2826 | -4.2826 | -0.0548 | -214.7000 | -214.7000 | -0.2749 | 1.0000 | 1.0000 | -0.4076 | 0.1050 | -7.6887 | 0.9900 | -1.5181 | 0.1303 |
+| U2 | call | 11:00 | 299 | 0 | 299 | 51.5050 | -1.0823 | -2.0823 | -0.0174 | -126.4000 | -126.4000 | -0.1699 | 1.0000 | 1.0000 | 0.0053 | 0.2500 | -3.5667 | 1.0000 | -0.3778 | 0.1471 |
+| U3 | put | 11:00 | 165 | 0 | 165 | 43.6364 | -1.4976 | -2.4976 | -0.0312 | -125.6000 | -125.6000 | -0.2195 | 1.0000 | 1.0000 | -1.4960 | 0.4850 | -5.1152 | 1.0000 | -0.5314 | 0.1548 |
+
+U1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0, n < 200 -> does not survive the four programmatic checks (DSR at N=45 is reported in the table above, not a survival condition). Fingerprint: U2 >= U1 (fails); U3 <= 0 at 1 pt (holds). Promotion: U1 does not survive, not promoted.
+
+FIXED (pre-registration, A46/A46a): signal = open->11:00 return (09:30 session open -> 11:00 bar close) vs the expanding percentile of that same measure over all strictly prior sessions (min 250 prior sessions, no fitted parameter). U1 = ret_to_1100 <= expanding 10th pct (the hypothesis); U2 = ret_to_1100 <= expanding 30th pct AND > expanding 10th pct (A46a's causal mild-decline dose-response band, disjoint from U1 by construction, replacing the look-ahead 09:45 timing fingerprint the amendment first registered); U3 = ret_to_1100 >= expanding 90th pct (mirror signal).
+
+## 12. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial
 
 Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.
 
-## 12. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered 2026-09-13
+## 13. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered 2026-09-13
 
 ### Calibration (diagnostic, no decision): implied k = real bar close ÷ Black-Scholes premium at k=1 × prior-close VIX, by VIX tercile and by minute (`out/realopt_calibration.csv`)
 
@@ -443,7 +479,7 @@ Fill-delay profile (entry bar actually used vs. the signal's own entry minute, a
 
 Sub-window, not a verdict: nothing above is promoted, added to the trial family (A41: "the trial count does not grow"), or scored against BH-FDR.
 
-## 13. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials
+## 14. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials
 
 3 trials (E1 baseline every session, E2 FOMC statement days, E3 the E2 rule on every non-FOMC session) from `pipeline.units.eventvol` (`out/eventvol_candidates.csv`), each at three round-trip costs ($0, $0.10, $0.20 per two-leg trade). All three are counted trials (family 36 -> 39); only the $0.10 row per trial is counted in the trial family ledger (`pipeline/trials.py`, `out/trials.csv`) — the $0 and $0.20 rows are a cost sensitivity, not additional trials. This is the whole file's one out-of-sample window by construction (2024-02-01 onward), not a CONTEXT/SELECTION/HOLDOUT split.
 

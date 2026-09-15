@@ -33,6 +33,7 @@ STEPS = [
     ("flow", ["python", "-m", "pipeline.units.flow", "--in", "data/raw/oanda_SPX500_USD.parquet", "--out", "out/flow_candidates.csv"], "out/flow.log"),
     ("fvg", ["python", "-m", "pipeline.units.fvg", "--in", "extended", "--out", "out/fvg_candidates.csv"], "out/fvg.log"),
     ("gapliq", ["python", "-m", "pipeline.units.gapliq", "--in", "extended", "--out", "out/gapliq_candidates.csv"], "out/gapliq.log"),
+    ("flatten", ["python", "-m", "pipeline.units.flatten", "--in", "extended", "--out", "out/flatten_candidates.csv"], "out/flatten.log"),
     ("letf", ["python", "-m", "pipeline.units.letf", "--in", "extended", "--out", "out/letf_candidates.csv"], "out/letf.log"),
     ("realopt", ["python", "-m", "pipeline.units.realopt", "--in", "extended", "--out", "out/realopt_reeval.csv"], "out/realopt.log"),
     ("eventvol", ["python", "-m", "pipeline.units.eventvol", "--in", "extended",
@@ -54,6 +55,7 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
             "out/own_account_summary.csv", "out/own_account_by_year.csv", "out/own_account_by_regime.csv", "out/own_account_bridge.csv",
             "out/xmarket_SPXUSD.csv", "out/xmarket_GRXEUR.csv", "out/xmarket_ETXEUR.csv",
             "out/vrp_vix_minus_rv.csv", "out/flow_candidates.csv", "out/fvg_candidates.csv", "out/gapliq_candidates.csv",
+            "out/flatten_candidates.csv",
             "out/letf_candidates.csv",
             "out/realopt_reeval.csv", "out/realopt_calibration.csv",
             "out/eventvol_candidates.csv",
@@ -72,7 +74,7 @@ def main():
     os.makedirs("out", exist_ok=True)
     ext = sessions.ext_present()
     for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*", "out/fvg_*", "out/gapliq_*",
-                "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/sellvol_*", "out/trackB_*"):
+                "out/flatten_*", "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/sellvol_*", "out/trackB_*"):
         for f in glob.glob(pat):
             os.remove(f)
     steps = [s for s in STEPS if s[0] not in HOLDOUT_STEPS or ext]

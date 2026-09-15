@@ -126,6 +126,54 @@ def gapliq_caption(df):
     return " ".join(parts[:2])
 
 
+FLATTEN_COLS = ["trial", "side", "entry_time", "n_signal_days", "n_skipped", "n", "win", "net_pts_cost1",
+                "net_pts_cost2", "net_pct_cost1", "worst_trade_pts_cost1", "worst_day_pts_cost1", "sharpe_calday",
+                "p_boot_day", "p_boot_month", "control_mean_pts_cost1", "frac_seeds_beaten",
+                "timing_control_pts_cost1", "frac_timing_beaten", "opt_mean_pct_s1", "dsr_N45"]
+
+
+def flatten_verdict(sub):
+    """Generated per-window verdict for the A46/A46a flatten family: U1's survival on the same
+    four programmatic checks as the FVG/GAPLIQ verdicts (net > 0 at 1 pt, p_day < 0.05, excess
+    over the day-selection control > 0, n >= 200; DSR at N=45 is reported in the table, not a
+    survival condition here either) AND the amendment's mechanism fingerprint (U2 < U1; U3 <= 0 at
+    1 pt), then the promotion decision per the amendment's kill/promotion rule."""
+    u1 = sub[sub["trial"] == "U1"]
+    u2 = sub[sub["trial"] == "U2"]
+    u3 = sub[sub["trial"] == "U3"]
+    if u1.empty:
+        return "U1 missing from this window."
+    u1 = u1.iloc[0]
+    net_pos = bool(u1["net_pts_cost1"] > 0)
+    p_sig = bool(u1["p_boot_day"] < 0.05) if pd.notna(u1["p_boot_day"]) else False
+    excess = u1["net_pts_cost1"] - u1["control_mean_pts_cost1"]
+    beats_control = bool(excess > 0) if pd.notna(excess) else False
+    n_ok = bool(u1["n"] >= 200)
+    survives = net_pos and p_sig and beats_control and n_ok
+    u2_lt_u1 = bool(u2.iloc[0]["net_pts_cost1"] < u1["net_pts_cost1"]) if len(u2) and pd.notna(u2.iloc[0]["net_pts_cost1"]) else False
+    u3_le_zero = bool(u3.iloc[0]["net_pts_cost1"] <= 0) if len(u3) and pd.notna(u3.iloc[0]["net_pts_cost1"]) else False
+    fingerprint_ok = u2_lt_u1 and u3_le_zero
+    promoted = survives and fingerprint_ok
+    decision = ("U1 promotable" if promoted else
+               "pattern without its mechanism, not promoted" if survives else
+               "U1 does not survive, not promoted")
+    return (f"U1: net {'>' if net_pos else '<='} 0 at 1 pt, p_day {'<' if p_sig else '>='} 0.05, excess over the "
+            f"day-selection control {'>' if beats_control else '<='} 0, n {'>=' if n_ok else '<'} 200 -> "
+            f"{'SURVIVES' if survives else 'does not survive'} the four programmatic checks (DSR at N=45 is reported "
+            f"in the table above, not a survival condition). Fingerprint: U2 {'<' if u2_lt_u1 else '>='} U1 "
+            f"({'holds' if u2_lt_u1 else 'fails'}); U3 {'<=' if u3_le_zero else '>'} 0 at 1 pt "
+            f"({'holds' if u3_le_zero else 'fails'}). Promotion: {decision}.")
+
+
+def flatten_caption(df):
+    """First two sentences of the `spec` column (identical on every row — the fixed pre-
+    registration), generated rather than typed (D7)."""
+    if "spec" not in df or not len(df):
+        return ""
+    parts = re.split(r"(?<=\.)\s+", str(df["spec"].iloc[0]).strip())
+    return " ".join(parts[:2])
+
+
 LETF_COLS = ["trial", "n_sessions_with_assets", "n_signal", "n_skipped", "n", "win", "net_pts_cost1",
              "net_pts_cost2", "net_pct_cost1", "worst_trade_pts_cost1", "worst_day_pts_cost1", "sharpe_calday",
              "p_boot_day", "p_boot_month", "control_mean_pts_cost1", "frac_seeds_beaten",
@@ -528,9 +576,32 @@ def playbook():
         cap = gapliq_caption(gapliq)
         if cap:
             L += [cap, ""]
+    if os.path.exists("out/flatten_candidates.csv"):
+        flatten = pd.read_csv("out/flatten_candidates.csv")
+        L += ["## 11. Intraday forced-flattening rebound (A46/A46a) — pre-registered 2026-09-15, 3 trials", "",
+              "3 trials (U1 long call entry 11:00 on days with open->11:00 return <= the expanding 10th pct, "
+              "U2 long call entry 11:00 on the mild-decline band -- <= the expanding 30th pct AND > the expanding "
+              "10th pct, A46a's causal replacement for the registered-but-defective 09:45 timing fingerprint -- "
+              "U3 mirror signal long put entry 11:00 on days >= the expanding 90th pct) from `pipeline.units."
+              "flatten` (`out/flatten_candidates.csv`), reported on three windows. Only the SELECTION-window rows "
+              "are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); CONTEXT is background and "
+              "HOLDOUT is these same 3 trials' out-of-sample rows, reported here, not double-counted -- the "
+              "amendment's verdict is judged on HOLDOUT.", ""]
+        for win_name, win_label in (("CONTEXT", "CONTEXT (2005-01-01 → 2012-12-31)"),
+                                     ("SELECTION", "SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family"),
+                                     ("HOLDOUT", "HOLDOUT (2020-07-27 → 2026-09-11) — the verdict window (A46)")):
+            sub = flatten[flatten["window"] == win_name]
+            if not len(sub):
+                continue
+            L += [f"### {win_label}", "",
+                  md(sub[[c for c in FLATTEN_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS), "",
+                  flatten_verdict(sub), ""]
+        cap = flatten_caption(flatten)
+        if cap:
+            L += [cap, ""]
     if os.path.exists("out/letf_candidates.csv"):
         letf = pd.read_csv("out/letf_candidates.csv")
-        L += ["## 11. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial", ""]
+        L += ["## 12. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial", ""]
         if len(letf):
             L += ["1 trial (`15:30|both|letf_demand`) from `pipeline.units.letf` (`out/letf_candidates.csv`), "
                   "reported on three windows, each over sessions with leveraged-ETF assets data only. Only the "
@@ -553,7 +624,7 @@ def playbook():
             L += ["Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.", ""]
     if os.path.exists("out/realopt_reeval.csv"):
         reeval = pd.read_csv("out/realopt_reeval.csv")
-        L += ["## 12. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered "
+        L += ["## 13. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered "
               "2026-09-13", ""]
         if len(reeval):
             calib, calib_summary = realopt_calibration_blocks("out/realopt_calibration.csv")
@@ -586,7 +657,7 @@ def playbook():
             L += ["Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.", ""]
     if os.path.exists("out/eventvol_candidates.csv"):
         eventvol = pd.read_csv("out/eventvol_candidates.csv")
-        L += ["## 13. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials", ""]
+        L += ["## 14. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials", ""]
         if len(eventvol):
             L += ["3 trials (E1 baseline every session, E2 FOMC statement days, E3 the E2 rule on "
                   "every non-FOMC session) from `pipeline.units.eventvol` "

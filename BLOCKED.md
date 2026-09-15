@@ -173,3 +173,26 @@ No agent is launched against the automated stop hook; the run resumes on a lette
 
 Recommendation unchanged in direction, sharpened by the number: no account is worth opening for E. Options A (stop) and B (passive forward test, A44) remain; C waits for the assets file.
 
+## Status after the inversion research (2026-09-15; judge DONE on 6c88943, tidied at a9eab64)
+
+The owner directed a reverse-thinking research pass — what day and swing traders do wrong, and
+whether the inverse of each mistake is reachable under the account constraint — delivered as
+`INVERSION.md` with evidence in `notes/inversion/` (u1, u2, u3, u5). No run was launched and the
+trial family is unchanged at 42 (43 once A44 runs).
+
+| Finding | Consequence for the block |
+|---|---|
+| Of 24 failure modes, 3 have an inverse the account can take (all process disciplines), 11 can only be avoided, 10 are unreachable because the winning side requires selling, overnight, shares or being the intermediary (`INVERSION.md` §1 counts) | The goal condition stays unsatisfiable on the data on the branch |
+| The largest measured effect in the programme remains the forbidden sell-side premium (A42; `INVERSION.md` §3) | Unchanged |
+| Exactly one candidate survived the screen, the intraday forced-flattening rebound (`INVERSION.md` §5), LOW prior, projected n ≈ 151 modelled / ≈ 65–68 real-priced, UNDERPOWERED by construction on current data, three trials if registered | A new owner option, not a way out of the block |
+
+### Owner options, updated
+
+- **A. Stop.** The finding stands on three data sets and 39 pre-registered trials: no long-only 0DTE mechanism clears its cost.
+- **B. Forward test** the overnight-loss call (symmetric spec) on sessions after 2026-09-11; no data needed, ≈ 2 years to 200 signals.
+- **C/D. Leveraged-ETF candidate** (A38): built and waiting for `data/ext/letf_aum_2006_2026.csv`.
+- **F. Adopt any of the four new rules in `INVERSION.md` §4** (per-trade fraction and attempts cap, which amends `ACCEPTANCE.md:108-112`; no first-30-minute entries; no size or frequency increase after a loss; resting mid limit orders, which needs the no-live-execution non-goal relaxed before it can be measured) — each adoption is its own `ACCEPTANCE.md` amendment.
+- **G. Pre-register the §5 candidate as three trials** (family 42 → 45, or 43 → 46 after A44), run it modelled on 2020-07→2026-09 with a real-priced sub-window check on the 2024–2026 shards, accepting that the likely label is UNDERPOWERED and that the kill criterion is the mirror-asymmetry test that already failed for A39.
+
+No agent is launched against the automated stop hook; the run resumes on a letter (A–G) or a file.
+

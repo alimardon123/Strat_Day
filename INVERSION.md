@@ -292,8 +292,9 @@ logic derived in §1 row 16 (U2 §3 Rule 1).
 **Entry, direction, gate, exit.**
 - Gate: open→11:00 SPY move at or below the expanding 10th percentile of all prior sessions'
   open→11:00 moves (requiring ≥20 prior sessions before the percentile is well-defined — the
-  registered expanding-threshold floor A29/A39/A44 use, `ACCEPTANCE.md:160`; an expanding-percentile
-  gate, no fitted threshold). The 11:00 entry time itself has no cited evidence behind it in U1 or
+  registered A29 floor (`ACCEPTANCE.md:160`), which A44 falls back to; A39 itself registered a
+  stricter 250-session minimum (`ACCEPTANCE.md:254`); an expanding-percentile gate, no fitted
+  threshold). The 11:00 entry time itself has no cited evidence behind it in U1 or
   U2; the 09:45 fingerprint below is the only test of the timing, and exactly one entry time
   (11:00) is registered.
 - Entry: long call at 11:00.
@@ -333,7 +334,8 @@ covers 2020-07-27→2026-09-11, 1,526 sessions (`DATA.md:68`). With the register
 expanding-threshold floor (A29, `ACCEPTANCE.md:160`), 1,526 − 20 = 1,506 sessions are eligible; a
 10th-percentile gate should trigger on roughly 10% of eligible sessions by construction, giving an
 *estimated* n ≈ 151. SECONDARY route: the option shards cover 2024-02-01→2026-09-11
-(`DATA.md:100-102`; u3 §C), about 675 sessions, giving an estimated n ≈ 65–68 real-priced. Both
+(`DATA.md:100-102`; u3 §C), about 630–650 sessions (A42 E1 ran every session in this window at
+n = 646, `SCORECARD.md:78`), giving an estimated n ≈ 65–68 real-priced. Both
 figures are an expectation from the gate's own definition, not a measured historical trigger count;
 counting signals without observing outcomes is not a "second selection" (U3 §B row 3 is about
 re-tuning after seeing outcomes, not about counting how often a fixed rule would have fired) — the
@@ -342,9 +344,10 @@ floor (`ACCEPTANCE.md:66`), so this candidate would register as UNDERPOWERED on 
 holdout, the same outcome A39 T1 had at n=158. Reaching n≥200 on the PRIMARY route would need
 roughly 2,000 eligible sessions (200 ÷ 10%), i.e. about 494 more sessions beyond the current 1,506 —
 on the order of 2 more years of forward data, comparable to A44's own ≈2-year forward horizon
-(`ACCEPTANCE.md:438`). Sensitivity only, not a registered gate: at a 250-session warm-up instead of
-the registered 20-session floor, 1,276 sessions would be eligible, giving n ≈ 128 — reported only to
-show the estimate is not sensitive to the choice of warm-up length.
+(`ACCEPTANCE.md:438`). A39's registered warm-up (250 sessions, `ACCEPTANCE.md:254`), reported here
+as the alternative, not as a mere sensitivity check: at 250 sessions instead of the 20-session A29
+floor registered for this candidate, 1,276 sessions would be eligible, giving n ≈ 128 — like
+PRIMARY's n ≈ 151, still below the ≥200 floor.
 
 **Honest prior: LOW.** No source retrieved in U1 or U2 quantifies prop-firm or margin-call-driven
 forced-selling flow at the SPX/SPY index level; the mechanism is analogical (from the general
@@ -396,10 +399,11 @@ holding overnight, holding shares, or being the market-making/firm intermediary 
 conclusion the 42-trial ledger's family-wide 0-of-42 FDR pass rate already implies
 (`SCORECARD.md:89`; family count established at `ACCEPTANCE.md:409`). What the lens adds is threefold: (1) the "stop doing" list
 in §4, an explicit, pre-registered rulebook for the forward log rather than an implicit set of
-habits; (2) exactly one new, LOW-prior, mechanism-based candidate (§5) that is distinct from every
-family already run or killed here, ready to pre-register if the owner chooses; and (3) a concrete
-measurement plan tying every §4 rule to a specific A44 forward-log column, so compliance is audited
-rather than assumed. What it cannot do is create expectancy under a long-only 0DTE mandate: §1's
+habits; (2) exactly one new, LOW-prior, mechanism-based candidate (§5) that is distinct as a trial from
+every family already run or killed here, though it is the intraday analogue of A39's mechanism and
+shares its template, ready to pre-register if the owner chooses; and (3) a measurement plan that
+separates the four rules A44 and the pipeline can check (entry time, moneyness, family inclusion,
+source tags) from the four that only an owner-kept trade journal can check (§4 preamble). What it cannot do is create expectancy under a long-only 0DTE mandate: §1's
 count (3 YES, 11 AVOID-ONLY, 10 NO out of 24 merged failure modes) shows the documented profitable
 roles are almost all foreclosed by construction, and the one YES row that names an actual market
 mechanism (a genuine forecasting capability, row 14) is a property this account has not

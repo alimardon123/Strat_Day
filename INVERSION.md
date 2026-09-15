@@ -399,11 +399,12 @@ holding overnight, holding shares, or being the market-making/firm intermediary 
 conclusion the 42-trial ledger's family-wide 0-of-42 FDR pass rate already implies
 (`SCORECARD.md:89`; family count established at `ACCEPTANCE.md:409`). What the lens adds is threefold: (1) the "stop doing" list
 in §4, an explicit, pre-registered rulebook for the forward log rather than an implicit set of
-habits; (2) exactly one new, LOW-prior, mechanism-based candidate (§5) that is distinct as a trial from
-every family already run or killed here, though it is the intraday analogue of A39's mechanism and
-shares its template, ready to pre-register if the owner chooses; and (3) a measurement plan that
-separates the four rules A44 and the pipeline can check (entry time, moneyness, family inclusion,
-source tags) from the four that only an owner-kept trade journal can check (§4 preamble). What it cannot do is create expectancy under a long-only 0DTE mandate: §1's
+habits; (2) exactly one new, LOW-prior, mechanism-based candidate (§5) that is distinct as a trial
+from every family already run or killed here, though it is the intraday analogue of A39's mechanism
+and shares its template, ready to pre-register if the owner chooses; and (3) a measurement plan
+that separates the four rules A44 and the pipeline can check (entry time, moneyness, family
+inclusion, source tags) from the four that only an owner-kept trade journal can check (§4 preamble).
+What it cannot do is create expectancy under a long-only 0DTE mandate: §1's
 count (3 YES, 11 AVOID-ONLY, 10 NO out of 24 merged failure modes) shows the documented profitable
 roles are almost all foreclosed by construction, and the one YES row that names an actual market
 mechanism (a genuine forecasting capability, row 14) is a property this account has not

@@ -530,3 +530,44 @@ here, before a single number has been produced.
   U1 promotable only if it passes all six conditions AND U2 < U1 AND U3 ≤ 0 at 1 pt).
 - Still exactly three trials; family 42 → 45; DSR at N = 45. The bands are disjoint, so a session feeds at most
   one of U1, U2, U3.
+
+## Amendment A47 — the detectability floor (pre-registered 2026-09-15, before any code; ZERO new trials)
+
+This is an ANALYSIS of measurements already published, not a test. It computes no new signal, opens no new
+window, fits no parameter and can promote nothing. It adds **zero** trials: the family stays at 45 and every
+published p-value, BH-FDR decision and DSR is untouched. It is registered here only because the Crucible
+protocol requires anything that will be reported to be specified before it is run.
+
+**The question.** Every result in this programme has been judged against the six-condition survival rule, whose
+condition 6 is a floor of n ≥ 200 holdout trades. That floor has never been checked against the per-trade
+dispersion actually observed. So the programme has never stated what size of effect its own design is CAPABLE
+of detecting. Without that number, "UNDERPOWERED" is a label rather than a quantity, and the owner cannot tell
+whether option B (forward-test A44 to n = 200) is a two-year path to an answer or a path to the same label.
+
+**What is computed**, for each candidate that already has a published per-trade series, on its published window:
+1. n, mean and standard deviation of net index points per trade, and the standard error and t. (All already
+   published or directly derivable; nothing is re-fitted.)
+2. The minimum detectable effect at the observed n and at the survival rule's n = 200 floor, one-sided at
+   α = 0.05 with 80 % power: `MDE = (z_0.95 + z_0.80) × sd / sqrt(n)`.
+3. The n required to detect a 1.0-point and a 2.0-point per-trade edge at the same α and power — the two cost
+   levels every result in this programme is already reported at (`ACCEPTANCE.md:104-106`).
+4. Signals per year on the published window, hence the YEARS required to reach each n above.
+5. The MDE expressed as a percentage of premium, where premium = the 2 %-ITM contract cost in index points at
+   the measured level in `out/sizing_forward.csv` (A45/§15), so it is comparable to the percent-of-premium
+   figures A41/A42/A43 report.
+
+**Assumptions, stated before the run.** Independent and identically distributed per-trade returns within a
+candidate (the same assumption the normal-approximation MDE formula carries; the programme's own p-values come
+from a day-block bootstrap precisely because that assumption is imperfect, so every MDE here is a LOWER bound on
+what is truly required — clustering inflates it). Normal approximation for the MDE. No adjustment for
+multiplicity: these are per-candidate detectability figures, not test statistics.
+
+**What would make this analysis wrong, stated before the run.** If the observed per-trade standard deviations
+are small enough that the n = 200 floor detects effects at or below the 1-2 point cost band, then the survival
+rule is adequately powered, the UNDERPOWERED labels reflect a genuine shortage of signals rather than a design
+limit, and option B is worth running. That is the outcome that would REFUTE the concern motivating this
+amendment, and it will be reported as such if it is what the numbers say.
+
+**Reporting.** `out/power_analysis.csv` (generated), a new `PLAYBOOK_0DTE.md` §16 appended at the end (no line
+at or before playbook line 125 moves), and a narrative section in `ASSESSMENT.md`. Every number generated, none
+typed. Labelled throughout as an analysis of existing measurements, never as a trial or a result.

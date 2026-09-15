@@ -437,3 +437,78 @@ Symmetric spec, fixed now, judged only on sessions after 2026-09-11 as data accr
 file; nothing runs on existing data): overnight return ≤ expanding 10th percentile → long 2 % ITM call at the 10:00 bar
 close; ≥ expanding 90th percentile → long 2 % ITM put at 10:00; exit at the 16:00 close; costs 1 and 2 pts; the six
 conditions with n ≥ 200 before any verdict (≈ two years). Counted as one trial when it first runs (family 43).
+
+## Amendment A45 — the owner's trading rulebook (owner's option F, adopted 2026-09-15)
+
+The owner adopted the "stop doing" list in `INVERSION.md` §4. It is recorded here as a contract, not a
+finding. Rules 2, 3, 6, 8 are already in force in this programme; rules 1, 4, 5, 7 are new. Rule 1 is an
+amendment to the per-trade sizing in the numeric budgets (`ACCEPTANCE.md:108-112`) and is named as such.
+
+1. **Per-trade risk and attempts cap (AMENDS the numeric budget).** The budget's rule (daily loss limit ÷
+   worst-trade loss in % of premium, floor 100 %) implies x = 4 % of account per trade at the 4 % base limit,
+   i.e. N = floor(D/x) = 1 full-loss attempt per day. From now on, for forward trading and for every sizing
+   table published after this amendment, x = 1 % of account equity per trade, giving N = 4 attempts at the 4 %
+   base limit (N = 3 at 3 %, N = 5 at 5 %). Sizing tables already published under the prior convention (D4 in
+   `PLAYBOOK_0DTE.md`, A43 in `TRACK_C.md`) are NOT restated; they remain labelled under the rule in force when
+   they were computed. Evidence: `U2` §3 Rule 1 arithmetic, `U2-S28` (Kelly, variance drag).
+2. **No entries in the first 30 minutes** (no entry before 10:00 ET). NEW for the prop account: A39 T1 and A44
+   enter at 10:00, but A42 E1 (`SCORECARD.md:78`) and A43 S1/S3 (`SCORECARD.md:85,87`) entered at 09:31, and
+   A39's own 09:31 fingerprint T2 was weaker than T1 (`SCORECARD.md:54` vs `:53`). Evidence: `U2-S27`.
+3. **ITM-only strikes; no ATM or OTM contracts.** Already codified as a non-goal (`ACCEPTANCE.md:118`);
+   ATM −53 %/trade at 17 % win, OTM median −50.6 % (`research/CLAUDE.md:59`).
+4. **No increase in size or trade frequency after a loss.** NEW. Evidence: `U2-S29` (SURVEY-grade).
+5. **Resting limit orders at the mid, not marketable orders.** NEW and NOT measurable inside this pipeline: the
+   0DTE shards carry trade prints only, no quotes, and "no live or paper execution" is a codified non-goal
+   (`ACCEPTANCE.md:118-119`). No slippage-versus-mid number may be reported until that non-goal is relaxed by
+   its own amendment. Evidence: `U1-S5`, `U2-S01`, `U2-S07`.
+6. **Every rule and candidate is pre-registered and counted in the trial family before any run.** Already in
+   force (survival-rule condition 3, `ACCEPTANCE.md:58`; trial definition A31, `ACCEPTANCE.md:162`).
+7. **No trade taken only to satisfy a consistency or minimum-days rule.** NEW. Evidence: `U2` §3 Rules 3 and 5.
+8. **Unaudited prop-firm statistics are never used as facts.** Already in force. The figures `U2` §5 marks
+   UNVERIFIED ("5-10 % pass", "95 % fail", FTMO's "99.8 %") are not used to size or gate anything.
+
+Measurement: rules 2, 3, 6, 8 are checkable by the pipeline and by A44 (entry time, strike moneyness, family
+inclusion, source tags). Rules 1, 4, 5, 7 govern the owner's own discretionary trading and can only be audited
+in an owner-kept journal outside this repository (`INVERSION.md` §4 preamble). Every candidate registered from
+now on must comply with rules 2 and 3 at registration time.
+
+## Amendment A46 — intraday forced-flattening rebound (owner's option G, pre-registered 2026-09-15, before any run)
+
+The only candidate that survived the five-part screen in `INVERSION.md` §5. One hypothesis with a mechanism
+fingerprint, not a search; every parameter below is fixed before the first run.
+
+- **Mechanism (who must trade, when).** Accounts under daily loss limits and margin calls are forced to flatten
+  longs after a large morning decline; the forced selling pushes price further down and then exhausts, so the
+  mechanism predicts (i) a positive drift from late morning to the close on those days, (ii) a LARGER drift from
+  11:00 than from 09:45 (the liquidation window is still running at 09:45), and (iii) NO mirror effect after a
+  large morning RISE (no forced buyer). This is the intraday analogue of A39's overnight version and shares its
+  template; it is a distinct trial on a disjoint trigger (current session's open→11:00 move, not the prior
+  session's close→open gap).
+- **Signal day.** Open→11:00 return (09:30 bar open → 11:00 bar close) ≤ the expanding 10th percentile of the
+  same measure over all PRIOR sessions, minimum 250 prior sessions, no fitted parameter. The 250-session warm-up
+  matches A39 (`ACCEPTANCE.md:254`) rather than the A29 floor of 20 (`ACCEPTANCE.md:160`): at 20 the 10th
+  percentile is a 2-of-20 order statistic, and since n falls short of the 200 floor under BOTH warm-ups
+  (≈128 at 250, ≈151 at 20) the choice cannot be made to buy power. The 20-session variant is reported as a
+  pre-registered reporting cut (A31), never as a second trial.
+- **Trials (exactly three, all counted).** U1 = long 2 % ITM call, entry at the 11:00 bar close, exit at the
+  16:00 session close (the hypothesis). U2 = same, entry at the 09:45 bar close (timing fingerprint; must be
+  worse than U1). U3 = mirror — open→11:00 return ≥ the expanding 90th percentile, long 2 % ITM put, entry
+  11:00, exit 16:00 (must NOT be positive if a mechanism rather than a symmetric pattern is at work).
+  Costs 1.0 and 2.0 pts; option leg priced at k × VIX as in D4.
+- **Windows.** SELECTION 2013-01-01 → 2020-05-13 (Oanda). HOLDOUT 2020-07-27 → 2026-09-11 (the owner's minute
+  feed). The verdict is on the HOLDOUT. A real-priced re-evaluation on the 0DTE shards (2024-02-01 →
+  2026-09-11, ≈630-650 sessions) is reported as a sub-window check under the A41 convention, not as a verdict
+  and not as a new trial.
+- **Scoring.** The six-condition survival rule; day-block bootstrap p (n_boot 2000, seed 11), month-block p
+  where ≥ 20 months; day-selection control (random non-signal sessions, same entry/exit, 200 seeds); timing
+  control (random entry minute 09:31-15:00, 200 seeds); calendar-day Sharpe; DSR at N = 45.
+- **Family.** Three trials join the Track-A family: 42 → 45 now, or 43 → 46 if A44 runs first.
+- **Compliance with A45.** Entry 11:00 satisfies rule 2 (no entry before 10:00); 2 % ITM satisfies rule 3; the
+  sizing table for this candidate is computed under A45 rule 1 (x = 1 %, N = 4 at the 4 % limit).
+- **Kill / promotion rule.** U1 is promotable only if it passes all six conditions AND U2 < U1 AND U3 ≤ 0 at
+  1 pt. A positive U1 with a failed fingerprint is reported as "pattern without its mechanism" and never
+  promoted — the outcome A39 itself had when its mirror T3 came back positive (`ASSESSMENT.md:74-83`).
+- **Honest prior: LOW.** No source in `notes/inversion/` quantifies prop-firm or margin-call-driven forced
+  selling at index level; the mechanism is analogical, the 11:00 entry time has no cited evidence behind it
+  (09:45 is its only timing test), and A39's mirror already failed for the closely related overnight version.
+  n ≈ 128 modelled on the holdout means the expected label is UNDERPOWERED, not a verdict.

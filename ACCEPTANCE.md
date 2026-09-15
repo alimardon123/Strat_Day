@@ -512,3 +512,21 @@ fingerprint, not a search; every parameter below is fixed before the first run.
   selling at index level; the mechanism is analogical, the 11:00 entry time has no cited evidence behind it
   (09:45 is its only timing test), and A39's mirror already failed for the closely related overnight version.
   n ≈ 128 modelled on the holdout means the expected label is UNDERPOWERED, not a verdict.
+
+### A46a clarification (2026-09-15, minutes after A46, before any code exists and before any result is computed)
+
+Reviewing A46 against the unit it will copy, the registered timing fingerprint is defective and is replaced
+here, before a single number has been produced.
+
+- **The defect.** A39's fingerprint compared a 09:31 entry with a 10:00 entry on a signal that was complete at
+  09:30, so both entries were causal. A46's gate does not complete until the 11:00 bar closes, so the
+  registered U2 (entry 09:45) could not be traded on that signal at all: it would be look-ahead, not a weaker
+  entry. No causal "earlier entry" fingerprint exists for this gate.
+- **The replacement (dose-response, causal).** U2 becomes the mild-decline band: open→11:00 return at or below
+  the expanding 30th percentile but ABOVE the expanding 10th percentile, long 2 % ITM call at the 11:00 bar
+  close, exit at the 16:00 close. The mechanism claims forced flattening happens on EXTREME mornings, so a
+  milder decline must show a weaker effect. Prediction: U1 > U2. Everything else in A46 is unchanged, including
+  U1, U3, the windows, the controls, the costs, the 250-session warm-up and the kill rule (which now reads:
+  U1 promotable only if it passes all six conditions AND U2 < U1 AND U3 ≤ 0 at 1 pt).
+- Still exactly three trials; family 42 → 45; DSR at N = 45. The bands are disjoint, so a session feeds at most
+  one of U1, U2, U3.

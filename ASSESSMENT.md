@@ -218,8 +218,15 @@ asymmetry condition the mechanism predicts HOLDS — there is no positive mirror
 is negative and n < 200. In the selection window U1 is positive (+1.67 pts, n 102) but does not survive there
 either (n < 200, day-block p 0.31); the context window is also negative (-2.30 pts, n 254). Verdict: U1 does not
 survive the four programmatic checks and its own dose-response fingerprint fails; per the amendment's kill rule
-this is reported and never promoted — unlike A39, which at least produced a positive-but-underpowered pattern,
-this candidate fails outright on its first and only run.
+this is reported and never promoted. The registered label is UNDERPOWERED (survival rule condition 6,
+ACCEPTANCE.md:66: below 200 holdout trades, report the p-value and label it so) — n 144, exactly the outcome
+the pre-registration itself predicted before any run (ACCEPTANCE.md:514: "n ≈ 128 modelled on the holdout means
+the expected label is UNDERPOWERED, not a verdict"). The dispersion behind the -3.28 mean is wide enough that the
+inverted fingerprint is not a refutation either: per-trade on the HOLDOUT window (`out/flatten_candidates_trades.csv`,
+`net_pts_cost1`), U1 has mean -3.28, sd 44.70, se 3.72, t = -0.88 (n 144); U2 has mean -1.08, sd 33.65, se 1.95,
+t = -0.56 (n 299); U1 minus U2 is -2.20 with se 4.20, t = -0.52 — none of these is distinguishable from zero. This
+run supplies no evidence FOR the mechanism, and it is too small to supply evidence AGAINST it either; it fails its
+pre-registered gates and is not promoted.
 
 **D2-class correction applied before this verdict was read (FIX 1).** The open->11:00 measure's base price had
 been read from `signals.day_table`'s first-bar-of-day open rather than the literal 09:30 (mod 570) bar; on 4

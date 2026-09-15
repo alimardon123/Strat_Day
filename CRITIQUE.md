@@ -248,3 +248,42 @@ the same failure class already logged in `RETRO.md:40` ("a close-out claim outra
 here, a synthesis instruction outran the evidence file rather than a close-out claim outrunning a
 code diff, but it is the identical "claim outran the evidence" pattern.
 
+## A46 review round 1, then judge pass (fresh-context reviewer, then fleet judge, 2026-09-15, on commit 634013d) — decision ITERATE (docs only; 2 judge findings), reviewer's 7 defects recapped as FIXED
+
+Science verified for the reviewer pass: SELECTION U3 recomputes to n 105, net_pts_cost1 +0.2962, p_boot_month
+1.0000 from the corrected 09:30 base price; HOLDOUT U1 is numerically unchanged (n 144, -3.282639 pts) both
+before and after; HOLDOUT U3 moves one session (n 165 → 166) as a side effect of the same 4 corrected sessions
+feeding the shared expanding-percentile pool; `pipeline/report.py`'s hard-coded §12/§13 cross-references and
+`ACCEPTANCE.md:365`'s frozen "PLAYBOOK §12" citation both resolve correctly again after the section reorder;
+`out/realopt_reeval.csv` carries the registered U1/U2/U3 sub-window rows with the 15 pre-existing rows numerically
+unchanged; family 42 → 45 throughout SCORECARD.md and ASSESSMENT.md; `make all` / `make repeat` both clean,
+byte-identical (commit 634013d). For the judge pass on that commit: recomputed U1/U2 dispersion directly from
+`out/flatten_candidates_trades.csv` (HOLDOUT, `net_pts_cost1`) — U1 mean -3.28, sd 44.70, se 3.72, t -0.88 (n
+144); U2 mean -1.08, sd 33.65, se 1.95, t -0.56 (n 299); U1 minus U2 -2.20, se 4.20, t -0.52 — matching the
+judge's own cross-check within rounding; the pre-registered 20-session reporting cut (A31) was reproduced from a
+scratch copy of `pipeline/units/flatten.py` (only `MIN_PRIOR_SESSIONS` changed 250 → 20, run outside the repo,
+never committed) and is byte-identical to the registered 250-session gate on SELECTION and HOLDOUT, confirming
+the amendment's own prediction that the warm-up choice can only move the CONTEXT window.
+
+| # | Sev | Finding (short) | Root cause | Disposition |
+|---|---|---|---|---|
+| D1 | 3 | The open→11:00 measure's "09:30 open" was `signals.day_table`'s first-bar-of-day open, not the literal mod-570 bar; on 4 sessions with no 09:30 print (2005-09-13, three March-2020 circuit-breaker days) that first bar is a post-halt reopen near the session low, inverting the sign of two limit-down mornings into large measured RISES that fired U3 and won | Base price read from the wrong column for sessions where trading resumed after the literal 09:30 minute | FIXED in 634013d: literal 09:30 (mod 570) bar required explicitly; a session lacking it is excluded (`n_skipped`), never silent |
+| D2 | 2 | `pipeline/report.py` inserted the new flatten section as "§11" and renumbered LETF/REALOPT/EVENTVOL to 12/13/14, breaking report.py's own hard-coded "§12 re-prices... §13 uses them directly" cross-references rendered into PLAYBOOK's first paragraph | New section spliced in the middle of an append-only numbering scheme | FIXED in 634013d: flatten moved to the end (§14); LETF/REALOPT/EVENTVOL restored to 11/12/13 |
+| D3 | 2 | The same renumbering broke `ACCEPTANCE.md:365`'s frozen "PLAYBOOK §12" citation (would have pointed at the wrong section) | Same as D2 | FIXED in 634013d: same section-order fix; ACCEPTANCE.md left untouched |
+| D4 | 3 | A46's registered real-priced sub-window check on the 0DTE shards (a pre-registration requirement) was never built | Reporting obligation omitted from the first build | FIXED in 634013d: `pipeline.units.realopt.process_flatten` added (mirrors `process_gapliq`), wiring U1/U2/U3 into `out/realopt_reeval.csv`; the 15 pre-existing rows unchanged |
+| D5 | 2 | The day-selection control pool included warm-up sessions with an undefined (NaN) expanding threshold, which cannot stand in for "confirmed no signal" | Pool filter did not exclude sessions before the percentile warm-up completed | FIXED in 634013d: pool now requires a defined threshold (`thr_ok`) |
+| D6 | 1 | `test_flatten.py`'s warm-up assertion left the last warm-up row unchecked | Off-by-one in the test's own loop bound | FIXED in 634013d: test checks the full warm-up range |
+| D7 | 1 | `test_flatten.py`'s trade fixture used `last_mod=960`; the real frame's last bar is 959 | Fixture value not matched to the real frame's actual last print | FIXED in 634013d: fixture uses 959; a test added for a session missing its mod-570 bar |
+| J1 | 3 | SCORECARD.md:95 labelled U1 "FAILED (net negative, dose-response fingerprint inverted)" and ASSESSMENT.md said the candidate "fails outright on its first and only run" and did worse than A39 "which at least produced a positive-but-underpowered pattern" — but U1's n is 144, below the 200-trade floor, and A39's own T1 had n 158 (also < 200) yet keeps the UNDERPOWERED label; denying U1 that label while granting it to A39 is inconsistent, and an n-144 result cannot refute a mechanism it lacks the power to test | The write-up hardened an underpowered null into a refutation instead of applying survival-rule condition 6 (ACCEPTANCE.md:66) | ADOPTED: SCORECARD.md U1 relabelled "UNDERPOWERED (n 144 < 200, ACCEPTANCE.md:66); net negative and dose-response fingerprint inverted; not promoted"; U3 (n 166) relabelled UNDERPOWERED on the same rule; U2 (n 299) correctly carries no label. ASSESSMENT.md's closing passage rewritten to carry the UNDERPOWERED label, cite the amendment's own prediction (ACCEPTANCE.md:514), give the HOLDOUT dispersion (U1 mean -3.28 sd 44.70 se 3.72 t -0.88, n 144; U2 mean -1.08 sd 33.65 se 1.95 t -0.56, n 299; U1-U2 -2.20 se 4.20 t -0.52) and state plainly the run supplies no evidence FOR the mechanism and is too small to supply evidence AGAINST it |
+| J2 | 2 | The amendment registered the 20-session variant as "a pre-registered reporting cut (A31), never as a second trial" (`ACCEPTANCE.md:491-492`) but it was never produced | Reporting obligation scheduled at pre-registration, not executed before the write-up closed | ADOPTED: produced from a scratch copy of `pipeline/units/flatten.py` (`MIN_PRIOR_SESSIONS` 250 → 20 only, run to a scratch path outside the repo, never committed, `pipeline/` left byte-for-byte unmodified); SELECTION and HOLDOUT rows are identical to the registered 250-session gate column-for-column, only CONTEXT moves (the first 250 sessions sit entirely inside 2005-2006), confirming the amendment's own prediction; one sentence added to SCORECARD.md's A46 block |
+
+Root cause noted on J1: this is the same failure class already logged at `RETRO.md:40` ("a close-out claim
+outran the diff") — here a results narrative outran what an n-144 sample can support, hardening "we lack the
+power to see an effect" into "the effect is refuted." The "claim outran the evidence" pattern recurs a third
+time (INVERSION.md's D1 above being the second); a standing guard is worth a fold-in if it recurs again per
+RETRO.md's fold-in rule.
+
+This round's confirmation: docs-only. `git diff --stat pipeline/ ACCEPTANCE.md research/` empty; `make repeat`
+byte-identical; no number in `out/` or `PLAYBOOK_0DTE.md` moved; only SCORECARD.md, ASSESSMENT.md and this file
+changed.
+

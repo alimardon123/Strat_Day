@@ -571,3 +571,52 @@ amendment, and it will be reported as such if it is what the numbers say.
 **Reporting.** `out/power_analysis.csv` (generated), a new `PLAYBOOK_0DTE.md` §16 appended at the end (no line
 at or before playbook line 125 moves), and a narrative section in `ASSESSMENT.md`. Every number generated, none
 typed. Labelled throughout as an analysis of existing measurements, never as a trial or a result.
+
+### A47a correction (2026-09-15, after the first A47 run, before any corrected number is published)
+
+A fresh-context adversarial review found two errors in A47 as registered and as first run. Both are recorded
+here rather than by editing A47 (this file is append-only). Neither adds a trial; the family stays at 45.
+
+**1. Scope error — the FVG family was silently omitted, and including it INVERTS the headline.** A47 scoped
+itself to "each candidate that already has a published per-trade series". `out/fvg_candidates_trades.csv` (A36,
+8 trials, 24 window/trial groups) carries a `pts` column on the same `COST1 = 1.0` convention every other series
+uses, and its group means reproduce the published `net_pts_cost1` in `out/fvg_candidates.csv` to six decimals
+(verified). It qualifies on every clause and was excluded by an implementation defect, not by a scope decision.
+`pipeline/units/power.py` additionally asserted in a docstring that no such candidate existed, which was false.
+Restoring it moves the headline statistics AGAINST A47's first conclusion — the direction a correctness fix
+should move:
+
+| statistic | as first published (37 rows) | corrected (61 rows) |
+|---|---|---|
+| best MDE at n = 200 | 1.68 pts | 0.22 pts |
+| median | 4.16 pts | 2.80 pts |
+| rows with MDE ≤ 2.0 pts | 1 of 37 | 25 of 61 |
+| HOLDOUT rows with MDE ≤ 2.0 pts | 0 of 8 | 8 of 16 |
+
+**A47's pre-registered refutation condition is therefore MET for one family and NOT met for the others, and it
+is reported as such.** The corrected finding is two-sided and narrower than the first one: for hold-to-close,
+one-trade-per-day, option-style candidates the n = 200 floor cannot resolve a 1-2 point effect (0 of 8 holdout
+rows); for the intraday stop/target family it can, with holdout MDE 0.78-1.27 pts INSIDE the cost band and
+actual holdout n of 282-959 already past the floor — so for that family the design did resolve the question and
+the answer was flat to negative (-0.004 to -1.14 pts/trade). Any claim that "the n = 200 floor cannot resolve
+the effects this programme is looking for" is withdrawn as overstated.
+
+**2. The i.i.d./clustering assumption's stated DIRECTION is withdrawn as unsupported.** A47's Assumptions
+paragraph asserted that because the programme's p-values come from a day-block bootstrap, "every MDE here is a
+LOWER bound on what is truly required — clustering inflates it". The review probed this and falsified it for the
+data in the table: every series feeding the first run is one trade per day, so each day block is a singleton and
+the day-block bootstrap degenerates to an i.i.d. bootstrap over trades; there is no within-day clustering to
+inflate anything. Measured across-day dependence runs the other way — lag-1 autocorrelation is negative in 22 of
+37 groups and a Newey-West variance-inflation factor over lags 1-5 is below 1.0 in 25 of 37 (median 0.89), so
+for most rows the true required n is slightly SMALLER than the i.i.d. figure, not larger. Magnitude is about
+±5 % on MDE and does not move any conclusion. The claim is replaced by the measured statement: dependence is
+weak and mostly mildly negative, so the i.i.d. MDE is a good approximation and not a bound in either direction.
+(The FVG family restored under correction 1 does carry up to 4 trades per day, so its rows — and only its rows —
+are the ones where a clustering adjustment could matter; this is stated, not corrected for, and no FVG
+conclusion rests on a margin smaller than that.)
+
+**3. Reporting discipline reasserted.** A47 required "every number generated, none typed". The first write-up
+breached this with a hand-typed window-mean standard deviation that was 12 % wrong and three hand-typed
+holding-hours correlations that do not reproduce (their duration map mis-stated A46a's U2 entry as 09:45 when
+A46a moved it to 11:00). All four are withdrawn. Any window-level or duration-level statement republished must
+come from a generated column or not appear.

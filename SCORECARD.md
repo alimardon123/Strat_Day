@@ -54,7 +54,7 @@ Updated 2026-09-13 10:10 UTC — HOLDOUT RUN ON REAL DATA (owner's `data/ext/`, 
 | T2 call 09:31 (timing fingerprint) | 158 | +0.12 | 1.00 | — | — | not a candidate |
 | T3 put 10:00 after overnight gain (mirror) | 154 | +1.89 | 0.43 | — | positive → mechanism asymmetry absent | not a candidate |
 
-Family-wide BH-FDR at 10 % over 42 trials (39 before A43's three joined): 0 pass (`out/trials.csv`).
+Family-wide BH-FDR at 10 % over 45 trials (42 before A46's three joined): 0 pass (`out/trials.csv`).
 
 ## Track B — swing-start detector on range bars (A40/A40c; 24-trial family, FDR on its own; SPY 16 and gold 8 both run, 24 of 24 FAILED)
 
@@ -78,7 +78,7 @@ Family-wide BH-FDR at 10 % over 42 trials (39 before A43's three joined): 0 pass
 | A42 E1 daily straddle 09:31 | n 646, -7.0 % of premium, p 1.00 — premium rich, as registered |
 | A42 E2 FOMC 13:30 vs E3 non-FOMC | E2 n 20 -1.6 %, E3 n 608 -17.2 %, difference +15.7 pts, p 0.64; UNDERPOWERED, not promoted |
 
-## Track C — A43 defined-risk short 0DTE premium (owner's option E; family 42; nothing promoted)
+## Track C — A43 defined-risk short 0DTE premium (owner's option E; family 45; nothing promoted)
 
 | Trial ($0.10/leg) | n | Mean % of max loss | Win % | Worst day ($100k, 4 % rule) | Max drawdown | Verdict |
 |---|---|---|---|---|---|---|
@@ -86,5 +86,17 @@ Family-wide BH-FDR at 10 % over 42 trials (39 before A43's three joined): 0 pass
 | S2 iron butterfly 13:30 | 557 | -5.0 | 51 | −$5,035 | 104 % | FAILED |
 | S3 iron condor 09:31 | 443 | -6.8 | 52 | −$8,010 | 114 % | FAILED |
 
-Decomposition (per share, pre-cost): short legs +0.26 / +0.24 / +0.14; wings -0.14 / -0.07 / -0.04; breakeven cost per leg $0.030 / $0.042 / $0.025. FDR over 42 trials: 0 pass.
+Decomposition (per share, pre-cost): short legs +0.26 / +0.24 / +0.14; wings -0.14 / -0.07 / -0.04; breakeven cost per leg $0.030 / $0.042 / $0.025. FDR over 45 trials: 0 pass.
+
+## A46 — intraday forced-flattening rebound (3 trials, pre-registered 2026-09-15; family 42 → 45)
+
+| Trial | Holdout n | Net pts @1 pt | p (day) | Control | Fingerprint | Verdict |
+|---|---|---|---|---|---|---|
+| U1 call 11:00 after a large morning decline (the hypothesis) | 144 | -3.28 | 1.00 | below day-selection control (excess -2.96 pts); above the timing control | U2 < U1 FAILS (U2 -1.08 > U1 -3.28: the mild-decline band lost LESS than the extreme one, the opposite of the predicted dose-response); U3 <= 0 holds | FAILED (net negative, dose-response fingerprint inverted), not promoted |
+| U2 call 11:00, mild-decline band (A46a's causal dose-response replacement for the look-ahead 09:45 fingerprint) | 299 | -1.08 | 1.00 | — | — | not a candidate |
+| U3 put 11:00 after a large morning rise (mirror) | 166 | -1.27 | 1.00 | — | negative → mechanism asymmetry present (no mirror rebound), unlike A39's mirror | not a candidate |
+
+FIX 1 (D2-class correctness fix, applied before this run's verdict was read): the "09:30 session open" base price had been read from `signals.day_table`'s first-bar-of-day open rather than the literal mod-570 bar; on 4 sessions with no mod-570 bar (2005-09-13 and the three March-2020 circuit-breaker days) the first bar was a post-halt reopen near the session low, inverting the sign of two limit-down crash mornings into large measured RISES that fired U3 and both won. Fixed to require the literal 09:30 bar and exclude sessions lacking it (`n_skipped`, not silent). Effect on the counted SELECTION U3 row (`out/flatten_candidates.csv`, `out/trials.csv`): n 107 → 105, net_pts_cost1 +1.6766 → +0.2962, p_boot_month 0.2655 → 1.0000 — the trial's own number got WORSE, the correct direction for a correctness fix; nothing else was adjusted to compensate. HOLDOUT U1 is numerically unchanged (n 144, -3.282639 pts, both before and after); HOLDOUT U3 shifts by one session (n 165 → 166, -1.4976 → -1.2696 pts) as a side effect of the same 4 corrected sessions feeding the whole-history expanding percentile pool, not because any HOLDOUT session itself starts late — this does not change U1's verdict.
+
+Family-wide BH-FDR at 10 % over 45 trials: 0 pass (`out/trials.csv`).
 

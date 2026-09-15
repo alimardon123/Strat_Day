@@ -133,7 +133,7 @@ to near zero) but 20 days cannot establish an edge. Family 39, FDR 0 pass. Nothi
 Owner's option E, pre-registered before the run (c7d62b1). Three structures on 2024-02-01 → 2026-09-11, $0.10 per leg round trip:
 S1 iron butterfly 09:31 n 592, -8.6 % of max loss per structure, win 50 %, worst day −$6,080 on $100k at the 4 % sizing rule,
 worst month −$35,952, max drawdown 198 %; S2 iron butterfly 13:30 n 557, -5.0 %, drawdown 104 %; S3 iron condor 09:31
-n 443, -6.8 %, drawdown 114 %. All three FAIL the survival rule and the promotion rule (p 1.0, DSR 0, FDR 0 of 42).
+n 443, -6.8 %, drawdown 114 %. All three FAIL the survival rule and the promotion rule (p 1.0, DSR 0, FDR 0 of 45).
 Why, decomposed from `out/sellvol_trades.csv` (per share, before costs): the SHORT legs earn +0.26 (S1), +0.24 (S2), +0.14 (S3) —
 the variance risk premium is real and on the seller's side, exactly as A42 measured from the buyer's chair — but the protective
 WINGS, themselves overpriced 0DTE options the seller must buy, give back -0.14 / -0.07 / -0.04, leaving a gross of
@@ -205,3 +205,32 @@ rule, it must be pre-registered now and judged only on data after 2026-09-11 (or
 PLAYBOOK §8), never on this holdout; (3) the owner's fair-value-gap family (A36) was tested under the same rule and no trial survives
 (§ above); (4) a NEW mechanism-based candidate — one that names who must trade and when — pre-registered in its own
 commit before any run and judged on data after 2026-09-11 (BLOCKED.md lists the candidates with their priors).
+
+## Intraday forced-flattening rebound (A46/A46a) — pre-registered, tested, not promoted
+
+Three trials (`out/flatten_candidates.csv`, PLAYBOOK §14). On the holdout the hypothesis trade U1 (call from 11:00
+after a morning decline below the expanding 10th percentile) is net NEGATIVE: n 144, win 47.9 %, -3.28 pts at
+1 pt (-4.28 at 2 pt), day-block p 1.00, BELOW its day-selection control (excess -2.96 pts) though above its
+timing control (-7.69); the dose-response fingerprint FAILS (U2, the mild-decline band: -1.08 pts, LESS negative
+than U1's -3.28 — the milder decline lost less than the extreme one, the opposite of A46a's prediction U1 > U2).
+The mirror U3 (put from 11:00 after a large morning RISE) is also negative (-1.27 pts, n 166), so unlike A39 the
+asymmetry condition the mechanism predicts HOLDS — there is no positive mirror — but that is moot once U1 itself
+is negative and n < 200. In the selection window U1 is positive (+1.67 pts, n 102) but does not survive there
+either (n < 200, day-block p 0.31); the context window is also negative (-2.30 pts, n 254). Verdict: U1 does not
+survive the four programmatic checks and its own dose-response fingerprint fails; per the amendment's kill rule
+this is reported and never promoted — unlike A39, which at least produced a positive-but-underpowered pattern,
+this candidate fails outright on its first and only run.
+
+**D2-class correction applied before this verdict was read (FIX 1).** The open->11:00 measure's base price had
+been read from `signals.day_table`'s first-bar-of-day open rather than the literal 09:30 (mod 570) bar; on 4
+sessions with no bar printed exactly at 09:30 — 2005-09-13 and the three March-2020 circuit-breaker days — the
+first bar is a post-halt reopen near the session low, not the 09:30 print. Two of those are limit-down crash
+mornings whose measured open->11:00 return therefore inverted sign into large RISES, firing the mirror trial U3
+on both, and both won. Fixed to read the literal 09:30 bar and to exclude a session lacking it (`n_skipped`,
+never silent). Effect on the counted SELECTION U3 row (`out/flatten_candidates.csv`, `out/trials.csv`): n 107 →
+105, net_pts_cost1 +1.6766 → +0.2962, p_boot_month 0.2655 → 1.0000 — a counted trial's number got WORSE, the
+correct direction for a correctness fix; nothing else was adjusted to compensate. HOLDOUT U1 is numerically
+unchanged (n 144, -3.2826 pts, both before and after the fix); HOLDOUT U3 shifts by one session (n 165 → 166,
+-1.4976 → -1.2696 pts) purely because the same 4 corrected sessions feed the whole-history expanding-percentile
+pool every later threshold reads from — no HOLDOUT session itself starts late — and this does not change U1's
+verdict. Family 42 → 45 (FDR 0 of 45, `out/trials.csv`).

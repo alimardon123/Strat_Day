@@ -3,9 +3,9 @@
     python -m pipeline.units.test_flatten
 
 No pytest dependency (none is used elsewhere in pipeline/); plain asserts, PASS/FAIL printed per
-check, matching pipeline.units.test_letf's own `__main__` block and tempfile usage. Two checks,
-per the task, both exercised through the REAL functions in flatten.py (compute_thresholds,
-compute_bands, build_trades, summarize), never a reimplementation of their logic:
+check, matching pipeline.units.test_letf's own `__main__` block and tempfile usage. Three checks,
+per the task, all exercised through the REAL functions in flatten.py (compute_thresholds,
+compute_bands, build_day_table, build_trades, summarize), never a reimplementation of their logic:
   (a) the band logic (flatten.compute_thresholds / flatten.compute_bands) is disjoint and causal
       on a synthetic 300-session fixture where the expanding 10th/30th/90th percentiles at one
       chosen row are known independently (np.quantile on that row's own strictly-prior window):
@@ -13,12 +13,17 @@ compute_bands, build_trades, summarize), never a reimplementation of their logic
       by construction at the chosen row using values placed exactly relative to the known
       thresholds); (ii) perturbing a session's OWN value never changes its OWN threshold (only
       later thresholds move -- checked both ways, so the test cannot pass on a no-op
-      perturbation); (iii) the first MIN_PRIOR_SESSIONS-1 sessions carry no signal at all.
+      perturbation); (iii) the first MIN_PRIOR_SESSIONS sessions (rows 0..249, the last warm-up
+      row included) carry no signal at all.
   (b) a trade table built by flatten.summarize's real path (build_trades -> the net-of-cost
       columns) has every entry bar (11:00, mod 660) strictly before its exit bar (the session's
-      last bar) and its net_pts_cost1/net_pts_cost2/net_pct_cost1/net_pct_cost2 columns equal the
+      last bar, mod 959 -- the real frame's actual last RTH bar, not the exclusive mod 960
+      boundary) and its net_pts_cost1/net_pts_cost2/net_pct_cost1/net_pct_cost2 columns equal the
       gross pts/ret_pct columns minus the registered COST1/COST2.
-Neither check writes anything under out/ or data/ (no tempfile is even needed: both fixtures are
+  (c) FIX 1: a session with no mod-570 (09:30) bar has no base price for the open->11:00 measure
+      and is excluded by flatten.build_day_table's real eligibility gate (elig False, ret_to_1100
+      NaN), rather than silently measured from signals.day_table's first-bar-of-day open.
+Neither check writes anything under out/ or data/ (no tempfile is even needed: all fixtures are
 plain in-memory DataFrames).
 """
 import sys
@@ -78,8 +83,10 @@ def test_bands_disjoint_and_causal():
     assert not np.isclose(later_lo.iloc[k + 5], thr_lo.iloc[k + 5]), \
         "perturbation had no effect anywhere -- the causal check above would be vacuous"
 
-    # --- (iii) the warm-up: no signal in the first MIN_PRIOR_SESSIONS-1 sessions ---
-    warm = flatten.MIN_PRIOR_SESSIONS - 1
+    # --- (iii) the warm-up: no signal in the first MIN_PRIOR_SESSIONS sessions (rows 0..249
+    # inclusive -- the threshold at row 249 still needs 250 STRICTLY PRIOR values, i.e. rows
+    # 0..249, and is NaN one row short of that; the first non-NaN threshold lands at row 250) ---
+    warm = flatten.MIN_PRIOR_SESSIONS
     assert not sig_u1.iloc[:warm].any(), "U1 fired inside the warm-up window"
     assert not sig_u2.iloc[:warm].any(), "U2 fired inside the warm-up window"
     assert not sig_u3.iloc[:warm].any(), "U3 fired inside the warm-up window"
@@ -95,9 +102,12 @@ def test_trade_entry_before_exit_and_net_of_cost():
     day = pd.DataFrame({
         "px_1100": [100.0, 101.0, 99.0, 102.0, 100.0],
         "close": [105.0, 99.0, 104.0, 98.0, 103.0],
-        "last_mod": [960, 960, 960, 960, 960],          # 16:00 close bar, strictly after 11:00 (660)
+        "last_mod": [959, 959, 959, 959, 959],          # 16:00 close bar, the real frame's actual
+                                                          # last bar (mod < RTH_END=960, so 959),
+                                                          # strictly after 11:00 (660)
         "vix_prev": [15.0, 16.0, 14.0, 18.0, 15.5],
         "elig": [True, True, True, True, True],
+        "thr_ok": [True, True, True, True, True],
         "sig_u1": [False, True, False, True, False],
         "sig_u2": [False, False, False, False, False],
         "sig_u3": [False, False, False, False, False],
@@ -116,7 +126,7 @@ def test_trade_entry_before_exit_and_net_of_cost():
     assert len(trades) == 2
     assert (trades["entry_mod"] < trades["exit_mod"]).all(), "entry bar (11:00) is not strictly before the exit bar"
     assert (trades["entry_mod"] == flatten.MOD_1100).all()
-    assert (trades["exit_mod"] == 960).all()
+    assert (trades["exit_mod"] == 959).all()
 
     expected_pts = trades["exit_px"] - trades["entry_px"]           # direction=+1 (call)
     expected_ret_pct = (trades["exit_px"] / trades["entry_px"] - 1) * 100
@@ -133,9 +143,40 @@ def test_trade_entry_before_exit_and_net_of_cost():
     return True
 
 
+def test_missing_930_bar_ineligible():
+    """FIX 1: a session with no mod-570 (09:30) bar has no base price for the open->11:00 measure
+    and must be ineligible (elig False, ret_to_1100 NaN) rather than silently measured from
+    `signals.day_table`'s first-bar-of-day open (which, on such a session, is some OTHER minute --
+    exactly the 2005-09-13 / March-2020 circuit-breaker defect this fix closes). Exercised through
+    the REAL `flatten.build_day_table` (which itself calls the real `signals.day_table`), not a
+    reimplementation."""
+    dates = pd.date_range("2021-03-01", periods=3, freq="B")
+    rows = []
+    for d in dates:
+        rows += [(d, flatten.MOD_0930, 100.0, 100.0),          # 09:30 bar: open=close=100
+                 (d, flatten.MOD_1100, 100.0, 102.0),           # 11:00 bar: close=102
+                 (d, 959, 100.0, 103.0)]                        # last RTH bar: close=103 (16:00 print)
+    frame = pd.DataFrame(rows, columns=["date", "mod", "open", "close"])
+    # the middle session loses its mod-570 bar entirely -- a post-halt-style reopen
+    frame = frame[~((frame["date"] == dates[1]) & (frame["mod"] == flatten.MOD_0930))].reset_index(drop=True)
+    vix = pd.DataFrame({"date": dates, "close": [15.0, 15.0, 15.0]})
+    td = list(dates)
+
+    day = flatten.build_day_table(frame, vix, None, td)
+
+    assert bool(day.loc[dates[0], "elig"]), "session WITH a mod-570 bar must be eligible"
+    assert bool(day.loc[dates[2], "elig"]), "session WITH a mod-570 bar must be eligible"
+    assert not bool(day.loc[dates[1], "elig"]), "session missing its mod-570 bar must be ineligible (FIX 1)"
+    assert pd.isna(day.loc[dates[1], "ret_to_1100"]), "ret_to_1100 must be NaN without a mod-570 base price"
+    assert not bool(day.loc[dates[1], "sig_u1"] or day.loc[dates[1], "sig_u2"] or day.loc[dates[1], "sig_u3"]), \
+        "a session with no mod-570 bar must never signal on either side"
+    return True
+
+
 def main():
     checks = [("band logic disjoint and causal on the 300-session fixture", test_bands_disjoint_and_causal),
-              ("trade entry strictly before exit; net columns = gross - registered cost", test_trade_entry_before_exit_and_net_of_cost)]
+              ("trade entry strictly before exit; net columns = gross - registered cost", test_trade_entry_before_exit_and_net_of_cost),
+              ("FIX 1: a session with no mod-570 bar is ineligible, not silently measured", test_missing_930_bar_ineligible)]
     ok = True
     for name, fn in checks:
         try:

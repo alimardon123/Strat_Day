@@ -576,32 +576,9 @@ def playbook():
         cap = gapliq_caption(gapliq)
         if cap:
             L += [cap, ""]
-    if os.path.exists("out/flatten_candidates.csv"):
-        flatten = pd.read_csv("out/flatten_candidates.csv")
-        L += ["## 11. Intraday forced-flattening rebound (A46/A46a) — pre-registered 2026-09-15, 3 trials", "",
-              "3 trials (U1 long call entry 11:00 on days with open->11:00 return <= the expanding 10th pct, "
-              "U2 long call entry 11:00 on the mild-decline band -- <= the expanding 30th pct AND > the expanding "
-              "10th pct, A46a's causal replacement for the registered-but-defective 09:45 timing fingerprint -- "
-              "U3 mirror signal long put entry 11:00 on days >= the expanding 90th pct) from `pipeline.units."
-              "flatten` (`out/flatten_candidates.csv`), reported on three windows. Only the SELECTION-window rows "
-              "are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); CONTEXT is background and "
-              "HOLDOUT is these same 3 trials' out-of-sample rows, reported here, not double-counted -- the "
-              "amendment's verdict is judged on HOLDOUT.", ""]
-        for win_name, win_label in (("CONTEXT", "CONTEXT (2005-01-01 → 2012-12-31)"),
-                                     ("SELECTION", "SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family"),
-                                     ("HOLDOUT", "HOLDOUT (2020-07-27 → 2026-09-11) — the verdict window (A46)")):
-            sub = flatten[flatten["window"] == win_name]
-            if not len(sub):
-                continue
-            L += [f"### {win_label}", "",
-                  md(sub[[c for c in FLATTEN_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS), "",
-                  flatten_verdict(sub), ""]
-        cap = flatten_caption(flatten)
-        if cap:
-            L += [cap, ""]
     if os.path.exists("out/letf_candidates.csv"):
         letf = pd.read_csv("out/letf_candidates.csv")
-        L += ["## 12. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial", ""]
+        L += ["## 11. Leveraged-ETF close rebalancing (A38, owner's option C) — pre-registered 2026-09-13, 1 trial", ""]
         if len(letf):
             L += ["1 trial (`15:30|both|letf_demand`) from `pipeline.units.letf` (`out/letf_candidates.csv`), "
                   "reported on three windows, each over sessions with leveraged-ETF assets data only. Only the "
@@ -624,7 +601,7 @@ def playbook():
             L += ["Waits for `data/ext/letf_aum_2006_2026.csv`; the unit skipped.", ""]
     if os.path.exists("out/realopt_reeval.csv"):
         reeval = pd.read_csv("out/realopt_reeval.csv")
-        L += ["## 13. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered "
+        L += ["## 12. Real 0DTE prices (A41) — model calibration and re-evaluation, pre-registered "
               "2026-09-13", ""]
         if len(reeval):
             calib, calib_summary = realopt_calibration_blocks("out/realopt_calibration.csv")
@@ -657,7 +634,7 @@ def playbook():
             L += ["Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.", ""]
     if os.path.exists("out/eventvol_candidates.csv"):
         eventvol = pd.read_csv("out/eventvol_candidates.csv")
-        L += ["## 14. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials", ""]
+        L += ["## 13. Event-day long volatility (A42) — pre-registered 2026-09-13, 3 trials", ""]
         if len(eventvol):
             L += ["3 trials (E1 baseline every session, E2 FOMC statement days, E3 the E2 rule on "
                   "every non-FOMC session) from `pipeline.units.eventvol` "
@@ -675,6 +652,29 @@ def playbook():
                 L += [cap, ""]
         else:
             L += ["Waits for `data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz`; the unit skipped.", ""]
+    if os.path.exists("out/flatten_candidates.csv"):
+        flatten = pd.read_csv("out/flatten_candidates.csv")
+        L += ["## 14. Intraday forced-flattening rebound (A46/A46a) — pre-registered 2026-09-15, 3 trials", "",
+              "3 trials (U1 long call entry 11:00 on days with open->11:00 return <= the expanding 10th pct, "
+              "U2 long call entry 11:00 on the mild-decline band -- <= the expanding 30th pct AND > the expanding "
+              "10th pct, A46a's causal replacement for the registered-but-defective 09:45 timing fingerprint -- "
+              "U3 mirror signal long put entry 11:00 on days >= the expanding 90th pct) from `pipeline.units."
+              "flatten` (`out/flatten_candidates.csv`), reported on three windows. Only the SELECTION-window rows "
+              "are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); CONTEXT is background and "
+              "HOLDOUT is these same 3 trials' out-of-sample rows, reported here, not double-counted -- the "
+              "amendment's verdict is judged on HOLDOUT.", ""]
+        for win_name, win_label in (("CONTEXT", "CONTEXT (2005-01-01 → 2012-12-31)"),
+                                     ("SELECTION", "SELECTION (2013-01-01 → 2020-05-13) — counted in the trial family"),
+                                     ("HOLDOUT", "HOLDOUT (2020-07-27 → 2026-09-11) — the verdict window (A46)")):
+            sub = flatten[flatten["window"] == win_name]
+            if not len(sub):
+                continue
+            L += [f"### {win_label}", "",
+                  md(sub[[c for c in FLATTEN_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS), "",
+                  flatten_verdict(sub), ""]
+        cap = flatten_caption(flatten)
+        if cap:
+            L += [cap, ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 

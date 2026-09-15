@@ -28,10 +28,12 @@ tercile (over the file's own sessions) and by minute.
 RE-EVALUATION (`out/realopt_reeval.csv` + `out/realopt_reeval_trades.csv`): every option leg
 already priced by the model on sessions >= 2024-02-01 is re-priced with real bars -- the two
 pre-registered D4 holdout signals, the 15 POST-SELECTION rows (if their per-trade files exist),
-A39's T1/T2/T3 -- at three added-cost rows (+$0.00 / +$0.10 / +$0.20 round trip = 0/1/2 SPX
-points), against the model's own number on the SAME re-priced trades, labelled "model optimistic
-here" / "model pessimistic here". Nothing here is promoted; every row is stamped `note =
-"sub-window, not a verdict"` (the amendment's own words).
+A39's T1/T2/T3, and (added per A46/A46a's own text, "reported as a sub-window check under the
+A41 convention") A46/A46a's U1/U2/U3 -- at three added-cost rows (+$0.00 / +$0.10 / +$0.20 round
+trip = 0/1/2 SPX points), against the model's own number on the SAME re-priced trades, labelled
+"model optimistic here" / "model pessimistic here". Nothing here is promoted; every row is
+stamped `note = "sub-window, not a verdict"` (the amendment's own words); A46's own trial count
+does not grow either -- this is a re-pricing of U1/U2/U3, not a fourth trial.
 
 Every ambiguity the amendment left open is fixed here and restated in the `spec` column
 (SPEC_NOTE below); worth flagging up front:
@@ -143,6 +145,12 @@ Every ambiguity the amendment left open is fixed here and restated in the `spec`
      `data/ext/`, the skip-path unit test's deliberately-missing tempfile path was silently
      overridden by the glob, so the "file missing" test re-priced the real file instead of
      exercising the skip path).
+(17) `process_flatten` (A46/A46a's registered sub-window check) mirrors `process_gapliq` exactly,
+     reading `out/flatten_candidates_trades.csv`'s HOLDOUT rows for U1/U2/U3: every trial enters
+     at the SAME fixed 11:00 bar close (`pipeline.units.flatten.MOD_1100`), unlike gapliq's
+     per-trial 10:00/09:31 entry, so `trial_meta` maps every trial name to that one constant; kind
+     is 'c'/'c'/'p' (U1/U2 call, U3 put) and `k = pipeline.units.flatten.OPT_K` (1.3), both reused
+     directly from that module exactly as A39's own constants are reused for T1/T2/T3.
 """
 import argparse
 import os
@@ -153,7 +161,7 @@ import numpy as np
 import pandas as pd
 
 from pipeline import insample, options, sessions, signals, stats
-from pipeline.units import gapliq
+from pipeline.units import flatten, gapliq
 
 EXT_OPT_PATH = "data/ext/spy_0dte_1min_2024-02_2026-09.csv.gz"   # single-file layout (message text)
 EXT_OPT_GLOB = "data/ext/spy_0dte_1min_*.csv.gz"                  # or per-year shards written by the fetch helper
@@ -186,6 +194,7 @@ GAP_NAME = "13:00|call|gap>0.3%"                 # Thread A's pre-registered sec
 POST_WINDOW = "2020-06-01..2026-09-11"           # reconcile.py's literal `window` string for POST-SELECTION rows
 COST_ROWS = [("+$0.00", 0.0), ("+$0.10", 0.10), ("+$0.20", 0.20)]   # 0 / 1 / 2 SPX-point round trips (A41)
 GAPLIQ_K = gapliq.OPT_K                          # 1.3, reused as-is (see docstring point 11)
+FLATTEN_K = flatten.OPT_K                        # 1.3, reused as-is (A46/A46a, mirrors GAPLIQ_K)
 CALIB_COLS = ["date", "minute", "right", "strike", "underlying", "real_close", "model_k1", "implied_k", "missing"]
 CALIB_SUMMARY_COLS = ["group_type", "group_value", "n", "median_implied_k", "iqr_implied_k", "missing_share"]
 OUT_COLS = ["signal", "cost_label", "added_cost_dollars", "n", "n_skipped_missing", "win",
@@ -203,7 +212,7 @@ SPEC_NOTE = (
     "the file's own sessions) and by minute, plus the missing (no-bar) share, in a second block of "
     "the same csv. Re-evaluation -- every option leg already priced by the model on sessions >= "
     "2024-02-01 (the two pre-registered D4 holdout signals, any POST-SELECTION row with a "
-    "per-trade file, A39 T1/T2/T3) is re-priced with real bars: entry = the option's exact-minute "
+    "per-trade file, A39 T1/T2/T3, A46/A46a U1/U2/U3) is re-priced with real bars: entry = the option's exact-minute "
     "bar close at the trade's own entry minute (next later bar's open if missing), exit = the "
     "exact 15:59 bar close (last bar at/before 15:59 if missing); a trade with neither is skipped "
     "and counted in n_skipped_missing. Strike = nearest LISTED strike that day, among strikes with "
@@ -213,7 +222,7 @@ SPEC_NOTE = (
     "than the exit bar actually used (exit_bar_mod) -- both are written to the per-trade file for "
     "audit. Costs: +$0.00/+$0.10/+$0.20 flat, three rows per signal. model_mean_pct is "
     "pipeline.options.trade's own number on the exact same re-priced trades (k=1.0 for the D1 "
-    "winner/POST-SELECTION rows, k=1.3 for the 13:00 gap-up call and A39 T1/T2/T3, matching each "
+    "winner/POST-SELECTION rows, k=1.3 for the 13:00 gap-up call, A39 T1/T2/T3 and A46/A46a U1/U2/U3, matching each "
     "signal's existing convention elsewhere in this codebase), never the D4 sensitivity sweep. "
     "label: 'model optimistic here' if real < model, 'model pessimistic here' if real > model. "
     "Every row carries note='sub-window, not a verdict': nothing here is promoted, added to "
@@ -523,6 +532,41 @@ def process_gapliq(day, opt_df, all_dates):
     return out_trades, out_rows
 
 
+def process_flatten(day, opt_df, all_dates):
+    """A46/A46a U1/U2/U3 from out/flatten_candidates_trades.csv on sessions >= 2024-02-01 (A46's
+    registered sub-window check, mirroring `process_gapliq` exactly: fixed entry minute/kind
+    reused from pipeline.units.flatten -- every trial enters at the same fixed 11:00 bar close, so
+    unlike gapliq's per-trial entry_mod there is only one to reuse -- exit minute-of-day and
+    prior-close VIX looked up from `day` by date since the trades file itself carries neither)."""
+    path = "out/flatten_candidates_trades.csv"
+    trial_meta = {name: (flatten.MOD_1100, kind) for name, _sig, _dirn, kind, _t in flatten.TRIALS}
+    out_trades, out_rows = [], []
+    if not os.path.exists(path):
+        print(f"[NOTE] A41 realopt: {path} missing; cannot re-price A46 U1/U2/U3.")
+        return out_trades, out_rows
+    ftr = pd.read_csv(path)
+    for trial in ("U1", "U2", "U3"):
+        entry_mod, kind = trial_meta[trial]
+        sub = ftr[(ftr["trial"] == trial) & (ftr["window"] == "HOLDOUT")
+                 & (pd.to_datetime(ftr["date"]) >= REEVAL_START)].reset_index(drop=True)
+        if len(sub):
+            dvals = pd.to_datetime(sub["date"])
+            in_day = dvals.isin(day.index)
+            n_no_ref = int((~in_day).sum())    # a real trade date with no session in `day` (feed gap)
+            sub = sub[in_day.to_numpy()].reset_index(drop=True)
+            dvals = pd.to_datetime(sub["date"])
+            trades, n_skipped = reprice_trades(trial, sub["date"], np.full(len(sub), entry_mod),
+                                               day.loc[dvals, "last_mod"].to_numpy(), [kind] * len(sub),
+                                               sub["entry_px"], sub["exit_px"],
+                                               day.loc[dvals, "vix_prev"].to_numpy(), opt_df, FLATTEN_K)
+            n_skipped += n_no_ref
+        else:
+            trades, n_skipped = pd.DataFrame(columns=TRADE_COLS), 0
+        out_trades.append(trades)
+        out_rows.extend(summarize_signal(trial, trades, n_skipped, all_dates))
+    return out_trades, out_rows
+
+
 def load_option_file(path):
     df = (read_option_bars(option_shards(path)) if not os.path.exists(path) else pd.read_csv(path, dtype={"right": str}))
     ts_ny = pd.to_datetime(df["ts"], utc=True).dt.tz_convert(sessions.NY)
@@ -598,6 +642,10 @@ def main(inp, out, ext_path=EXT_OPT_PATH, calib_out=CALIB_OUT):
     gap_trades, gap_rows = process_gapliq(day, opt_df, all_dates)
     all_trades.extend(gap_trades)
     all_summ.extend(gap_rows)
+
+    flat_trades, flat_rows = process_flatten(day, opt_df, all_dates)
+    all_trades.extend(flat_trades)
+    all_summ.extend(flat_rows)
 
     res = pd.DataFrame(all_summ, columns=OUT_COLS) if all_summ else pd.DataFrame(columns=OUT_COLS)
     res.to_csv(out, index=False, float_format="%.6f")

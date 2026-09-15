@@ -32,24 +32,41 @@ Every ambiguity the amendment left open is fixed here and restated in the `spec`
     complete until the 11:00 bar closes, so a 09:45 entry could not be traded on that signal at
     all. A46a replaced it, before any code or result existed, with the causal mild-decline band
     defined above; U2 still enters at 11:00, same as U1/U3.
-(2) A session is eligible for ANY of the three trials only if BOTH the 11:00 bar and the 16:00
-    close are present (most conservative reading of "sessions with missing 11:00 or close bars
-    are skipped"); sessions failing this gate are counted in `n_skipped`, not dropped silently.
-    In practice this can only bind on the close (always present in `signals.day_table`) since a
-    missing 11:00 bar already makes `ret_to_1100` NaN and therefore signals nothing -- the check
-    is kept explicit anyway, matching gapliq's own defensive convention.
-(3) Open->11:00 return uses `signals.day_table`'s "open" column (the first RTH bar's open, i.e.
-    the session's 09:30 open per that table's own docstring) with no prior-close reference needed
-    (unlike A39's overnight gap): both legs of the measure belong to the SAME session, so there is
-    no dividend/roll-day reference-close problem to gate on.
+(2) A session is eligible for ANY of the three trials only if the 09:30 bar, the 11:00 bar AND
+    the 16:00 close are ALL present (most conservative reading of "sessions with missing 11:00 or
+    close bars are skipped", extended to the 09:30 bar by point (3) below, a correctness fix, not
+    an interpretation choice); sessions failing this gate are counted in `n_skipped`, not dropped
+    silently. A missing 09:30 or 11:00 bar already makes `ret_to_1100` NaN and therefore signals
+    nothing -- the check is kept explicit anyway, matching gapliq's own defensive convention.
+(3) Open->11:00 return reads the 09:30 bar's (mod 570) OWN open price EXPLICITLY -- NOT
+    `signals.day_table`'s "open" column, which is merely the session's FIRST bar's open and is
+    NOT always the 09:30 bar: `sessions.build_extended` keeps every bar from mod >= RTH_START
+    (570) onward, so on a session with no bar printed exactly at 09:30 the "first bar" is
+    whatever minute trading actually resumed at. On 2005-09-13 and the three March-2020
+    circuit-breaker days (2020-03-09, -16, -18) that first bar is a post-halt reopen (09:49/09:46
+    on the two crash mornings, near the session low), so feeding it to this measure inverts the
+    sign on exactly the mornings the mechanism is about: two limit-down crash opens would score as
+    large RISES and fire U3. A session without a mod-570 bar therefore has no base price -- its
+    `ret_to_1100` is NaN and it is ineligible (`n_skipped`), never a signal, on either side. No
+    prior-close reference-validity gate is otherwise needed (unlike A39's overnight gap): both
+    legs of the measure belong to the SAME session, so there is no dividend/roll-day
+    reference-close problem to gate on.
 (4) The 10th/30th/90th percentile thresholds expand across the WHOLE history (via `signals.
     expanding_threshold`, min_prior=250), never resetting at a window boundary -- same convention
     as gapliq and the D1 gates; only the reported ROWS are filtered by window.
 (5) Day-selection control (A16): 200 draws from ONE generator seeded 11 (matching gapliq's
-    convention); pool = the window's eligible sessions carrying NONE of U1/U2/U3 (not just the
-    matched trial's own signal -- unlike gapliq's two-signal case, three bands here partition both
-    tails and the mild-decline middle, so "no signal" must mean none of the three), same fixed
-    11:00 entry / 16:00 exit as the matched trial.
+    convention); pool = the window's eligible sessions with a DEFINED expanding threshold (past
+    the MIN_PRIOR_SESSIONS warm-up -- a warm-up session's signal status is UNDEFINED, not
+    confirmed absent, so it cannot stand in for "no signal") carrying NONE of U1/U2/U3 (not just
+    the matched trial's own signal -- unlike gapliq's two-signal case, three bands here partition
+    both tails and the mild-decline middle, so "no signal" must mean none of the three), same
+    fixed 11:00 entry / 16:00 exit as the matched trial. Measured bias versus the A39 template's
+    per-trial-only exclusion (gapliq's pool excludes just the matched trial's own signal column,
+    not the other two trials'), on THIS run's own thr_ok-gated pool: this three-way pool makes
+    U1's HOLDOUT excess over its control about 0.15 pts LESS NEGATIVE than a per-trial pool would
+    (-2.96 vs -3.11, same 200 seeds/seed 11) -- favourable to U1 on HOLDOUT, unfavourable (i.e.
+    tougher) on SELECTION (excess +2.40 vs +2.59 there) -- stated here as the measured direction
+    of the effect, not as a claim that the wider exclusion is "conservative" in general.
 (6) Timing control: same real trade days, entry at a uniformly random INTEGER minute-of-day in
     [09:31,15:00] (bar close, reusing gapliq's TIMING_LO/TIMING_HI), exit at 16:00 close, same
     direction/cost. TIMING_SEED is gapliq's own arbitrary fixed constant (distinct from 11),
@@ -71,6 +88,7 @@ from pipeline import options, sessions, signals, stats
 from pipeline.units import _gh
 
 MOD_1100 = 11 * 60         # 660 (11:00 bar close)
+MOD_0930 = 9 * 60 + 30     # 570 (09:30 bar open, the measure's own base price -- FIX 1)
 MOD_0931 = 9 * 60 + 31     # 571 (timing control lower bound, reused from gapliq)
 TIMING_LO, TIMING_HI = MOD_0931, 15 * 60     # 09:31..15:00, inclusive, integer minutes
 Q_LO, Q_MILD, Q_HI = 0.10, 0.30, 0.90
@@ -98,18 +116,24 @@ OUT_COLS = ["window", "trial", "side", "entry_time", "n_signal_days", "n_skipped
 TRADE_COLS = ["window", "trial", "date", "entry_px", "exit_px", "net_pts_cost1"]
 
 SPEC_NOTE = (
-    "FIXED (pre-registration, A46/A46a): signal = open->11:00 return (09:30 session open -> 11:00 "
-    "bar close) vs the expanding percentile of that same measure over all strictly prior sessions "
-    "(min 250 prior sessions, no fitted parameter). U1 = ret_to_1100 <= expanding 10th pct (the "
+    "FIXED (pre-registration, A46/A46a): signal = open->11:00 return (09:30 bar's OWN open, read "
+    "explicitly by minute-of-day, not signals.day_table's first-bar 'open' -> 11:00 bar close) vs "
+    "the expanding percentile of that same measure over all strictly prior sessions (min 250 prior "
+    "sessions, no fitted parameter). U1 = ret_to_1100 <= expanding 10th pct (the "
     "hypothesis); U2 = ret_to_1100 <= expanding 30th pct AND > expanding 10th pct (A46a's causal "
     "mild-decline dose-response band, disjoint from U1 by construction, replacing the look-ahead "
     "09:45 timing fingerprint the amendment first registered); U3 = ret_to_1100 >= expanding 90th "
     "pct (mirror signal). All three enter long at the 11:00 bar close (U1/U2 call, U3 put) and "
-    "exit at the 16:00 session close. Costs 1.0/2.0 pts. A session trades only if both the 11:00 "
-    "bar and the 16:00 close are present (else n_skipped); the percentile thresholds expand across "
-    "the whole history, never resetting at a window boundary. Day-selection control: 200 draws "
-    "from one generator seeded 11, pool = eligible sessions in the window carrying NONE of "
-    "U1/U2/U3, same fixed 11:00 entry / 16:00 exit. Timing control: same real trade days, 200 "
+    "exit at the 16:00 session close. Costs 1.0/2.0 pts. A session trades only if the 09:30 bar, "
+    "the 11:00 bar and the 16:00 close are ALL present (else n_skipped; a missing 09:30 bar -- "
+    "2005-09-13 and the three March-2020 circuit-breaker days -- is a FIX 1 correctness gate, not "
+    "an ambiguity reading); the percentile thresholds expand across the whole history, never "
+    "resetting at a window boundary. Day-selection control: 200 draws from one generator seeded "
+    "11, pool = eligible sessions in the window with a DEFINED threshold (past the warm-up) "
+    "carrying NONE of U1/U2/U3 -- versus the A39 template's per-trial-only exclusion this makes "
+    "U1's HOLDOUT excess over its control about 0.15 pts less negative (favourable to U1 on "
+    "HOLDOUT, tougher on SELECTION), stated as the measured direction, not as 'conservative'. "
+    "Timing control: same real trade days, 200 "
     "draws from one generator seeded 7, entry at a uniformly random integer minute in "
     "[09:31,15:00] (bar close), exit 16:00. Option leg: 2% ITM, k=1.3 x prior-close VIX, 1 pt "
     "spread, cash settle (pipeline.options.trade_table), priced on the real trades only. Entry at "
@@ -143,15 +167,21 @@ def compute_bands(ret):
 
 
 def build_day_table(frame, vix, meta, td):
-    """One row per session: signals.day_table's usual columns (open = first RTH bar's open, close
-    = last RTH bar's close = the 16:00 print, vix_prev) plus the 11:00 bar close, the eligibility
+    """One row per session: signals.day_table's usual columns (close = last RTH bar's close = the
+    16:00 print, vix_prev) plus the 09:30 bar's own open (mod 570, read EXPLICITLY -- FIX 1, see
+    module docstring point 3, NOT `signals.day_table`'s "open" column, which is just the
+    session's first bar and is not always the 09:30 bar), the 11:00 bar close, the eligibility
     flag, the open->11:00 return and the three disjoint expanding-percentile signal bands."""
     day = signals.day_table(frame, vix, dividends=meta["dividends"] if meta else None,
                             trading_days=td, roll_dates=meta["roll_dates"] if meta else ())
+    px_930 = frame.loc[frame["mod"] == MOD_0930].groupby("date")["open"].first()
     px_1100 = frame.loc[frame["mod"] == MOD_1100].groupby("date")["close"].first()
+    day["px_930"] = px_930.reindex(day.index)
     day["px_1100"] = px_1100.reindex(day.index)
-    day["elig"] = day["px_1100"].notna() & day["close"].notna()
-    day["ret_to_1100"] = day["px_1100"] / day["open"] - 1
+    day["elig"] = day["px_930"].notna() & day["px_1100"].notna() & day["close"].notna()
+    day["ret_to_1100"] = day["px_1100"] / day["px_930"] - 1
+    thr_lo, _thr_mild, _thr_hi = compute_thresholds(day["ret_to_1100"])
+    day["thr_ok"] = thr_lo.notna()    # FIX 5(a): past the warm-up, signal status is DEFINED
     day["sig_u1"], day["sig_u2"], day["sig_u3"] = compute_bands(day["ret_to_1100"])
     return day
 
@@ -172,11 +202,12 @@ def build_trades(day, dates, direction, kind):
 
 def day_selection_control(day, start_ts, end_ts, direction, cost, n_trades,
                           n_seeds=N_SEEDS, seed=CONTROL_SEED):
-    """A16: 200 draws from one seeded generator over the window's eligible sessions carrying NONE
-    of U1/U2/U3, same fixed 11:00 entry / 16:00 exit as the matched trial (net of `cost`). Returns
-    the per-seed mean net pts array (empty when there is no matched trade or not enough sessions
-    to draw from)."""
-    w = day[(day.index >= start_ts) & (day.index <= end_ts) & day["elig"]
+    """A16: 200 draws from one seeded generator over the window's eligible sessions with a
+    DEFINED threshold (past the warm-up -- FIX 5(a): a warm-up session's signal status is
+    undefined, not confirmed absent) carrying NONE of U1/U2/U3, same fixed 11:00 entry / 16:00
+    exit as the matched trial (net of `cost`). Returns the per-seed mean net pts array (empty when
+    there is no matched trade or not enough sessions to draw from)."""
+    w = day[(day.index >= start_ts) & (day.index <= end_ts) & day["elig"] & day["thr_ok"]
             & ~day["sig_u1"] & ~day["sig_u2"] & ~day["sig_u3"]]
     if n_trades == 0 or len(w) < n_trades:
         return np.array([])

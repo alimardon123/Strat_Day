@@ -37,7 +37,7 @@ momentum                   15:30|both|vixmove_lit 252     0.1140                
   gapliq                                GAPLIQ T3 132     1.0000                  False
  flatten                               FLATTEN U1 102     0.2970                  False
  flatten                               FLATTEN U2 343     1.0000                  False
- flatten                               FLATTEN U3 107     0.2655                  False
+ flatten                               FLATTEN U3 105     1.0000                  False
 eventvol                              EVENTVOL E1 646     1.0000                  False
 eventvol                              EVENTVOL E2  20     1.0000                  False
 eventvol                              EVENTVOL E3 608     1.0000                  False

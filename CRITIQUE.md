@@ -217,3 +217,9 @@ Science verified by a full independent rebuild of all 1,592 structures from the 
 
 Round 8 confirmation (same judge, on commit ef2c113): **DONE** for A43 / Track C. All 1,592 structures rebuilt independently from the shards with 0.0 difference; every tail statistic, equity curve, the BH-FDR (0 of 42) and the buyer-mirror identity reproduced; the run_all defect fixed and re-proven by a full make all + make repeat (byte-identical, tree clean); all reporting numbers reproduce. Standing guard adopted from the judge's note: any edit to run_all STEPS or EXPECTED is followed by `python -c "from pipeline import run_all"` and one execution of the touched step before commit. Accepted-as-documented by choice: the cost0/cost1 column naming, the two drawdown definitions, the non-day-matched control (none affects a verdict). Verdict for the owner: no options account should be opened for option E on this evidence.
 
+## Inversion research audit (2026-09-15)
+
+| Finding | Disposition |
+|---|---|
+| U3 self-audit: D6 rows in SCORECARD.md:26 and ASSESSMENT.md:54 carried the stale 33-trial count after A42/A43 raised the family to 42 — doc-lag class (see RETRO.md); fixed by an appended superseded-clause, not a rewrite. | FIXED |
+

@@ -42,6 +42,7 @@ STEPS = [
     ("sellvol", ["python", "-m", "pipeline.units.sellvol", "--in", "extended",
                 "--out", "out/sellvol_candidates.csv"], "out/sellvol.log"),
     ("trials", ["python", "-m", "pipeline.trials"], "out/trials.log"),
+    ("power", ["python", "-m", "pipeline.units.power", "--in", "out", "--out", "out/power_analysis.csv"], "out/power.log"),
     ("options_timevalue", ["python", "-m", "pipeline.options"], "out/options_timevalue.log"),
     ("report", ["python", "-m", "pipeline.report"], "out/report.log"),
     ("trackB_rangebars", ["python", "-m", "pipeline.units.rangebars", "--in", "extended", "--out", "out/trackB_rangebars_gate.csv"], "out/trackB_rangebars.log"),
@@ -68,15 +69,17 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
 EXPECTED_HOLDOUT = ["out/sizing_forward.csv",
                     "out/holdout_summary.csv", "out/holdout_by_year.csv", "out/holdout_pooled.csv",
                     "out/holdout_d4_execution.csv", "out/holdout_d4_summary.csv", "out/holdout_d4_sizing.csv",
-                    "out/fullsample_execution.csv", "out/fullsample_summary.csv", "out/fullsample_sizing.csv"]
-HOLDOUT_STEPS = {"holdout_d2", "reconcile_holdout", "fullsample_d4", "sizing"}   # ext-only steps (skipped when data/ext is absent)
+                    "out/fullsample_execution.csv", "out/fullsample_summary.csv", "out/fullsample_sizing.csv",
+                    "out/power_analysis.csv"]
+HOLDOUT_STEPS = {"holdout_d2", "reconcile_holdout", "fullsample_d4", "sizing", "power"}   # ext-only steps (skipped when data/ext is absent)
 
 
 def main():
     os.makedirs("out", exist_ok=True)
     ext = sessions.ext_present()
     for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*", "out/fvg_*", "out/gapliq_*",
-                "out/flatten_*", "out/sizing_*", "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/sellvol_*", "out/trackB_*"):
+                "out/flatten_*", "out/sizing_*", "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/sellvol_*",
+                "out/power_*", "out/trackB_*"):
         for f in glob.glob(pat):
             os.remove(f)
     steps = [s for s in STEPS if s[0] not in HOLDOUT_STEPS or ext]

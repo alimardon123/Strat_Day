@@ -445,6 +445,45 @@ def a45_rules(sf):
     ]
 
 
+# §16: A47's detectability floor -- an ANALYSIS of measurements already published, never a trial
+# (ACCEPTANCE.md amendment A47). Both helpers below are generated straight from
+# `out/power_analysis.csv` (D7: tables generated, never typed); neither computes anything new --
+# `pipeline.units.power` is the only place any of these numbers is derived.
+POWER_COLS = ["candidate", "window", "n", "mean_net_pts", "sd_net_pts", "mde_at_n", "mde_at_200",
+              "n_req_1pt", "years_to_n_req_1pt"]
+
+
+def power_caption(df):
+    """Generated from `out/power_analysis.csv` itself: the worst case in the table -- the row with
+    the largest `mde_at_200` (the effect the 200-trade floor is LEAST able to see) -- stated in
+    plain words with its own numbers, then A47's own stated refutation condition (the 200-trade
+    floor detects effects at or below the 1-2 point cost band) checked against every row's
+    `mde_at_200` against 2.0 pts, written both ways so the sentence is correct whichever way the
+    data falls (never assumed)."""
+    if not len(df):
+        return ""
+    worst = df.loc[df["mde_at_200"].idxmax()]
+    n_at_or_below_2 = int((df["mde_at_200"] <= 2.0).sum())
+    if n_at_or_below_2 == len(df):
+        refutation = (f"A47's own refutation condition -- the n=200 floor detects effects at or below the 1-2 "
+                      f"point cost band -- is MET (all {len(df)} of {len(df)} rows have mde_at_200 <= 2.0 pts): "
+                      "the survival rule is adequately powered at n=200, the UNDERPOWERED labels reflect a "
+                      "genuine shortage of signals rather than a design limit, and option B (forward-testing to "
+                      "n=200) is worth running.")
+    else:
+        refutation = (f"A47's own refutation condition -- the n=200 floor detects effects at or below the 1-2 "
+                      f"point cost band -- is NOT met (only {n_at_or_below_2} of {len(df)} rows have mde_at_200 "
+                      "<= 2.0 pts): the 200-trade floor cannot be assumed adequately powered for most of these "
+                      "candidates, so at least part of the UNDERPOWERED label reflects the design's own "
+                      "detectability floor, not only a shortage of signals.")
+    years_clause = (f"{worst['years_to_n_req_1pt']:.1f} years of signals at its own observed rate"
+                    if worst["years_to_n_req_1pt"] == worst["years_to_n_req_1pt"] else "an unknown number of years (no signal rate available)")
+    return (f"Worst case in the table: `{worst['candidate']}` ({worst['window']}, n={int(worst['n'])}, "
+            f"sd={worst['sd_net_pts']:.2f} pts/trade) -- the n=200 floor cannot detect an effect smaller than "
+            f"{worst['mde_at_200']:.2f} pts/trade there, and establishing a 1.0-point edge ({int(worst['n_req_1pt']):,} "
+            f"trades required) would take {years_clause}. {refutation}")
+
+
 def playbook():
     ext = sessions.ext_present()
     w = winner()
@@ -786,6 +825,18 @@ def playbook():
           "in force when they were computed. §6's pre-A45 minimum account has been RETIRED from §6 rather than "
           "restated: A45 rule 1 (x = 1% of account equity per trade) governs any sizing figure published after the "
           "amendment, and the table above is the single minimum-account statement for forward trading.", ""]
+    pw = _csv_rows_or_none("out/power_analysis.csv")
+    L += ["## 16. What this design can detect (A47) — an analysis of published measurements, not a trial", "",
+          "This section computes, for every candidate that already has a published per-trade series, the minimum "
+          "effect the six-condition survival rule's n=200 holdout-trade floor is capable of detecting, from the "
+          "per-trade dispersion already observed in each candidate's own trades (`out/power_analysis.csv`, "
+          "`pipeline.units.power`). **It adds ZERO trials, computes no new signal, opens no new window, fits no "
+          "parameter and can promote nothing: the family stays at 45.**", ""]
+    if pw is not None:
+        L += [md(pw[[c for c in POWER_COLS if c in pw]], int_cols=INT_COLS), "", power_caption(pw), ""]
+    else:
+        L += ["`out/power_analysis.csv` is absent, empty, or has no usable row (e.g. the post-May-2020 minute "
+              "feed, `data/ext`, is absent, DATA.md); this section cannot be generated.", ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 

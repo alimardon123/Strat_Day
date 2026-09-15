@@ -545,3 +545,49 @@ A45 forward-sizing table (rule 1), generated from `out/sizing_forward.csv`, anch
 The minimum account is the same on all three rows because A45 rule 1 fixes x at 1% of equity independently of the daily limit; the limit changes only how many full-loss attempts the day allows.
 
 §4's sizing table and `TRACK_C.md`'s A43 table are NOT restated and remain labelled under the convention in force when they were computed. §6's pre-A45 minimum account has been RETIRED from §6 rather than restated: A45 rule 1 (x = 1% of account equity per trade) governs any sizing figure published after the amendment, and the table above is the single minimum-account statement for forward trading.
+
+## 16. What this design can detect (A47) — an analysis of published measurements, not a trial
+
+This section computes, for every candidate that already has a published per-trade series, the minimum effect the six-condition survival rule's n=200 holdout-trade floor is capable of detecting, from the per-trade dispersion already observed in each candidate's own trades (`out/power_analysis.csv`, `pipeline.units.power`). **It adds ZERO trials, computes no new signal, opens no new window, fits no parameter and can promote nothing: the family stays at 45.**
+
+| candidate | window | n | mean_net_pts | sd_net_pts | mde_at_n | mde_at_200 | n_req_1pt | years_to_n_req_1pt |
+|---|---|---|---|---|---|---|---|---|
+| U1 | CONTEXT | 254 | -2.305 | 16.283 | 2.540 | 2.863 | 1640 | 44.017 |
+| U2 | CONTEXT | 326 | -0.724 | 9.530 | 1.312 | 1.676 | 562 | 11.998 |
+| U3 | CONTEXT | 247 | -2.174 | 13.192 | 2.087 | 2.319 | 1076 | 29.602 |
+| U1 | HOLDOUT | 144 | -3.283 | 44.699 | 9.262 | 7.859 | 12353 | 514.121 |
+| U2 | HOLDOUT | 299 | -1.082 | 33.651 | 4.839 | 5.916 | 7001 | 141.161 |
+| U3 | HOLDOUT | 166 | -1.270 | 31.592 | 6.097 | 5.555 | 6171 | 222.183 |
+| U1 | SELECTION | 102 | 1.669 | 33.470 | 8.240 | 5.885 | 6926 | 490.233 |
+| U2 | SELECTION | 343 | -1.172 | 15.374 | 2.064 | 2.703 | 1462 | 31.298 |
+| U3 | SELECTION | 105 | 0.296 | 29.217 | 7.090 | 5.137 | 5278 | 361.122 |
+| T1 | CONTEXT | 284 | -3.187 | 15.920 | 2.349 | 2.799 | 1567 | 38.219 |
+| T2 | CONTEXT | 284 | -2.450 | 17.759 | 2.620 | 3.122 | 1950 | 47.561 |
+| T3 | CONTEXT | 273 | -3.673 | 15.473 | 2.328 | 2.720 | 1481 | 36.968 |
+| T1 | HOLDOUT | 158 | 2.202 | 45.294 | 8.960 | 7.964 | 12684 | 480.022 |
+| T2 | HOLDOUT | 158 | 0.117 | 50.858 | 10.060 | 8.942 | 15992 | 605.213 |
+| T3 | HOLDOUT | 154 | 1.892 | 48.011 | 9.620 | 8.441 | 14251 | 562.708 |
+| T1 | SELECTION | 121 | -2.412 | 27.726 | 6.267 | 4.875 | 4753 | 280.801 |
+| T2 | SELECTION | 121 | -0.902 | 28.556 | 6.455 | 5.021 | 5042 | 297.875 |
+| T3 | SELECTION | 132 | -8.595 | 34.233 | 7.409 | 6.019 | 7246 | 387.602 |
+| 13:00\|call\|gap>0.3% | HOLDOUT | 452 | -1.904 | 25.395 | 2.970 | 4.465 | 3988 | 53.941 |
+| 15:00\|both\|vixmove_exp | HOLDOUT | 274 | -0.143 | 21.904 | 3.290 | 3.851 | 2967 | 64.986 |
+| 13:00\|call\|gap>0.3% | SELECTION | 423 | -0.138 | 16.913 | 2.045 | 2.974 | 1769 | 30.674 |
+| 15:00\|both\|mag | SELECTION | 371 | -0.033 | 16.933 | 2.186 | 2.977 | 1773 | 34.529 |
+| 15:00\|both\|vixmove_exp | SELECTION | 145 | 3.115 | 25.820 | 5.332 | 4.540 | 4122 | 158.541 |
+| 15:00\|both\|vixmove_fixed | SELECTION | 92 | 5.272 | 31.092 | 8.060 | 5.467 | 5977 | 361.968 |
+| 15:00\|both\|vixmove_lit | SELECTION | 251 | 2.168 | 20.477 | 3.214 | 3.600 | 2593 | 73.085 |
+| 15:00\|put\|mag | SELECTION | 189 | 0.324 | 17.563 | 3.176 | 3.088 | 1908 | 72.940 |
+| 15:00\|put\|vixmove_exp | SELECTION | 58 | 1.740 | 27.283 | 8.908 | 4.797 | 4602 | 442.506 |
+| 15:00\|put\|vixmove_fixed | SELECTION | 42 | 2.412 | 30.886 | 11.850 | 5.430 | 5898 | 662.831 |
+| 15:00\|put\|vixmove_lit | SELECTION | 101 | 2.111 | 21.895 | 5.417 | 3.850 | 2964 | 203.035 |
+| 15:30\|both\|mag | SELECTION | 371 | 0.067 | 14.259 | 1.841 | 2.507 | 1257 | 24.480 |
+| 15:30\|both\|vixmove_exp | SELECTION | 146 | 2.382 | 22.143 | 4.557 | 3.893 | 3032 | 115.932 |
+| 15:30\|both\|vixmove_fixed | SELECTION | 92 | 3.880 | 26.208 | 6.794 | 4.608 | 4247 | 257.199 |
+| 15:30\|both\|vixmove_lit | SELECTION | 252 | 1.425 | 17.444 | 2.732 | 3.067 | 1882 | 52.835 |
+| 15:30\|put\|mag | SELECTION | 182 | 0.771 | 15.771 | 2.907 | 2.773 | 1538 | 61.057 |
+| 15:30\|put\|vixmove_exp | SELECTION | 62 | 1.542 | 23.685 | 7.479 | 4.164 | 3469 | 312.349 |
+| 15:30\|put\|vixmove_fixed | SELECTION | 43 | 1.116 | 26.354 | 9.993 | 4.634 | 4294 | 471.347 |
+| 15:30\|put\|vixmove_lit | SELECTION | 104 | 1.770 | 19.102 | 4.657 | 3.358 | 2256 | 150.079 |
+
+Worst case in the table: `T2` (HOLDOUT, n=158, sd=50.86 pts/trade) -- the n=200 floor cannot detect an effect smaller than 8.94 pts/trade there, and establishing a 1.0-point edge (15,992 trades required) would take 605.2 years of signals at its own observed rate. A47's own refutation condition -- the n=200 floor detects effects at or below the 1-2 point cost band -- is NOT met (only 1 of 37 rows have mde_at_200 <= 2.0 pts): the 200-trade floor cannot be assumed adequately powered for most of these candidates, so at least part of the UNDERPOWERED label reflects the design's own detectability floor, not only a shortage of signals.

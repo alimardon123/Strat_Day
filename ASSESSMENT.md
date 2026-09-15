@@ -278,3 +278,57 @@ both passed it. Three real checks were added and each mutant now fails.
 Gap that remains, stated plainly: this work makes the deliverable honest and correctly sized. It does not
 advance the mission. No long-only 0DTE mechanism in 45 pre-registered trials clears its cost, and the only large
 effect this programme measured is on the sell side of the 0DTE premium, which the account forbids.
+
+## A47 — the detectability floor: what this design can and cannot resolve (2026-09-15, ZERO new trials)
+
+Pre-registered in `ACCEPTANCE.md` A47 before any code, and it is what it says: an analysis of measurements
+already published. It computes no new signal, opens no window, fits no parameter and can promote nothing. The
+family stays at 45 and every published p-value, BH-FDR decision and DSR is untouched. Source
+`out/power_analysis.csv` (37 candidate/window rows, every one with a published per-trade series);
+`PLAYBOOK_0DTE.md` §16.
+
+**The question nobody had asked.** Every verdict here is judged against a six-condition survival rule whose
+condition 6 is a floor of n ≥ 200 holdout trades (`ACCEPTANCE.md:66`), and several results carry the
+UNDERPOWERED label for falling short of it. But that floor had never been checked against the per-trade
+dispersion actually observed, so UNDERPOWERED was a label rather than a quantity.
+
+**The answer.** At one-sided α = 0.05 and 80 % power, the minimum effect the n = 200 floor can detect is:
+
+| across all 37 rows | pts/trade | % of premium |
+|---|---|---|
+| best case | 1.68 | 1.10 |
+| median | 4.16 | 2.72 |
+| worst case | 8.94 | 5.85 |
+
+Premium is the 2 %-ITM contract cost in index points at the measured level, 152.828 pts
+(`out/sizing_forward.csv`, A45/§15). The cost every result in this programme must clear is **1.0 to 2.0 index
+points** (`ACCEPTANCE.md:104-106`). So the design's detection threshold sits two to nine times ABOVE the bar the
+edge has to clear. Only 1 of 37 rows can resolve an effect at or below 2.0 points.
+
+**On the holdout, which is where every verdict is actually decided, it is worse: 0 of 8 rows.** Holdout MDE runs
+3.85 to 8.94 pts/trade, median 6.89 (4.5 % of premium). The worst row (A39's T2) would need 15,992 trades to
+establish a 1.0-point edge — 605 years at its own observed signal rate.
+
+**A47's own refutation condition is NOT met.** The amendment stated in advance that if the floor detected
+effects at or below the 1-2 point cost band, the survival rule would be adequately powered, the UNDERPOWERED
+labels would reflect a genuine shortage of signals, and option B would be worth running. It does not.
+
+**What this changes for option B.** Forward-testing A44 to n = 200 takes roughly two years and, on these
+dispersions, can only return a verdict if the true edge exceeds about 4 points per trade (≈ 2.7 % of premium) —
+an edge far larger than anything this programme has measured, and larger than the sell-side premium it is
+forbidden from harvesting. For any smaller effect, two years of waiting buys the same UNDERPOWERED label. That
+is not an argument against forward testing on other grounds; it is the price in advance.
+
+**What drives the floor.** The period, not the holding time. Mean per-trade sd by window is 14.69 (CONTEXT),
+26.41 (SELECTION), 37.68 (HOLDOUT) — the post-2020 window is roughly 2.5× as dispersed as CONTEXT for the same
+candidates. Within the holdout alone, sd does correlate with holding hours (+0.82 over 8 rows), but that is an
+UNREGISTERED exploratory correlation on eight points that does not replicate in CONTEXT (+0.02) or SELECTION
+(+0.21). It does not meet this programme's bar and is recorded here as an observation, not a finding. Nothing
+should be built on it without its own pre-registration.
+
+**What this does NOT license.** Low power does not convert a failed result into a live one. A wide confidence
+interval is not evidence of an edge, and no result in `SCORECARD.md` becomes promotable because of this
+analysis. What it does establish is narrower and still worth knowing: the programme's negative results are
+weaker evidence AGAINST their mechanisms than their p-values of 1.00 make them look, and — the decision-relevant
+half — **more of the same design will not resolve them.** Distinguishing a real 2-point edge from zero here
+needs of order 4,000 to 16,000 trades, which no amount of patience supplies at 20-60 signals a year.

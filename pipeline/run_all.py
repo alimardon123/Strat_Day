@@ -34,6 +34,7 @@ STEPS = [
     ("fvg", ["python", "-m", "pipeline.units.fvg", "--in", "extended", "--out", "out/fvg_candidates.csv"], "out/fvg.log"),
     ("gapliq", ["python", "-m", "pipeline.units.gapliq", "--in", "extended", "--out", "out/gapliq_candidates.csv"], "out/gapliq.log"),
     ("flatten", ["python", "-m", "pipeline.units.flatten", "--in", "extended", "--out", "out/flatten_candidates.csv"], "out/flatten.log"),
+    ("sizing", ["python", "-m", "pipeline.units.sizing", "--in", "extended", "--out", "out/sizing_forward.csv"], "out/sizing.log"),
     ("letf", ["python", "-m", "pipeline.units.letf", "--in", "extended", "--out", "out/letf_candidates.csv"], "out/letf.log"),
     ("realopt", ["python", "-m", "pipeline.units.realopt", "--in", "extended", "--out", "out/realopt_reeval.csv"], "out/realopt.log"),
     ("eventvol", ["python", "-m", "pipeline.units.eventvol", "--in", "extended",
@@ -64,17 +65,18 @@ EXPECTED = ["out/dst_probe_oanda.csv", "out/calendar_oanda.csv", "out/dst_probe_
             "PLAYBOOK_0DTE.md", "OWN_ACCOUNT.md",
             "out/trackB_rangebars_gate.csv", "out/trackB_sweep_candidates.csv", "out/trackB_decision.csv", "TRACK_B.md",
             "TRACK_C.md"]
-EXPECTED_HOLDOUT = ["out/holdout_summary.csv", "out/holdout_by_year.csv", "out/holdout_pooled.csv",
+EXPECTED_HOLDOUT = ["out/sizing_forward.csv",
+                    "out/holdout_summary.csv", "out/holdout_by_year.csv", "out/holdout_pooled.csv",
                     "out/holdout_d4_execution.csv", "out/holdout_d4_summary.csv", "out/holdout_d4_sizing.csv",
                     "out/fullsample_execution.csv", "out/fullsample_summary.csv", "out/fullsample_sizing.csv"]
-HOLDOUT_STEPS = {"holdout_d2", "reconcile_holdout", "fullsample_d4"}   # ext-only steps (skipped when data/ext is absent)
+HOLDOUT_STEPS = {"holdout_d2", "reconcile_holdout", "fullsample_d4", "sizing"}   # ext-only steps (skipped when data/ext is absent)
 
 
 def main():
     os.makedirs("out", exist_ok=True)
     ext = sessions.ext_present()
     for pat in ("out/*.error", "out/insample_*", "out/holdout_*", "out/fullsample_*", "out/fvg_*", "out/gapliq_*",
-                "out/flatten_*", "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/sellvol_*", "out/trackB_*"):
+                "out/flatten_*", "out/sizing_*", "out/letf_*", "out/realopt_*", "out/eventvol_*", "out/sellvol_*", "out/trackB_*"):
         for f in glob.glob(pat):
             os.remove(f)
     steps = [s for s in STEPS if s[0] not in HOLDOUT_STEPS or ext]

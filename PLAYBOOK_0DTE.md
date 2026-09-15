@@ -111,7 +111,7 @@ The improvement over market entry splits into the part that is a cost assumption
 
 ## 6. Contract size and minimum account
 
-A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $13,000 at S = 6,500 (S = 6,500 is an assumed current index level, not measured here — no post-2020 price file is present; every dollar figure scales linearly with S); XSP is one tenth. At the base size (4% of account per trade) one SPX contract needs ≈ $325k of account, one XSP contract ≈ $32.5k, one SPY contract ≈ $32.5k with the 15:55 exit. Max positions per day: 2 (the two signals can coincide).
+A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $15,283 at the measured 2026-09-11 close S = 7,641.40 SPX-equivalent points (`out/sizing_forward.csv`; every dollar figure scales linearly with S); XSP and SPY are one tenth (≈ $1,528). At the base size (4% of account per trade, PRE-A45 convention — A45 rule 1 raises the minimum account, see §15) one SPX contract needs ≈ $382,070 of account, one XSP contract ≈ $38,207, one SPY contract ≈ $38,207 with the 15:55 exit. Max positions per day: 2 (the two signals can coincide).
 
 ## 7. Holdout — what decides whether this is tradeable
 
@@ -516,3 +516,32 @@ U1: net > 0 at 1 pt, p_day >= 0.05, excess over the day-selection control > 0, n
 U1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0, n < 200 -> does not survive the four programmatic checks (DSR at N=45 is reported in the table above, not a survival condition). Fingerprint: U2 >= U1 (fails); U3 <= 0 at 1 pt (holds). Promotion: U1 does not survive, not promoted.
 
 FIXED (pre-registration, A46/A46a): signal = open->11:00 return (09:30 bar's OWN open, read explicitly by minute-of-day, not signals.day_table's first-bar 'open' -> 11:00 bar close) vs the expanding percentile of that same measure over all strictly prior sessions (min 250 prior sessions, no fitted parameter). U1 = ret_to_1100 <= expanding 10th pct (the hypothesis); U2 = ret_to_1100 <= expanding 30th pct AND > expanding 10th pct (A46a's causal mild-decline dose-response band, disjoint from U1 by construction, replacing the look-ahead 09:45 timing fingerprint the amendment first registered); U3 = ret_to_1100 >= expanding 90th pct (mirror signal).
+
+## 15. Trading rulebook in force (A45) — adopted 2026-09-15 (owner's option F)
+
+This is a contract the owner adopted, recorded in `ACCEPTANCE.md` amendment A45, not a measured finding; it governs how the signals above are traded, and every candidate registered after it must comply with rules 2 and 3 at registration time.
+
+The table below is typed from `ACCEPTANCE.md` amendment A45's own text, not generated from out/ — it is a transcription of a contract, not a measured table.
+
+| # | rule | status | audit |
+|---|---|---|---|
+| 1 | Per-trade sizing (AMENDS the numeric budget): x = 1% of account equity per trade, N = floor(daily limit / x) full-loss attempts per day | NEW | owner journal |
+| 2 | No entries in the first 30 minutes (no entry before 10:00 ET) | already in force | pipeline |
+| 3 | ITM-only strikes; no ATM or OTM contracts | already in force | pipeline |
+| 4 | No increase in size or trade frequency after a loss | NEW | owner journal |
+| 5 | Resting limit orders at the mid, not marketable orders | NEW | owner journal; not measurable until the no-live-execution non-goal is relaxed |
+| 6 | Every rule and candidate is pre-registered and counted in the trial family before any run | already in force | pipeline |
+| 7 | No trade taken only to satisfy a consistency or minimum-days rule | NEW | owner journal |
+| 8 | Unaudited prop-firm statistics are never used as facts | already in force | pipeline |
+
+A45 forward-sizing table (rule 1), generated from `out/sizing_forward.csv`, anchored to the 2026-09-11 measured close (S = 7,641.40 SPX-equivalent points):
+
+| daily_limit_pct | x_pct | attempts_per_day | cost_spx_usd | min_account_spx_usd | min_account_xsp_usd | min_account_spy_usd |
+|---|---|---|---|---|---|---|
+| 3 | 1 | 3 | 15,283 | 1,528,280 | 152,828 | 152,828 |
+| 4 | 1 | 4 | 15,283 | 1,528,280 | 152,828 | 152,828 |
+| 5 | 1 | 5 | 15,283 | 1,528,280 | 152,828 | 152,828 |
+
+The minimum account is the same on all three rows because A45 rule 1 fixes x at 1% of equity independently of the daily limit; the limit changes only how many full-loss attempts the day allows.
+
+Under A45 rule 1 the sizing table in §4 and the pre-A45 minimum account in §6 are NOT restated — they remain labelled under the convention in force when they were computed; A45 rule 1 (x = 1% of equity per trade) is the convention for forward trading.

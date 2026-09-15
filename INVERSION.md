@@ -195,6 +195,8 @@ premium was real and still could not clear its own cost.
 
 ## 4. Rules we adopt (the "stop doing" list)
 
+> **Adopted 2026-09-15 as `ACCEPTANCE.md` amendment A45 (owner's option F).** These eight rules are in force; they are restated in `PLAYBOOK_0DTE.md` §15 with which are pipeline-checkable and which are owner-journal-only.
+
 Rules 1, 4, 5 and 7 below govern the owner's own discretionary trading, not a mechanical pipeline
 signal. None of the four is measurable inside A44 as registered: A44 takes at most one mechanical
 trade per day, at a fixed size, with no live or paper fills (`ACCEPTANCE.md:434-439`), so it cannot
@@ -268,6 +270,8 @@ the pipeline can check each of those directly.
    or gate a trade.
 
 ## 5. Candidates that survive the screen
+
+> **Outcome, recorded 2026-09-15 after this section was written.** The owner chose option G. The candidate below was pre-registered unchanged as `ACCEPTANCE.md` amendment A46 (with the A46a causality clarification), counted as three trials, and run once. It FAILED: holdout U1 n 144, −3.28 index points per trade at 1 pt, day-block bootstrap p 1.00, dose-response fingerprint inverted; U1 and U3 carry the UNDERPOWERED label (n below the 200-trade floor) and nothing was promoted. See the A46 block in `SCORECARD.md` and the A46 write-up in `ASSESSMENT.md`. The screen and the prior below are left as written; only this outcome note is added.
 
 Screen applied to every YES/AVOID-ONLY row and every mechanism named in U1/U2: (a) names who must
 trade and when; (b) reachable under the constraint (YES in §1); (c) not a duplicate of a killed
@@ -368,7 +372,7 @@ fingerprint. Joins the Track-A family currently at 42 run trials (43 counting A4
 `ACCEPTANCE.md:409`; family-wide BH-FDR 0/42 pass, `SCORECARD.md:89`); pre-registering these three
 trials would move the family from 42 → 45 if registered before A44 first runs, or from 43 → 46 if
 registered after, tightening the BH-FDR bar for every trial already in the family; DSR at N = 45 or
-46 accordingly.
+46 accordingly. (Settled: registered before A44, so the family moved 42 → 45 and the DSR N is 45; `out/trials.csv`.)
 
 ### Considered and rejected
 
@@ -415,6 +419,8 @@ nothing to start logging); whether to pre-register the §5 candidate, given its 
 ~2-year path (on the PRIMARY modelled-pricing route) to an unambiguous n≥200 verdict; and that
 A38 (leveraged-ETF data) and A44 (the overnight-gap forward test) remain pending on the owner's
 own data supply, independent of anything in this document (`BLOCKED.md:142`; `ACCEPTANCE.md:434-439`).
+
+> **Settled 2026-09-15.** The owner chose both open items in this section: option F adopted the §4 rulebook as amendment A45, and option G pre-registered the §5 candidate as A46. A46 ran once and failed (see the outcome note at the head of §5). The decision framing above is kept as the record of what was open at the time of writing; neither item is open now.
 
 ## 7. Sources
 

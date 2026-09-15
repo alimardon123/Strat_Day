@@ -111,7 +111,7 @@ The improvement over market entry splits into the part that is a cost assumption
 
 ## 6. Contract size and minimum account
 
-A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $15,283 at the measured 2026-09-11 close S = 7,641.40 SPX-equivalent points (`out/sizing_forward.csv`; every dollar figure scales linearly with S); XSP and SPY are one tenth (≈ $1,528). At the base size (4% of account per trade, PRE-A45 convention — A45 rule 1 raises the minimum account, see §15) one SPX contract needs ≈ $382,070 of account, one XSP contract ≈ $38,207, one SPY contract ≈ $38,207 with the 15:55 exit. Max positions per day: 2 (the two signals can coincide).
+A 2% ITM SPX option costs ≈ 2% × S × 100 ≈ $15,283 at the measured 2026-09-11 close S = 7,641.40 SPX-equivalent points (`out/sizing_forward.csv`; every dollar figure scales linearly with S); XSP and SPY are one tenth (≈ $1,528), SPY settled physically so its position is exited by 15:55, not held to the close. The minimum account per contract for forward trading is given in §15 under A45 rule 1 (x = 1% of account equity per trade); the pre-A45 minimum account previously stated in this section is superseded by that rule, not restated here. Max positions per day: 2 (the two signals can coincide).
 
 ## 7. Holdout — what decides whether this is tradeable
 
@@ -521,12 +521,12 @@ FIXED (pre-registration, A46/A46a): signal = open->11:00 return (09:30 bar's OWN
 
 This is a contract the owner adopted, recorded in `ACCEPTANCE.md` amendment A45, not a measured finding; it governs how the signals above are traded, and every candidate registered after it must comply with rules 2 and 3 at registration time.
 
-The table below is typed from `ACCEPTANCE.md` amendment A45's own text, not generated from out/ — it is a transcription of a contract, not a measured table.
+The table below is typed from `ACCEPTANCE.md` amendment A45's own text, not generated from out/ — it is a transcription of a contract, not a measured table — except rule 1's stated x, read from `out/sizing_forward.csv` when available so it cannot silently drift from the generated sizing table below it.
 
 | # | rule | status | audit |
 |---|---|---|---|
 | 1 | Per-trade sizing (AMENDS the numeric budget): x = 1% of account equity per trade, N = floor(daily limit / x) full-loss attempts per day | NEW | owner journal |
-| 2 | No entries in the first 30 minutes (no entry before 10:00 ET) | already in force | pipeline |
+| 2 | No entries in the first 30 minutes (no entry before 10:00 ET) | already in force (A45 preamble); rule text marks it NEW for the prop account | pipeline |
 | 3 | ITM-only strikes; no ATM or OTM contracts | already in force | pipeline |
 | 4 | No increase in size or trade frequency after a loss | NEW | owner journal |
 | 5 | Resting limit orders at the mid, not marketable orders | NEW | owner journal; not measurable until the no-live-execution non-goal is relaxed |
@@ -544,4 +544,4 @@ A45 forward-sizing table (rule 1), generated from `out/sizing_forward.csv`, anch
 
 The minimum account is the same on all three rows because A45 rule 1 fixes x at 1% of equity independently of the daily limit; the limit changes only how many full-loss attempts the day allows.
 
-Under A45 rule 1 the sizing table in §4 and the pre-A45 minimum account in §6 are NOT restated — they remain labelled under the convention in force when they were computed; A45 rule 1 (x = 1% of equity per trade) is the convention for forward trading.
+§4's sizing table and `TRACK_C.md`'s A43 table are NOT restated and remain labelled under the convention in force when they were computed. §6's pre-A45 minimum account has been RETIRED from §6 rather than restated: A45 rule 1 (x = 1% of account equity per trade) governs any sizing figure published after the amendment, and the table above is the single minimum-account statement for forward trading.

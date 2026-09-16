@@ -279,3 +279,60 @@ nothing in `SCORECARD.md` moves.
 - **F/G. DELIVERED** — A45 adopted and now stated in `PLAYBOOK_0DTE.md` §15; A46 registered, run once, failed.
 
 No agent is launched against the automated stop hook; the run resumes on a letter or a file.
+
+## Status after A48/A48a (2026-09-16) — the last lever is closed; option A is now the indicated choice
+
+A47 left one thing untried. The one family with enough power to answer its own question differed from the four
+that could not by a factor of seven in per-trade dispersion, and the difference was structural: bounded exits
+versus holding to settlement. A48 asked whether a bounded exit would make the unanswerable questions answerable
+on data already here. ZERO trials; family stays 45. `out/bexit_detectability.csv`, `PLAYBOOK_0DTE.md` §17.
+
+**The answer is no, and the reason is arithmetic rather than market behaviour.**
+
+| measured on the run's own dispersion table | value |
+|---|---|
+| dispersion ÷ barrier width at a 5-pt stop | 0.989 (min 0.944, max 1.004, n = 20) |
+| ATR grid scaling (0.5x, 1x, 1.5x, 2x) | 1.00 / 2.00 / 2.98 / 3.86 against a 1/2/3/4 ideal |
+| break-even win rate at b = 5 pts, cost 1 / 2 pts | 60.0 % / 70.0 % |
+| break-even win rate at b = 20 pts, cost 1 / 2 pts | 52.5 % / 55.0 % |
+
+Dispersion IS the barrier width, so nearly every trade exits at a barrier and the bounded version is a
+two-outcome bet, not the registered signal with a safety net. Cost does not scale with the barrier, so tightening
+the stop RAISES the edge required to pay. A tighter stop lowers the detection threshold in absolute points and
+raises the bar the strategy must clear — the gain is real arithmetically and empty economically.
+
+**An error of mine, caught before publication and recorded.** A48's registered answer condition asked whether the
+detection threshold clears the 1-2 point cost band. That compares a quantity scaling with the treatment against a
+bar that does not, so any tight enough stop satisfies it; the run's apparent "8 of 8 clear" verdict is an artifact
+of my criterion, withdrawn in A48a. Nothing was published on it. The safeguard that made this recoverable was
+A48's ban on computing any profitability statistic — so when the criterion proved vacuous, no candidate had been
+ranked and no exit rule chosen.
+
+### Where the programme now stands
+
+Across 45 pre-registered trials, three data sets and two zero-trial analyses:
+
+- Where the design HAD power to see an edge (A36, 8 configurations, 282-959 holdout trades each), it looked and
+  found +0.026 pts/trade at best against a 1-2 pt cost. A genuine negative.
+- Where it lacked power (the four hold-to-close families), A47 measured the floor at 3.85-8.94 pts/trade, far
+  above any effect observed, and A48 showed the obvious remedy is not one.
+- The single large effect ever measured here is the sell side of the 0DTE premium, which the account forbids
+  (A42/A43).
+
+**Nothing on this branch now converts an unanswerable question into an answerable one, and no answerable question
+has come back positive.**
+
+### Owner options, final
+
+- **A. Stop. Now the indicated choice**, not merely an available one: the powered test was run and came back
+  empty, and the unpowered ones cannot be rescued here.
+- **B. Forward test A44** — still legitimate, at A47's measured price: ≈ 4 years to n = 200, verdict only if the
+  true edge exceeds ~4-8 pts/trade.
+- **C/D. Leveraged-ETF candidate (A38)** — built and wired, waiting on `data/ext/letf_aum_2006_2026.csv`. It is a
+  hold-to-close one-per-day design, so it inherits the same floor; supplying the file buys a test that A47 says
+  will likely return UNDERPOWERED.
+- **E. Relax the account constraint** — the only path to the one large measured effect, and the reason it was
+  refused stands (A43: defined-risk short premium fails at registered costs; naked short premium has an unbounded
+  tail against a 4 % daily limit).
+
+No agent is launched against the automated stop hook; the run resumes on a letter or a file.

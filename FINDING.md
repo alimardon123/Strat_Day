@@ -35,6 +35,27 @@ economically **a leveraged intraday SPX position with a hard stop at 2%, paying 
 The question therefore reduces to: *can intraday SPX direction be predicted well enough to pay that spread?*
 Across 48 pre-registered tests, no.
 
+## Why the search had to come out this way
+
+A long option has exactly four ways to make money. Under this constraint each is either tested-and-failed or
+structurally unavailable, and the two facts interlock:
+
+| source | status under this constraint |
+|---|---|
+| **Delta** (direction) | The only one actually available at the traded strike. **48 pre-registered trials, 0 pass.** This is an empirical result, not a proof — directional prediction is not impossible, this programme did not find it |
+| **Gamma** (realised vol above implied) | Requires a strike with time value, i.e. at- or out-of-the-money — where the measured loss is **−53%/trade at a 17% hit rate (ATM)** and **−50.6% median (OTM)**. Tested directly as a long straddle: **−7% of premium at 09:31, −17% at 13:30** (A42, n 646/608) |
+| **Vega** (implied vol repricing) | **Structurally ≈ 0 at the traded strike:** time value is exactly 0.000 index points at 30, 60 and 180 minutes to expiry across every k tested (`out/options_timevalue.csv`). Capturing vol repricing across sessions needs an overnight hold, which the account forbids |
+| **Theta** (time decay) | **Wrong sign for a buyer by definition.** Capturing it requires selling, which the account forbids. Its measured size is the largest effect in this programme: 7-17% of premium per day |
+
+The trap is the interlock. Both threads independently found the strike must be 2% in the money, because
+at-the-money and out-of-the-money lose roughly half the premium per trade. But 2% ITM has **zero time value**,
+which means zero vega and zero theta: the instrument becomes pure delta. So the constraint forces a binary
+choice between **a pure-delta instrument that needs a directional edge** (48 trials, none found) and **a
+vol-exposed instrument that pays the variance risk premium every day** (measured, and it is large).
+
+There is no third option. That is why the answer is no, and it is a more useful statement than "we tested a lot
+of things."
+
 ## The one large effect this programme did measure
 
 The 0DTE variance risk premium: **7-17% of premium per day** (A42, n 646/608). It is on the **sell** side, which
@@ -58,6 +79,7 @@ the account forbids. Selling it with defined risk was tested anyway and fails at
 | 2 | **Minute data after 2026-09-11** | Runs the pre-registered forward test (A44). Price: ≈ 4 years to a verdict, and only if the true edge exceeds ~4-8 pts/trade |
 | 3 | **`data/ext/letf_aum_2006_2026.csv`** | Runs the pre-registered leveraged-ETF candidate (A38). It is a hold-to-close one-per-day design, so it inherits the same detection floor and will likely return UNDERPOWERED |
 | 4 | **Relaxing the account constraint** | The only route to the one large measured effect. Refused on evidence, not on principle (A43) |
+| 5 | **Minute bars for another 0DTE underlying** (QQQ, IWM) | A genuinely different market with different microstructure, not a re-test of the same one. Honest prior: LOW — the finding above is about the difficulty of intraday prediction, which is not SPX-specific |
 
 ## What to do
 

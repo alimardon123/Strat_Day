@@ -749,3 +749,70 @@ it will not be settled here.
 **Reporting.** `PLAYBOOK_0DTE.md` §17 must report the corrected reading, not the withdrawn one: the proportional
 scaling, the fixed cost, the break-even arithmetic, and the negative conclusion. The `answerable_at_n` column is
 retained in the CSV but must be labelled in the caption as WITHDRAWN and not cited as a verdict.
+
+## Amendment A49 — 0DTE dealer-hedging flow impulse (pre-registered 2026-09-16, before any code; 3 trials, family 45 → 48)
+
+**A stated non-goal is reopened, and the reason is that its own premise has lapsed.** The mission's non-goal list
+excludes "GEX / dealer-positioning filters" with the reason given in the same clause: *no positioning data is
+obtainable here*. That was written 2026-09-12. On 2026-09-13 the owner supplied `data/ext/spy_0dte_1min_*.csv.gz`
+— 1-minute trade bars of SPY same-day-expiry contracts by strike and right, INCLUDING VOLUME, 2024-02-01 →
+2026-09-11. Three units use those bars (A41 re-pricing, A42 event vol, A43 short premium); NONE has ever used
+them as a SIGNAL SOURCE. A non-goal whose stated reason has lapsed is reopened here explicitly, not silently;
+this is owner-reversible, and if the owner intends the exclusion to stand on other grounds, say so and A49 is
+withdrawn before it runs.
+
+**Feasibility checked BEFORE registration** (the A48a guard: verify before fixing a criterion). 2025 shard:
+3,791,068 rows over 249 sessions; median 10,493 contracts traded per MINUTE across all strikes and both rights;
+median 5,125,975 per session; call share of session volume mean 0.499, sd 0.043, deciles 0.455-0.550. Aggregate
+minute-level flow is a real measurement here, and it varies.
+
+**Mechanism — who must trade, and when.** A dealer who absorbs a large directional 0DTE customer order is
+immediately short or long delta and must hedge in the underlying. Same-day expiry removes every other option:
+the hedge cannot be deferred to tomorrow and must be unwound by the close. The forced trade is therefore
+concentrated in the MINUTES after the customer order, pushing the underlying in the direction of the customer's
+delta. This names the counterparty, the obligation and the deadline, which the mission ranks above any pattern
+in price.
+
+**Signal, fixed now.** Per contract-minute, sign volume by the tick rule (Lee & Ready 1991) against that
+contract's most recent PRIOR print in the same session: higher price → buyer-initiated, lower → seller-initiated,
+equal → carry the previous sign, no prior print → unsigned and EXCLUDED. Aggregate per minute:
+bullish = buyer-initiated calls + seller-initiated puts; bearish = seller-initiated calls + buyer-initiated puts;
+`imbalance = (bullish − bearish) / (bullish + bearish)`. Everything uses data through minute t only.
+
+**Gate.** |imbalance| ≥ the expanding 90th percentile of |imbalance| over all minutes of strictly PRIOR sessions,
+minimum 100 prior sessions. No fitted parameter; the percentile and warm-up are fixed here.
+
+**Trials — exactly three, all counted.**
+- **T1 (the hypothesis):** imbalance ≥ +the threshold → long 2 % ITM call, entry at the NEXT minute's close, exit
+  30 minutes later. Horizon fixed at 30 minutes, no grid.
+- **T2 (timing fingerprint, must be WEAKER than T1):** same signal, entry delayed 15 minutes. Hedging is an
+  impulse; if a 15-minute-late entry does as well, this is not impulse hedging but a slow drift or an artifact.
+- **T3 (symmetry, must ALSO work):** imbalance ≤ −the threshold → long 2 % ITM put, same horizon. NOTE the
+  difference from A39/A46: there the mirror was a placebo that had to FAIL. Dealer hedging is symmetric by
+  construction, so here T3 working CONFIRMS the mechanism and T3 failing disconfirms it.
+Non-overlapping: no new entry in a direction while a position in that direction is open. Costs 1.0 and 2.0 pts;
+option leg at 2 % ITM per the standing finding.
+
+**Windows.** The shards are the only data, and they sit inside the programme's existing holdout, so they are
+split: SELECTION 2024-02-01 → 2025-06-30, HOLDOUT 2025-07-01 → 2026-09-11. The verdict is on the HOLDOUT.
+Thresholds are never re-fitted after the selection window.
+
+**Designed to be ANSWERABLE, per A47/A48.** A47 showed one-trade-per-day hold-to-close designs cannot resolve a
+1-2 pt effect; A48 showed tightening a price barrier cannot fix that. What CAN is more trades and a shorter
+horizon, which is how the one adequately powered family got its power. At ~3-6 non-overlapping entries per
+session over ~300 holdout sessions, n ≈ 900-1,800; a 30-minute hold implies dispersion near 7 pts against 21.9
+for a full session, so the expected MDE is ≈ 0.5 pts — inside the cost band. **Limit check** (the A48a guard):
+the horizon is fixed, so nothing here can be driven to zero; tightening the percentile reduces n and RAISES the
+MDE, so the criterion is not vacuous in either limit.
+
+**Scoring.** The six-condition survival rule; day-block bootstrap (n_boot 2000, seed 11) — trades cluster within
+days by construction, which is exactly what day blocks exist for; day-selection and timing controls as in A39/A46;
+DSR at N = 48; BH-FDR across the whole family of 48.
+
+**Kill / promotion.** T1 is promotable only if it passes all six conditions AND T2 < T1 AND T3 > 0 at 1 pt. A
+positive T1 with a failed timing fingerprint is "pattern without its mechanism" and is never promoted.
+
+**Honest prior: LOW.** 0DTE dealer flow is among the most-watched signals in the market; a tick-rule proxy on
+1-minute trade bars with no quotes is crude; and any hedging impulse is likely arbitraged inside the 1-minute
+resolution this data has. The value of A49 is that, unlike every hold-to-close candidate before it, it is
+designed so the answer will be a verdict rather than an UNDERPOWERED label.

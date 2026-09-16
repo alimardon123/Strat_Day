@@ -396,3 +396,54 @@ not a remedy. Nothing on this branch now converts an unanswerable question into 
 answerable question has come back positive. Option A is the honest end; option B is available at the price A47
 measured (≈ 4 years, and a verdict only above ~4-8 points per trade); options C/D still wait on a file and would
 inherit the same floor.
+
+## A49 — the option-flow avenue, opened and closed (2026-09-16; 3 trials, family 45 → 48)
+
+A48 closed the last DESIGN lever. A49 opened the last DATA one, and closed it too.
+
+**Why it was opened.** The mission's non-goal list excludes "GEX / dealer-positioning filters" and gives its
+reason in the same clause: *no positioning data is obtainable here*. That was written 2026-09-12. The owner
+supplied `data/ext/spy_0dte_1min_*.csv.gz` on 2026-09-13 — 1-minute SPY same-day-expiry trade bars by strike and
+right, WITH VOLUME. Three units use those bars for pricing and volatility tests; none had ever used them as a
+signal source. A non-goal whose stated reason has lapsed was reopened explicitly, not silently.
+
+**Why it was designed the way it was.** A47 showed one-per-day hold-to-close candidates cannot resolve a 1-2 pt
+effect; A48 showed a tighter price barrier cannot fix that. What can is more trades over a shorter horizon —
+which is how the one adequately powered family got its power. A49 fires several times a session and holds 30
+minutes. It worked: holdout n came out 1,772 / 1,751 / 1,842, ABOVE its own 900-1,800 projection. For the first
+time in this programme a candidate was powered to return a verdict rather than a label.
+
+**The verdict, and why it is uninformative.** All three failed — T1 −1.116 pts at 1 pt cost with p_day 1.00;
+T2 −1.301, so the timing fingerprint held; T3 −1.099, so the symmetry fingerprint FAILED (A49 required T3 > 0).
+The trials are counted and stay counted; the family is 48 and no p-value or FDR decision is revised. But the
+result says nothing about dealer hedging, because the signal I registered did not measure it:
+
+| construct-validity check, 2025 shard | value |
+|---|---|
+| corr(tick-rule imbalance, SAME-minute underlying return) | 0.6312 |
+| sign agreement | 0.8568 |
+| minutes at abs(imbalance) > 0.9 | 42.9 % |
+
+Calls and puts are priced off spot, so in a rising minute every call ticks up and every put ticks down and the
+tick rule signs essentially all volume one way. A49 tested a 1-minute momentum indicator — a pattern in price,
+the very thing the mechanism was meant to replace. **The root cause is general, not a bug: aggressor inference
+requires quotes, these bars carry trades only, and no quote-free aggressor rule can work on an instrument priced
+off a third asset.** That forecloses every signed-flow construct on this data.
+
+**The clean alternative, and the near-miss.** A price-free construct — call share of each minute's volume, using
+no price at all — is largely uncontaminated (same-minute corr 0.1264, sign agreement 0.5486) and carries a
+next-minute correlation of −0.0212 over 94,405 minutes. Bounding whether that could pay produced the most
+dangerous number of this session: the most put-heavy 5 % of minutes showed **+2.014 pts over the next 30 minutes,
+n 4,376, naive t 5.66** — above the cost band. Date-clustered to one observation per session, as this programme's
+own contract requires of every pooled statistic: **−0.956 pts, se 0.526, t −1.82, day-block bootstrap p 0.9665.**
+The sign flips. Thirty-minute windows overlapping 29/30, plus high-volume sessions dominating a pooled minute
+mean, had manufactured a 5.7-sigma effect out of a negative one. **Nothing was registered on it and nothing will
+be** — it was seen on holdout-window data, so building on it now would be a re-tune, and after clustering there
+is nothing to build on.
+
+**Where this leaves the programme.** The reopened non-goal is restored on better grounds than it was written on:
+not "no positioning data is obtainable", but "the positioning data obtainable here cannot identify an aggressor,
+and its unsigned residual is below cost". Across 48 pre-registered trials, three data sets and three zero-trial
+analyses, no long-only 0DTE mechanism clears its cost; the one family with power to see an edge found +0.026
+pts/trade; the design levers (A48) and the data levers (A49) are both closed; and the single large measured
+effect remains the sell side of the 0DTE premium, which the account forbids.

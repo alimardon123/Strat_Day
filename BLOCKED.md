@@ -336,3 +336,43 @@ has come back positive.**
   tail against a 4 % daily limit).
 
 No agent is launched against the automated stop hook; the run resumes on a letter or a file.
+
+## Status after A49/A49a (2026-09-16) — the last data lever is closed; family 45 → 48
+
+A48 closed the last design lever. A49 opened the last data lever — the owner's 0DTE option bars, never used as a
+SIGNAL source by any unit — and closed it. Three trials, all FAILED (`out/oflow_candidates.csv`,
+`PLAYBOOK_0DTE.md` §18). Family 45 → 48; 0 of 48 pass the family-wide FDR.
+
+| | result |
+|---|---|
+| T1 (hypothesis) HOLDOUT | n 1,772, −1.116 pts at 1 pt, p_day 1.00 |
+| T2 (timing fingerprint) | n 1,751, −1.301 — weaker than T1, so the fingerprint HELD |
+| T3 (symmetry, required > 0) | n 1,842, −1.099 — FAILED |
+
+**Two things the owner should take from it.** First, the design finally worked: holdout n came out ABOVE the
+projection, so this was a verdict rather than another UNDERPOWERED label — the A47/A48 lessons were applied and
+they held. Second, the verdict is uninformative about the mechanism, because the signal I registered was invalid:
+the tick rule on option prices is 86 % just the sign of the contemporaneous underlying move (corr 0.6312), since
+calls and puts are priced off spot. Aggressor inference needs quotes; these bars carry trades only. That closes
+signed-flow constructs here permanently rather than inviting another attempt.
+
+**A near-miss worth seeing.** A clean price-free construct showed +2.014 pts over 30 minutes at a naive t of 5.66
+— above cost. Date-clustered per the contract: −0.956, bootstrap p 0.9665, sign flipped. Nothing was registered
+on it. Had the clustering rule not existed, this session would have ended by proposing a candidate built on an
+artifact.
+
+### Owner options — unchanged in substance, with every avenue now priced
+
+- **A. Stop. The indicated choice.** 48 trials, 0 passing. Where the design HAD power (A36, and now A49) it
+  looked and found nothing. The design lever (A48) and the data lever (A49) are both closed.
+- **B. Forward test A44** — legitimate at A47's measured price: ≈ 4 years to n = 200, verdict only above
+  ~4-8 pts/trade.
+- **C/D. Leveraged-ETF candidate (A38)** — still waiting on `data/ext/letf_aum_2006_2026.csv`; hold-to-close
+  one-per-day, so it inherits A47's floor and will likely return UNDERPOWERED.
+- **E. Relax the account constraint** — the only route to the one large measured effect, and refused on evidence
+  (A43).
+- **NEW — the only thing that would genuinely reopen the flow avenue: QUOTES.** A 0DTE option quote file (NBBO
+  bid/ask by contract-minute) would make aggressor inference possible and A49's mechanism testable as registered.
+  Nothing on this branch can substitute for it. If that file is obtainable, say so and it will be pre-registered.
+
+No agent is launched against the automated stop hook; the run resumes on a letter or a file.

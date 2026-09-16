@@ -234,3 +234,48 @@ owner adopted, not a new finding, and it was nowhere stated before now.
   UNDERPOWERED, not promoted). `INVERSION.md` §5 now carries that outcome.
 
 No agent is launched against the automated stop hook; the run resumes on a letter or a file.
+
+## Status after A47/A47a/A47b (2026-09-16) — the options are unchanged, but option B's price is now measured
+
+A47 asked a question this programme had never asked: what size of effect can its own design detect? It adds ZERO
+trials; the family stays at 45 with 0 passing the family-wide FDR. Source `out/power_analysis.csv`,
+`PLAYBOOK_0DTE.md` §16, narrative in `ASSESSMENT.md`. The first run overstated its conclusion by omitting a
+family; the correction is registered as A47a/A47b and the numbers below are the corrected ones.
+
+At the survival rule's n = 200 floor, one-sided α = 0.05 with 80 % power, on the HOLDOUT window:
+
+| family | actual holdout n | smallest effect detectable | its holdout result |
+|---|---|---|---|
+| fvg (A36, intraday stop/target) | 282 – 959 | **0.78 – 1.27 pts/trade** | −1.143 to +0.026 pts/trade |
+| pre-registered (D1 winner, gap-up call) | 274 – 452 | 3.85 – 4.46 | −1.904 to −0.143 |
+| flatten (A46) | 144 – 299 | 5.55 – 7.86 | −3.283 to −1.082 |
+| gapliq (A39) | 154 – 158 | 7.96 – 8.94 | +0.117 to +2.202 |
+
+The cost to clear is 1.0-2.0 index points. Two consequences the owner should weigh:
+
+1. **One family already gave a real answer.** A36's intraday stop/target family had enough trades AND small
+   enough per-trade dispersion to detect an edge at or below its own cost. It looked, on 282-959 holdout trades
+   per configuration, and found nothing: its best group is +0.026 pts/trade against a 1-2 pt cost. That is a
+   genuine negative, not an underpowered one — the strongest negative result on the branch.
+2. **Option B is more expensive than its registration says.** A44 is a hold-to-close, one-trade-per-day
+   candidate, so it sits in the underpowered group: at those dispersions, reaching a verdict needs an edge of
+   roughly 4-8 pts/trade, larger than anything measured here. A47's `years_to_200` column puts the fastest
+   holdout row at 2.71 years and the median at 7.39, and A44's closest measured analogue (A39's gapliq, ≈ 26
+   signals/yr one-sided, ≈ 53 symmetric) implies nearer **four years**, not the "≈ two years" in its
+   registration (`ACCEPTANCE.md:439`). Forward testing remains legitimate; it is simply not a two-year path to
+   an answer, and for any edge smaller than ~4 pts/trade it returns the same UNDERPOWERED label at the end.
+
+This does NOT make any failed result promotable. Low power never converts a negative into a positive, and
+nothing in `SCORECARD.md` moves.
+
+### Owner options, repriced
+
+- **A. Stop.** Now better supported than before: where the design HAD the power to see an edge (A36, 8
+  configurations, 282-959 holdout trades each), it looked and there was none.
+- **B. Forward test A44.** Still available, now with its price stated: ≈ 4 years to n = 200, and a verdict only
+  if the true edge exceeds ~4-8 pts/trade.
+- **C/D. Leveraged-ETF candidate** (A38): built, wired, waiting for `data/ext/letf_aum_2006_2026.csv`. Note it
+  is also a hold-to-close one-per-day design, so it would inherit the same detectability floor.
+- **F/G. DELIVERED** — A45 adopted and now stated in `PLAYBOOK_0DTE.md` §15; A46 registered, run once, failed.
+
+No agent is launched against the automated stop hook; the run resumes on a letter or a file.

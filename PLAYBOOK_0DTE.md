@@ -615,3 +615,144 @@ This section computes, for every candidate that already has a published per-trad
 | reconcile | 15:30\|put\|vixmove_lit | SELECTION | 104 | 1.770 | 19.102 | 4.657 | 3.358 | 2256 | 150.079 |
 
 25 of 61 rows (41%) have mde_at_200 <= 2.0 pts overall, and 8 of 16 (50%) restricted to HOLDOUT. The fvg family's holdout MDE falls at or below the 1-2 point cost band (0.78-1.27 pts) at an actual holdout n of 282-959 (already past the n=200 floor), versus flatten, gapliq, and pre_registered whose holdout MDE lies above the band (3.85-8.94 pts, holdout n 144-452). The fvg family's own holdout mean ranges -1.143 to 0.026 pts/trade (flat to negative): the n=200 floor DID resolve this family's question, and the resolved answer is flat to negative, not positive. Per-trade dispersion is the mechanical reason one side is powered and the other is not: the fvg family's holdout sd runs 4.44-7.20 pts/trade, versus 21.90-50.86 pts/trade for flatten, gapliq, and pre_registered. A47's own refutation condition is therefore MET for the fvg family and NOT met for flatten, gapliq, and pre_registered: the n=200 floor is adequately powered for the former (a genuine answer, not a design limit) but not for the latter, where the UNDERPOWERED label still reflects the design's own detectability floor, not only a shortage of signals.
+
+## 17. Would a bounded exit make these questions answerable? (A48) — dispersion only, not a trial
+
+For each of the 8 already-registered hold-to-close candidates (A39's T1/T2/T3, A46's U1/U2/U3, and the two pre-registered signals), this section asks what its per-trade DISPERSION would be under a bounded exit; it adds ZERO trials, computes no new signal, opens no new window and can promote nothing (the family stays at 45). **A48's own proposed answer condition -- whether the resulting minimum detectable effect clears the 1-2 point cost band -- was WITHDRAWN after the first run as a mis-specification, not a finding (ACCEPTANCE.md amendment A48a): the caption below reports the corrected reading, not the withdrawn one.** It reports dispersion only and licenses NOTHING about profitability: every candidate here already has a KNOWN holdout result, so computing profitability under a new exit rule and then choosing among the results would be a re-tune on the holdout, which the contract forbids (BLOCKED.md).
+
+| family | candidate | window | exit_rule | n | sd_net_pts_cost1 | sd_net_pts_cost2 | mde_at_n | mde_at_200 | answerable_at_n |
+|---|---|---|---|---|---|---|---|---|---|
+| gapliq | T1 | CONTEXT | registered | 284 | 15.920 | 15.920 | 2.349 | 2.799 | False |
+| gapliq | T1 | CONTEXT | fixed5pts | 284 | 4.941 | 4.941 | 0.729 | 0.869 | True |
+| gapliq | T1 | CONTEXT | fixed10pts | 284 | 8.692 | 8.692 | 1.282 | 1.528 | True |
+| gapliq | T1 | CONTEXT | fixed20pts | 284 | 12.816 | 12.816 | 1.891 | 2.253 | True |
+| gapliq | T2 | CONTEXT | registered | 284 | 17.759 | 17.759 | 2.620 | 3.122 | False |
+| gapliq | T2 | CONTEXT | fixed5pts | 284 | 4.982 | 4.982 | 0.735 | 0.876 | True |
+| gapliq | T2 | CONTEXT | fixed10pts | 284 | 9.073 | 9.073 | 1.339 | 1.595 | True |
+| gapliq | T2 | CONTEXT | fixed20pts | 284 | 13.659 | 13.659 | 2.015 | 2.402 | False |
+| gapliq | T3 | CONTEXT | registered | 273 | 15.473 | 15.473 | 2.328 | 2.720 | False |
+| gapliq | T3 | CONTEXT | fixed5pts | 273 | 4.930 | 4.930 | 0.742 | 0.867 | True |
+| gapliq | T3 | CONTEXT | fixed10pts | 273 | 8.447 | 8.447 | 1.271 | 1.485 | True |
+| gapliq | T3 | CONTEXT | fixed20pts | 273 | 11.764 | 11.764 | 1.770 | 2.068 | True |
+| gapliq | T1 | SELECTION | registered | 121 | 27.726 | 27.726 | 6.267 | 4.875 | False |
+| gapliq | T1 | SELECTION | fixed5pts | 121 | 5.017 | 5.017 | 1.134 | 0.882 | True |
+| gapliq | T1 | SELECTION | fixed10pts | 121 | 9.752 | 9.752 | 2.204 | 1.715 | False |
+| gapliq | T1 | SELECTION | fixed20pts | 121 | 16.168 | 16.168 | 3.655 | 2.843 | False |
+| gapliq | T2 | SELECTION | registered | 121 | 28.556 | 28.556 | 6.455 | 5.021 | False |
+| gapliq | T2 | SELECTION | fixed5pts | 121 | 4.959 | 4.959 | 1.121 | 0.872 | True |
+| gapliq | T2 | SELECTION | fixed10pts | 121 | 9.911 | 9.911 | 2.240 | 1.743 | False |
+| gapliq | T2 | SELECTION | fixed20pts | 121 | 16.566 | 16.566 | 3.745 | 2.913 | False |
+| gapliq | T3 | SELECTION | registered | 132 | 34.233 | 34.233 | 7.409 | 6.019 | False |
+| gapliq | T3 | SELECTION | fixed5pts | 132 | 4.982 | 4.982 | 1.078 | 0.876 | True |
+| gapliq | T3 | SELECTION | fixed10pts | 132 | 9.298 | 9.298 | 2.012 | 1.635 | False |
+| gapliq | T3 | SELECTION | fixed20pts | 132 | 14.730 | 14.730 | 3.188 | 2.590 | False |
+| gapliq | T1 | HOLDOUT | registered | 158 | 45.294 | 45.294 | 8.960 | 7.964 | False |
+| gapliq | T1 | HOLDOUT | fixed5pts | 158 | 5.012 | 5.012 | 0.991 | 0.881 | True |
+| gapliq | T1 | HOLDOUT | fixed10pts | 158 | 10.029 | 10.029 | 1.984 | 1.763 | True |
+| gapliq | T1 | HOLDOUT | fixed20pts | 158 | 19.582 | 19.582 | 3.874 | 3.443 | False |
+| gapliq | T2 | HOLDOUT | registered | 158 | 50.858 | 50.858 | 10.060 | 8.942 | False |
+| gapliq | T2 | HOLDOUT | fixed5pts | 158 | 5.009 | 5.009 | 0.991 | 0.881 | True |
+| gapliq | T2 | HOLDOUT | fixed10pts | 158 | 10.029 | 10.029 | 1.984 | 1.763 | True |
+| gapliq | T2 | HOLDOUT | fixed20pts | 158 | 19.707 | 19.707 | 3.898 | 3.465 | False |
+| gapliq | T3 | HOLDOUT | registered | 154 | 48.011 | 48.011 | 9.620 | 8.441 | False |
+| gapliq | T3 | HOLDOUT | fixed5pts | 154 | 4.965 | 4.965 | 0.995 | 0.873 | True |
+| gapliq | T3 | HOLDOUT | fixed10pts | 154 | 9.840 | 9.840 | 1.972 | 1.730 | True |
+| gapliq | T3 | HOLDOUT | fixed20pts | 154 | 19.154 | 19.154 | 3.838 | 3.368 | False |
+| flatten | U1 | CONTEXT | registered | 254 | 16.283 | 16.283 | 2.540 | 2.863 | False |
+| flatten | U1 | CONTEXT | atr0.5x | 254 | 1.699 | 1.699 | 0.265 | 0.299 | True |
+| flatten | U1 | CONTEXT | atr1.0x | 254 | 3.391 | 3.391 | 0.529 | 0.596 | True |
+| flatten | U1 | CONTEXT | atr1.5x | 254 | 5.096 | 5.096 | 0.795 | 0.896 | True |
+| flatten | U1 | CONTEXT | atr2.0x | 254 | 6.743 | 6.743 | 1.052 | 1.185 | True |
+| flatten | U1 | CONTEXT | fixed5pts | 254 | 4.909 | 4.909 | 0.766 | 0.863 | True |
+| flatten | U1 | CONTEXT | fixed10pts | 254 | 8.561 | 8.561 | 1.336 | 1.505 | True |
+| flatten | U1 | CONTEXT | fixed20pts | 254 | 12.578 | 12.578 | 1.962 | 2.211 | True |
+| flatten | U2 | CONTEXT | registered | 326 | 9.530 | 9.530 | 1.312 | 1.676 | True |
+| flatten | U2 | CONTEXT | atr0.5x | 326 | 1.145 | 1.145 | 0.158 | 0.201 | True |
+| flatten | U2 | CONTEXT | atr1.0x | 326 | 2.295 | 2.295 | 0.316 | 0.403 | True |
+| flatten | U2 | CONTEXT | atr1.5x | 326 | 3.435 | 3.435 | 0.473 | 0.604 | True |
+| flatten | U2 | CONTEXT | atr2.0x | 326 | 4.556 | 4.556 | 0.627 | 0.801 | True |
+| flatten | U2 | CONTEXT | fixed5pts | 326 | 4.718 | 4.718 | 0.650 | 0.829 | True |
+| flatten | U2 | CONTEXT | fixed10pts | 326 | 7.152 | 7.152 | 0.985 | 1.257 | True |
+| flatten | U2 | CONTEXT | fixed20pts | 326 | 8.588 | 8.588 | 1.183 | 1.510 | True |
+| flatten | U3 | CONTEXT | registered | 247 | 13.192 | 13.192 | 2.087 | 2.319 | False |
+| flatten | U3 | CONTEXT | atr0.5x | 247 | 1.655 | 1.655 | 0.262 | 0.291 | True |
+| flatten | U3 | CONTEXT | atr1.0x | 247 | 3.316 | 3.316 | 0.525 | 0.583 | True |
+| flatten | U3 | CONTEXT | atr1.5x | 247 | 4.944 | 4.944 | 0.782 | 0.869 | True |
+| flatten | U3 | CONTEXT | atr2.0x | 247 | 6.551 | 6.551 | 1.036 | 1.152 | True |
+| flatten | U3 | CONTEXT | fixed5pts | 247 | 4.746 | 4.746 | 0.751 | 0.834 | True |
+| flatten | U3 | CONTEXT | fixed10pts | 247 | 7.948 | 7.948 | 1.257 | 1.397 | True |
+| flatten | U3 | CONTEXT | fixed20pts | 247 | 11.636 | 11.636 | 1.841 | 2.046 | True |
+| flatten | U1 | SELECTION | registered | 102 | 33.470 | 33.470 | 8.240 | 5.885 | False |
+| flatten | U1 | SELECTION | atr0.5x | 102 | 3.030 | 3.030 | 0.746 | 0.533 | True |
+| flatten | U1 | SELECTION | atr1.0x | 102 | 6.072 | 6.072 | 1.495 | 1.068 | True |
+| flatten | U1 | SELECTION | atr1.5x | 102 | 9.062 | 9.062 | 2.231 | 1.593 | False |
+| flatten | U1 | SELECTION | atr2.0x | 102 | 12.098 | 12.098 | 2.978 | 2.127 | False |
+| flatten | U1 | SELECTION | fixed5pts | 102 | 5.021 | 5.021 | 1.236 | 0.883 | True |
+| flatten | U1 | SELECTION | fixed10pts | 102 | 9.317 | 9.317 | 2.294 | 1.638 | False |
+| flatten | U1 | SELECTION | fixed20pts | 102 | 16.183 | 16.183 | 3.984 | 2.845 | False |
+| flatten | U2 | SELECTION | registered | 343 | 15.374 | 15.374 | 2.064 | 2.703 | False |
+| flatten | U2 | SELECTION | atr0.5x | 343 | 1.605 | 1.605 | 0.216 | 0.282 | True |
+| flatten | U2 | SELECTION | atr1.0x | 343 | 3.207 | 3.207 | 0.431 | 0.564 | True |
+| flatten | U2 | SELECTION | atr1.5x | 343 | 4.816 | 4.816 | 0.647 | 0.847 | True |
+| flatten | U2 | SELECTION | atr2.0x | 343 | 6.393 | 6.393 | 0.858 | 1.124 | True |
+| flatten | U2 | SELECTION | fixed5pts | 343 | 4.918 | 4.918 | 0.660 | 0.865 | True |
+| flatten | U2 | SELECTION | fixed10pts | 343 | 8.235 | 8.235 | 1.106 | 1.448 | True |
+| flatten | U2 | SELECTION | fixed20pts | 343 | 11.829 | 11.829 | 1.588 | 2.080 | True |
+| flatten | U3 | SELECTION | registered | 105 | 29.217 | 29.217 | 7.090 | 5.137 | False |
+| flatten | U3 | SELECTION | atr0.5x | 105 | 2.832 | 2.832 | 0.687 | 0.498 | True |
+| flatten | U3 | SELECTION | atr1.0x | 105 | 5.695 | 5.695 | 1.382 | 1.001 | True |
+| flatten | U3 | SELECTION | atr1.5x | 105 | 8.441 | 8.441 | 2.048 | 1.484 | False |
+| flatten | U3 | SELECTION | atr2.0x | 105 | 11.163 | 11.163 | 2.709 | 1.963 | False |
+| flatten | U3 | SELECTION | fixed5pts | 105 | 4.912 | 4.912 | 1.192 | 0.864 | True |
+| flatten | U3 | SELECTION | fixed10pts | 105 | 9.007 | 9.007 | 2.186 | 1.584 | False |
+| flatten | U3 | SELECTION | fixed20pts | 105 | 14.772 | 14.772 | 3.584 | 2.597 | False |
+| flatten | U1 | HOLDOUT | registered | 144 | 44.699 | 44.699 | 9.262 | 7.859 | False |
+| flatten | U1 | HOLDOUT | atr0.5x | 144 | 5.075 | 5.075 | 1.052 | 0.892 | True |
+| flatten | U1 | HOLDOUT | atr1.0x | 144 | 10.159 | 10.159 | 2.105 | 1.786 | False |
+| flatten | U1 | HOLDOUT | atr1.5x | 144 | 15.235 | 15.235 | 3.157 | 2.679 | False |
+| flatten | U1 | HOLDOUT | atr2.0x | 144 | 20.089 | 20.089 | 4.163 | 3.532 | False |
+| flatten | U1 | HOLDOUT | fixed5pts | 144 | 5.010 | 5.010 | 1.038 | 0.881 | True |
+| flatten | U1 | HOLDOUT | fixed10pts | 144 | 10.003 | 10.003 | 2.073 | 1.759 | False |
+| flatten | U1 | HOLDOUT | fixed20pts | 144 | 19.182 | 19.182 | 3.975 | 3.373 | False |
+| flatten | U2 | HOLDOUT | registered | 299 | 33.651 | 33.651 | 4.839 | 5.916 | False |
+| flatten | U2 | HOLDOUT | atr0.5x | 299 | 3.706 | 3.706 | 0.533 | 0.652 | True |
+| flatten | U2 | HOLDOUT | atr1.0x | 299 | 7.421 | 7.421 | 1.067 | 1.305 | True |
+| flatten | U2 | HOLDOUT | atr1.5x | 299 | 11.110 | 11.110 | 1.598 | 1.953 | True |
+| flatten | U2 | HOLDOUT | atr2.0x | 299 | 14.641 | 14.641 | 2.105 | 2.574 | False |
+| flatten | U2 | HOLDOUT | fixed5pts | 299 | 5.000 | 5.000 | 0.719 | 0.879 | True |
+| flatten | U2 | HOLDOUT | fixed10pts | 299 | 9.950 | 9.950 | 1.431 | 1.749 | True |
+| flatten | U2 | HOLDOUT | fixed20pts | 299 | 17.803 | 17.803 | 2.560 | 3.130 | False |
+| flatten | U3 | HOLDOUT | registered | 166 | 31.592 | 31.592 | 6.097 | 5.555 | False |
+| flatten | U3 | HOLDOUT | atr0.5x | 166 | 5.143 | 5.143 | 0.993 | 0.904 | True |
+| flatten | U3 | HOLDOUT | atr1.0x | 166 | 10.309 | 10.309 | 1.990 | 1.813 | True |
+| flatten | U3 | HOLDOUT | atr1.5x | 166 | 15.287 | 15.287 | 2.950 | 2.688 | False |
+| flatten | U3 | HOLDOUT | atr2.0x | 166 | 15.833 | 15.833 | 3.056 | 2.784 | False |
+| flatten | U3 | HOLDOUT | fixed5pts | 166 | 5.012 | 5.012 | 0.967 | 0.881 | True |
+| flatten | U3 | HOLDOUT | fixed10pts | 166 | 9.902 | 9.902 | 1.911 | 1.741 | True |
+| flatten | U3 | HOLDOUT | fixed20pts | 166 | 18.241 | 18.241 | 3.520 | 3.207 | False |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | registered | 452 | 25.395 | 25.395 | 2.970 | 4.465 | False |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | atr0.5x | 452 | 2.548 | 2.548 | 0.298 | 0.448 | True |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | atr1.0x | 452 | 5.095 | 5.095 | 0.596 | 0.896 | True |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | atr1.5x | 452 | 7.574 | 7.574 | 0.886 | 1.332 | True |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | atr2.0x | 452 | 10.049 | 10.049 | 1.175 | 1.767 | True |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | fixed5pts | 452 | 4.986 | 4.986 | 0.583 | 0.877 | True |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | fixed10pts | 452 | 9.445 | 9.445 | 1.105 | 1.661 | True |
+| pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | fixed20pts | 452 | 15.733 | 15.733 | 1.840 | 2.766 | True |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | registered | 274 | 21.904 | 21.904 | 3.290 | 3.851 | False |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | atr0.5x | 274 | 3.712 | 3.712 | 0.558 | 0.653 | True |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | atr1.0x | 274 | 7.296 | 7.296 | 1.096 | 1.283 | True |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | atr1.5x | 274 | 10.585 | 10.585 | 1.590 | 1.861 | True |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | atr2.0x | 274 | 13.833 | 13.833 | 2.078 | 2.432 | False |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | fixed5pts | 274 | 4.893 | 4.893 | 0.735 | 0.860 | True |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | fixed10pts | 274 | 9.356 | 9.356 | 1.405 | 1.645 | True |
+| pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | fixed20pts | 274 | 14.715 | 14.715 | 2.210 | 2.587 | False |
+
+**The answer condition is withdrawn.** A48's `answerable_at_n` column is retained in the table above for the record, but it is NOT a verdict and must not be cited as one (ACCEPTANCE.md amendment A48a): it compares the minimum detectable effect, which SCALES with the exit rule's own barrier width, against a fixed cost bar that does not scale, so it can be satisfied by choosing any sufficiently tight stop and carries no information.
+
+**The proportionality, measured.** From this run's own `sd_net_pts_cost1`: across the fixed-points grid, mean sd / barrier width by barrier -- b=5 pts sd/b 0.989 (min 0.944, max 1.004, n=20); b=10 pts sd/b 0.920 (min 0.715, max 1.003, n=20); b=20 pts sd/b 0.764 (min 0.429, max 0.985, n=20). Across the ATR grid, each row's sd against its own candidate/window's `atr0.5x` sd -- 0.5x/0.5x 1.00 (by construction); 1x/0.5x mean 2.00 (n=11); 1.5x/0.5x mean 2.98 (n=11); 2x/0.5x mean 3.86 (n=11) -- near the 1 / 2 / 3 / 4 ideal implied by the multiplier grid itself. Dispersion is essentially the barrier width, so nearly every trade exits AT a barrier: the bounded version is a two-outcome bet, not the registered signal with a safety net.
+
+**The economics, which run the other way.** Cost does not scale with the barrier: b=5 pts: break-even win rate 60.0% at cost 1.0 pts (10.0% of the 2b range), 70.0% at cost 2.0 pts (20.0% of the 2b range); b=10 pts: break-even win rate 55.0% at cost 1.0 pts (5.0% of the 2b range), 60.0% at cost 2.0 pts (10.0% of the 2b range); b=20 pts: break-even win rate 52.5% at cost 1.0 pts (2.5% of the 2b range), 55.0% at cost 2.0 pts (5.0% of the 2b range). Tightening the stop RAISES the edge required to pay.
+
+**The corrected conclusion, a negative.** Bounded exits do not rescue detectability for these candidates: they shrink the noise and the effect together while leaving cost fixed, so no exit rule on the registered grid makes an unanswerable question answerable. A valid test would need a scale-free criterion -- detectability measured against the effect size under the SAME exit rule, not against a fixed external cost bar -- which requires the per-trade mean under each exit rule, exactly the quantity A48 forbids because every candidate here already has a KNOWN holdout result. The two requirements are mutually exclusive on this data, and that is itself the answer: this question cannot be settled here without a re-tune on the holdout, so it will not be settled here.
+
+No profitability statistic -- mean, win rate, Sharpe or cumulative P&L -- was computed anywhere in this analysis, so the A48 no-re-tune safeguard held.

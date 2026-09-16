@@ -816,3 +816,50 @@ positive T1 with a failed timing fingerprint is "pattern without its mechanism" 
 1-minute trade bars with no quotes is crude; and any hedging impulse is likely arbitraged inside the 1-minute
 resolution this data has. The value of A49 is that, unlike every hold-to-close candidate before it, it is
 designed so the answer will be a verdict rather than an UNDERPOWERED label.
+
+### A49a correction (2026-09-16, after the A49 run) — the registered SIGNAL was invalid; the avenue is closed, and a near-miss is recorded
+
+**A49 ran and its three trials FAILED** (HOLDOUT T1 −1.116 pts, p_day 1.00; T2 −1.301, so the timing fingerprint
+held; T3 −1.099, so A49's symmetry fingerprint FAILED, since it required T3 > 0). n was 1,772/1,751/1,842 —
+above A49's own 900-1,800 projection, so for once the design was adequately powered. **The trials stay counted:
+they ran, the family is 48, and no p-value or FDR decision is revised.** But the result is NOT evidence about
+the dealer-hedging mechanism, for the reason below.
+
+**Construct-validity failure — the signal did not measure what A49 said it measured.** The tick rule signs a
+contract-minute by comparing its price to that contract's previous print. Calls and puts move MECHANICALLY with
+spot, so in a minute when the underlying rises every call ticks up and every put ticks down, and the rule
+classifies essentially all volume one way. Measured on the 2025 shard:
+
+| check | value |
+|---|---|
+| corr(imbalance, SAME-minute underlying return) | 0.6312 |
+| sign agreement | 0.8568 |
+| minutes with abs(imbalance) > 0.9 | 0.4292 |
+
+So A49's "flow imbalance" is 86 % just the sign of the contemporaneous underlying move: a 1-minute momentum
+signal, i.e. a pattern in price — the very thing the mechanism was supposed to replace. Root cause: Lee & Ready's
+tick test infers an AGGRESSOR, and aggressor inference needs quotes. The shards carry trade prints only. **No
+quote-free aggressor rule can work on an instrument whose price is driven by a third asset.** That is a general
+fact, not a bug to fix, and it forecloses signed-flow constructs on this data entirely.
+
+**Unregistered diagnostic, reported as exactly that.** A price-free alternative — call share of each minute's
+total volume, which uses no price at all — is largely uncontaminated: same-minute corr 0.1264, sign agreement
+0.5486 (against 0.6312 / 0.8568 for the tick rule). Its predictive content is corr −0.0212 with the next minute's
+return over 94,405 minutes. This was computed to assess construct validity, NOT to design a candidate, and
+nothing is registered on it.
+
+**A near-miss, recorded because it nearly became a re-tune on the holdout.** Bounding that construct's economic
+size, the most put-heavy 5 % of minutes showed a mean +2.014 pt move over the next 30 minutes, n 4,376, naive
+se 0.356, **naive t 5.66** — above the 1-2 pt cost band. Pooled minute statistics are exactly what this
+programme's own contract requires to be date-clustered. Clustered to one observation per session (236 sessions):
+**mean −0.956 pts, se 0.526, t −1.82, day-block bootstrap one-sided p 0.9665**; net of cost −1.96 and −2.96. The
+sign FLIPS. The naive figure was an artifact of 30-minute windows overlapping 29/30 and of high-volume sessions
+dominating a pooled mean. **No candidate was registered on it, and none will be:** it was seen on holdout-window
+data, so anything built on it now would be a re-tune, and after clustering there is nothing there to build on.
+
+**Conclusion — the option-flow avenue is CLOSED**, and not merely untested. Signed-flow constructs are
+mechanically confounded here because there are no quotes; the one clean unsigned construct carries a next-minute
+correlation of −0.02 and a day-clustered 30-minute effect that is negative before costs. The non-goal that A49
+reopened (dealer positioning) is therefore restored on new and better grounds: not "no positioning data is
+obtainable", but "the positioning data obtainable here cannot identify an aggressor, and its unsigned residual is
+below cost".

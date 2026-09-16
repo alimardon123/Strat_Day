@@ -401,3 +401,18 @@ and said so rather than quietly generalising. It also verified `date == expiry` 
 grouping on date to save memory, rather than assuming it, and it disclosed that a single mod-569 print is
 dropped by RTH filtering. Memory was bounded by the largest single shard (peak RSS 1,522 MB), not the 9.5M-row
 sum.
+
+## A50 positive control (2026-09-16) — the apparatus PASSES where it could be tested; part (c) under-specified by me
+
+| # | severity | finding | disposition |
+|---|---|---|---|
+| P1 | PASS, and the one that mattered | At δ = 0 all four candidates reproduce their published HOLDOUT numbers EXACTLY to 6 dp (T1 +2.201582 n 158; U1 −3.282639 n 144; fvg +0.026263 n 959; D1 −0.143431 n 274), with p_boot_day, DSR/PSR, calendar-day Sharpe and the control figures also exact. `recovered_minus_delta` is **exactly 0.0 on all 28 rows** | No harness bug. The 48 negatives are not the product of broken measurement — the thing this control existed to establish |
+| P2 | defect, MINE, in the registration | A50 scoped injection to HOLDOUT only, then gated on all six survival conditions. Condition 3 (family FDR) is computed on the **SELECTION** window for every fleet-unit candidate (`pipeline/trials.py:30,37,44,83` — verified), so a holdout-only injection cannot move it; and condition 6 (n ≥ 200) is unreachable for gapliq T1 (n 158) and flatten U1 (n 144) at any δ. Three of four candidates therefore could never flip to survival, by construction | Registered in A50a. Part (c) is reported as evaluable for ONE candidate, not spun as pass or fail. Same family as A48's defect: a criterion whose limits I did not check against the machinery it would run through |
+| P3 | substantive, unanticipated | The PROMOTION bar sits far above the DETECTION floor. fvg: A47's MDE 0.398 pts/trade, but the pipeline does not flag survival until δ ≈ 4.0 even excluding the frozen FDR — a factor of ≈ 10, driven by DSR > 0.95 being far stricter than 80 % power at α = 0.05 | Both numbers are right and answer different questions (can it be SEEN vs would this programme ACT). Every negative stands under both (+0.026 << 0.398 << 4.0), but "adequately powered" must not be read as "would have promoted a small edge". Published framing corrected |
+| P4 | disclosed divergence, changed nothing | `ACCEPTANCE.md`'s survival rule names SIX conditions; `pipeline/report.py`'s per-family verdict gates on FOUR and says so in its own generated text. The narrower gate can only make promotion EASIER and **no candidate was promoted under it** — all failed the four outright — so no verdict is affected; the family FDR is carried separately in `out/trials.csv` (0 of 48) | Recorded, not corrected: it is disclosed at the point of use |
+
+The implementer flagged eight decisions where A50 was ambiguous, including the two that became P2, and demonstrated
+one mutation on the test's own call site rather than claiming a source mutation it could not honestly make. It also
+noted the cleanup glob I specified (`out/poscontrol_*`) does not match the output filename (`out/poscontrol.csv`)
+and implemented it literally rather than silently fixing it — correct behaviour; the effect is nil since the unit
+overwrites its single output unconditionally.

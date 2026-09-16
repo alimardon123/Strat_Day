@@ -154,3 +154,31 @@ is believed, not after.
 implementer flagged it as an aside rather than a problem. The lesson is not that the implementer erred — it
 reported the fact plainly, which is exactly right — but that distributional oddities in a hand-back deserve to be
 chased before the result is read, not after.
+
+## Addendum 2026-09-16 (A50 round) — the limit-check guard reaches count 2 and is now a framework rule
+
+The A48 round proposed a guard at count 1: **before registering a threshold, ask what it does in the limit of the
+treatment.** A50 hit the same class from the other side and the guard, as worded, would NOT have caught it. A50's
+criterion is well-behaved in both limits — nothing is detected at δ = 0, everything is at δ = ∞ — and I checked
+exactly that before registering. What I did not check is whether the *machinery* could vary the criterion at all:
+three of the four candidates were pinned to FAIL regardless of δ, because one survival condition is computed on a
+window the injection never touches and another needs observations an injection cannot create.
+
+So the guard is generalised and, at count 2, promoted from proposal to rule: **before registering a criterion,
+verify not only its limits but that every input it depends on is actually MOVED by the treatment. Enumerate the
+criterion's inputs and, for each, name what in the experiment changes it. Any input the treatment cannot reach
+makes the criterion partly or wholly unevaluable, and that must be known before the run, not discovered in the
+output.** One pass over A50's six conditions against "what does injecting δ into holdout trades change?" would
+have shown that two of the six are untouchable, and A50 would have been scoped to the conditions it could
+exercise. Count 2 — now a rule.
+
+**What the round bought anyway, and it was the point.** The control's primary purpose was never part (c). It was
+to establish that a programme reporting 48 negatives can return a positive at all. It does: exact
+self-reproduction at zero injection, exact one-for-one recovery of an injected effect across 28 rows. That is the
+foundation every other result on this branch stands on, and until this round it had never been tested.
+
+**A second finding worth carrying forward.** The promotion bar is ~10× the detection floor for the one
+adequately-powered family (4.0 vs 0.398 pts/trade), because DSR > 0.95 is far stricter than 80 % power. The
+programme has been reporting detection floors (A47) and promotion verdicts (the survival rule) as if they lived
+on the same scale. They do not, and any future statement about what a negative rules out should name which of the
+two it means.

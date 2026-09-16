@@ -782,3 +782,45 @@ T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the minute-level day-selection 
 T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the minute-level day-selection control <= 0, n >= 200 -> does not survive the four programmatic checks (DSR at N=48 is reported in the table above, not a survival condition). Fingerprint: T2 < T1 (holds); T3 <= 0 at 1 pt (fails). Promotion: T1 does not survive, not promoted.
 
 FIXED (pre-registration, A49): per contract (strike+right+expiry key, expiry verified equal to the ts-derived session date on every row of every shard, so expiry is not even read) within a session, sign each minute's volume by the tick rule against that contract's most recent PRIOR print in the same session (higher close -> buyer-initiated, lower -> seller-initiated, equal -> carry the last CLASSIFIED sign via forward-fill, no prior print -> unsigned and excluded). Aggregate per (date, minute): bullish = buyer-initiated call volume + seller-initiated put volume; bearish = seller-initiated call volume + buyer-initiated put volume; imbalance = (bullish-bearish)/(bullish+bearish), NaN when the denominator is 0.
+
+## 19. Positive control — can this pipeline find an edge that is definitely there? (A50) — a validation, not a trial
+
+This programme has a null control (Thread A's random-walk sanity check) but had never demonstrated that its own pipeline can RECOVER an edge that is definitely present; this section injects a known, synthetic drift of delta index points into four already-registered candidates' own HOLDOUT signal-day trades ON AN IN-MEMORY COPY and re-runs each candidate's complete, unmodified scoring path. **It adds ZERO trials, computes no new signal on real data, opens no window, fits no parameter and can promote nothing (the family stays at 48); every number below is about the PIPELINE, never about the market, and may not be cited as evidence for or against any strategy.**
+
+| candidate | family | window | delta | n | mean_net_pts | recovered_minus_delta | p_boot_day | excess_over_control_pct | dsr | survives_all_six | theoretical_mde_at_n |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| U1 | flatten | HOLDOUT | 0.0000 | 144 | -3.2826 | 0.0000 | 1.0000 | -2.9603 | 0.1284 | False | 9.2619 |
+| U1 | flatten | HOLDOUT | 0.2500 | 144 | -3.0326 | 0.0000 | 1.0000 | -2.7103 | 0.1630 | False | 9.2619 |
+| U1 | flatten | HOLDOUT | 0.5000 | 144 | -2.7826 | 0.0000 | 1.0000 | -2.4603 | 0.2022 | False | 9.2619 |
+| U1 | flatten | HOLDOUT | 1.0000 | 144 | -2.2826 | 0.0000 | 1.0000 | -1.9603 | 0.2853 | False | 9.2619 |
+| U1 | flatten | HOLDOUT | 2.0000 | 144 | -1.2826 | 0.0000 | 1.0000 | -0.9603 | 0.3265 | False | 9.2619 |
+| U1 | flatten | HOLDOUT | 4.0000 | 144 | 0.7174 | 0.0000 | 0.3448 | 1.0397 | 0.2801 | False | 9.2619 |
+| U1 | flatten | HOLDOUT | 8.0000 | 144 | 4.7174 | 0.0000 | 0.0648 | 5.0397 | 0.1901 | False | 9.2619 |
+| short\|R1\|bos_off | fvg | HOLDOUT | 0.0000 | 959 | 0.0263 | 0.0000 | 0.4803 | 1.1988 | 0.0000 | False | 0.3985 |
+| short\|R1\|bos_off | fvg | HOLDOUT | 0.2500 | 959 | 0.2763 | 0.0000 | 0.0480 | 1.4488 | 0.0001 | False | 0.3985 |
+| short\|R1\|bos_off | fvg | HOLDOUT | 0.5000 | 959 | 0.5263 | 0.0000 | 0.0000 | 1.6988 | 0.0013 | False | 0.3985 |
+| short\|R1\|bos_off | fvg | HOLDOUT | 1.0000 | 959 | 1.0263 | 0.0000 | 0.0000 | 2.1988 | 0.0388 | False | 0.3985 |
+| short\|R1\|bos_off | fvg | HOLDOUT | 2.0000 | 959 | 2.0263 | 0.0000 | 0.0000 | 3.1988 | 0.6047 | False | 0.3985 |
+| short\|R1\|bos_off | fvg | HOLDOUT | 4.0000 | 959 | 4.0263 | -0.0000 | 0.0000 | 5.1988 | 0.9952 | False | 0.3985 |
+| short\|R1\|bos_off | fvg | HOLDOUT | 8.0000 | 959 | 8.0263 | 0.0000 | 0.0000 | 9.1988 | 1.0000 | False | 0.3985 |
+| T1 | gapliq | HOLDOUT | 0.0000 | 158 | 2.2016 | 0.0000 | 0.2592 | 3.2730 | 0.4354 | False | 8.9597 |
+| T1 | gapliq | HOLDOUT | 0.2500 | 158 | 2.4516 | 0.0000 | 0.2372 | 3.5230 | 0.4305 | False | 8.9597 |
+| T1 | gapliq | HOLDOUT | 0.5000 | 158 | 2.7016 | 0.0000 | 0.2188 | 3.7730 | 0.4252 | False | 8.9597 |
+| T1 | gapliq | HOLDOUT | 1.0000 | 158 | 3.2016 | 0.0000 | 0.1845 | 4.2730 | 0.4141 | False | 8.9597 |
+| T1 | gapliq | HOLDOUT | 2.0000 | 158 | 4.2016 | 0.0000 | 0.1128 | 5.2730 | 0.3904 | False | 8.9597 |
+| T1 | gapliq | HOLDOUT | 4.0000 | 158 | 6.2016 | 0.0000 | 0.0380 | 7.2730 | 0.3416 | False | 8.9597 |
+| T1 | gapliq | HOLDOUT | 8.0000 | 158 | 10.2016 | 0.0000 | 0.0018 | 11.2730 | 0.2510 | False | 8.9597 |
+| 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 0.0000 | 274 | -0.1434 | 0.0000 | 1.0000 | 0.0023 | 0.3635 | False | 3.2903 |
+| 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 0.2500 | 274 | 0.1066 | 0.0000 | 1.0000 | 0.0082 | 0.4389 | False | 3.2903 |
+| 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 0.5000 | 274 | 0.3566 | 0.0000 | 0.4813 | 0.0141 | 0.5165 | False | 3.2903 |
+| 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 1.0000 | 274 | 0.8566 | 0.0000 | 0.3275 | 0.0259 | 0.6666 | False | 3.2903 |
+| 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 2.0000 | 274 | 1.8566 | 0.0000 | 0.1135 | 0.0496 | 0.8852 | False | 3.2903 |
+| 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 4.0000 | 274 | 3.8566 | 0.0000 | 0.0035 | 0.0968 | 0.9964 | False | 3.2903 |
+| 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 8.0000 | 274 | 7.8566 | 0.0000 | 0.0000 | 0.1914 | 1.0000 | True | 3.2903 |
+
+- **U1**: theoretical MDE 9.262 pts; empirical floor, literal all-six condition: not reached within the sweep (delta up to 8.0 pts); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): not reached within the sweep.
+- **short|R1|bos_off**: theoretical MDE 0.398 pts; empirical floor, literal all-six condition: not reached within the sweep (delta up to 8.0 pts); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): 4.00 pts (x10.04 theory).
+- **T1**: theoretical MDE 8.960 pts; empirical floor, literal all-six condition: not reached within the sweep (delta up to 8.0 pts); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): not reached within the sweep.
+- **15:00|both|vixmove_exp**: theoretical MDE 3.290 pts; empirical floor, literal all-six condition: 8.00 pts (x2.43 theory); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): 4.00 pts (x1.22 theory).
+
+**Neither of A50's two clean outcomes applies cleanly; this is itself the headline finding of this validation.** condition (a) PASSES: every candidate's delta=0.0 row reproduces its published HOLDOUT n and mean net points exactly. condition (b) PASSES: the largest |recovered_minus_delta| across all 28 rows is 0.000000 pts (<= 0.05, and by construction should be ~0). Condition (c) does not pass, under the LITERAL six-condition rule, for gapliq T1, flatten U1 and fvg short|R1|bos_off -- but NOT for the power-related reason A50's own pre-registered FAIL-on-(c) meaning describes ('some negatives are weaker than reported, the gates or controls are losing power somewhere'): condition 3 (family-wide BH-FDR) is scored, for these three, on the SELECTION window (`pipeline/trials.py`), a window this validation's HOLDOUT-only injection (A50's own scope) structurally cannot touch -- so no delta in the sweep can ever flip it, at any effect size, for these three families (see each row's own `notes` column in `out/poscontrol.csv`). Reading instead the 5 conditions a HOLDOUT-only injection CAN meaningfully re-run (net > 0, day-block p < 0.05, positive excess over the day-selection control, deflated Sharpe/PSR > 0.95, n >= 200) -- per-candidate floors in the bullets above -- the D1 winner's own literal floor is 8.00 pts against a theoretical MDE of 3.290 pts (x2.43) using the literal rule, versus its 5-of-6 floor above using the re-runnable subset -- a genuine, reportable finding about how harsh the family-wide multiple-testing correction is at this delta scale for the ONE candidate whose own scoring path counts it on HOLDOUT itself, not evidence that a gate or control silently loses power. gapliq T1 and flatten U1 additionally never clear condition 6 (n >= 200) at ANY delta -- a real, delta-invariant fact about their own already-published HOLDOUT trade counts (144/158 trades), independent of this validation entirely.

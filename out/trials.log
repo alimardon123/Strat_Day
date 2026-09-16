@@ -1,48 +1,51 @@
 holdout labels finalised: {'15:00|both|vixmove_exp': 'FAILED', '13:00|call|gap>0.3%': 'FAILED'}
-trials counted: 45 (families: {'momentum': 16, 'fvg': 8, 'flatten': 3, 'xmarket': 3, 'flow': 3, 'gapliq': 3, 'sellvol': 3, 'eventvol': 3, 'holdout': 2, 'gapup': 1}); FDR passes at 10%: 0
-  family                                    trial   n  p_for_fdr  fdr_pass_10pct_family
-momentum                 15:00|both|vixmove_fixed  92     0.0630                  False
-momentum                 15:30|both|vixmove_fixed  92     0.0833                  False
-momentum                   15:00|both|vixmove_exp 145     0.1795                  False
-momentum                   15:30|both|vixmove_exp 146     0.1153                  False
-momentum                            15:30|put|mag 182     0.2545                  False
-momentum                    15:30|put|vixmove_exp  62     0.3142                  False
-momentum                  15:00|put|vixmove_fixed  42     0.3345                  False
-momentum                    15:00|put|vixmove_exp  58     0.3510                  False
-momentum                            15:00|put|mag 189     0.3623                  False
-momentum                  15:30|put|vixmove_fixed  43     0.4095                  False
-momentum                           15:30|both|mag 371     0.4785                  False
-momentum                           15:00|both|mag 371     0.4928                  False
-momentum                    15:00|put|vixmove_lit 101     0.1415                  False
-momentum                   15:00|both|vixmove_lit 251     0.1165                  False
-momentum                    15:30|put|vixmove_lit 104     0.0585                  False
-momentum                   15:30|both|vixmove_lit 252     0.1140                  False
-   gapup                      13:00|call|gap>0.3% 423     1.0000                  False
- xmarket                         gap-up on ETXEUR 548     1.0000                  False
- xmarket                         gap-up on GRXEUR 602     0.2657                  False
- xmarket                         gap-up on SPXUSD 499     0.1620                  False
-    flow month_end: against MTD move, 15:00→close 184     1.0000                  False
-    flow           opex: continue open→15:00 move 168     1.0000                  False
-    flow      russell recon day: long 15:00→close  15     1.0000                  False
-     fvg                      FVG short|R1|bos_on 461     1.0000                  False
-     fvg                      FVG short|R2|bos_on 460     1.0000                  False
-     fvg                     FVG short|R1|bos_off 859     1.0000                  False
-     fvg                     FVG short|R2|bos_off 856     1.0000                  False
-     fvg                       FVG long|R1|bos_on 308     1.0000                  False
-     fvg                       FVG long|R2|bos_on 307     1.0000                  False
-     fvg                      FVG long|R1|bos_off 664     1.0000                  False
-     fvg                      FVG long|R2|bos_off 661     1.0000                  False
-  gapliq                                GAPLIQ T1 121     1.0000                  False
-  gapliq                                GAPLIQ T2 121     1.0000                  False
-  gapliq                                GAPLIQ T3 132     1.0000                  False
- flatten                               FLATTEN U1 102     0.2970                  False
- flatten                               FLATTEN U2 343     1.0000                  False
- flatten                               FLATTEN U3 105     1.0000                  False
-eventvol                              EVENTVOL E1 646     1.0000                  False
-eventvol                              EVENTVOL E2  20     1.0000                  False
-eventvol                              EVENTVOL E3 608     1.0000                  False
- sellvol                               SELLVOL S1 592     1.0000                  False
- sellvol                               SELLVOL S2 557     1.0000                  False
- sellvol                               SELLVOL S3 443     1.0000                  False
- holdout           HOLDOUT 15:00|both|vixmove_exp 274     1.0000                  False
- holdout              HOLDOUT 13:00|call|gap>0.3% 452     1.0000                  False
+trials counted: 48 (families: {'momentum': 16, 'fvg': 8, 'xmarket': 3, 'eventvol': 3, 'flow': 3, 'gapliq': 3, 'flatten': 3, 'oflow': 3, 'sellvol': 3, 'holdout': 2, 'gapup': 1}); FDR passes at 10%: 0
+  family                                    trial    n  p_for_fdr  fdr_pass_10pct_family
+momentum                 15:00|both|vixmove_fixed   92     0.0630                  False
+momentum                 15:30|both|vixmove_fixed   92     0.0833                  False
+momentum                   15:00|both|vixmove_exp  145     0.1795                  False
+momentum                   15:30|both|vixmove_exp  146     0.1153                  False
+momentum                            15:30|put|mag  182     0.2545                  False
+momentum                    15:30|put|vixmove_exp   62     0.3142                  False
+momentum                  15:00|put|vixmove_fixed   42     0.3345                  False
+momentum                    15:00|put|vixmove_exp   58     0.3510                  False
+momentum                            15:00|put|mag  189     0.3623                  False
+momentum                  15:30|put|vixmove_fixed   43     0.4095                  False
+momentum                           15:30|both|mag  371     0.4785                  False
+momentum                           15:00|both|mag  371     0.4928                  False
+momentum                    15:00|put|vixmove_lit  101     0.1415                  False
+momentum                   15:00|both|vixmove_lit  251     0.1165                  False
+momentum                    15:30|put|vixmove_lit  104     0.0585                  False
+momentum                   15:30|both|vixmove_lit  252     0.1140                  False
+   gapup                      13:00|call|gap>0.3%  423     1.0000                  False
+ xmarket                         gap-up on ETXEUR  548     1.0000                  False
+ xmarket                         gap-up on GRXEUR  602     0.2657                  False
+ xmarket                         gap-up on SPXUSD  499     0.1620                  False
+    flow month_end: against MTD move, 15:00→close  184     1.0000                  False
+    flow           opex: continue open→15:00 move  168     1.0000                  False
+    flow      russell recon day: long 15:00→close   15     1.0000                  False
+     fvg                      FVG short|R1|bos_on  461     1.0000                  False
+     fvg                      FVG short|R2|bos_on  460     1.0000                  False
+     fvg                     FVG short|R1|bos_off  859     1.0000                  False
+     fvg                     FVG short|R2|bos_off  856     1.0000                  False
+     fvg                       FVG long|R1|bos_on  308     1.0000                  False
+     fvg                       FVG long|R2|bos_on  307     1.0000                  False
+     fvg                      FVG long|R1|bos_off  664     1.0000                  False
+     fvg                      FVG long|R2|bos_off  661     1.0000                  False
+  gapliq                                GAPLIQ T1  121     1.0000                  False
+  gapliq                                GAPLIQ T2  121     1.0000                  False
+  gapliq                                GAPLIQ T3  132     1.0000                  False
+ flatten                               FLATTEN U1  102     0.2970                  False
+ flatten                               FLATTEN U2  343     1.0000                  False
+ flatten                               FLATTEN U3  105     1.0000                  False
+eventvol                              EVENTVOL E1  646     1.0000                  False
+eventvol                              EVENTVOL E2   20     1.0000                  False
+eventvol                              EVENTVOL E3  608     1.0000                  False
+ sellvol                               SELLVOL S1  592     1.0000                  False
+ sellvol                               SELLVOL S2  557     1.0000                  False
+ sellvol                               SELLVOL S3  443     1.0000                  False
+   oflow                                 OFLOW T1 1665     1.0000                  False
+   oflow                                 OFLOW T2 1621     1.0000                  False
+   oflow                                 OFLOW T3 1668     1.0000                  False
+ holdout           HOLDOUT 15:00|both|vixmove_exp  274     1.0000                  False
+ holdout              HOLDOUT 13:00|call|gap>0.3%  452     1.0000                  False

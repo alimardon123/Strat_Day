@@ -345,3 +345,54 @@ effects; the assertion that clustering makes every MDE a lower bound (every seri
 per day, so day blocks are singletons and measured dependence is mildly negative — the effect is ≈ ±5 % and runs
 the other way for most rows); a hand-typed window-mean standard deviation that was 12 % wrong; and three
 hand-typed holding-hours correlations resting on a duration map that mis-stated A46a's U2 entry time.
+
+## A48 — bounded exits do not rescue detectability (2026-09-16, ZERO new trials; condition withdrawn by A48a)
+
+A47 left one lever untried. The single family with enough statistical power to answer its own question differed
+from the four that could not by a factor of seven in per-trade dispersion, and the difference was structural:
+bounded exits versus holding to settlement. A48 asked whether giving the hold-to-close candidates a bounded exit
+would make their questions answerable on data already on the branch, rather than after the ~4 years A47 priced.
+Zero trials; the family stays at 45. Source `out/bexit_detectability.csv`, `PLAYBOOK_0DTE.md` §17.
+
+**The safeguard, and that it held.** Every candidate here has a KNOWN holdout result, so computing profitability
+under a new exit rule and then choosing among the outcomes would be a re-tune on the holdout — the one thing the
+contract forbids outright. A48 therefore restricted the unit to the second moment: dispersion, the implied
+detectable effect, and the trade count, with a test asserting that the module's own source computes no mean, win
+rate, Sharpe, p-value or P&L anywhere. That test passes, and no profitability statistic was produced at any
+point in this analysis. The safeguard is the reason the conclusion below can be trusted at all.
+
+**The run appeared to succeed, and I had specified it wrongly.** Its first verdict was that 8 of 8 candidates
+clear the 2.0-point answer condition, with the best detectable effect falling from 3.0-10.1 points under the
+registered exit to 0.30-1.04 under the grid. That is an artifact of my own answer condition, caught in review of
+the unit's output and withdrawn in A48a before anything was published. The condition compared a quantity that
+SCALES with the barrier width against a cost bar that does not, so it can be met by choosing any tight enough
+stop. A 0.1-point barrier would have "cleared" it.
+
+**What the run actually measured.** Dispersion is essentially the barrier width itself: at a 5-point barrier the
+ratio of standard deviation to barrier is **0.989** (min 0.944, max 1.004 across 20 candidate/window rows), and
+the ATR grid scales at 1.00 / 2.00 / 2.98 / 3.86 against a proportional ideal of 1 / 2 / 3 / 4. Dispersion equal
+to the barrier means nearly every trade exits AT a barrier. The bounded version is a two-outcome bet at ±b, not
+the registered signal with a safety net — exactly the failure mode A48's own "what would make this worthless"
+clause named in advance.
+
+**The economics run the other way.** Cost does not scale with the barrier. At a 5-point barrier a 1.0-2.0 point
+round trip is 10-20 % of the entire 2b range, and the break-even win rate (b+c)/(2b) is 60 % at 1 point and 70 %
+at 2 points; at a 20-point barrier it is 52.5 % and 55 %. Tightening the stop RAISES the edge required to pay.
+And for a drift-plus-noise process with symmetric barriers, expected per-trade P&L scales as b² while dispersion
+scales as b, so signal-to-noise per trade scales as b. The apparent detectability gain is real in absolute points
+and empty in every sense that matters.
+
+**Corrected finding: a negative, and it closes the last lever.** Bounded exits do not rescue detectability for
+these candidates. They shrink the noise and the effect together while leaving cost fixed. A valid version of this
+test would need a scale-free criterion — detectability measured against the effect size under the SAME exit rule
+— and that requires the per-trade mean A48 forbids precisely because every candidate has a known holdout result.
+The two requirements are mutually exclusive on this data. That mutual exclusivity is itself the answer: this
+question cannot be settled here without a re-tune on the holdout, and so it is not settled here.
+
+**Where that leaves the programme.** A47 established that four of five families cannot resolve a 1-2 point effect
+at the survival rule's floor, and that the fifth could, looked across eight configurations on 282-959 holdout
+trades each, and found +0.026 points per trade at best. A48 establishes that the obvious remedy for the four is
+not a remedy. Nothing on this branch now converts an unanswerable question into an answerable one, and no
+answerable question has come back positive. Option A is the honest end; option B is available at the price A47
+measured (≈ 4 years, and a verdict only above ~4-8 points per trade); options C/D still wait on a file and would
+inherit the same floor.

@@ -182,3 +182,28 @@ adequately-powered family (4.0 vs 0.398 pts/trade), because DSR > 0.95 is far st
 programme has been reporting detection floors (A47) and promotion verdicts (the survival rule) as if they lived
 on the same scale. They do not, and any future statement about what a negative rules out should name which of the
 two it means.
+
+## Closing retro (crucible-retro, 2026-09-16, on HEAD ee7f124) — ledger entries
+
+Run judged cold against its seven done-statements: **6 HELD, 1 PARTIAL** (D4 — the playbook asserted "every number
+measured" while §6 priced contracts off an assumed index level and claimed no post-2020 price file existed, false
+for ~7 weeks; fixed 2026-09-15). D7 was upgraded beyond what the contract asked: it specified only in-place
+`make repeat`, and the stronger clean-clone reproduction was verified instead (36/36 steps, `diff -r` across 177
+files returned nothing). Goal condition NOT met: 48 trials, 0 passing the family-wide FDR.
+
+Findings logged (findings 4 and 5 of the retro are the two already carried above at counts 2 and 4; they are
+referenced, not duplicated):
+
+| # | class | finding | counterfactual edit | count |
+|---|---|---|---|---|
+| R1 | PROMPT | Verification gates were necessary but not sufficient, and licensed unearned confidence. Two instances, one root: D7 asked only for in-place `make repeat`, which cannot detect dependence on local state; and the contract required a NULL control (`mh.sanity`) but never a POSITIVE one, so 48 negatives rested on equipment never shown able to return a positive until A50 | Phase 2 gates must read "a clean clone reproduces `out/` byte-identically" AND "inject a known edge; confirm the pipeline recovers it", alongside the random-walk check | 1 |
+| R2 | PROMPT | The survival rule has two implementations: `ACCEPTANCE.md` names six conditions, `pipeline/report.py`'s per-family verdict gates on four and discloses it locally. Harmless here only because nothing passed four | Require the survival rule to be ONE function every report calls, so contract and code cannot drift | 1 |
+| R3 | PROMPT | Non-goals carried their reasons inline and nobody re-read them. "GEX / dealer-positioning filters (no positioning data is obtainable here)" became false the day the owner supplied option bars with volume; it took until A49 to notice | Write non-goals with an explicit expiry — "revisit if X becomes available" — so a data drop triggers a re-scan of the exclusion list | 1 |
+| R4 | POSITIVE | Date-clustering earned its keep decisively: it converted an apparent t = 5.66 edge into −0.956 with bootstrap p 0.9665 and stopped a re-tune on the holdout. Evidence against ever pruning the rule | None — keep the rule; record the magnitude of what it caught | 1 |
+| R5 | PROMPT | Subagent hand-backs buried decisive facts as asides. "Thresholds landed ≈0.99" on a ±1-bounded ratio was the tell that A49's construct was degenerate, and it arrived as a footnote | The unit contract should require a distributional summary of any new signal (min / median / max, fraction at bounds) as a NAMED field in the hand-back, not prose | 1 |
+
+**Fold-in deferred, deliberately.** The two repeat findings (criterion wrong-by-construction ×2; claim outran the
+evidence ×4) qualify for a framework edit under the fold-in rule. Not done: editing or re-issuing `prompt-upgrader`
+and `crucible-retro` touches skill packages OUTSIDE this repository, and the owner asked to see the exact wording
+changes and a prune list first. The proposal is ready on request; nothing outside `/home/user/Strat_Day` has been
+modified.

@@ -447,3 +447,49 @@ and its unsigned residual is below cost". Across 48 pre-registered trials, three
 analyses, no long-only 0DTE mechanism clears its cost; the one family with power to see an edge found +0.026
 pts/trade; the design levers (A48) and the data levers (A49) are both closed; and the single large measured
 effect remains the sell side of the 0DTE premium, which the account forbids.
+
+## A50 — positive control: the measurement apparatus works (2026-09-16, ZERO new trials)
+
+Every negative result on this branch rested on an assumption nobody had tested: that this pipeline can return a
+POSITIVE when one exists. The programme had a null control (Thread A's random-walk check, confirming it does not
+manufacture edges from noise) and, after A47, an analytic power formula. It had never taken a known edge and
+pushed it end to end through the real gate, bootstrap, controls, DSR and family-wide FDR. A50 did that. ZERO
+trials; the family stays 48. `out/poscontrol.csv`, `PLAYBOOK_0DTE.md` §19.
+
+**Result: the apparatus is sound.** Injection was applied to four enumerated candidates (one per family with a
+holdout series) over δ ∈ {0, 0.25, 0.5, 1, 2, 4, 8} index points.
+
+| check | outcome |
+|---|---|
+| δ = 0 reproduces published HOLDOUT numbers | **EXACT to 6 dp, all four** — T1 +2.201582 (n 158), U1 −3.282639 (n 144), fvg `short\|R1\|bos_off` +0.026263 (n 959), D1 winner −0.143431 (n 274); p_boot_day, DSR/PSR, calendar-day Sharpe and controls also exact |
+| recovery of the injected effect | **exactly 0.0 deviation on all 28 rows** |
+
+There is no harness bug, and the 48 negatives are not the product of broken measurement. That was the point of
+the exercise and it is settled.
+
+**A defect in my own registration.** A50 scoped injection to HOLDOUT only, then gated on all six survival
+conditions — but condition 3 (family-wide BH-FDR) is computed on the **SELECTION** window for every fleet-unit
+candidate (`pipeline/trials.py:30,37,44,83`), which a holdout injection cannot move, and condition 6 (n ≥ 200) is
+unreachable for gapliq T1 (n 158) and flatten U1 (n 144) at any δ. Three of four candidates were pinned to FAIL
+by construction. Part (c) of the answer condition is therefore evaluable only for the D1 winner, where the
+empirical floor is δ = 8.0 literal (2.43× A47's theoretical 3.290, missing the registered 2× bound) and δ = 4.0
+on the five conditions a holdout injection can exercise (1.22×, clearing it). Reported as partly unevaluable, not
+spun either way. Registered in A50a.
+
+**The finding that changes how earlier sections should be read.** The PROMOTION bar sits far above the DETECTION
+floor. For the fvg family A47's detection floor is 0.398 pts/trade, but the pipeline does not flag survival until
+δ ≈ 4.0 even excluding the frozen FDR condition — a factor of **≈ 10**, driven by DSR > 0.95 being far stricter
+than 80 % power at α = 0.05. Both numbers are correct and they answer different questions:
+
+- **A47's MDE** — can this design SEE an effect of this size?
+- **A50's empirical floor** — would this programme ACT on one?
+
+**Every negative here stands under both** (fvg's observed +0.026 is far below 0.398, let alone 4.0), so nothing
+is revised. But the A47 section above should be read with this distinction in mind: "adequately powered" there
+means the fvg family could SEE an effect down to ~0.4 pts, not that a 0.4-pt edge would have been promoted. Any
+future statement about what a negative rules out must name which of the two bars it means.
+
+**Recorded, not corrected:** `ACCEPTANCE.md` names SIX survival conditions; `pipeline/report.py`'s per-family
+HOLDOUT verdict gates on FOUR and discloses that in its own generated text. The narrower gate can only make
+promotion EASIER and no candidate was promoted under it — all failed the four outright — so no verdict is
+affected, and the family FDR is carried separately in `out/trials.csv` (0 of 48).

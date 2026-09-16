@@ -376,3 +376,33 @@ artifact.
   Nothing on this branch can substitute for it. If that file is obtainable, say so and it will be pre-registered.
 
 No agent is launched against the automated stop hook; the run resumes on a letter or a file.
+
+## Status after A50/A50a (2026-09-16) — the negatives are validated measurements; nothing changes for the owner
+
+A50 was the missing control: proof that this pipeline can return a POSITIVE when one exists. ZERO trials; family
+stays 48. `out/poscontrol.csv`, `PLAYBOOK_0DTE.md` §19.
+
+**It passes.** With no edge injected, all four tested candidates reproduce their published holdout numbers EXACTLY
+to six decimals — including the bootstrap p, the deflated Sharpe and the control figures. With an edge injected,
+the pipeline recovers it one-for-one with **exactly zero** deviation across all 28 rows. There is no harness bug.
+**The 48 negative results are real measurements, not broken equipment.**
+
+**One thing the owner should know about how to read them.** The bar to DETECT an effect and the bar to PROMOTE one
+are not the same, and they differ by about 10×. For the family A47 found adequately powered, an effect of 0.4
+points per trade is detectable, but this programme would not have declared survival below roughly 4 points,
+because the deflated-Sharpe condition is deliberately far stricter than a plain power test. Both are correct.
+Every negative stands under both — the observed effect was 0.026 points — but "we had the power to see it" is a
+weaker statement than "we would have traded it", and earlier write-ups used the first where a reader might hear
+the second.
+
+### Owner options — unchanged; the evidence behind option A is now stronger
+
+- **A. Stop. Indicated, and now on validated instruments.** 48 trials, 0 passing. The design lever (A48) and the
+  data lever (A49) are closed, and A50 confirms the measurement itself is sound.
+- **B. Forward test A44** — ≈ 4 years to n = 200, verdict only above ~4-8 pts/trade (A47).
+- **C/D. Leveraged-ETF candidate (A38)** — waiting on `data/ext/letf_aum_2006_2026.csv`; inherits A47's floor.
+- **E. Relax the account constraint** — refused on evidence (A43).
+- **F. Supply a 0DTE QUOTE file** (NBBO bid/ask by contract-minute) — the only input that would reopen the flow
+  mechanism A49 could not test, since aggressor inference needs quotes and the trade bars cannot supply them.
+
+No agent is launched against the automated stop hook; the run resumes on a letter or a file.

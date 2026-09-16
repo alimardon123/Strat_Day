@@ -22,19 +22,27 @@ statistics.
 
 STEP A's inventory (which per-trade series exist, read here without re-deriving any of them):
   `out/flatten_candidates_trades.csv`   (A46/A46a, 3 trials x 3 windows): `net_pts_cost1`, grouped
-      by (window, trial).
+      by (window, trial). family = "flatten".
   `out/gapliq_candidates_trades.csv`    (A39, 3 trials x 3 windows): `net_pts_cost1`, grouped by
-      (window, trial).
+      (window, trial). family = "gapliq".
   `out/letf_candidates_trades.csv`      (A38): `net_pts_cost1`, grouped by (window, trial) --
       EMPTY on a checkout without `data/ext/letf_aum_2006_2026.csv` (the unit's own [SKIP]
       convention), in which case this file contributes no rows here, not a fabricated one.
+      family = "letf".
+  `out/fvg_candidates_trades.csv`       (A36, 8 trials x 3 windows = 24 window/trial groups,
+      restored under A47a correction 1 after A47's first run silently excluded it): filtered to
+      `filled == True` (exactly the rows where `pts` is non-NaN -- an unfilled setup contributes no
+      trade), then `net_pts = pts - COST1` computed here, grouped by (window, trial). Verified: the
+      resulting group means reproduce `out/fvg_candidates.csv`'s published `net_pts_cost1` and the
+      group counts reproduce its published `n`, to 6 decimal places, for all 24 groups
+      (`test_power.py`'s cost-convention regression check). family = "fvg".
   `out/reconcile_trades_selection.csv`  (D1, all 17 SELECTION-window candidates incl. the two
       pre-registered signals): `net_pts`, grouped by `candidate` (this file carries no `window`
       column of its own -- it is written only for the SELECTION window, 2013-01-01..2020-05-13, by
       `pipeline.reconcile`'s `mode="insample"` path, so `window` is set to the literal constant
-      "SELECTION" here, not invented).
+      "SELECTION" here, not invented). family = "reconcile".
   The two pre-registered signals' HOLDOUT per-trade series (searched for per the amendment; not
-      one of the four files above): `pipeline.insample`'s own D4 per-trade pricing tables,
+      one of the five files above): `pipeline.insample`'s own D4 per-trade pricing tables,
       `out/holdout_d4_<candidate>_s1_cash_k<k>.csv` (`pipeline.playbook.build`), spread=1 (the
       "cost1" convention) and settle="cash" (the headline convention, not the SPY-only "exit"
       alternative); `k` does not affect the underlying `pts` column at all (only the option-leg
@@ -43,10 +51,19 @@ STEP A's inventory (which per-trade series exist, read here without re-deriving 
       is not a column of this file; it is `pts - COST1` (COST1=1.0, the same constant this whole
       programme uses for "cost1"), NOT a value read from any summary. Window is the literal
       constant "HOLDOUT" (`pipeline.insample`'s own D2 holdout window, 2020-06-01..2026-09-11).
-  No candidate anywhere in this run is known to exist (from a summary row) but missing its
-  trade-level series; the letf case above is "zero candidates produced", not "a known candidate
-  with an unavailable series" -- there is nothing to attach a `note` to. `note` is kept as the last
-  output column per the pre-registration and is populated only if a future run hits that case.
+      family = "pre_registered".
+  A47a's review found the module's own prior claim here false: it asserted that no candidate was
+  "known to exist (from a summary row) but missing its trade-level series", when in fact FVG's
+  summary (`out/fvg_candidates.csv`) had published rows for 24 groups whose trade-level series
+  (`out/fvg_candidates_trades.csv`) existed all along and was excluded only by an implementation
+  defect in this file, not by a scope decision -- restored above. The letf case remains the
+  genuinely different one: "zero candidates produced" (no summary row exists at all on a checkout
+  without the extension data), not "a known candidate with an unavailable series" -- there is
+  nothing to attach a `note` to for letf. `note` is kept as the last output column per the
+  pre-registration and is populated only if a future run hits an actual known-but-missing case.
+  `family` is kept as the FIRST output column (before `source`) so a reader can attribute any row
+  to its amendment without cross-referencing candidate names; it is set once per source block
+  above, from the source file the row came from, never inferred from a candidate's own name.
 
 Fully deterministic: no clock, no randomness, no fitted parameter -- every number above is a
 closed-form statistic of an already-published series. On failure (an unexpected exception) this
@@ -78,13 +95,14 @@ HOLDOUT_SIGNAL_FILES = [
     "out/holdout_d4_1300_call_gapgt0.3pct_s1_cash_k1.0.csv",
     "out/holdout_d4_1500_both_vixmove_exp_s1_cash_k1.0.csv",
 ]
-# (path, window column name, candidate column name, net-points-per-trade column name)
+FVG_TRADES_FILE = "out/fvg_candidates_trades.csv"   # A36/A47a: filled==True, net_pts = pts - COST1
+# (path, window column name, candidate column name, net-points-per-trade column name, family)
 GROUPED_TRADE_FILES = [
-    ("out/flatten_candidates_trades.csv", "window", "trial", "net_pts_cost1"),
-    ("out/gapliq_candidates_trades.csv", "window", "trial", "net_pts_cost1"),
-    ("out/letf_candidates_trades.csv", "window", "trial", "net_pts_cost1"),
+    ("out/flatten_candidates_trades.csv", "window", "trial", "net_pts_cost1", "flatten"),
+    ("out/gapliq_candidates_trades.csv", "window", "trial", "net_pts_cost1", "gapliq"),
+    ("out/letf_candidates_trades.csv", "window", "trial", "net_pts_cost1", "letf"),
 ]
-OUT_COLS = ["source", "window", "candidate", "n", "mean_net_pts", "sd_net_pts", "se_net_pts", "t",
+OUT_COLS = ["family", "source", "window", "candidate", "n", "mean_net_pts", "sd_net_pts", "se_net_pts", "t",
             "mde_at_n", "mde_at_200", "n_req_1pt", "n_req_2pt", "span_years", "signals_per_year",
             "years_to_200", "years_to_n_req_1pt", "years_to_n_req_2pt", "premium_pts",
             "mde_at_200_pct_of_premium", "mean_pct_of_premium", "note"]
@@ -115,28 +133,36 @@ def _read_premium_pts():
 
 
 def _long_rows():
-    """The full inventory (module docstring) collapsed to one long table: source, window,
+    """The full inventory (module docstring) collapsed to one long table: family, source, window,
     candidate, net_pts (already the net-of-cost1 points-per-trade series in every case), date.
     A source that is missing, empty or unparsable simply contributes no rows -- STEP A's "do not
-    guess" rule: a candidate this unit cannot see is a candidate it does not report on."""
+    guess" rule: a candidate this unit cannot see is a candidate it does not report on. `family` is
+    set once per block, from the source file being read, never inferred from a candidate's name."""
     frames = []
-    for path, wcol, ccol, vcol in GROUPED_TRADE_FILES:
+    for path, wcol, ccol, vcol, family in GROUPED_TRADE_FILES:
         df = _read_csv_or_empty(path)
         if not len(df):
             continue
-        frames.append(pd.DataFrame({"source": path, "window": df[wcol], "candidate": df[ccol],
-                                     "net_pts": df[vcol], "date": df["date"]}))
+        frames.append(pd.DataFrame({"family": family, "source": path, "window": df[wcol],
+                                     "candidate": df[ccol], "net_pts": df[vcol], "date": df["date"]}))
+    fvg = _read_csv_or_empty(FVG_TRADES_FILE)
+    if len(fvg):
+        filled = fvg[fvg["filled"] == True]   # exactly the rows where `pts` is non-NaN
+        frames.append(pd.DataFrame({"family": "fvg", "source": FVG_TRADES_FILE, "window": filled["window"],
+                                     "candidate": filled["trial"], "net_pts": filled["pts"] - COST1,
+                                     "date": filled["date"]}))
     rec = _read_csv_or_empty("out/reconcile_trades_selection.csv")
     if len(rec):
-        frames.append(pd.DataFrame({"source": "out/reconcile_trades_selection.csv", "window": "SELECTION",
-                                     "candidate": rec["candidate"], "net_pts": rec["net_pts"], "date": rec["date"]}))
+        frames.append(pd.DataFrame({"family": "reconcile", "source": "out/reconcile_trades_selection.csv",
+                                     "window": "SELECTION", "candidate": rec["candidate"],
+                                     "net_pts": rec["net_pts"], "date": rec["date"]}))
     for path in HOLDOUT_SIGNAL_FILES:
         df = _read_csv_or_empty(path)
         if not len(df):
             continue
-        frames.append(pd.DataFrame({"source": path, "window": "HOLDOUT", "candidate": df["candidate"],
-                                     "net_pts": df["pts"] - COST1, "date": df["date"]}))
-    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["source", "window", "candidate", "net_pts", "date"])
+        frames.append(pd.DataFrame({"family": "pre_registered", "source": path, "window": "HOLDOUT",
+                                     "candidate": df["candidate"], "net_pts": df["pts"] - COST1, "date": df["date"]}))
+    return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame(columns=["family", "source", "window", "candidate", "net_pts", "date"])
 
 
 def mde(sd, n):
@@ -151,8 +177,8 @@ def n_req(sd, delta):
     return math.ceil((Z_SUM * sd / delta) ** 2)
 
 
-def group_row(source, window, candidate, net_pts, dates, premium_pts):
-    """One output row for a (source, window, candidate) group of net-points-per-trade
+def group_row(family, source, window, candidate, net_pts, dates, premium_pts):
+    """One output row for a (family, source, window, candidate) group of net-points-per-trade
     observations, or None if the group has fewer than 2 trades (a sample sd needs n >= 2 -- a
     1-trade group is SKIPPED, never emitted with a NaN sd). Pure function of its arguments (no
     I/O), so it is directly testable on synthetic series without a data loader."""
@@ -177,7 +203,7 @@ def group_row(source, window, candidate, net_pts, dates, premium_pts):
     have_premium = pd.notna(premium_pts) and premium_pts > 0
     mde_pct = 100 * mde_200 / premium_pts if have_premium else np.nan
     mean_pct = 100 * mean / premium_pts if have_premium else np.nan
-    return dict(source=source, window=window, candidate=candidate, n=n, mean_net_pts=mean, sd_net_pts=sd,
+    return dict(family=family, source=source, window=window, candidate=candidate, n=n, mean_net_pts=mean, sd_net_pts=sd,
                 se_net_pts=se, t=t, mde_at_n=mde_n, mde_at_200=mde_200, n_req_1pt=n1, n_req_2pt=n2,
                 span_years=span_years, signals_per_year=signals_per_year, years_to_200=years_200,
                 years_to_n_req_1pt=years_1pt, years_to_n_req_2pt=years_2pt,
@@ -193,7 +219,8 @@ def main(inp, out):
     rows = []
     if len(long):
         for (source, window, candidate), g in long.groupby(["source", "window", "candidate"], sort=False):
-            row = group_row(source, window, candidate, g["net_pts"].to_numpy(), g["date"].to_numpy(), premium_pts)
+            family = g["family"].iloc[0]
+            row = group_row(family, source, window, candidate, g["net_pts"].to_numpy(), g["date"].to_numpy(), premium_pts)
             if row is not None:
                 rows.append(row)
     res = pd.DataFrame(rows, columns=OUT_COLS)

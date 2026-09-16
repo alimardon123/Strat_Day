@@ -70,3 +70,31 @@ Observation, not a finding: the round's largest defect was found by an adversari
 published number and mutation-tested the new unit test, which proved two mutants survived a green suite (a wrong-bar
 level read, and a 4× understatement of required capital). A suite that only restates the implementation reports PASS
 on both. Mutation-testing a new test suite is now the cheapest known way to tell a real test from a tautology here.
+
+## Addendum 2026-09-16 (A47 round) — "the claim outran the evidence" reaches count 3, twice in one amendment chain
+
+The finding folded in on 2026-09-15 at count 2 recurred twice more within a single day, and the second time
+inside the very amendment written to correct the first.
+
+**Occurrence 3a — a scope claim asserted, never checked.** `pipeline/units/power.py` stated in a docstring that
+no candidate existed with a published summary row but no trade-level series. The FVG family was exactly that,
+and its omission inverted the headline of the analysis that shipped on it. One `ls out/*trades*.csv` compared
+against the families in `out/trials.csv` would have caught it. The 2026-09-15 guard ("run `git diff` on anything
+you claim you left untouched") is the same shape but does not cover this case, so it is generalised:
+**a completeness claim — "no X exists", "every Y is included", "nothing else was touched" — must be produced by
+enumerating the set, never asserted from memory of having looked.** Count 3.
+
+**Occurrence 3b — the correction repeated the sin.** A47a was written partly to withdraw hand-typed numbers that
+breached A47's own "generated, none typed" rule. A47a then hand-typed two numbers of its own, one of which
+reported a range whose upper end had the wrong sign (-0.004 where the generated maximum is +0.026). This is
+worth its own line because the failure survived heightened attention: the amendment's author knew the rule, was
+actively enforcing it against a previous draft, and still typed. Guard: **when an amendment withdraws a typed
+number, the replacement text may cite only a generated column by name, or state no number at all.** Count 4 for
+the class; it is now the most frequent finding in this ledger by a wide margin.
+
+**Observation on what did work.** The adversarial reviewer that found 3a re-derived every published formula
+independently, reproduced all 37 rows from raw inputs, and mutation-tested the new test suite (23 mutants, 11
+killed, 12 survived). The 12 survivors included the cost convention — the precise failure the suite's docstring
+claimed to guard. Mutation testing has now twice in two days distinguished a real suite from a tautology where
+a green run could not. It is cheap and it should be standard for any new test file in this repo, not an
+occasional reviewer's initiative.

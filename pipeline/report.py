@@ -448,40 +448,103 @@ def a45_rules(sf):
 # §16: A47's detectability floor -- an ANALYSIS of measurements already published, never a trial
 # (ACCEPTANCE.md amendment A47). Both helpers below are generated straight from
 # `out/power_analysis.csv` (D7: tables generated, never typed); neither computes anything new --
-# `pipeline.units.power` is the only place any of these numbers is derived.
-POWER_COLS = ["candidate", "window", "n", "mean_net_pts", "sd_net_pts", "mde_at_n", "mde_at_200",
+# `pipeline.units.power` is the only place any of these numbers is derived. `family` (added under
+# A47a correction 1, when the FVG family was restored) lets a reader attribute a row to its
+# amendment without cross-referencing candidate names.
+POWER_COLS = ["family", "candidate", "window", "n", "mean_net_pts", "sd_net_pts", "mde_at_n", "mde_at_200",
               "n_req_1pt", "years_to_n_req_1pt"]
 
 
+def _join_names(names):
+    """"a", "a and b", or "a, b, and c" -- for a set of family names, never assumed to be size 1."""
+    names = sorted(names)
+    if len(names) == 1:
+        return names[0]
+    if len(names) == 2:
+        return f"{names[0]} and {names[1]}"
+    return ", ".join(names[:-1]) + f", and {names[-1]}"
+
+
+def _fmt_range(lo, hi, decimals=2):
+    lo, hi = round(float(lo), decimals), round(float(hi), decimals)
+    return f"{lo:.{decimals}f}" if lo == hi else f"{lo:.{decimals}f}-{hi:.{decimals}f}"
+
+
 def power_caption(df):
-    """Generated from `out/power_analysis.csv` itself: the worst case in the table -- the row with
-    the largest `mde_at_200` (the effect the 200-trade floor is LEAST able to see) -- stated in
-    plain words with its own numbers, then A47's own stated refutation condition (the 200-trade
-    floor detects effects at or below the 1-2 point cost band) checked against every row's
-    `mde_at_200` against 2.0 pts, written both ways so the sentence is correct whichever way the
-    data falls (never assumed)."""
+    """Generated from `out/power_analysis.csv` itself (A47a correction 1: including the FVG family
+    inverted A47's first, one-sided headline -- the refutation condition is MET for one family and
+    NOT met for the rest, and it is reported here as a split, never as a single verdict). Every
+    number is read from the CSV; which family lands on which side of the 1-2 point cost band is
+    computed here, not assumed, so the sentence stays correct if the numbers change."""
     if not len(df):
         return ""
-    worst = df.loc[df["mde_at_200"].idxmax()]
-    n_at_or_below_2 = int((df["mde_at_200"] <= 2.0).sum())
-    if n_at_or_below_2 == len(df):
-        refutation = (f"A47's own refutation condition -- the n=200 floor detects effects at or below the 1-2 "
-                      f"point cost band -- is MET (all {len(df)} of {len(df)} rows have mde_at_200 <= 2.0 pts): "
-                      "the survival rule is adequately powered at n=200, the UNDERPOWERED labels reflect a "
-                      "genuine shortage of signals rather than a design limit, and option B (forward-testing to "
-                      "n=200) is worth running.")
+    fam = df["family"] if "family" in df else pd.Series(["all"] * len(df), index=df.index)
+    n_all, n_le2_all = len(df), int((df["mde_at_200"] <= 2.0).sum())
+    hold = df[df["window"] == "HOLDOUT"]
+    n_hold = len(hold)
+    n_le2_hold = int((hold["mde_at_200"] <= 2.0).sum()) if n_hold else 0
+    overall = (f"{n_le2_all} of {n_all} rows ({100 * n_le2_all / n_all:.0f}%) have mde_at_200 <= 2.0 pts overall, "
+               f"and {n_le2_hold} of {n_hold} ({100 * n_le2_hold / n_hold:.0f}%)" if n_hold else "no HOLDOUT rows")
+    if not n_hold:
+        return f"{overall}; no HOLDOUT rows are present in this run to split by family."
+
+    hold_fam = hold.assign(family=fam[hold.index]).groupby("family").agg(
+        mde_lo=("mde_at_200", "min"), mde_hi=("mde_at_200", "max"), n_lo=("n", "min"), n_hi=("n", "max"),
+        mean_lo=("mean_net_pts", "min"), mean_hi=("mean_net_pts", "max"),
+        sd_lo=("sd_net_pts", "min"), sd_hi=("sd_net_pts", "max"))
+    powered = hold_fam[hold_fam["mde_hi"] <= 2.0]
+    underpowered = hold_fam[hold_fam["mde_hi"] > 2.0]
+
+    split = f"{overall} restricted to HOLDOUT. "
+    if len(powered):
+        split += (f"The {_join_names(powered.index)} family's holdout MDE falls at or below the 1-2 point cost band "
+                  f"({_fmt_range(powered['mde_lo'].min(), powered['mde_hi'].max())} pts) at an actual holdout n of "
+                  f"{_fmt_range(powered['n_lo'].min(), powered['n_hi'].max(), 0)} (already past the n=200 floor)")
     else:
-        refutation = (f"A47's own refutation condition -- the n=200 floor detects effects at or below the 1-2 "
-                      f"point cost band -- is NOT met (only {n_at_or_below_2} of {len(df)} rows have mde_at_200 "
-                      "<= 2.0 pts): the 200-trade floor cannot be assumed adequately powered for most of these "
-                      "candidates, so at least part of the UNDERPOWERED label reflects the design's own "
-                      "detectability floor, not only a shortage of signals.")
-    years_clause = (f"{worst['years_to_n_req_1pt']:.1f} years of signals at its own observed rate"
-                    if worst["years_to_n_req_1pt"] == worst["years_to_n_req_1pt"] else "an unknown number of years (no signal rate available)")
-    return (f"Worst case in the table: `{worst['candidate']}` ({worst['window']}, n={int(worst['n'])}, "
-            f"sd={worst['sd_net_pts']:.2f} pts/trade) -- the n=200 floor cannot detect an effect smaller than "
-            f"{worst['mde_at_200']:.2f} pts/trade there, and establishing a 1.0-point edge ({int(worst['n_req_1pt']):,} "
-            f"trades required) would take {years_clause}. {refutation}")
+        split += "No family's holdout MDE falls at or below the 1-2 point cost band"
+    if len(underpowered):
+        split += (f", versus {_join_names(underpowered.index)} whose holdout MDE lies above the band "
+                  f"({_fmt_range(underpowered['mde_lo'].min(), underpowered['mde_hi'].max())} pts, holdout n "
+                  f"{_fmt_range(underpowered['n_lo'].min(), underpowered['n_hi'].max(), 0)}).")
+    else:
+        split += "; every family's holdout MDE falls inside the band."
+
+    mean_clause = ""
+    if len(powered):
+        mean_lo, mean_hi = float(powered["mean_lo"].min()), float(powered["mean_hi"].max())
+        if mean_hi <= 0:
+            sign = "negative"
+        elif mean_lo >= 0:
+            sign = "positive"
+        elif abs(mean_hi) <= abs(mean_lo):
+            sign = "flat to negative"
+        else:
+            sign = "flat to positive"
+        mean_clause = (f" The {_join_names(powered.index)} family's own holdout mean ranges "
+                        f"{mean_lo:.3f} to {mean_hi:.3f} pts/trade ({sign}): the n=200 floor DID resolve this "
+                        f"family's question, and the resolved answer is {sign}" +
+                        (", not positive." if sign != "positive" else "."))
+
+    sd_clause = ""
+    if len(powered) and len(underpowered):
+        sd_clause = (f" Per-trade dispersion is the mechanical reason one side is powered and the other is not: "
+                     f"the {_join_names(powered.index)} family's holdout sd runs "
+                     f"{_fmt_range(powered['sd_lo'].min(), powered['sd_hi'].max())} pts/trade, versus "
+                     f"{_fmt_range(underpowered['sd_lo'].min(), underpowered['sd_hi'].max())} pts/trade for "
+                     f"{_join_names(underpowered.index)}.")
+
+    if len(powered) and len(underpowered):
+        refutation = (f"A47's own refutation condition is therefore MET for the {_join_names(powered.index)} "
+                      f"family and NOT met for {_join_names(underpowered.index)}: the n=200 floor is adequately "
+                      "powered for the former (a genuine answer, not a design limit) but not for the latter, "
+                      "where the UNDERPOWERED label still reflects the design's own detectability floor, not "
+                      "only a shortage of signals.")
+    elif len(powered):
+        refutation = f"A47's own refutation condition is MET for every family in this HOLDOUT subset."
+    else:
+        refutation = f"A47's own refutation condition is NOT met for any family in this HOLDOUT subset."
+
+    return f"{split}{mean_clause}{sd_clause} {refutation}"
 
 
 def playbook():

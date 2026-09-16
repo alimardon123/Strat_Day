@@ -279,56 +279,69 @@ Gap that remains, stated plainly: this work makes the deliverable honest and cor
 advance the mission. No long-only 0DTE mechanism in 45 pre-registered trials clears its cost, and the only large
 effect this programme measured is on the sell side of the 0DTE premium, which the account forbids.
 
-## A47 — the detectability floor: what this design can and cannot resolve (2026-09-15, ZERO new trials)
+## A47 — what this design can and cannot resolve (2026-09-16, ZERO new trials; corrected by A47a/A47b)
 
-Pre-registered in `ACCEPTANCE.md` A47 before any code, and it is what it says: an analysis of measurements
-already published. It computes no new signal, opens no window, fits no parameter and can promote nothing. The
-family stays at 45 and every published p-value, BH-FDR decision and DSR is untouched. Source
-`out/power_analysis.csv` (37 candidate/window rows, every one with a published per-trade series);
-`PLAYBOOK_0DTE.md` §16.
+Pre-registered in `ACCEPTANCE.md` A47 before any code: an analysis of measurements already published. It computes
+no new signal, opens no window, fits no parameter and can promote nothing. The family stays at 45 and every
+published p-value, BH-FDR decision and DSR is untouched. Source `out/power_analysis.csv` (61 candidate/window
+rows across 5 families); `PLAYBOOK_0DTE.md` §16.
 
-**The question nobody had asked.** Every verdict here is judged against a six-condition survival rule whose
-condition 6 is a floor of n ≥ 200 holdout trades (`ACCEPTANCE.md:66`), and several results carry the
-UNDERPOWERED label for falling short of it. But that floor had never been checked against the per-trade
-dispersion actually observed, so UNDERPOWERED was a label rather than a quantity.
+**This section's first version was wrong and is superseded.** It omitted the FVG family (A36, 8 trials, 24
+groups) — which has a published per-trade series on the same cost convention and reproduces its published
+`net_pts_cost1` to six decimals — and on the strength of the remaining 37 rows concluded that "the n = 200 floor
+cannot resolve the effects this programme is looking for". A fresh-context adversarial review found the omission.
+Restoring it inverts the headline, in the direction a correctness fix should move. Corrections registered as
+A47a and A47b before any corrected number was published.
 
-**The answer.** At one-sided α = 0.05 and 80 % power, the minimum effect the n = 200 floor can detect is:
+**The question.** Condition 6 of the survival rule is a floor of n ≥ 200 holdout trades (`ACCEPTANCE.md:66`), and
+several results carry the UNDERPOWERED label for falling short of it. That floor had never been checked against
+the per-trade dispersion actually observed, so UNDERPOWERED was a word rather than a quantity.
 
-| across all 37 rows | pts/trade | % of premium |
-|---|---|---|
-| best case | 1.68 | 1.10 |
-| median | 4.16 | 2.72 |
-| worst case | 8.94 | 5.85 |
+**The answer is two-sided.** At one-sided α = 0.05 with 80 % power, the minimum effect the n = 200 floor can
+detect, by family, on the HOLDOUT window where every verdict is decided:
 
-Premium is the 2 %-ITM contract cost in index points at the measured level, 152.828 pts
-(`out/sizing_forward.csv`, A45/§15). The cost every result in this programme must clear is **1.0 to 2.0 index
-points** (`ACCEPTANCE.md:104-106`). So the design's detection threshold sits two to nine times ABOVE the bar the
-edge has to clear. Only 1 of 37 rows can resolve an effect at or below 2.0 points.
+| family | holdout rows | actual n | sd (pts/trade) | MDE at n=200 | holdout mean |
+|---|---|---|---|---|---|
+| fvg (A36) | 8 | 282 – 959 | 4.44 – 7.20 | **0.78 – 1.27** | −1.143 to +0.026 |
+| pre-registered (D1, gap-up) | 2 | 274 – 452 | 21.90 – 25.39 | 3.85 – 4.46 | −1.904 to −0.143 |
+| flatten (A46) | 3 | 144 – 299 | 31.59 – 44.70 | 5.55 – 7.86 | −3.283 to −1.082 |
+| gapliq (A39) | 3 | 154 – 158 | 45.29 – 50.86 | 7.96 – 8.94 | +0.117 to +2.202 |
 
-**On the holdout, which is where every verdict is actually decided, it is worse: 0 of 8 rows.** Holdout MDE runs
-3.85 to 8.94 pts/trade, median 6.89 (4.5 % of premium). The worst row (A39's T2) would need 15,992 trades to
-establish a 1.0-point edge — 605 years at its own observed signal rate.
+The cost every result must clear is 1.0 to 2.0 index points (`ACCEPTANCE.md:104-106`). Across all 61 rows the MDE
+runs 0.22 / 2.80 / 8.94 (best / median / worst); 25 of 61 resolve an effect at or below 2.0 points, and 8 of 16
+on the holdout — all eight of them the FVG family.
 
-**A47's own refutation condition is NOT met.** The amendment stated in advance that if the floor detected
-effects at or below the 1-2 point cost band, the survival rule would be adequately powered, the UNDERPOWERED
-labels would reflect a genuine shortage of signals, and option B would be worth running. It does not.
+**A47's own refutation condition is MET for one family and NOT met for the others, and is reported as such.**
+For the intraday stop/target family the floor detects effects at or below the cost band, its actual holdout
+samples of 282-959 trades were already well past the floor, and so the design DID resolve that question. The
+resolved answer was flat: the best of its eight holdout groups is +0.026 pts/trade against a 1-2 point cost,
+indistinguishable from zero. **That is evidence of absence, not merely absence of evidence** — the strongest
+negative result this programme holds. For the hold-to-close, one-trade-per-day option families the floor detects
+nothing below 3.85 points, so their UNDERPOWERED labels reflect the design's own detectability floor and not only
+a shortage of signals.
 
-**What this changes for option B.** Forward-testing A44 to n = 200 takes roughly two years and, on these
-dispersions, can only return a verdict if the true edge exceeds about 4 points per trade (≈ 2.7 % of premium) —
-an edge far larger than anything this programme has measured, and larger than the sell-side premium it is
-forbidden from harvesting. For any smaller effect, two years of waiting buys the same UNDERPOWERED label. That
-is not an argument against forward testing on other grounds; it is the price in advance.
+**The mechanical reason for the split**, observed not recommended: bounded-exit intraday trades carry 4.4-7.2
+points of per-trade dispersion; hold-to-close delta-one positions carry 21.9-50.9. Roughly seven times less noise
+is what buys the power. Nothing should be built on this without its own pre-registration.
 
-**What drives the floor.** The period, not the holding time. Mean per-trade sd by window is 14.69 (CONTEXT),
-26.41 (SELECTION), 37.68 (HOLDOUT) — the post-2020 window is roughly 2.5× as dispersed as CONTEXT for the same
-candidates. Within the holdout alone, sd does correlate with holding hours (+0.82 over 8 rows), but that is an
-UNREGISTERED exploratory correlation on eight points that does not replicate in CONTEXT (+0.02) or SELECTION
-(+0.21). It does not meet this programme's bar and is recorded here as an observation, not a finding. Nothing
-should be built on it without its own pre-registration.
+**What it makes of A39, the programme's most-cited near-miss.** T1's published +2.20 pts/trade at n 158 sits
+against a detection threshold of 7.96 points for its own family. It is about a quarter of the way to what this
+design could distinguish from zero. That is the quantitative content of its UNDERPOWERED label.
 
-**What this does NOT license.** Low power does not convert a failed result into a live one. A wide confidence
-interval is not evidence of an edge, and no result in `SCORECARD.md` becomes promotable because of this
-analysis. What it does establish is narrower and still worth knowing: the programme's negative results are
-weaker evidence AGAINST their mechanisms than their p-values of 1.00 make them look, and — the decision-relevant
-half — **more of the same design will not resolve them.** Distinguishing a real 2-point edge from zero here
-needs of order 4,000 to 16,000 trades, which no amount of patience supplies at 20-60 signals a year.
+**What this changes for option B.** Forward-testing A44 — a hold-to-close, one-per-day candidate, so squarely in
+the underpowered group — can only return a verdict if the true edge exceeds roughly 4 to 8 points per trade,
+larger than anything measured here. A47's `years_to_200` column puts the fastest holdout row at 2.71 years and
+the holdout median at 7.39, so A44's registered "≈ two years" estimate (`ACCEPTANCE.md:439`) is optimistic; its
+closest measured analogue implies nearer four. That is the price stated in advance, not an argument against
+forward testing on other grounds.
+
+**What this does NOT license.** Low power never converts a failed result into a live one. A wide confidence
+interval is not evidence of an edge, and no row in `SCORECARD.md` becomes promotable. The p-values of 1.00 that
+accompany the negative results are a one-sided convention (`pipeline/stats.py:47` returns exactly 1.0 whenever
+the sample mean is ≤ 0), never a strength-of-evidence measure, and nothing here should be read as one.
+
+**Withdrawn from the first version** (see A47a/A47b): the claim that the floor cannot resolve this programme's
+effects; the assertion that clustering makes every MDE a lower bound (every series in the first run is one trade
+per day, so day blocks are singletons and measured dependence is mildly negative — the effect is ≈ ±5 % and runs
+the other way for most rows); a hand-typed window-mean standard deviation that was 12 % wrong; and three
+hand-typed holding-hours correlations resting on a duration map that mis-stated A46a's U2 entry time.

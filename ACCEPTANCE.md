@@ -620,3 +620,28 @@ breached this with a hand-typed window-mean standard deviation that was 12 % wro
 holding-hours correlations that do not reproduce (their duration map mis-stated A46a's U2 entry as 09:45 when
 A46a moved it to 11:00). All four are withdrawn. Any window-level or duration-level statement republished must
 come from a generated column or not appear.
+
+### A47b correction (2026-09-16) — two typed figures in A47a were themselves wrong
+
+A47a was written to correct A47 for, among other things, publishing hand-typed numbers in breach of its own
+"every number generated, none typed" rule. A47a then did the same thing twice. Both are corrected here, and the
+generated CSV is authoritative over any prose in this file.
+
+1. **The FVG holdout mean range.** A47a's prose gives it as "-0.004 to -1.14 pts/trade". The true range across
+   all 8 FVG HOLDOUT groups is **-1.1434 to +0.0263** (`out/power_analysis.csv`): the upper end is slightly
+   POSITIVE, not slightly negative. The -0.004 figure is one particular group (`short|R1|bos_on`), not the
+   maximum. The qualitative reading is unchanged — the largest positive is +0.026 pts/trade against a 1.0-2.0 pt
+   cost, i.e. indistinguishable from zero and far below cost — but "flat to negative" must not be stated as if
+   every group were negative. `PLAYBOOK_0DTE.md` §16 reports the generated range and is correct.
+2. **"Inside the 1-2 point cost band."** The FVG holdout MDE range is 0.78-1.27 pts, whose lower end is BELOW
+   the band, not inside it. The accurate phrasing is "at or below the 1-2 point cost band". Being below it means
+   MORE power, not less, so the conclusion is unaffected; the wording is corrected wherever it is republished.
+
+Recorded for the ledger, since this is the third instance in this programme of a claim outran its evidence and
+the second inside a single amendment chain (`RETRO.md`).
+
+**One figure worth adding to the record, generated not typed** (`out/power_analysis.csv`): A39's gapliq family
+has POSITIVE holdout means (+0.117 to +2.202 pts/trade, including T1's published +2.20 at n 158) against a
+detection threshold at the n = 200 floor of 7.96-8.94 pts. So T1's positive result sits roughly a quarter of the
+way to what this design could distinguish from zero. That is the quantitative content of its UNDERPOWERED label,
+which until now was only a word.

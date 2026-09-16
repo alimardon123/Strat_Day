@@ -547,6 +547,109 @@ def power_caption(df):
     return f"{split}{mean_clause}{sd_clause} {refutation}"
 
 
+BEXIT_COST_LO, BEXIT_COST_HI = 1.0, 2.0   # the programme's own fixed round-trip cost convention
+                                           # (ACCEPTANCE.md; pipeline.units.power.COST1/COST2) --
+                                           # a design constant, never a profitability statistic
+                                           # measured on these candidates' own trades
+
+
+def bexit_caption(df):
+    """Generated from `out/bexit_detectability.csv` itself (A48a correction, ACCEPTANCE.md,
+    2026-09-16). The run's own apparent verdict ("N of M candidates clear 2.0 pts") is WITHDRAWN
+    as an artifact, not reported here as a finding: A48's `answerable_at_n` compared the minimum
+    detectable effect -- which SCALES with the exit rule's own barrier width -- against a fixed
+    1-2 point cost bar that does not, so it is satisfiable by choosing an arbitrarily tight stop
+    and carries no information. This caption instead reports the corrected reading A48a requires,
+    entirely from arithmetic on this CSV's own columns (never typed): the measured proportionality
+    between `sd_net_pts_cost1` and each exit rule's own barrier width (parsed from `exit_rule`),
+    the break-even arithmetic computed from those SAME barrier widths against the programme's fixed
+    1.0/2.0-point cost convention (a design constant, not a profitability statistic realised by
+    these trades), and the negative conclusion both point to. `answerable_at_n` stays in the CSV
+    for the record and is never read here as a verdict."""
+    if not len(df):
+        return ""
+
+    withdrawal = (
+        "**The answer condition is withdrawn.** A48's `answerable_at_n` column is retained in the "
+        "table above for the record, but it is NOT a verdict and must not be cited as one "
+        "(ACCEPTANCE.md amendment A48a): it compares the minimum detectable effect, which SCALES "
+        "with the exit rule's own barrier width, against a fixed cost bar that does not scale, so "
+        "it can be satisfied by choosing any sufficiently tight stop and carries no information."
+    )
+
+    exit_rule = df["exit_rule"].astype(str)
+    fixed = df[exit_rule.str.fullmatch(r"fixed\d+pts")].copy()
+    atr = df[exit_rule.str.fullmatch(r"atr[\d.]+x")].copy()
+
+    by_b = None
+    if len(fixed):
+        fixed["barrier_pts"] = fixed["exit_rule"].str.extract(r"^fixed(\d+)pts$")[0].astype(float)
+        fixed["sd_over_b"] = fixed["sd_net_pts_cost1"] / fixed["barrier_pts"]
+        by_b = fixed.groupby("barrier_pts")["sd_over_b"].agg(["mean", "min", "max", "count"]).sort_index()
+        fixed_ratio_clause = "; ".join(
+            f"b={b:g} pts sd/b {r['mean']:.3f} (min {r['min']:.3f}, max {r['max']:.3f}, n={int(r['count'])})"
+            for b, r in by_b.iterrows())
+    else:
+        fixed_ratio_clause = "no fixed*pts rows are present in this run"
+
+    if len(atr) and "0.5" in set(atr["exit_rule"].str.extract(r"^atr([\d.]+)x$")[0]):
+        atr["mult"] = atr["exit_rule"].str.extract(r"^atr([\d.]+)x$")[0].astype(float)
+        pivot = atr.pivot_table(index=["candidate", "window"], columns="mult", values="sd_net_pts_cost1")
+        base = 0.5
+        atr_ratio_clause = "; ".join(
+            [f"{base:g}x/{base:g}x 1.00 (by construction)"] +
+            [f"{m:g}x/{base:g}x mean {(pivot[m] / pivot[base]).mean():.2f} (n={int(pivot[m].notna().sum())})"
+             for m in sorted(pivot.columns) if m != base])
+    else:
+        atr_ratio_clause = "no atr*x rows with an atr0.5x baseline are present in this run"
+
+    proportionality = (
+        f"**The proportionality, measured.** From this run's own `sd_net_pts_cost1`: across the "
+        f"fixed-points grid, mean sd / barrier width by barrier -- {fixed_ratio_clause}. Across the "
+        f"ATR grid, each row's sd against its own candidate/window's `atr0.5x` sd -- "
+        f"{atr_ratio_clause} -- near the 1 / 2 / 3 / 4 ideal implied by the multiplier grid itself. "
+        f"Dispersion is essentially the barrier width, so nearly every trade exits AT a barrier: "
+        f"the bounded version is a two-outcome bet, not the registered signal with a safety net."
+    )
+
+    if by_b is not None:
+        econ_lines = []
+        for b in by_b.index:
+            wr_lo = (b + BEXIT_COST_LO) / (2 * b)
+            wr_hi = (b + BEXIT_COST_HI) / (2 * b)
+            pct_lo = 100 * BEXIT_COST_LO / (2 * b)
+            pct_hi = 100 * BEXIT_COST_HI / (2 * b)
+            econ_lines.append(
+                f"b={b:g} pts: break-even win rate {wr_lo:.1%} at cost {BEXIT_COST_LO:.1f} pts "
+                f"({pct_lo:.1f}% of the 2b range), {wr_hi:.1%} at cost {BEXIT_COST_HI:.1f} pts "
+                f"({pct_hi:.1f}% of the 2b range)")
+        econ_clause = "; ".join(econ_lines)
+    else:
+        econ_clause = "no fixed*pts rows are present in this run to compute a break-even figure from"
+
+    economics = (
+        f"**The economics, which run the other way.** Cost does not scale with the barrier: "
+        f"{econ_clause}. Tightening the stop RAISES the edge required to pay."
+    )
+
+    conclusion = (
+        "**The corrected conclusion, a negative.** Bounded exits do not rescue detectability for "
+        "these candidates: they shrink the noise and the effect together while leaving cost fixed, "
+        "so no exit rule on the registered grid makes an unanswerable question answerable. A valid "
+        "test would need a scale-free criterion -- detectability measured against the effect size "
+        "under the SAME exit rule, not against a fixed external cost bar -- which requires the "
+        "per-trade mean under each exit rule, exactly the quantity A48 forbids because every "
+        "candidate here already has a KNOWN holdout result. The two requirements are mutually "
+        "exclusive on this data, and that is itself the answer: this question cannot be settled "
+        "here without a re-tune on the holdout, so it will not be settled here."
+    )
+
+    safeguard = ("No profitability statistic -- mean, win rate, Sharpe or cumulative P&L -- was "
+                 "computed anywhere in this analysis, so the A48 no-re-tune safeguard held.")
+
+    return "\n\n".join([withdrawal, proportionality, economics, conclusion, safeguard])
+
+
 def playbook():
     ext = sessions.ext_present()
     w = winner()
@@ -900,6 +1003,23 @@ def playbook():
     else:
         L += ["`out/power_analysis.csv` is absent, empty, or has no usable row (e.g. the post-May-2020 minute "
               "feed, `data/ext`, is absent, DATA.md); this section cannot be generated.", ""]
+    bx = _csv_rows_or_none("out/bexit_detectability.csv")
+    L += ["## 17. Would a bounded exit make these questions answerable? (A48) — dispersion only, not a trial", "",
+          "For each of the 8 already-registered hold-to-close candidates (A39's T1/T2/T3, A46's U1/U2/U3, and "
+          "the two pre-registered signals), this section asks what its per-trade DISPERSION would be under a "
+          "bounded exit; it adds ZERO trials, computes no new signal, opens no new window and can promote "
+          "nothing (the family stays at 45). **A48's own proposed answer condition -- whether the resulting "
+          "minimum detectable effect clears the 1-2 point cost band -- was WITHDRAWN after the first run as a "
+          "mis-specification, not a finding (ACCEPTANCE.md amendment A48a): the caption below reports the "
+          "corrected reading, not the withdrawn one.** It reports dispersion only and licenses NOTHING about "
+          "profitability: every candidate here already has a KNOWN holdout result, so computing profitability "
+          "under a new exit rule and then choosing among the results would be a re-tune on the holdout, which "
+          "the contract forbids (BLOCKED.md).", ""]
+    if bx is not None:
+        L += [md(bx, int_cols=("n",)), "", bexit_caption(bx), ""]
+    else:
+        L += ["`out/bexit_detectability.csv` is absent, empty, or has no usable row (e.g. the post-May-2020 "
+              "minute feed, `data/ext`, is absent, DATA.md); this section cannot be generated.", ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 

@@ -354,3 +354,28 @@ decision or DSR anywhere in `out/` changed, `SCORECARD.md` untouched, and the wi
 checkout. And it confirmed what the implementer had documented defensively and correctly — that the empty letf
 case owes no note, A38 having no published result at all. That correct note sat fifteen lines above the false
 completeness claim that caused D1.
+
+## A48 orchestrator review (2026-09-16, on the unit's own output, before publication) — the answer condition was MIS-SPECIFIED BY ME; apparent verdict withdrawn
+
+No external reviewer found this one. The unit did its job correctly and returned "8 of 8 candidates clear the
+2.0-point answer condition" with best MDE falling from 3.0-10.1 pts (registered exit) to 0.30-1.04 pts (grid).
+I caught the error reviewing that output against the amendment I had written, before anything was published.
+
+| # | severity | defect | why it mattered | disposition |
+|---|---|---|---|---|
+| D1 | CRITICAL (mine, in the pre-registration itself) | A48's answer condition compared MDE, which SCALES with the exit rule's barrier width, against a fixed 1-2 pt cost bar that does not scale | Satisfiable by construction: a 0.1-pt barrier would "clear" it. The apparent 8-of-8 result is an artifact of the criterion, not a property of the data. Had it shipped, the programme would have published "bounded exits make these questions answerable" and quite possibly authorised 8 more trials on the strength of it | WITHDRAWN in A48a before publication. The unit and CSV are correct and kept as the evidence for the corrected reading; only the interpretation was wrong. `PLAYBOOK_0DTE.md` §17 now leads with the withdrawal |
+| D2 | derived finding | Dispersion is essentially the barrier width: sd/b = 0.989 at b = 5 (min 0.944, max 1.004, n = 20), 0.920 at b = 10, 0.764 at b = 20; the ATR grid scales 1.00 / 2.00 / 2.98 / 3.86 against a 1/2/3/4 ideal | sd ≈ b means nearly every trade exits AT a barrier, so the bounded version is a two-outcome bet at ±b rather than the registered signal with a safety net — precisely what A48's own "what would make this worthless" clause named in advance | REPORTED as the corrected finding |
+| D3 | derived finding | Cost does not scale with the barrier. Break-even win rate (b+c)/(2b): 60.0 %/70.0 % at b = 5 for c = 1/2 pts, against 52.5 %/55.0 % at b = 20 | Tightening the stop RAISES the edge required to pay, so the apparent detectability gain runs opposite to the economics. For a drift-plus-noise process with symmetric barriers E[P&L] ∝ b² while sd ∝ b, so signal-to-noise per trade scales as b | REPORTED |
+| D4 | structural, disclosed by the implementer | `execution.atr_at_decision`'s 14-bar 5-minute proxy is first available at mod 640 (≈10:40) on all 5,187 sessions, so A39's T1/T2/T3 (entries at 10:00 and 09:31) have no usable ATR-grid rows and carry only the fixed-point and registered rows | Could have looked like a silent gap or a cherry-pick | ACCEPTED as correct: the implementer reused `execution.py`'s own availability gate rather than inventing a look-forward fallback, applied it uniformly, and stated it in the module docstring rather than burying it. Verified |
+
+**What worked, and is the reason this conclusion is usable at all.** A48 forbade the unit from computing any
+location or profitability statistic, because every candidate has a KNOWN holdout result and choosing among
+profitability outcomes under a new exit rule would be a re-tune on the holdout. The test suite asserts this
+against the module's own source, and `grep -nE "\.mean\(|\.cumsum\(|win_rate|sharpe|pnl" pipeline/units/bexit.py`
+returns nothing. No profitability number was produced at any point. So although the criterion was wrong, the
+analysis is uncontaminated: nothing was selected on the holdout, and the corrected reading rests only on second
+moments and design constants.
+
+**The implementer also caught one of its own**, worth recording as good practice: its module docstring originally
+spelled out the forbidden tokens in prose, which tripped the very source-scan test meant to detect them. It
+reworded the docstring rather than weakening the test.

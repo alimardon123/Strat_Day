@@ -98,3 +98,30 @@ killed, 12 survived). The 12 survivors included the cost convention — the prec
 claimed to guard. Mutation testing has now twice in two days distinguished a real suite from a tautology where
 a green run could not. It is cheap and it should be standard for any new test file in this repo, not an
 occasional reviewer's initiative.
+
+## Addendum 2026-09-16 (A48 round) — a new finding: a pre-registration can be wrong in a way pre-registration does not protect against
+
+The Crucible's central guard is that a criterion fixed before the run cannot be bent to fit the result. A48
+honoured that completely: the answer condition, the exit grid, the scope and the refutation clause were all
+fixed in a commit before any code existed, and none was touched afterwards. The criterion was still wrong,
+because it compared a quantity that SCALES with the treatment (minimum detectable effect, which tracks the stop
+width) against a bar that does not (a fixed cost in index points). Pre-registration made the error immovable; it
+did not make it visible.
+
+This is a different failure from the ledger's dominant one. "A claim outran the evidence" (now count 4) is a
+reporting failure caught by checking the claim against the artifact. This is a DESIGN failure: the artifact and
+the claim agreed perfectly, and both were wrong together. An adversarial reviewer checking the output against
+the amendment would have passed it, because the output DID satisfy the amendment.
+
+Counterfactual guard, offered for a second occurrence before it becomes a framework rule: **before registering a
+threshold, ask what happens to it in the limit of the treatment.** Here, "what is the MDE as the stop goes to
+zero?" answers itself immediately — it goes to zero, so the criterion is vacuous. A one-line limit check on any
+registered threshold would have caught this before the commit. Count 1.
+
+**What saved the round was a different guard entirely**, and it is worth naming because it was chosen for an
+unrelated reason. A48 forbade the unit from computing any profitability statistic, to prevent a re-tune on the
+holdout. That restriction meant that when the criterion turned out to be vacuous, there was nothing to walk
+back: no candidate had been ranked, no exit rule chosen, no mean seen. A safeguard against one failure mode
+contained the blast radius of another. The general form is worth keeping in mind: a restriction that keeps a
+result from being *actionable* until it is *understood* is cheap insurance against criteria that turn out not to
+mean what they appeared to mean.

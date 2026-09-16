@@ -645,3 +645,62 @@ has POSITIVE holdout means (+0.117 to +2.202 pts/trade, including T1's published
 detection threshold at the n = 200 floor of 7.96-8.94 pts. So T1's positive result sits roughly a quarter of the
 way to what this design could distinguish from zero. That is the quantitative content of its UNDERPOWERED label,
 which until now was only a word.
+
+## Amendment A48 — does a bounded exit make these questions answerable? (pre-registered 2026-09-16, before any code; ZERO new trials)
+
+A47 established that the four hold-to-close, one-trade-per-day families cannot resolve a 1-2 point effect at the
+survival rule's n = 200 floor (holdout MDE 3.85-8.94 pts/trade), while the one bounded-exit family can
+(0.78-1.27 pts at n 282-959). The difference is per-trade dispersion: 4.4-7.2 pts against 21.9-50.9. That is a
+DESIGN property, not a market property, and it gates every remaining option on this branch — including option B,
+whose four-year price A47 just established.
+
+**The question.** For each already-registered hold-to-close candidate, what would its per-trade DISPERSION be
+under a bounded exit, and would the resulting detectability bring its minimum detectable effect at or below the
+1-2 point cost band? If yes, questions currently answerable only after ~4 years of new signals become answerable
+on data already on the branch. If no, those questions are unanswerable here and option A is the honest end.
+
+**This is an analysis, not a test, and the distinction is enforced in code.** It adds ZERO trials; the family
+stays at 45. The unit computes and emits DISPERSION ONLY: standard deviation of per-trade net points, the
+implied MDE at the observed n and at n = 200, and the trade count. It MUST NOT compute, emit, log or report a
+mean, a win rate, a Sharpe, a p-value, a cumulative P&L or any other location or profitability statistic, for
+any candidate or exit rule. `pipeline/units/test_bexit.py` must assert that the output carries no such column
+and that no such quantity is computed anywhere in the module. The reason is explicit: every candidate here has a
+KNOWN holdout result, so computing profitability under a new exit rule and then choosing among the results would
+be a re-tune on the holdout, which the contract forbids (`BLOCKED.md`, "promoting any of them is a re-tune on
+the holdout"). Dispersion is chosen because it is a second moment: it does not identify which exit rule PAYS,
+only which makes a question ANSWERABLE.
+
+**Scope — every hold-to-close registered candidate, no cherry-picking.** All 8: A39's T1/T2/T3 (`gapliq`),
+A46's U1/U2/U3 (`flatten`), and the two pre-registered signals (D1's `15:00|both|vixmove_exp`, Thread A's
+`13:00|call|gap>0.3%`). Selecting a subset would be selection on A47's own published means and is forbidden.
+Windows as already registered for each candidate; the HOLDOUT figures are the ones that matter.
+
+**Exit grid, fixed now.** Stop and target placed symmetrically at m × the session's opening-range ATR proxy
+already used by `pipeline/execution.py`, for m in {0.5, 1.0, 1.5, 2.0}, plus a fixed-points variant at
+{5, 10, 20} index points, each evaluated against the minute path between the registered entry and the
+registered exit; whichever triggers first ends the trade, otherwise the registered exit stands. Costs 1.0 and
+2.0 pts as always. No other parameter, and the grid is not extended after seeing results.
+
+**The answer condition, stated before the run.** For a candidate/exit pair, the question becomes ANSWERABLE if
+its MDE at that candidate's OBSERVED holdout n falls at or below 2.0 index points. Report, per candidate, the
+best (smallest) MDE over the grid and whether any grid point clears 2.0. Aggregate verdict: if NO candidate has
+any grid point clearing 2.0, bounded exits do not rescue detectability on this branch and that is reported as
+the finding, reinforcing option A. If SOME do, the finding is that those specific questions could be made
+answerable, and the owner may then choose to authorise the corresponding trials — which would be a SEPARATE
+pre-registration with its own trial count and family FDR, never this one.
+
+**Honest prior: MIXED.** The bounded-exit family's low dispersion comes partly from tight stops on a small
+reference box; a stop placed on a full-session directional signal will not shrink dispersion as far. A stop at
+±10 pts caps per-trade outcomes near 10 pts, implying MDE ≈ 2.0 at n = 158 — marginal, on the boundary of the
+answer condition. The plausible outcome is that some candidates clear and some do not, which is why the verdict
+is reported per candidate and not as a single yes.
+
+**What would make this analysis worthless, stated before the run.** If a bounded exit shrinks dispersion only by
+truncating the same distribution without raising the number of independent observations, the MDE gain is real
+but the economic question changes underneath it: a stopped-out trade is a different trade. This analysis
+therefore licenses NOTHING about profitability and its write-up must say so. It answers only whether a
+measurement could be made, never whether it would come out positive.
+
+**Reporting.** `out/bexit_detectability.csv`, a `PLAYBOOK_0DTE.md` §17 appended at the end (nothing at or before
+playbook line 125 moves), and a narrative in `ASSESSMENT.md`. Every number generated, none typed — and per
+A47b, any withdrawn figure may be replaced only by a named generated column.

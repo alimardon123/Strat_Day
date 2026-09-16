@@ -920,3 +920,47 @@ in either direction — the failure A48's own criterion suffered.
 **Honest prior: PASS is expected.** The components are individually tested and `make repeat` is byte-identical.
 The value here is not surprise; it is that "we looked and found nothing" is only worth as much as the
 demonstrated ability to find something, and that demonstration does not currently exist.
+
+### A50a result and correction (2026-09-16) — the apparatus is validated where it could be; part (c) was only evaluable for one of four candidates, by a scoping flaw in A50 itself
+
+**Parts (a) and (b) PASS cleanly, and this is the result that mattered most.** At δ = 0 all four candidates
+reproduce their published HOLDOUT numbers EXACTLY (gapliq T1 n 158 +2.201582; flatten U1 n 144 −3.282639; fvg
+`short|R1|bos_off` n 959 +0.026263; D1 winner n 274 −0.143431 — each matching its published table to six
+decimals, with p_boot_day, DSR/PSR and the control figures also exact). `recovered_minus_delta` is **exactly 0.0
+on all 28 rows**. There is no harness bug: the pipeline reproduces itself and recovers an injected effect
+one-for-one.
+
+**Part (c) is evaluable for only ONE of the four candidates, because of a flaw in A50's own scope** (mine, not
+the implementer's). Two structural blockers, both verified directly:
+1. **Condition 6 (n ≥ 200)** — gapliq T1 (real holdout n 158) and flatten U1 (n 144) fail it at EVERY δ. Already
+   known from A47; injecting a mean shift cannot create observations.
+2. **Condition 3 (family-wide BH-FDR)** — `pipeline/trials.py` counts and FDR-tests the fleet-unit candidates on
+   their **SELECTION** window (verified at `trials.py:30,37,44,83`), which A50's HOLDOUT-ONLY injection
+   structurally cannot touch. So `survives_all_six` can never become True for gapliq, flatten or fvg at any δ —
+   by construction, not for want of power. A50 anticipated this case in the abstract ("a control whose own pool
+   would also need injecting") but did not notice it would disable three of its own four candidates.
+Only the D1 winner has condition 3 re-run on HOLDOUT. Its empirical floor is **δ = 8.0 literal (2.43× A47's
+theoretical MDE of 3.290, so it MISSES the registered 2× bound, narrowly)** and **δ = 4.0 on the five conditions
+a holdout-only injection can actually exercise (1.22×, which clears it)**.
+
+**The substantive finding, which A50 did not anticipate: the PROMOTION bar is far above the DETECTION floor.**
+For the fvg family, A47's detection floor is 0.398 pts/trade; the pipeline does not flag survival until δ ≈ 4.0
+even excluding the frozen FDR condition — a factor of **≈ 10**. The gap is DSR > 0.95, a skew-, kurtosis- and
+trial-count-adjusted statistic that is deliberately far stricter than 80 % power at α = 0.05. Both numbers are
+correct and they answer different questions: A47's MDE is *can this design SEE an effect*; A50's floor is *what
+would this programme ACT on*. **Every negative result on this branch stands under both** — fvg's observed
++0.026 pts/trade is far below 0.398, let alone 4.0 — but the published framing must distinguish them, and
+"adequately powered" must not be read as "would have promoted a small edge".
+
+**A disclosed divergence found while checking this, recorded because it is real even though it changed nothing.**
+`ACCEPTANCE.md`'s survival rule names SIX conditions. `pipeline/report.py`'s per-family HOLDOUT verdict prose
+gates on FOUR (net > 0, p_day < 0.05, excess over control > 0, n ≥ 200) and says so in its own generated text
+("DSR ... is reported in the table above, not a survival condition"). The narrower gate can only make promotion
+EASIER, and **no candidate was promoted under it** — every one failed the four checks outright — so no published
+verdict is affected. The family-wide FDR is carried separately in `out/trials.csv` and reported as 0 of 48. Not
+corrected here (it is disclosed at the point of use); recorded so the divergence is on the record.
+
+**Verdict.** The apparatus is sound: exact self-reproduction, exact recovery, and on the single candidate where
+the full rule could be exercised an empirical floor within 1.22× of theory on the exercisable conditions. The 48
+negatives are not the product of broken measurement. A50's part (c) was under-specified by me and is reported as
+partially unevaluable rather than spun as either a pass or a failure.

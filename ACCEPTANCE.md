@@ -704,3 +704,48 @@ measurement could be made, never whether it would come out positive.
 **Reporting.** `out/bexit_detectability.csv`, a `PLAYBOOK_0DTE.md` §17 appended at the end (nothing at or before
 playbook line 125 moves), and a narrative in `ASSESSMENT.md`. Every number generated, none typed — and per
 A47b, any withdrawn figure may be replaced only by a named generated column.
+
+### A48a correction (2026-09-16, after the first A48 run, before any A48 result is published)
+
+**A48's answer condition was mis-specified by me, and the run's apparent verdict ("8 of 8 candidates clear 2.0
+points") is an artifact of that error, not a finding.** Caught in orchestrator review of the unit's own output,
+before anything was published. No trial is affected; the family stays at 45. Crucially, no profitability
+statistic was computed at any point, so the A48 no-re-tune safeguard held and nothing here is contaminated.
+
+**The error.** A48 asked whether a bounded exit brings the minimum detectable effect at or below the 1-2 point
+cost band. That compares a quantity that SCALES with the exit rule against a bar that does NOT. Measured on the
+run's own output (`out/bexit_detectability.csv`, dispersion only):
+
+- Per-trade dispersion is essentially equal to the barrier width. At a 5-point barrier sd/b = **0.989** (min
+  0.944, max 1.004 over 20 candidate/window rows); the ATR grid scales at **1.00 / 2.00 / 2.98 / 3.86** against
+  a perfect-proportionality ideal of 1 / 2 / 3 / 4.
+- sd ≈ b means nearly every trade exits AT a barrier, so the bounded version is a two-outcome bet at ±b, not the
+  registered signal with a safety net. A48 itself warned of this ("a stopped-out trade is a different trade");
+  the run confirms it empirically.
+- Therefore MDE ∝ b, and "MDE ≤ 2.0 pts" can be satisfied by choosing any sufficiently tight stop. The condition
+  is satisfiable by construction and carries no information about answerability. A barrier of 0.1 points would
+  "clear" it trivially.
+
+**Why the apparent gain runs backwards.** Cost does not scale with the barrier. At b = 5 a 1.0-2.0 pt round trip
+is 10-20 % of the whole 2b range, and the break-even win rate (b+c)/(2b) is 60 % at 1 pt and 70 % at 2 pt; at
+b = 20 it is 52.5 % and 55 %. So tightening the stop RAISES the edge required to pay. And for a drift-plus-noise
+process with symmetric barriers the expected per-trade P&L scales as b² while dispersion scales as b, so
+signal-to-noise per trade scales as b: tighter barriers make the question HARDER to answer per trade, not
+easier. The measured MDE fall is real in absolute points and economically empty.
+
+**Corrected finding, and it is a negative.** Bounded exits do NOT rescue detectability for these candidates.
+They shrink noise and the effect together while leaving cost fixed, so no exit rule on the registered grid makes
+an unanswerable question answerable. A48's stated aggregate verdict is therefore the one its own "what would
+make this analysis worthless" clause anticipated, and the honest reading reinforces option A. The unit and its
+table are kept as the evidence for that conclusion, with the answer condition withdrawn.
+
+**What a valid version would have required**, recorded so nobody rebuilds the invalid one: a scale-free
+criterion — detectability measured against the effect size under the SAME exit rule, not against a fixed
+external cost bar. That requires the per-trade mean under each exit rule, which is exactly the quantity A48
+forbids because every candidate has a known holdout result. The two requirements are mutually exclusive on this
+data, which is itself the answer: this question cannot be settled here without a re-tune on the holdout, and so
+it will not be settled here.
+
+**Reporting.** `PLAYBOOK_0DTE.md` §17 must report the corrected reading, not the withdrawn one: the proportional
+scaling, the fixed cost, the break-even arithmetic, and the negative conclusion. The `answerable_at_n` column is
+retained in the CSV but must be labelled in the caption as WITHDRAWN and not cited as a verdict.

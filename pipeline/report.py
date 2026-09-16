@@ -174,6 +174,57 @@ def flatten_caption(df):
     return " ".join(parts[:2])
 
 
+OFLOW_COLS = ["trial", "side", "entry_lag", "n_signal_minutes", "n_skipped", "n_overlap_skipped", "n", "win",
+              "net_pts_cost1", "net_pts_cost2", "net_pct_cost1", "worst_trade_pts_cost1", "worst_day_pts_cost1",
+              "sharpe_calday", "p_boot_day", "p_boot_month", "control_mean_pts_cost1", "frac_seeds_beaten",
+              "timing_control_pts_cost1", "frac_timing_beaten", "opt_mean_pct_s1", "dsr_N48"]
+
+
+def oflow_verdict(sub):
+    """Generated per-window verdict for the A49 oflow family: T1's survival on the same four
+    programmatic checks as the FVG/GAPLIQ/flatten verdicts (net > 0 at 1 pt, p_day < 0.05, excess
+    over the (minute-level) day-selection control > 0, n >= 200; DSR at N=48 is reported in the
+    table, not a survival condition here either) AND A49's OWN mechanism fingerprint -- T2 < T1
+    (the timing fingerprint) AND T3 > 0 at 1 pt (the MIRROR of A39's/A46's put-must-fail
+    convention: dealer hedging is symmetric by construction, so here T3 working CONFIRMS the
+    mechanism and T3 failing disconfirms it) -- then the promotion decision per A49's own
+    kill/promotion rule."""
+    t1 = sub[sub["trial"] == "T1"]
+    t2 = sub[sub["trial"] == "T2"]
+    t3 = sub[sub["trial"] == "T3"]
+    if t1.empty:
+        return "T1 missing from this window."
+    t1 = t1.iloc[0]
+    net_pos = bool(t1["net_pts_cost1"] > 0)
+    p_sig = bool(t1["p_boot_day"] < 0.05) if pd.notna(t1["p_boot_day"]) else False
+    excess = t1["net_pts_cost1"] - t1["control_mean_pts_cost1"]
+    beats_control = bool(excess > 0) if pd.notna(excess) else False
+    n_ok = bool(t1["n"] >= 200)
+    survives = net_pos and p_sig and beats_control and n_ok
+    t2_lt_t1 = bool(t2.iloc[0]["net_pts_cost1"] < t1["net_pts_cost1"]) if len(t2) and pd.notna(t2.iloc[0]["net_pts_cost1"]) else False
+    t3_gt_zero = bool(t3.iloc[0]["net_pts_cost1"] > 0) if len(t3) and pd.notna(t3.iloc[0]["net_pts_cost1"]) else False
+    fingerprint_ok = t2_lt_t1 and t3_gt_zero
+    promoted = survives and fingerprint_ok
+    decision = ("T1 promotable" if promoted else
+               "pattern without its mechanism, not promoted" if survives else
+               "T1 does not survive, not promoted")
+    return (f"T1: net {'>' if net_pos else '<='} 0 at 1 pt, p_day {'<' if p_sig else '>='} 0.05, excess over the "
+            f"minute-level day-selection control {'>' if beats_control else '<='} 0, n {'>=' if n_ok else '<'} 200 -> "
+            f"{'SURVIVES' if survives else 'does not survive'} the four programmatic checks (DSR at N=48 is reported "
+            f"in the table above, not a survival condition). Fingerprint: T2 {'<' if t2_lt_t1 else '>='} T1 "
+            f"({'holds' if t2_lt_t1 else 'fails'}); T3 {'>' if t3_gt_zero else '<='} 0 at 1 pt "
+            f"({'holds' if t3_gt_zero else 'fails'}). Promotion: {decision}.")
+
+
+def oflow_caption(df):
+    """First two sentences of the `spec` column (identical on every row — the fixed pre-
+    registration), generated rather than typed (D7)."""
+    if "spec" not in df or not len(df):
+        return ""
+    parts = re.split(r"(?<=\.)\s+", str(df["spec"].iloc[0]).strip())
+    return " ".join(parts[:2])
+
+
 LETF_COLS = ["trial", "n_sessions_with_assets", "n_signal", "n_skipped", "n", "win", "net_pts_cost1",
              "net_pts_cost2", "net_pct_cost1", "worst_trade_pts_cost1", "worst_day_pts_cost1", "sharpe_calday",
              "p_boot_day", "p_boot_month", "control_mean_pts_cost1", "frac_seeds_beaten",
@@ -1020,6 +1071,32 @@ def playbook():
     else:
         L += ["`out/bexit_detectability.csv` is absent, empty, or has no usable row (e.g. the post-May-2020 "
               "minute feed, `data/ext`, is absent, DATA.md); this section cannot be generated.", ""]
+    if os.path.exists("out/oflow_candidates.csv"):
+        oflow = pd.read_csv("out/oflow_candidates.csv")
+        L += ["## 18. 0DTE dealer-hedging flow impulse (A49) — pre-registered 2026-09-16, 3 trials", "",
+              "3 trials (T1 tick-rule imbalance >= the expanding 90th percentile of |imbalance| over strictly "
+              "prior sessions -> long 2% ITM call, entry the next minute's close, exit 30 minutes later; T2 the "
+              "same signal with entry delayed 15 minutes -- the timing fingerprint, must be WEAKER than T1; T3 "
+              "the mirror signal -- imbalance <= -threshold -> long 2% ITM put, same horizon -- which must ALSO "
+              "work, since dealer hedging is symmetric by construction, unlike every prior mirror signal in this "
+              "programme) from `pipeline.units.oflow` (`out/oflow_candidates.csv`), reported on two windows. Only "
+              "the SELECTION-window rows are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); "
+              "HOLDOUT is these same 3 trials' out-of-sample rows, reported here, not double-counted -- the "
+              "amendment's verdict is judged on HOLDOUT.", ""]
+        for win_name, win_label in (("SELECTION", "SELECTION (2024-02-01 → 2025-06-30) — counted in the trial family"),
+                                     ("HOLDOUT", "HOLDOUT (2025-07-01 → 2026-09-11) — the verdict window (A49)")):
+            sub = oflow[oflow["window"] == win_name]
+            if not len(sub):
+                continue
+            L += [f"### {win_label}", "",
+                  md(sub[[c for c in OFLOW_COLS if c in sub]], fmt="{:.4f}", int_cols=INT_COLS), "",
+                  oflow_verdict(sub), ""]
+        cap = oflow_caption(oflow)
+        if cap:
+            L += [cap, ""]
+    else:
+        L += ["## 18. 0DTE dealer-hedging flow impulse (A49) — pre-registered 2026-09-16, 3 trials", "",
+              "`out/oflow_candidates.csv` is absent or empty; this section cannot be generated.", ""]
     open("PLAYBOOK_0DTE.md", "w").write("\n".join(L))
 
 

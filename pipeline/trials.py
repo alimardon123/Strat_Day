@@ -74,6 +74,14 @@ def main():
         for _, x in sellvol[np.isclose(sellvol["cost_per_leg"], 0.10)].iterrows():
             rows.append(dict(family="sellvol", trial=f"SELLVOL {x['trial']}", n=x["n"],
                              p=x["p_boot_day"], p_day=x["p_boot_day"]))
+    if os.path.exists("out/oflow_candidates.csv"):
+        # A49: only the SELECTION-window rows are trials (mirrors the gapliq/flatten blocks above);
+        # CONTEXT does not exist for this family (the shards ARE the holdout-era data, A49's own
+        # text) and HOLDOUT is these same 3 trials' out-of-sample rows, reported in the oflow
+        # table, not re-counted -- the amendment's verdict is judged on HOLDOUT; family becomes 48.
+        oflow = pd.read_csv("out/oflow_candidates.csv")
+        for _, x in oflow[oflow["window"] == "SELECTION"].iterrows():
+            rows.append(dict(family="oflow", trial=f"OFLOW {x['trial']}", n=x["n"], p=x["p_boot_month"], p_day=x["p_boot_day"]))
     hold = pd.read_csv("out/holdout_summary.csv") if os.path.exists("out/holdout_summary.csv") else None
     if hold is not None:
         for _, x in hold.iterrows():

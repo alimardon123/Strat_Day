@@ -45,7 +45,7 @@ Thread A's gap-up call, same selection window (pre-registered by Thread A, not p
 |---|---|---|---|---|---|---|---|
 | 13:00\|call\|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 45 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
+Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 48 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
@@ -756,3 +756,29 @@ For each of the 8 already-registered hold-to-close candidates (A39's T1/T2/T3, A
 **The corrected conclusion, a negative.** Bounded exits do not rescue detectability for these candidates: they shrink the noise and the effect together while leaving cost fixed, so no exit rule on the registered grid makes an unanswerable question answerable. A valid test would need a scale-free criterion -- detectability measured against the effect size under the SAME exit rule, not against a fixed external cost bar -- which requires the per-trade mean under each exit rule, exactly the quantity A48 forbids because every candidate here already has a KNOWN holdout result. The two requirements are mutually exclusive on this data, and that is itself the answer: this question cannot be settled here without a re-tune on the holdout, so it will not be settled here.
 
 No profitability statistic -- mean, win rate, Sharpe or cumulative P&L -- was computed anywhere in this analysis, so the A48 no-re-tune safeguard held.
+
+## 18. 0DTE dealer-hedging flow impulse (A49) — pre-registered 2026-09-16, 3 trials
+
+3 trials (T1 tick-rule imbalance >= the expanding 90th percentile of |imbalance| over strictly prior sessions -> long 2% ITM call, entry the next minute's close, exit 30 minutes later; T2 the same signal with entry delayed 15 minutes -- the timing fingerprint, must be WEAKER than T1; T3 the mirror signal -- imbalance <= -threshold -> long 2% ITM put, same horizon -- which must ALSO work, since dealer hedging is symmetric by construction, unlike every prior mirror signal in this programme) from `pipeline.units.oflow` (`out/oflow_candidates.csv`), reported on two windows. Only the SELECTION-window rows are counted in the trial family (`pipeline/trials.py`, `out/trials.csv`); HOLDOUT is these same 3 trials' out-of-sample rows, reported here, not double-counted -- the amendment's verdict is judged on HOLDOUT.
+
+### SELECTION (2024-02-01 → 2025-06-30) — counted in the trial family
+
+| trial | side | entry_lag | n_signal_minutes | n_skipped | n_overlap_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N48 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| T1 | call | +1min | 4744 | 190 | 2889 | 1665 | 52.4324 | -1.0160 | -2.0160 | -0.0171 | -237.9000 | -167.2000 | -1.9114 | 1.0000 |  | -1.0209 | 0.4900 | -0.6112 | 0.1250 | -0.7255 | 0.0014 |
+| T2 | call | +16min | 4744 | 267 | 2856 | 1621 | 51.0796 | -0.9377 | -1.9377 | -0.0156 | -90.7000 | -196.1000 | -1.5630 | 1.0000 |  | -1.0217 | 0.6450 | -0.6707 | 0.2150 | -0.7178 | 0.0011 |
+| T3 | put | +1min | 5374 | 112 | 3594 | 1668 | 49.2806 | -1.2448 | -2.2448 | -0.0230 | -228.8500 | -347.6500 | -2.2202 | 1.0000 |  | -0.9616 | 0.2200 | -0.4312 | 0.0300 | -0.9783 | 0.0000 |
+
+T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the minute-level day-selection control > 0, n >= 200 -> does not survive the four programmatic checks (DSR at N=48 is reported in the table above, not a survival condition). Fingerprint: T2 >= T1 (fails); T3 <= 0 at 1 pt (fails). Promotion: T1 does not survive, not promoted.
+
+### HOLDOUT (2025-07-01 → 2026-09-11) — the verdict window (A49)
+
+| trial | side | entry_lag | n_signal_minutes | n_skipped | n_overlap_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N48 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| T1 | call | +1min | 4118 | 26 | 2320 | 1772 | 49.3792 | -1.1163 | -2.1163 | -0.0163 | -67.7000 | -112.4500 | -3.4566 | 1.0000 |  | -1.0079 | 0.3450 | -0.7250 | 0.0550 | -0.7844 | 0.0000 |
+| T2 | call | +16min | 4118 | 62 | 2305 | 1751 | 49.8572 | -1.3013 | -2.3013 | -0.0184 | -73.1000 | -147.6000 | -3.6856 | 1.0000 |  | -1.0453 | 0.1500 | -0.7498 | 0.0450 | -0.8873 | 0.0000 |
+| T3 | put | +1min | 5097 | 11 | 3244 | 1842 | 47.4484 | -1.0988 | -2.0988 | -0.0161 | -85.4000 | -132.3500 | -3.2034 | 1.0000 |  | -0.9733 | 0.3150 | -0.4499 | 0.0050 | -0.7799 | 0.0000 |
+
+T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the minute-level day-selection control <= 0, n >= 200 -> does not survive the four programmatic checks (DSR at N=48 is reported in the table above, not a survival condition). Fingerprint: T2 < T1 (holds); T3 <= 0 at 1 pt (fails). Promotion: T1 does not survive, not promoted.
+
+FIXED (pre-registration, A49): per contract (strike+right+expiry key, expiry verified equal to the ts-derived session date on every row of every shard, so expiry is not even read) within a session, sign each minute's volume by the tick rule against that contract's most recent PRIOR print in the same session (higher close -> buyer-initiated, lower -> seller-initiated, equal -> carry the last CLASSIFIED sign via forward-fill, no prior print -> unsigned and excluded). Aggregate per (date, minute): bullish = buyer-initiated call volume + seller-initiated put volume; bearish = seller-initiated call volume + buyer-initiated put volume; imbalance = (bullish-bearish)/(bullish+bearish), NaN when the denominator is 0.

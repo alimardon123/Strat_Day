@@ -125,3 +125,32 @@ back: no candidate had been ranked, no exit rule chosen, no mean seen. A safegua
 contained the blast radius of another. The general form is worth keeping in mind: a restriction that keeps a
 result from being *actionable* until it is *understood* is cheap insurance against criteria that turn out not to
 mean what they appeared to mean.
+
+## Addendum 2026-09-16 (A49 round) — two findings, one of which is the clustering rule earning its keep
+
+**Finding: a mechanism-named signal can still be a price pattern in disguise, and the registration is where that
+is decided.** A49 was written to satisfy the mission's own preference — "a mechanism that names who must trade
+and when outranks any pattern in price" — and it named a counterparty, an obligation and a deadline. The signal
+I then specified for it, a tick-rule imbalance on option prints, turned out to be 86 % the sign of the
+contemporaneous underlying move, because calls and puts are priced off the same third asset. The mechanism was
+real; the proxy was a momentum indicator wearing its clothes. **Guard: when registering a proxy for a mechanism,
+register the check that the proxy is not the thing it is supposed to predict.** One correlation against the
+contemporaneous underlying move, computed before the trials, would have caught this and cost nothing. It would
+have saved three trial slots in a family whose FDR every other trial pays for. Count 1.
+
+**Finding: the date-clustering rule stopped a re-tune that a t of 5.66 would otherwise have justified.** While
+bounding whether a clean version of the construct could pay, the most put-heavy 5 % of minutes showed +2.014 pts
+over the next 30 minutes with a naive t of 5.66 — comfortably above the cost band, on 4,376 observations, on the
+first look. Clustered to one observation per session it is −0.956 with a bootstrap p of 0.9665: the sign flips.
+The contract's requirement that "every pooled statistic is date-clustered" is usually treated as a reporting
+formality. Here it was the difference between closing an avenue and registering a candidate on an artifact.
+**Nothing is proposed as a new rule** — the rule already exists and worked. What is worth recording is the
+magnitude of what it caught: overlapping windows (29/30) plus high-volume-session dominance manufactured a
+5.7-sigma effect out of a negative one. Any future exploratory bound in this programme gets clustered BEFORE it
+is believed, not after.
+
+**Observation on sequencing.** Both findings came from chasing a single sentence in a subagent's hand-back
+("thresholds landed ≈0.99"). A threshold at 0.99 on a ratio bounded by ±1 is a degenerate distribution, and the
+implementer flagged it as an aside rather than a problem. The lesson is not that the implementer erred — it
+reported the fact plainly, which is exactly right — but that distributional oddities in a hand-back deserve to be
+chased before the result is read, not after.

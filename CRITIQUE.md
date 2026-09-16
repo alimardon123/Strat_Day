@@ -379,3 +379,25 @@ moments and design constants.
 **The implementer also caught one of its own**, worth recording as good practice: its module docstring originally
 spelled out the forbidden tokens in prose, which tripped the very source-scan test meant to detect them. It
 reworded the docstring rather than weakening the test.
+
+## A49 orchestrator review (2026-09-16, on the unit's own output, before publication) — CONSTRUCT INVALID; result stands as a failure but proves nothing about the mechanism
+
+The unit was built correctly to the registration and its tests pass, including a causality check, a tick-rule
+check and a non-overlap check, each mutation-proven. The defect is in the SIGNAL the registration specified,
+which I wrote. It surfaced from one line in the implementer's own hand-back: "imbalance sits near ±1 much of the
+time on this data — thresholds landed ≈0.99". A threshold at 0.99 on a ratio bounded by ±1 is a degenerate
+distribution, and that was worth chasing.
+
+| # | severity | defect | evidence | disposition |
+|---|---|---|---|---|
+| D1 | CRITICAL (mine, in the registration) | A49's tick-rule flow imbalance does not measure customer order flow. Calls and puts move mechanically with spot, so in an up-minute every call ticks up and every put ticks down and essentially all volume is signed one way | corr(imbalance, SAME-minute underlying return) **0.6312**; sign agreement **0.8568**; 42.9 % of minutes at abs(imbalance) > 0.9 | A49's three trials tested a 1-minute momentum signal, not dealer hedging. Trials STAY COUNTED (they ran; family 48, no p-value or FDR decision revised) but the result is recorded as uninformative about the mechanism. Registered in A49a |
+| D2 | root cause, general | Lee & Ready's tick test infers an AGGRESSOR, which requires quotes. The shards carry trade prints only | — | No quote-free aggressor rule can work on an instrument priced off a third asset. This forecloses ALL signed-flow constructs on this data, not just this one. Recorded so nobody rebuilds it |
+| D3 | near-miss, caught | Bounding a clean price-free construct (call share of minute volume; contamination 0.1264 vs 0.6312, so genuinely uncontaminated) produced a mean +2.014 pts over 30 minutes in the most put-heavy 5 % of minutes, n 4,376, **naive t 5.66** — above the cost band | Day-clustered to one observation per session (236 sessions): **mean −0.956, se 0.526, t −1.82, day-block bootstrap p 0.9665**; the SIGN FLIPS. Cause: 30-minute windows overlap 29/30, and high-volume sessions dominate a pooled minute mean | NOTHING registered on it. Seen on holdout-window data, so anything built on it would be a re-tune; and after clustering there is nothing to build on |
+
+**What the implementer got right and flagged**, all verified: it declared six places where A49 was ambiguous and
+it had to decide, the largest being that A49's "day-selection control (random non-signal SESSIONS)" has no
+literal meaning for a signal firing several times per session, so it implemented the minute-granularity analogue
+and said so rather than quietly generalising. It also verified `date == expiry` across all 9.48M rows before
+grouping on date to save memory, rather than assuming it, and it disclosed that a single mod-569 print is
+dropped by RTH filtering. Memory was bounded by the largest single shard (peak RSS 1,522 MB), not the 9.5M-row
+sum.

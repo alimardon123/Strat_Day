@@ -863,3 +863,60 @@ correlation of −0.02 and a day-clustered 30-minute effect that is negative bef
 reopened (dealer positioning) is therefore restored on new and better grounds: not "no positioning data is
 obtainable", but "the positioning data obtainable here cannot identify an aggressor, and its unsigned residual is
 below cost".
+
+## Amendment A50 — positive control: can this pipeline find an edge that is definitely there? (pre-registered 2026-09-16, before any code; ZERO new trials)
+
+**The gap.** This programme has a NULL control — Thread A's `mh.sanity()` random-walk check, a Phase 2 gate
+confirming the machinery does not manufacture edges out of noise. It has never had a POSITIVE control:
+confirming the machinery RECOVERS an edge that is definitely present. A47 answered that analytically, with a
+minimum-detectable-effect formula. Nothing has ever been run end to end — through the actual expanding-percentile
+gate, the day-block bootstrap, the day-selection and timing controls, the DSR and the family-wide BH-FDR — with a
+known edge injected. **Until that is done, 48 negative results rest on an apparatus never shown capable of
+returning a positive.** That is the single largest untested assumption on this branch.
+
+**This is a VALIDATION, not a candidate.** ZERO trials: the family stays at 48. It computes no new signal on real
+data, opens no window, fits no parameter, promotes nothing, and cannot produce a tradeable result. Every number
+it emits is about the PIPELINE, not about the market. Its output is written to `out/poscontrol.csv` and may never
+be cited as evidence for or against any strategy.
+
+**Method.** Take an existing registered candidate's own signal days and scoring path, unchanged. On a COPY of the
+underlying frame, add a synthetic drift of exactly δ index points to the realised entry→exit move on that
+candidate's signal days ONLY, leaving all other sessions, all thresholds and the entire gate untouched. Re-run
+that candidate's complete scoring path on the injected copy. Repeat over a δ sweep. Real data and real results
+are never modified: the injection happens on an in-memory copy inside the unit and nothing it produces enters
+`out/trials.csv`, `SCORECARD.md`, or any candidate table.
+
+**Scope — enumerated, not asserted** (the A49a guard): exactly four candidates, one per family with a per-trade
+series and a HOLDOUT window — `gapliq` T1, `flatten` U1, the D1 winner `15:00|both|vixmove_exp`, and `fvg`
+`short|R1|bos_off` (the family A47 found adequately powered, included precisely because it should detect the
+smallest δ). HOLDOUT window only.
+
+**δ sweep, fixed now:** δ ∈ {0.0, 0.25, 0.5, 1.0, 2.0, 4.0, 8.0} index points. δ = 0.0 is the re-run-unchanged
+case and MUST reproduce the published result exactly — if it does not, the harness is wrong and that is itself a
+finding to report before anything else.
+
+**What is reported, per candidate per δ:** the recovered mean net points (must track δ one-for-one, since the
+injection is additive), the day-block bootstrap p, whether all six survival conditions pass, and the smallest δ
+at which the pipeline flags survival. Also the EMPIRICAL detection floor so found, set beside A47's THEORETICAL
+MDE for the same candidate/window from `out/power_analysis.csv`.
+
+**The answer condition, fixed before the run, with its limit checked** (the A48a guard): the pipeline PASSES this
+control if, for every one of the four candidates, (a) δ = 0 reproduces the published result exactly, (b) the
+recovered mean tracks the injected δ within 0.05 pts, and (c) the empirical detection floor is within a factor of
+2 of A47's theoretical MDE for that candidate. Limit check: as δ → 0 no candidate can be detected, and as δ → ∞
+every candidate must be; the criterion is therefore bounded at both ends and cannot be satisfied by construction
+in either direction — the failure A48's own criterion suffered.
+
+**What each outcome means, stated in advance so neither can be spun.**
+- **PASS** → the machinery detects real edges at the size A47 predicts, so the 48 negatives are genuine negatives
+  and "no edge was found" means no edge was there, at least down to the measured floor. This STRENGTHENS the
+  programme's conclusion and is the expected outcome.
+- **FAIL on (c), floor much worse than theory** → some negatives are weaker than reported, the gates or controls
+  are losing power somewhere, and the affected results must be re-labelled. This would be the most consequential
+  defect found on this branch.
+- **FAIL on (a) or (b)** → a harness bug, which would put specific published numbers in question and must be
+  traced before anything else is believed.
+
+**Honest prior: PASS is expected.** The components are individually tested and `make repeat` is byte-identical.
+The value here is not surprise; it is that "we looked and found nothing" is only worth as much as the
+demonstrated ability to find something, and that demonstration does not currently exist.

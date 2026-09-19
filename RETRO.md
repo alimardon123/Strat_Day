@@ -191,6 +191,10 @@ for ~7 weeks; fixed 2026-09-15). D7 was upgraded beyond what the contract asked:
 `make repeat`, and the stronger clean-clone reproduction was verified instead (36/36 steps, `diff -r` across 177
 files returned nothing). Goal condition NOT met: 48 trials, 0 passing the family-wide FDR.
 
+**CONFIRMED BY THE OWNER 2026-09-19 — "confirm all".** All seven retro findings are confirmed for the ledger:
+the five below (R1-R5) plus the two repeats already carried above (criterion wrong-by-construction, count 2;
+claim outran the evidence, count 4). No finding was rejected.
+
 Findings logged (findings 4 and 5 of the retro are the two already carried above at counts 2 and 4; they are
 referenced, not duplicated):
 

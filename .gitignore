@@ -6,3 +6,5 @@ __pycache__/
 .venv/
 .pytest_cache/
 out/trackB_sweep_trades.csv
+data/ext/_quotes_cache/
+.venv-quotes/

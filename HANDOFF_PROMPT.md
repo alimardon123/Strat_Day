@@ -28,7 +28,7 @@ must be tradeable under it.
 
 # STATE — established, do not rediscover, do not re-derive
 - 48 pre-registered trials across three data sets. 0 pass the family-wide Benjamini-Hochberg
-  FDR at 10%. The best holdout result is +2.20 index points/trade at n=158, which its own
+  FDR at 10%. The best holdout result is +2.19 index points/trade at n=159, which its own
   family cannot distinguish from zero.
 - ACCEPTANCE.md is the APPEND-ONLY contract: done-statements, the six-condition survival rule,
   numeric budgets, non-goals, and 50 amendments (A1-A50), each pre-registered in its own commit
@@ -81,7 +81,7 @@ Check, by inspection and not by memory, whether any of these five inputs is now 
 **If NONE is present, the correct outcome is to confirm the negative and STOP.** Re-verify the
 state (git clean, `out/trials.csv` at 48 rows with 0 passing, `make repeat` byte-identical),
 report it in three lines, and end the run. Do NOT manufacture a 49th trial. The measured
-probability of backtest overfitting for this selection procedure is 0.73, so each additional
+probability of backtest overfitting for this selection procedure is 0.70, so each additional
 trial tightens the correction applied to all 48 existing results while being very unlikely to
 survive: searching harder now makes the evidence worse, not better. Stopping is the
 contractually valid outcome — the mission's own preamble says a rigorous negative is a valid

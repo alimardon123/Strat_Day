@@ -25,6 +25,7 @@ ENT_TOL = 5          # entry price   = open of the first bar within (mod, mod+5]
 MIN_PRIOR = 20       # sessions before an expanding threshold is used (A29)
 LIT_VIX, LIT_MOVE = 17.06, 0.665
 GAP_MIN = 0.003
+MOD_OPEN = 570       # 09:30: the literal session-open bar (A52.3); `open` below is the FIRST bar, which differs on halt mornings
 GATES = ("mag", "vixmove_exp", "vixmove_fixed", "vixmove_lit")
 RANKABLE = ("mag", "vixmove_exp", "vixmove_fixed")
 CANDIDATES = [(e, d, g) for e in (900, 930) for d in ("put", "both") for g in GATES]
@@ -52,6 +53,8 @@ def day_table(frame, vix, dividends=None, trading_days=None, roll_dates=()):
     g = frame.groupby("date")
     d = pd.DataFrame({"open": g["open"].first(), "close": g["close"].last(), "bars": g.size(),
                       "last_mod": g["mod"].max()})
+    # A52.3: the 09:30 bar's own open, NaN when no bar printed at 09:30 (post-halt first bars, A46 FIX 1)
+    d["open_930"] = frame.loc[frame["mod"] == MOD_OPEN].groupby("date")["open"].first().reindex(d.index)
     for m in (780, 900, 930, 955):
         d[f"dec_{m}"] = _last_close_at(frame, m)
         ent, ent_mod = _first_open_after(frame, m)
@@ -82,6 +85,11 @@ def day_table(frame, vix, dividends=None, trading_days=None, roll_dates=()):
     return d
 
 
+def sessions_without_open_bar(day):
+    """A52.3: sessions with no bar printed at 09:30 (their first bar is a later reopen), enumerated."""
+    return list(day.index[day["open_930"].isna()])
+
+
 def ref_report(day):
     """How many sessions lost their prior-close reference, and why."""
     return dict(sessions=len(day), ref_ok=int(day["ref_ok"].sum()), not_prior_trading_day=int((~day["prev_is_prior_td"]).sum()),
@@ -102,14 +110,16 @@ def fixed_thresholds(day, entry_mod, end="2013-01-01"):
 
 
 def gate_base(gate):
-    return "open" if gate == "mag" else "prev_close"
+    return "open_930" if gate == "mag" else "prev_close"
 
 
-def candidate(day, entry_mod, direction, gate, fixed=None, name=None):
-    """Trade table for one configuration on the underlying (signed % and points)."""
+def candidate(day, entry_mod, direction, gate, fixed=None, name=None, open_col="open_930"):
+    """Trade table for one configuration on the underlying (signed % and points). The magnitude
+    gate measures from the literal 09:30 open (A52.3); `open_col="open"` (the session's first bar)
+    is kept only for Thread A's reproduction gate, which reproduces Thread A under its own convention."""
     dec, ent, entmod = day[f"dec_{entry_mod}"], day[f"ent_{entry_mod}"], day[f"entmod_{entry_mod}"]
     if gate == "mag":
-        move = dec / day["open"] - 1
+        move = dec / day[open_col] - 1
         thr = expanding_threshold(move.abs())
         ok = move.abs() > thr
         gate_val = thr
@@ -171,7 +181,8 @@ def day_selection_control(day, trades, entry_mod, direction, base="prev_close", 
     base the signal uses: the open for the magnitude gate, the prior close for the VIX gates),
     same exit. Returns the array of control means in % (one per seed)."""
     ent = day[f"ent_{entry_mod}"]
-    pool = day[ent.notna() & day["close"].notna() & day[f"dec_{entry_mod}"].notna() & (day["ref_ok"] if base == "prev_close" else True)]
+    pool = day[ent.notna() & day["close"].notna() & day[f"dec_{entry_mod}"].notna()
+               & (day["ref_ok"] if base == "prev_close" else day[base].notna())]   # the signal's own base must exist (A52.3)
     move = pool[f"dec_{entry_mod}"] / pool[base] - 1
     dirn = np.sign(move).to_numpy() if direction == "both" else np.full(len(pool), -1.0)
     ret = dirn * (pool["close"] / pool[f"ent_{entry_mod}"] - 1).to_numpy() * 100

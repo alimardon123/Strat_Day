@@ -12,8 +12,9 @@ shares, no overnight holds. Daily loss limit 3-5%.
 
 **No — not in anything this programme could reach, and the negative is now measured rather than assumed.**
 48 pre-registered trials across three data sets. **0 pass the family-wide false-discovery correction**
-(`out/trials.csv`). The best result on the decisive out-of-sample window is +2.20 index points per trade at
-n = 158, which its own family cannot distinguish from zero (`SCORECARD.md`; A47).
+(`out/trials.csv`). The best result on the decisive out-of-sample window is +2.19 index points per trade at
+n = 159, which its own family cannot distinguish from zero (`SCORECARD.md`; A47; +2.20 at n = 158 before A52's
+09:30-open correction).
 
 ## Why the answer is trustworthy this time
 
@@ -22,7 +23,7 @@ Three checks that had never been run before this session:
 | check | result |
 |---|---|
 | Can the pipeline flag an edge that is there? (A50) | **Yes, above a floor.** At zero injection every candidate, rebuilt from raw data by its own code, reproduces its published numbers exactly to 6 dp. With a known edge injected into its trades, the scoring path first flags survival at δ = 4.0 pts/trade on the five conditions a holdout injection can move (D1 winner, fvg) and at 8.0 on all six (D1 winner) (`out/poscontrol.csv`). The often-quoted "deviation exactly 0.0 across 28 rows" is an arithmetic identity of the injection, not evidence (A52) |
-| What size of edge can it see? (A47) | Detection floor 0.40 to 8.94 pts/trade by family, against a cost of 1-2 pts |
+| What size of edge can it see? (A47) | Detection floor 0.40 to 8.91 pts/trade by family, against a cost of 1-2 pts |
 | Does a stranger get the same numbers? (D7) | **Yes.** Fresh clone, raw data refetched from nothing, 36/36 steps: `diff -r` on 177 output files returned **nothing** |
 
 So "we found nothing" now means the instruments work, they were pointed at the right place, and nothing was there.

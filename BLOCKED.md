@@ -406,3 +406,23 @@ the second.
   mechanism A49 could not test, since aggressor inference needs quotes and the trade bars cannot supply them.
 
 No agent is launched against the automated stop hook; the run resumes on a letter or a file.
+
+## Status after 2026-10-02 — quotes are now obtainable; the record is corrected (A51, A52); the answer is unchanged
+
+- **Quotes are obtainable.** The vendor hosts refused at the proxy throughout this programme now answer from the
+  container when given a key. Real 0DTE quotes are therefore obtainable: Databento OPRA or Polygon, not Alpaca.
+  - A51 is registered: a zero-trial measurement of what the programme's instrument really costs to trade.
+  - It also measures which strike depth is cheapest, and re-prices A43 at real bid and ask.
+  - A50 already implies no directional result can be revived by a lower cost: the best-powered candidate needs
+    δ ≈ 4 pts, and a cost cut is worth at most 1.
+- **The record is corrected (A52).**
+  - The positive-control claim and the premium figure are corrected, and the gates now fail the build.
+  - The 09:30-open correction moves A39 T1 to +2.19 pts at n 159 (was +2.20 at n 158; UNDERPOWERED either way) and
+    lifts the magnitude configurations' selection Sharpes.
+  - The registered winner, the family FDR (0 of 48) and every verdict are unchanged.
+- **Owner options:**
+  - **A. Stop.** Still indicated for the directional search.
+  - **Q (new).** Supply a Databento key in the environment settings to run A51. Its directional re-read is expected
+    to qualify nothing; its value is the real cost, the cheapest depth, and Track C at real prices (which needs a
+    non-prop account).
+  - **B, C/D, E** as before.

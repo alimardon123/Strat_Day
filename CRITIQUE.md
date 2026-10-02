@@ -416,3 +416,14 @@ one mutation on the test's own call site rather than claiming a source mutation 
 noted the cleanup glob I specified (`out/poscontrol_*`) does not match the output filename (`out/poscontrol.csv`)
 and implemented it literally rather than silently fixing it — correct behaviour; the effect is nil since the unit
 overwrites its single output unconditionally.
+
+## 2026-10-02 audit (fresh-context read of the shipped record, then orchestrator verification) — 4 record defects, 2 environment findings, all dispositioned
+
+| # | severity | finding | disposition |
+|---|---|---|---|
+| AU1 | overstated evidence | A50's "deviation exactly 0.0 across 28 rows" is an identity of the additive per-trade injection (`poscontrol.py`), yet FINDING.md cited it as proof the pipeline recovers edges; the docstring credited A50 with a sentence it does not contain | A52.1: claim corrected everywhere it was cited; the δ=0 rebuild and the survival floor are what A50 establishes |
+| AU2 | mis-stated size | "7-17 % of premium per day" is the buyer's loss at the +$0.10 cost, not the premium itself | A52.2: both figures given, from `out/eventvol_candidates.csv` |
+| AU3 | correctness, live | A46's FIX 1 corrected the first-bar "open" only inside `flatten.py`; A39's overnight return and D1's `mag` gate read the same column. The audit named A39; enumerating consumers found the `mag` gate too | A52.3 pre-registered, implemented, regenerated; 22 outputs changed, the winner did not; PLAYBOOK §2's typed ranking sentence made false by it is now generated |
+| AU4 | gate could not fail the build | gates (b), (c), (e) printed FAIL and exited 0 | A52.4: exit non-zero; each demonstrated failing then passing |
+| EN1 | reproducibility, environment | the VIX fetch tracked a daily-updated `main` | Makefile pins the commit matching the manifest sha256 |
+| EN2 | reproducibility, environment | a transient read error silently dropped one stock file from a fresh fetch; nothing compares a fresh manifest with the committed one, so the drift surfaced only as unexplained own-account differences | re-fetched (byte-identical baseline restored); manifest verification recommended as a follow-up |

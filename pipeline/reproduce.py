@@ -108,8 +108,9 @@ def thread_b(vix):
 def thread_a(vix):
     frame, _ = sessions.build("oanda", "data/raw/oanda_SPX500_USD.parquet", sessions.trading_days_from_vix())
     day = signals.day_table(frame, vix)
-    put = signals.candidate(day, 900, "put", "mag", name="A 15:00 put")
-    upcall = signals.candidate(day, 900, "both", "mag", name="A big-up call")
+    # Thread A's own convention: magnitude measured from the session's first bar (A30; A52.3 keeps it here)
+    put = signals.candidate(day, 900, "put", "mag", name="A 15:00 put", open_col="open")
+    upcall = signals.candidate(day, 900, "both", "mag", name="A big-up call", open_col="open")
     upcall = upcall[upcall["direction"] > 0]
     call = signals.gap_up_call(day, name="A 13:00 call")
     rows = []

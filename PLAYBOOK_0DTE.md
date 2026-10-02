@@ -17,18 +17,18 @@ Strike: 2% in the money, rounded away from spot to the grid (5 points SPX, $1 SP
 
 | rank | candidate | params | n | win | net_pts | net_pct | sharpe_calday | p_boot_month | p_boot_day | excess_over_control_pct | timing_control_pct | dsr_N12 | dsr_N42 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 15:00\|both\|vixmove_fixed | 2 | 92 | 64.130 | 5.272 | 0.194 | 0.557 |  | 0.063 | 0.206 | 0.416 | 0.756 | 0.662 |
-| 2 | 15:30\|both\|vixmove_fixed | 2 | 92 | 59.783 | 3.880 | 0.149 | 0.515 |  | 0.083 | 0.168 | 0.425 | 0.714 | 0.617 |
-| 3 | 15:00\|both\|vixmove_exp | 0 | 145 | 62.759 | 3.115 | 0.112 | 0.489 | 0.179 | 0.095 | 0.124 | 0.303 | 0.613 | 0.476 |
-| 4 | 15:30\|both\|vixmove_exp | 0 | 146 | 59.589 | 2.382 | 0.091 | 0.467 | 0.115 | 0.102 | 0.111 | 0.302 | 0.587 | 0.451 |
-| 5 | 15:30\|put\|mag | 0 | 182 | 57.143 | 0.771 | 0.033 | 0.260 | 0.255 | 0.238 | 0.072 | 0.241 | 0.334 | 0.217 |
-| 6 | 15:30\|put\|vixmove_exp | 0 | 62 | 51.613 | 1.542 | 0.054 | 0.170 |  | 0.314 | 0.086 | 0.287 | 0.414 | 0.332 |
-| 7 | 15:00\|put\|vixmove_fixed | 2 | 42 | 54.762 | 2.412 | 0.080 | 0.159 |  | 0.335 | 0.116 | 0.342 | 0.447 | 0.376 |
-| 8 | 15:00\|put\|vixmove_exp | 0 | 58 | 55.172 | 1.740 | 0.055 | 0.145 |  | 0.351 | 0.085 | 0.286 | 0.393 | 0.313 |
-| 9 | 15:00\|put\|mag | 0 | 189 | 52.381 | 0.324 | 0.017 | 0.125 | 0.362 | 0.374 | 0.062 | 0.226 | 0.202 | 0.112 |
-| 10 | 15:30\|put\|vixmove_fixed | 2 | 43 | 51.163 | 1.116 | 0.033 | 0.079 |  | 0.409 | 0.074 | 0.312 | 0.364 | 0.298 |
-| 11 | 15:30\|both\|mag | 0 | 371 | 54.717 | 0.067 | 0.002 | 0.023 | 0.478 | 0.470 | 0.036 | 0.211 | 0.055 | 0.016 |
-| 12 | 15:00\|both\|mag | 0 | 371 | 50.943 | -0.033 | 0.001 | 0.008 | 0.493 | 0.492 | 0.039 | 0.188 | 0.050 | 0.014 |
+| 1 | 15:00\|both\|vixmove_fixed | 2 | 92 | 64.130 | 5.272 | 0.194 | 0.557 |  | 0.063 | 0.206 | 0.416 | 0.798 | 0.728 |
+| 2 | 15:30\|both\|vixmove_fixed | 2 | 92 | 59.783 | 3.880 | 0.149 | 0.515 |  | 0.083 | 0.168 | 0.425 | 0.759 | 0.684 |
+| 3 | 15:00\|both\|vixmove_exp | 0 | 145 | 62.759 | 3.115 | 0.112 | 0.489 | 0.179 | 0.095 | 0.124 | 0.303 | 0.679 | 0.570 |
+| 4 | 15:30\|put\|mag | 0 | 181 | 57.459 | 1.254 | 0.054 | 0.470 | 0.074 | 0.095 | 0.094 | 0.269 | 0.604 | 0.495 |
+| 5 | 15:30\|both\|vixmove_exp | 0 | 146 | 59.589 | 2.382 | 0.091 | 0.467 | 0.115 | 0.102 | 0.111 | 0.302 | 0.654 | 0.544 |
+| 6 | 15:30\|both\|mag | 0 | 368 | 55.163 | 0.523 | 0.021 | 0.284 | 0.158 | 0.219 | 0.051 | 0.232 | 0.277 | 0.153 |
+| 7 | 15:00\|both\|mag | 0 | 368 | 51.359 | 0.483 | 0.022 | 0.248 | 0.202 | 0.252 | 0.056 | 0.209 | 0.242 | 0.126 |
+| 8 | 15:00\|put\|mag | 0 | 188 | 52.660 | 0.662 | 0.032 | 0.238 | 0.223 | 0.256 | 0.078 | 0.244 | 0.369 | 0.260 |
+| 9 | 15:30\|put\|vixmove_exp | 0 | 62 | 51.613 | 1.542 | 0.054 | 0.170 |  | 0.314 | 0.086 | 0.287 | 0.457 | 0.386 |
+| 10 | 15:00\|put\|vixmove_fixed | 2 | 42 | 54.762 | 2.412 | 0.080 | 0.159 |  | 0.335 | 0.116 | 0.342 | 0.484 | 0.423 |
+| 11 | 15:00\|put\|vixmove_exp | 0 | 58 | 55.172 | 1.740 | 0.055 | 0.145 |  | 0.351 | 0.085 | 0.286 | 0.436 | 0.366 |
+| 12 | 15:30\|put\|vixmove_fixed | 2 | 43 | 51.163 | 1.116 | 0.033 | 0.079 |  | 0.409 | 0.074 | 0.312 | 0.399 | 0.342 |
 
 Literal Thread B thresholds (17.06 / 0.665, in-sample on 2013–2018, reported not ranked):
 
@@ -45,7 +45,7 @@ Thread A's gap-up call, same selection window (pre-registered by Thread A, not p
 |---|---|---|---|---|---|---|---|
 | 13:00\|call\|gap>0.3% | 423 | 52.719 | -0.138 | -0.004 | -0.047 | 1.000 | 1.000 |
 
-Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the 15:00 entry with the expanding-tercile rule. 0 of 48 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.73; the in-sample best configuration's median out-of-sample rank logit is -0.81; the per-column shuffled null gives 0.85 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
+Not every VIX-gated two-sided configuration outranks the magnitude-gated and put-only ones: `15:30|put|mag` (rank 4) ranks above `15:30|both|vixmove_exp` (rank 5); the configurations within 0.10 Sharpe of the top tie (`15:00|both|vixmove_fixed` 0.557, `15:30|both|vixmove_fixed` 0.515, `15:00|both|vixmove_exp` 0.489, `15:30|put|mag` 0.470, `15:30|both|vixmove_exp` 0.467) and the tie-break (fewest FITTED parameters — an expanding rule has none — then the higher Sharpe) picks `15:00|both|vixmove_exp`. 0 of 48 trials pass BH-FDR at 10% across the family (`out/trials.csv`). Probability of backtest overfitting of this 12-configuration selection (CSCV, 16 blocks, 12,870 splits): 0.70; the in-sample best configuration's median out-of-sample rank logit is -0.47; the per-column shuffled null gives 0.94 (this null preserves each configuration's own mean and variance, so it is a floor for near-duplicate configurations, not 0.5 — reported, not a survival condition).
 
 ## 3. Option-level results — IN-SAMPLE (% of premium per trade)
 
@@ -142,7 +142,7 @@ All 16 configurations on the holdout — published, not promoted (`out/reconcile
 | 15:30\|put\|vixmove_exp | POST-SELECTION | 0 | 121 | 50.413 | -1.574 | -0.046 | -0.456 | 1.000 | 1.000 | -0.029 | 0.119 |
 | 15:30\|put\|vixmove_fixed | POST-SELECTION | 2 | 81 | 48.148 | -2.621 | -0.073 | -0.545 | 1.000 | 1.000 | -0.057 | 0.099 |
 | 15:30\|put\|vixmove_lit | POST-SELECTION | 2 | 195 | 49.744 | -1.297 | -0.039 | -0.565 | 1.000 | 1.000 | -0.023 | 0.114 |
-| 15:30\|both\|mag | POST-SELECTION | 0 | 485 | 48.660 | -0.833 | -0.020 | -0.576 | 1.000 | 1.000 | 0.005 | 0.157 |
+| 15:30\|both\|mag | POST-SELECTION | 0 | 487 | 48.460 | -0.918 | -0.021 | -0.618 | 1.000 | 1.000 | 0.002 | 0.155 |
 | 15:30\|both\|vixmove_lit | POST-SELECTION | 2 | 469 | 48.401 | -1.304 | -0.033 | -0.871 | 1.000 | 1.000 | -0.010 | 0.108 |
 | 15:30\|both\|vixmove_exp | POST-SELECTION | 0 | 291 | 46.048 | -1.923 | -0.050 | -0.930 | 1.000 | 1.000 | -0.025 | 0.107 |
 | 15:30\|both\|vixmove_fixed | POST-SELECTION | 2 | 189 | 42.857 | -3.062 | -0.078 | -1.049 | 1.000 | 1.000 | -0.055 | 0.083 |
@@ -349,8 +349,8 @@ FIXED (pre-registration): ATR mult 1.5, structure lookback 12 bars, stop buffer 
 
 | trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N37 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| T1 | call | 10:00 | 284 | 0 | 284 | 44.7183 | -3.1873 | -4.1873 | -0.2771 | -62.3000 | -62.3000 | -1.0962 | 1.0000 | 1.0000 | -0.6471 | 0.0000 | -2.7408 | 0.0900 | -7.0881 | 0.0000 |
-| T2 | call | 09:31 | 284 | 0 | 284 | 47.8873 | -2.4500 | -3.4500 | -0.2029 | -69.6000 | -69.6000 | -0.7298 | 1.0000 | 1.0000 | -0.8500 | 0.0050 | -2.7408 | 0.8150 | -3.5841 | 0.0000 |
+| T1 | call | 10:00 | 283 | 0 | 283 | 44.5230 | -3.1961 | -4.1961 | -0.2779 | -62.3000 | -62.3000 | -1.0955 | 1.0000 | 1.0000 | -0.6714 | 0.0000 | -2.7514 | 0.0900 | -7.1107 | 0.0000 |
+| T2 | call | 09:31 | 283 | 0 | 283 | 47.7032 | -2.4597 | -3.4597 | -0.2037 | -69.6000 | -69.6000 | -0.7301 | 1.0000 | 1.0000 | -0.8790 | 0.0000 | -2.7514 | 0.8050 | -3.6068 | 0.0000 |
 | T3 | put | 10:00 | 273 | 0 | 273 | 39.1941 | -3.6725 | -4.6725 | -0.3469 | -73.0000 | -73.0000 | -1.2901 | 1.0000 | 1.0000 | -0.4838 | 0.0000 | -3.7292 | 0.5700 | -9.2340 | 0.0000 |
 
 T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0, n >= 200 -> does not survive the four programmatic checks (DSR at N=37 is reported in the table above, not a survival condition). Fingerprint: T2 >= T1 (fails); T3 <= 0 at 1 pt (holds). Promotion: T1 does not survive, not promoted.
@@ -359,8 +359,8 @@ T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0,
 
 | trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N37 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| T1 | call | 10:00 | 123 | 2 | 121 | 47.1074 | -2.4124 | -3.4124 | -0.0974 | -99.4000 | -99.4000 | -0.3564 | 1.0000 | 1.0000 | -0.7693 | 0.1050 | -1.9027 | 0.2950 | -2.6008 | 0.0001 |
-| T2 | call | 09:31 | 123 | 2 | 121 | 51.2397 | -0.9017 | -1.9017 | -0.0240 | -94.8000 | -94.8000 | -0.0845 | 1.0000 | 1.0000 | -0.9280 | 0.5350 | -1.9027 | 0.8350 | 0.4543 | 0.0010 |
+| T1 | call | 10:00 | 120 | 0 | 120 | 47.5000 | -2.2875 | -3.2875 | -0.0922 | -99.4000 | -99.4000 | -0.3353 | 1.0000 | 1.0000 | -0.7281 | 0.1450 | -2.1547 | 0.4450 | -2.2670 | 0.0001 |
+| T2 | call | 09:31 | 120 | 0 | 120 | 50.8333 | -1.0067 | -2.0067 | -0.0283 | -94.8000 | -94.8000 | -0.0988 | 1.0000 | 1.0000 | -0.8263 | 0.4350 | -2.1547 | 0.9000 | 0.3949 | 0.0009 |
 | T3 | put | 10:00 | 132 | 0 | 132 | 31.0606 | -8.5947 | -9.5947 | -0.3526 | -165.0000 | -165.0000 | -1.0583 | 1.0000 | 1.0000 | -0.4166 | 0.0000 | -7.1055 | 0.0500 | -10.4819 | 0.0000 |
 
 T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0, n < 200 -> does not survive the four programmatic checks (DSR at N=37 is reported in the table above, not a survival condition). Fingerprint: T2 >= T1 (fails); T3 <= 0 at 1 pt (holds). Promotion: T1 does not survive, not promoted.
@@ -369,9 +369,9 @@ T1: net <= 0 at 1 pt, p_day >= 0.05, excess over the day-selection control <= 0,
 
 | trial | side | entry_time | n_signal_days | n_skipped | n | win | net_pts_cost1 | net_pts_cost2 | net_pct_cost1 | worst_trade_pts_cost1 | worst_day_pts_cost1 | sharpe_calday | p_boot_day | p_boot_month | control_mean_pts_cost1 | frac_seeds_beaten | timing_control_pts_cost1 | frac_timing_beaten | opt_mean_pct_s1 | dsr_N37 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| T1 | call | 10:00 | 158 | 0 | 158 | 54.4304 | 2.2016 | 1.2016 | 0.0513 | -166.7500 | -166.7500 | 0.2603 | 0.2592 | 0.2278 | -1.0715 | 0.8550 | 0.0153 | 0.9350 | 3.5742 | 0.4354 |
-| T2 | call | 09:31 | 158 | 0 | 158 | 55.0633 | 0.1168 | -0.8832 | -0.0082 | -189.7000 | -189.7000 | -0.0369 | 1.0000 | 1.0000 | -0.4384 | 0.5500 | 0.0153 | 0.5150 | 1.0202 | 0.1841 |
-| T3 | put | 10:00 | 154 | 0 | 154 | 39.6104 | 1.8922 | 0.8922 | 0.0131 | -84.5000 | -84.5000 | 0.0662 | 0.4338 | 0.4353 | -1.2510 | 0.9050 | 1.4791 | 0.6450 | 0.9594 | 0.2608 |
+| T1 | call | 10:00 | 159 | 0 | 159 | 54.7170 | 2.1909 | 1.1909 | 0.0511 | -166.7500 | -166.7500 | 0.2607 | 0.2517 | 0.2280 | -0.9655 | 0.8550 | 0.1003 | 0.9300 | 3.5588 | 0.4311 |
+| T2 | call | 09:31 | 159 | 0 | 159 | 54.7170 | 0.0770 | -0.9230 | -0.0092 | -189.7000 | -189.7000 | -0.0415 | 1.0000 | 1.0000 | -0.2169 | 0.5900 | 0.1003 | 0.4800 | 0.9666 | 0.1780 |
+| T3 | put | 10:00 | 154 | 0 | 154 | 39.6104 | 1.8922 | 0.8922 | 0.0131 | -84.5000 | -84.5000 | 0.0662 | 0.4338 | 0.4353 | -1.2510 | 0.9050 | 1.4791 | 0.6450 | 0.9594 | 0.2577 |
 
 T1: net > 0 at 1 pt, p_day >= 0.05, excess over the day-selection control > 0, n < 200 -> does not survive the four programmatic checks (DSR at N=37 is reported in the table above, not a survival condition). Fingerprint: T2 < T1 (holds); T3 > 0 at 1 pt (fails). Promotion: T1 does not survive, not promoted.
 
@@ -585,36 +585,36 @@ This section computes, for every candidate that already has a published per-trad
 | fvg | short\|R1\|bos_on | SELECTION | 461 | -0.504 | 1.890 | 0.219 | 0.332 | 23 | 0.366 |
 | fvg | short\|R2\|bos_off | SELECTION | 856 | -0.705 | 3.156 | 0.268 | 0.555 | 62 | 0.533 |
 | fvg | short\|R2\|bos_on | SELECTION | 460 | -0.710 | 2.921 | 0.339 | 0.514 | 53 | 0.846 |
-| gapliq | T1 | CONTEXT | 284 | -3.187 | 15.920 | 2.349 | 2.799 | 1567 | 38.219 |
-| gapliq | T2 | CONTEXT | 284 | -2.450 | 17.759 | 2.620 | 3.122 | 1950 | 47.561 |
+| gapliq | T1 | CONTEXT | 283 | -3.196 | 15.947 | 2.357 | 2.804 | 1573 | 38.486 |
+| gapliq | T2 | CONTEXT | 283 | -2.460 | 17.790 | 2.629 | 3.128 | 1957 | 47.881 |
 | gapliq | T3 | CONTEXT | 273 | -3.673 | 15.473 | 2.328 | 2.720 | 1481 | 36.968 |
-| gapliq | T1 | HOLDOUT | 158 | 2.202 | 45.294 | 8.960 | 7.964 | 12684 | 480.022 |
-| gapliq | T2 | HOLDOUT | 158 | 0.117 | 50.858 | 10.060 | 8.942 | 15992 | 605.213 |
+| gapliq | T1 | HOLDOUT | 159 | 2.191 | 45.150 | 8.903 | 7.938 | 12604 | 473.995 |
+| gapliq | T2 | HOLDOUT | 159 | 0.077 | 50.699 | 9.997 | 8.914 | 15892 | 597.646 |
 | gapliq | T3 | HOLDOUT | 154 | 1.892 | 48.011 | 9.620 | 8.441 | 14251 | 562.708 |
-| gapliq | T1 | SELECTION | 121 | -2.412 | 27.726 | 6.267 | 4.875 | 4753 | 280.801 |
-| gapliq | T2 | SELECTION | 121 | -0.902 | 28.556 | 6.455 | 5.021 | 5042 | 297.875 |
+| gapliq | T1 | SELECTION | 120 | -2.288 | 27.808 | 6.312 | 4.889 | 4781 | 284.809 |
+| gapliq | T2 | SELECTION | 120 | -1.007 | 28.653 | 6.504 | 5.038 | 5076 | 302.383 |
 | gapliq | T3 | SELECTION | 132 | -8.595 | 34.233 | 7.409 | 6.019 | 7246 | 387.602 |
 | pre_registered | 13:00\|call\|gap>0.3% | HOLDOUT | 452 | -1.904 | 25.395 | 2.970 | 4.465 | 3988 | 53.941 |
 | pre_registered | 15:00\|both\|vixmove_exp | HOLDOUT | 274 | -0.143 | 21.904 | 3.290 | 3.851 | 2967 | 64.986 |
 | reconcile | 13:00\|call\|gap>0.3% | SELECTION | 423 | -0.138 | 16.913 | 2.045 | 2.974 | 1769 | 30.674 |
-| reconcile | 15:00\|both\|mag | SELECTION | 371 | -0.033 | 16.933 | 2.186 | 2.977 | 1773 | 34.529 |
+| reconcile | 15:00\|both\|mag | SELECTION | 368 | 0.483 | 15.713 | 2.037 | 2.763 | 1527 | 29.981 |
 | reconcile | 15:00\|both\|vixmove_exp | SELECTION | 145 | 3.115 | 25.820 | 5.332 | 4.540 | 4122 | 158.541 |
 | reconcile | 15:00\|both\|vixmove_fixed | SELECTION | 92 | 5.272 | 31.092 | 8.060 | 5.467 | 5977 | 361.968 |
 | reconcile | 15:00\|both\|vixmove_lit | SELECTION | 251 | 2.168 | 20.477 | 3.214 | 3.600 | 2593 | 73.085 |
-| reconcile | 15:00\|put\|mag | SELECTION | 189 | 0.324 | 17.563 | 3.176 | 3.088 | 1908 | 72.940 |
+| reconcile | 15:00\|put\|mag | SELECTION | 188 | 0.662 | 16.981 | 3.079 | 2.986 | 1783 | 68.524 |
 | reconcile | 15:00\|put\|vixmove_exp | SELECTION | 58 | 1.740 | 27.283 | 8.908 | 4.797 | 4602 | 442.506 |
 | reconcile | 15:00\|put\|vixmove_fixed | SELECTION | 42 | 2.412 | 30.886 | 11.850 | 5.430 | 5898 | 662.831 |
 | reconcile | 15:00\|put\|vixmove_lit | SELECTION | 101 | 2.111 | 21.895 | 5.417 | 3.850 | 2964 | 203.035 |
-| reconcile | 15:30\|both\|mag | SELECTION | 371 | 0.067 | 14.259 | 1.841 | 2.507 | 1257 | 24.480 |
+| reconcile | 15:30\|both\|mag | SELECTION | 368 | 0.523 | 13.199 | 1.711 | 2.321 | 1078 | 21.165 |
 | reconcile | 15:30\|both\|vixmove_exp | SELECTION | 146 | 2.382 | 22.143 | 4.557 | 3.893 | 3032 | 115.932 |
 | reconcile | 15:30\|both\|vixmove_fixed | SELECTION | 92 | 3.880 | 26.208 | 6.794 | 4.608 | 4247 | 257.199 |
 | reconcile | 15:30\|both\|vixmove_lit | SELECTION | 252 | 1.425 | 17.444 | 2.732 | 3.067 | 1882 | 52.835 |
-| reconcile | 15:30\|put\|mag | SELECTION | 182 | 0.771 | 15.771 | 2.907 | 2.773 | 1538 | 61.057 |
+| reconcile | 15:30\|put\|mag | SELECTION | 181 | 1.254 | 14.404 | 2.662 | 2.532 | 1283 | 51.215 |
 | reconcile | 15:30\|put\|vixmove_exp | SELECTION | 62 | 1.542 | 23.685 | 7.479 | 4.164 | 3469 | 312.349 |
 | reconcile | 15:30\|put\|vixmove_fixed | SELECTION | 43 | 1.116 | 26.354 | 9.993 | 4.634 | 4294 | 471.347 |
 | reconcile | 15:30\|put\|vixmove_lit | SELECTION | 104 | 1.770 | 19.102 | 4.657 | 3.358 | 2256 | 150.079 |
 
-25 of 61 rows (41%) have mde_at_200 <= 2.0 pts overall, and 8 of 16 (50%) restricted to HOLDOUT. The fvg family's holdout MDE falls at or below the 1-2 point cost band (0.78-1.27 pts) at an actual holdout n of 282-959 (already past the n=200 floor), versus flatten, gapliq, and pre_registered whose holdout MDE lies above the band (3.85-8.94 pts, holdout n 144-452). The fvg family's own holdout mean ranges -1.143 to 0.026 pts/trade (flat to negative): the n=200 floor DID resolve this family's question, and the resolved answer is flat to negative, not positive. Per-trade dispersion is the mechanical reason one side is powered and the other is not: the fvg family's holdout sd runs 4.44-7.20 pts/trade, versus 21.90-50.86 pts/trade for flatten, gapliq, and pre_registered. A47's own refutation condition is therefore MET for the fvg family and NOT met for flatten, gapliq, and pre_registered: the n=200 floor is adequately powered for the former (a genuine answer, not a design limit) but not for the latter, where the UNDERPOWERED label still reflects the design's own detectability floor, not only a shortage of signals.
+25 of 61 rows (41%) have mde_at_200 <= 2.0 pts overall, and 8 of 16 (50%) restricted to HOLDOUT. The fvg family's holdout MDE falls at or below the 1-2 point cost band (0.78-1.27 pts) at an actual holdout n of 282-959 (already past the n=200 floor), versus flatten, gapliq, and pre_registered whose holdout MDE lies above the band (3.85-8.91 pts, holdout n 144-452). The fvg family's own holdout mean ranges -1.143 to 0.026 pts/trade (flat to negative): the n=200 floor DID resolve this family's question, and the resolved answer is flat to negative, not positive. Per-trade dispersion is the mechanical reason one side is powered and the other is not: the fvg family's holdout sd runs 4.44-7.20 pts/trade, versus 21.90-50.70 pts/trade for flatten, gapliq, and pre_registered. A47's own refutation condition is therefore MET for the fvg family and NOT met for flatten, gapliq, and pre_registered: the n=200 floor is adequately powered for the former (a genuine answer, not a design limit) but not for the latter, where the UNDERPOWERED label still reflects the design's own detectability floor, not only a shortage of signals.
 
 ## 17. Would a bounded exit make these questions answerable? (A48) — dispersion only, not a trial
 
@@ -622,38 +622,38 @@ For each of the 8 already-registered hold-to-close candidates (A39's T1/T2/T3, A
 
 | family | candidate | window | exit_rule | n | sd_net_pts_cost1 | sd_net_pts_cost2 | mde_at_n | mde_at_200 | answerable_at_n |
 |---|---|---|---|---|---|---|---|---|---|
-| gapliq | T1 | CONTEXT | registered | 284 | 15.920 | 15.920 | 2.349 | 2.799 | False |
-| gapliq | T1 | CONTEXT | fixed5pts | 284 | 4.941 | 4.941 | 0.729 | 0.869 | True |
-| gapliq | T1 | CONTEXT | fixed10pts | 284 | 8.692 | 8.692 | 1.282 | 1.528 | True |
-| gapliq | T1 | CONTEXT | fixed20pts | 284 | 12.816 | 12.816 | 1.891 | 2.253 | True |
-| gapliq | T2 | CONTEXT | registered | 284 | 17.759 | 17.759 | 2.620 | 3.122 | False |
-| gapliq | T2 | CONTEXT | fixed5pts | 284 | 4.982 | 4.982 | 0.735 | 0.876 | True |
-| gapliq | T2 | CONTEXT | fixed10pts | 284 | 9.073 | 9.073 | 1.339 | 1.595 | True |
-| gapliq | T2 | CONTEXT | fixed20pts | 284 | 13.659 | 13.659 | 2.015 | 2.402 | False |
+| gapliq | T1 | CONTEXT | registered | 283 | 15.947 | 15.947 | 2.357 | 2.804 | False |
+| gapliq | T1 | CONTEXT | fixed5pts | 283 | 4.950 | 4.950 | 0.732 | 0.870 | True |
+| gapliq | T1 | CONTEXT | fixed10pts | 283 | 8.707 | 8.707 | 1.287 | 1.531 | True |
+| gapliq | T1 | CONTEXT | fixed20pts | 283 | 12.839 | 12.839 | 1.898 | 2.257 | True |
+| gapliq | T2 | CONTEXT | registered | 283 | 17.790 | 17.790 | 2.629 | 3.128 | False |
+| gapliq | T2 | CONTEXT | fixed5pts | 283 | 4.990 | 4.990 | 0.738 | 0.877 | True |
+| gapliq | T2 | CONTEXT | fixed10pts | 283 | 9.089 | 9.089 | 1.343 | 1.598 | True |
+| gapliq | T2 | CONTEXT | fixed20pts | 283 | 13.683 | 13.683 | 2.022 | 2.406 | False |
 | gapliq | T3 | CONTEXT | registered | 273 | 15.473 | 15.473 | 2.328 | 2.720 | False |
 | gapliq | T3 | CONTEXT | fixed5pts | 273 | 4.930 | 4.930 | 0.742 | 0.867 | True |
 | gapliq | T3 | CONTEXT | fixed10pts | 273 | 8.447 | 8.447 | 1.271 | 1.485 | True |
 | gapliq | T3 | CONTEXT | fixed20pts | 273 | 11.764 | 11.764 | 1.770 | 2.068 | True |
-| gapliq | T1 | SELECTION | registered | 121 | 27.726 | 27.726 | 6.267 | 4.875 | False |
-| gapliq | T1 | SELECTION | fixed5pts | 121 | 5.017 | 5.017 | 1.134 | 0.882 | True |
-| gapliq | T1 | SELECTION | fixed10pts | 121 | 9.752 | 9.752 | 2.204 | 1.715 | False |
-| gapliq | T1 | SELECTION | fixed20pts | 121 | 16.168 | 16.168 | 3.655 | 2.843 | False |
-| gapliq | T2 | SELECTION | registered | 121 | 28.556 | 28.556 | 6.455 | 5.021 | False |
-| gapliq | T2 | SELECTION | fixed5pts | 121 | 4.959 | 4.959 | 1.121 | 0.872 | True |
-| gapliq | T2 | SELECTION | fixed10pts | 121 | 9.911 | 9.911 | 2.240 | 1.743 | False |
-| gapliq | T2 | SELECTION | fixed20pts | 121 | 16.566 | 16.566 | 3.745 | 2.913 | False |
+| gapliq | T1 | SELECTION | registered | 120 | 27.808 | 27.808 | 6.312 | 4.889 | False |
+| gapliq | T1 | SELECTION | fixed5pts | 120 | 5.015 | 5.015 | 1.138 | 0.882 | True |
+| gapliq | T1 | SELECTION | fixed10pts | 120 | 9.745 | 9.745 | 2.212 | 1.713 | False |
+| gapliq | T1 | SELECTION | fixed20pts | 120 | 16.121 | 16.121 | 3.659 | 2.834 | False |
+| gapliq | T2 | SELECTION | registered | 120 | 28.653 | 28.653 | 6.504 | 5.038 | False |
+| gapliq | T2 | SELECTION | fixed5pts | 120 | 4.951 | 4.951 | 1.124 | 0.870 | True |
+| gapliq | T2 | SELECTION | fixed10pts | 120 | 9.901 | 9.901 | 2.247 | 1.741 | False |
+| gapliq | T2 | SELECTION | fixed20pts | 120 | 16.522 | 16.522 | 3.750 | 2.905 | False |
 | gapliq | T3 | SELECTION | registered | 132 | 34.233 | 34.233 | 7.409 | 6.019 | False |
 | gapliq | T3 | SELECTION | fixed5pts | 132 | 4.982 | 4.982 | 1.078 | 0.876 | True |
 | gapliq | T3 | SELECTION | fixed10pts | 132 | 9.298 | 9.298 | 2.012 | 1.635 | False |
 | gapliq | T3 | SELECTION | fixed20pts | 132 | 14.730 | 14.730 | 3.188 | 2.590 | False |
-| gapliq | T1 | HOLDOUT | registered | 158 | 45.294 | 45.294 | 8.960 | 7.964 | False |
-| gapliq | T1 | HOLDOUT | fixed5pts | 158 | 5.012 | 5.012 | 0.991 | 0.881 | True |
-| gapliq | T1 | HOLDOUT | fixed10pts | 158 | 10.029 | 10.029 | 1.984 | 1.763 | True |
-| gapliq | T1 | HOLDOUT | fixed20pts | 158 | 19.582 | 19.582 | 3.874 | 3.443 | False |
-| gapliq | T2 | HOLDOUT | registered | 158 | 50.858 | 50.858 | 10.060 | 8.942 | False |
-| gapliq | T2 | HOLDOUT | fixed5pts | 158 | 5.009 | 5.009 | 0.991 | 0.881 | True |
-| gapliq | T2 | HOLDOUT | fixed10pts | 158 | 10.029 | 10.029 | 1.984 | 1.763 | True |
-| gapliq | T2 | HOLDOUT | fixed20pts | 158 | 19.707 | 19.707 | 3.898 | 3.465 | False |
+| gapliq | T1 | HOLDOUT | registered | 159 | 45.150 | 45.150 | 8.903 | 7.938 | False |
+| gapliq | T1 | HOLDOUT | fixed5pts | 159 | 5.011 | 5.011 | 0.988 | 0.881 | True |
+| gapliq | T1 | HOLDOUT | fixed10pts | 159 | 10.030 | 10.030 | 1.978 | 1.763 | True |
+| gapliq | T1 | HOLDOUT | fixed20pts | 159 | 19.578 | 19.578 | 3.861 | 3.442 | False |
+| gapliq | T2 | HOLDOUT | registered | 159 | 50.699 | 50.699 | 9.997 | 8.914 | False |
+| gapliq | T2 | HOLDOUT | fixed5pts | 159 | 5.011 | 5.011 | 0.988 | 0.881 | True |
+| gapliq | T2 | HOLDOUT | fixed10pts | 159 | 10.027 | 10.027 | 1.977 | 1.763 | True |
+| gapliq | T2 | HOLDOUT | fixed20pts | 159 | 19.646 | 19.646 | 3.874 | 3.454 | False |
 | gapliq | T3 | HOLDOUT | registered | 154 | 48.011 | 48.011 | 9.620 | 8.441 | False |
 | gapliq | T3 | HOLDOUT | fixed5pts | 154 | 4.965 | 4.965 | 0.995 | 0.873 | True |
 | gapliq | T3 | HOLDOUT | fixed10pts | 154 | 9.840 | 9.840 | 1.972 | 1.730 | True |
@@ -749,7 +749,7 @@ For each of the 8 already-registered hold-to-close candidates (A39's T1/T2/T3, A
 
 **The answer condition is withdrawn.** A48's `answerable_at_n` column is retained in the table above for the record, but it is NOT a verdict and must not be cited as one (ACCEPTANCE.md amendment A48a): it compares the minimum detectable effect, which SCALES with the exit rule's own barrier width, against a fixed cost bar that does not scale, so it can be satisfied by choosing any sufficiently tight stop and carries no information.
 
-**The proportionality, measured.** From this run's own `sd_net_pts_cost1`: across the fixed-points grid, mean sd / barrier width by barrier -- b=5 pts sd/b 0.989 (min 0.944, max 1.004, n=20); b=10 pts sd/b 0.920 (min 0.715, max 1.003, n=20); b=20 pts sd/b 0.764 (min 0.429, max 0.985, n=20). Across the ATR grid, each row's sd against its own candidate/window's `atr0.5x` sd -- 0.5x/0.5x 1.00 (by construction); 1x/0.5x mean 2.00 (n=11); 1.5x/0.5x mean 2.98 (n=11); 2x/0.5x mean 3.86 (n=11) -- near the 1 / 2 / 3 / 4 ideal implied by the multiplier grid itself. Dispersion is essentially the barrier width, so nearly every trade exits AT a barrier: the bounded version is a two-outcome bet, not the registered signal with a safety net.
+**The proportionality, measured.** From this run's own `sd_net_pts_cost1`: across the fixed-points grid, mean sd / barrier width by barrier -- b=5 pts sd/b 0.989 (min 0.944, max 1.004, n=20); b=10 pts sd/b 0.920 (min 0.715, max 1.003, n=20); b=20 pts sd/b 0.763 (min 0.429, max 0.982, n=20). Across the ATR grid, each row's sd against its own candidate/window's `atr0.5x` sd -- 0.5x/0.5x 1.00 (by construction); 1x/0.5x mean 2.00 (n=11); 1.5x/0.5x mean 2.98 (n=11); 2x/0.5x mean 3.86 (n=11) -- near the 1 / 2 / 3 / 4 ideal implied by the multiplier grid itself. Dispersion is essentially the barrier width, so nearly every trade exits AT a barrier: the bounded version is a two-outcome bet, not the registered signal with a safety net.
 
 **The economics, which run the other way.** Cost does not scale with the barrier: b=5 pts: break-even win rate 60.0% at cost 1.0 pts (10.0% of the 2b range), 70.0% at cost 2.0 pts (20.0% of the 2b range); b=10 pts: break-even win rate 55.0% at cost 1.0 pts (5.0% of the 2b range), 60.0% at cost 2.0 pts (10.0% of the 2b range); b=20 pts: break-even win rate 52.5% at cost 1.0 pts (2.5% of the 2b range), 55.0% at cost 2.0 pts (5.0% of the 2b range). Tightening the stop RAISES the edge required to pay.
 
@@ -803,13 +803,13 @@ This programme has a null control (Thread A's random-walk sanity check) but had 
 | short\|R1\|bos_off | fvg | HOLDOUT | 2.0000 | 959 | 2.0263 | 0.0000 | 0.0000 | 3.1988 | 0.6047 | False | 0.3985 |
 | short\|R1\|bos_off | fvg | HOLDOUT | 4.0000 | 959 | 4.0263 | -0.0000 | 0.0000 | 5.1988 | 0.9952 | False | 0.3985 |
 | short\|R1\|bos_off | fvg | HOLDOUT | 8.0000 | 959 | 8.0263 | 0.0000 | 0.0000 | 9.1988 | 1.0000 | False | 0.3985 |
-| T1 | gapliq | HOLDOUT | 0.0000 | 158 | 2.2016 | 0.0000 | 0.2592 | 3.2730 | 0.4354 | False | 8.9597 |
-| T1 | gapliq | HOLDOUT | 0.2500 | 158 | 2.4516 | 0.0000 | 0.2372 | 3.5230 | 0.4305 | False | 8.9597 |
-| T1 | gapliq | HOLDOUT | 0.5000 | 158 | 2.7016 | 0.0000 | 0.2188 | 3.7730 | 0.4252 | False | 8.9597 |
-| T1 | gapliq | HOLDOUT | 1.0000 | 158 | 3.2016 | 0.0000 | 0.1845 | 4.2730 | 0.4141 | False | 8.9597 |
-| T1 | gapliq | HOLDOUT | 2.0000 | 158 | 4.2016 | 0.0000 | 0.1128 | 5.2730 | 0.3904 | False | 8.9597 |
-| T1 | gapliq | HOLDOUT | 4.0000 | 158 | 6.2016 | 0.0000 | 0.0380 | 7.2730 | 0.3416 | False | 8.9597 |
-| T1 | gapliq | HOLDOUT | 8.0000 | 158 | 10.2016 | 0.0000 | 0.0018 | 11.2730 | 0.2510 | False | 8.9597 |
+| T1 | gapliq | HOLDOUT | 0.0000 | 159 | 2.1909 | 0.0000 | 0.2517 | 3.1564 | 0.4311 | False | 8.9032 |
+| T1 | gapliq | HOLDOUT | 0.2500 | 159 | 2.4409 | 0.0000 | 0.2318 | 3.4064 | 0.4263 | False | 8.9032 |
+| T1 | gapliq | HOLDOUT | 0.5000 | 159 | 2.6909 | 0.0000 | 0.2122 | 3.6564 | 0.4211 | False | 8.9032 |
+| T1 | gapliq | HOLDOUT | 1.0000 | 159 | 3.1909 | 0.0000 | 0.1745 | 4.1564 | 0.4101 | False | 8.9032 |
+| T1 | gapliq | HOLDOUT | 2.0000 | 159 | 4.1909 | 0.0000 | 0.1118 | 5.1564 | 0.3865 | False | 8.9032 |
+| T1 | gapliq | HOLDOUT | 4.0000 | 159 | 6.1909 | 0.0000 | 0.0355 | 7.1564 | 0.3378 | False | 8.9032 |
+| T1 | gapliq | HOLDOUT | 8.0000 | 159 | 10.1909 | 0.0000 | 0.0022 | 11.1564 | 0.2473 | False | 8.9032 |
 | 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 0.0000 | 274 | -0.1434 | 0.0000 | 1.0000 | 0.0023 | 0.3635 | False | 3.2903 |
 | 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 0.2500 | 274 | 0.1066 | 0.0000 | 1.0000 | 0.0082 | 0.4389 | False | 3.2903 |
 | 15:00\|both\|vixmove_exp | pre_registered | HOLDOUT | 0.5000 | 274 | 0.3566 | 0.0000 | 0.4813 | 0.0141 | 0.5165 | False | 3.2903 |
@@ -820,7 +820,7 @@ This programme has a null control (Thread A's random-walk sanity check) but had 
 
 - **U1**: theoretical MDE 9.262 pts; empirical floor, literal all-six condition: not reached within the sweep (delta up to 8.0 pts); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): not reached within the sweep.
 - **short|R1|bos_off**: theoretical MDE 0.398 pts; empirical floor, literal all-six condition: not reached within the sweep (delta up to 8.0 pts); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): 4.00 pts (x10.04 theory).
-- **T1**: theoretical MDE 8.960 pts; empirical floor, literal all-six condition: not reached within the sweep (delta up to 8.0 pts); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): not reached within the sweep.
+- **T1**: theoretical MDE 8.903 pts; empirical floor, literal all-six condition: not reached within the sweep (delta up to 8.0 pts); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): not reached within the sweep.
 - **15:00|both|vixmove_exp**: theoretical MDE 3.290 pts; empirical floor, literal all-six condition: 8.00 pts (x2.43 theory); floor on the 5 conditions this HOLDOUT-only injection CAN re-run (excluding condition 3, family-wide BH-FDR -- see below): 4.00 pts (x1.22 theory).
 
 **Neither of A50's two clean outcomes applies cleanly; this is itself the headline finding of this validation.** condition (a) PASSES: every candidate's delta=0.0 row reproduces its published HOLDOUT n and mean net points exactly. condition (b) PASSES: the largest |recovered_minus_delta| across all 28 rows is 0.000000 pts (<= 0.05, and by construction should be ~0). Condition (c) does not pass, under the LITERAL six-condition rule, for gapliq T1, flatten U1 and fvg short|R1|bos_off -- but NOT for the power-related reason A50's own pre-registered FAIL-on-(c) meaning describes ('some negatives are weaker than reported, the gates or controls are losing power somewhere'): condition 3 (family-wide BH-FDR) is scored, for these three, on the SELECTION window (`pipeline/trials.py`), a window this validation's HOLDOUT-only injection (A50's own scope) structurally cannot touch -- so no delta in the sweep can ever flip it, at any effect size, for these three families (see each row's own `notes` column in `out/poscontrol.csv`). Reading instead the 5 conditions a HOLDOUT-only injection CAN meaningfully re-run (net > 0, day-block p < 0.05, positive excess over the day-selection control, deflated Sharpe/PSR > 0.95, n >= 200) -- per-candidate floors in the bullets above -- the D1 winner's own literal floor is 8.00 pts against a theoretical MDE of 3.290 pts (x2.43) using the literal rule, versus its 5-of-6 floor above using the re-runnable subset -- a genuine, reportable finding about how harsh the family-wide multiple-testing correction is at this delta scale for the ONE candidate whose own scoring path counts it on HOLDOUT itself, not evidence that a gate or control silently loses power. gapliq T1 and flatten U1 additionally never clear condition 6 (n >= 200) at ANY delta -- a real, delta-invariant fact about their own already-published HOLDOUT trade counts (144/158 trades), independent of this validation entirely.

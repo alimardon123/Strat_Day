@@ -170,8 +170,8 @@ side of several of them, though largely by design constraint rather than demonst
   combined book (`ACCEPTANCE.md:108`) — the same discipline §1 rows 13/16/23 describe as the
   reachable inverse of leverage-amplified and unconstrained-sizing losses.
 - **A39 T1 and A44 enter at 10:00, not 09:31 — but that is not a programme-wide rule.** A39's own
-  timing fingerprint shows T2 (09:31 entry, +0.12 pts, `SCORECARD.md:54`) underperforming T1
-  (10:00 entry, +2.20 pts, `SCORECARD.md:53`) — a deliberate fingerprint test, not evidence the
+  timing fingerprint shows T2 (09:31 entry, +0.08 pts, `SCORECARD.md:54`) underperforming T1
+  (10:00 entry, +2.19 pts, `SCORECARD.md:53`; A52.3 values) — a deliberate fingerprint test, not evidence the
   programme avoids the open generally: A42 E1 (`SCORECARD.md:78`) and A43 S1/S3 (`SCORECARD.md:85,87`),
   both sell-side/own-account tests, entered at 09:31 on purpose. The T1/T2 contrast is consistent in
   direction with U2's open-cluster spread evidence (`U2-S27`, §1 row 6) that the market's widest
@@ -224,7 +224,7 @@ the pipeline can check each of those directly.
    candidates, enter at 10:00, but A42 E1 and A43 S1/S3 (sell-side/own-account tests, not prop-account
    trades) entered at 09:31, and A39 T2 was a deliberate 09:31 timing fingerprint, not an accidental
    early entry; no cross-programme rule has actually been adopted yet, only the practice of two
-   candidates. The T2-vs-T1 fingerprint (T2 +0.12 pts, `SCORECARD.md:54`, vs T1 +2.20 pts,
+   candidates. The T2-vs-T1 fingerprint (T2 +0.08 pts, `SCORECARD.md:54`, vs T1 +2.19 pts,
    `SCORECARD.md:53`) is the programme's own evidence for adopting it. A44 measurement: log
    `entry_time`; audit that every trade's `entry_time` is ≥ 10:00 ET.
 3. **ITM-only strikes; no ATM or OTM "lottery" contracts.** Inverts §1 rows 4, 7. Evidence:
@@ -345,7 +345,7 @@ counting signals without observing outcomes is not a "second selection" (U3 §B 
 re-tuning after seeing outcomes, not about counting how often a fixed rule would have fired) — the
 actual trigger count will be reported at registration time. PRIMARY's n ≈ 151 is below the ≥200
 floor (`ACCEPTANCE.md:66`), so this candidate would register as UNDERPOWERED on the existing
-holdout, the same outcome A39 T1 had at n=158. Reaching n≥200 on the PRIMARY route would need
+holdout, the same outcome A39 T1 had at n=159. Reaching n≥200 on the PRIMARY route would need
 roughly 2,000 eligible sessions (200 ÷ 10%), i.e. about 494 more sessions beyond the current 1,506 —
 on the order of 2 more years of forward data, comparable to A44's own ≈2-year forward horizon
 (`ACCEPTANCE.md:438`). A39's registered warm-up (250 sessions, `ACCEPTANCE.md:254`), reported here

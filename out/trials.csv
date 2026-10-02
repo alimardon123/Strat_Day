@@ -1,21 +1,21 @@
 family,trial,n,p,p_day,dsr_this_run,dsr_historical,p_for_fdr,fdr_pass_10pct_family
-momentum,15:00|both|vixmove_fixed,92,,0.063000,0.756243,0.662482,0.063000,False
-momentum,15:30|both|vixmove_fixed,92,,0.083250,0.714266,0.616526,0.083250,False
-momentum,15:00|both|vixmove_exp,145,0.179500,0.095250,0.613421,0.475943,0.179500,False
-momentum,15:30|both|vixmove_exp,146,0.115250,0.102250,0.587388,0.450880,0.115250,False
-momentum,15:30|put|mag,182,0.254500,0.238250,0.333670,0.217041,0.254500,False
-momentum,15:30|put|vixmove_exp,62,,0.314250,0.413511,0.331538,0.314250,False
-momentum,15:00|put|vixmove_fixed,42,,0.334500,0.446750,0.375693,0.334500,False
-momentum,15:00|put|vixmove_exp,58,,0.351000,0.392979,0.312999,0.351000,False
-momentum,15:00|put|mag,189,0.362250,0.374500,0.201795,0.112017,0.362250,False
-momentum,15:30|put|vixmove_fixed,43,,0.409500,0.363818,0.298202,0.409500,False
-momentum,15:30|both|mag,371,0.478500,0.470000,0.054636,0.015967,0.478500,False
-momentum,15:00|both|mag,371,0.492750,0.491750,0.049737,0.014158,0.492750,False
-momentum,15:00|put|vixmove_lit,101,0.141500,0.174750,0.520136,0.406876,0.141500,False
-momentum,15:00|both|vixmove_lit,251,0.116500,0.046500,0.606348,0.424078,0.116500,False
-momentum,15:30|put|vixmove_lit,104,0.058500,0.163000,0.533837,0.424215,0.058500,False
-momentum,15:30|both|vixmove_lit,252,0.114000,0.088250,0.474220,0.301402,0.114000,False
-gapup,13:00|call|gap>0.3%,423,1.000000,1.000000,0.449661,0.000141,1.000000,False
+momentum,15:00|both|vixmove_fixed,92,,0.063000,0.798009,0.727522,0.063000,False
+momentum,15:30|both|vixmove_fixed,92,,0.083250,0.759081,0.683937,0.083250,False
+momentum,15:00|both|vixmove_exp,145,0.179500,0.095250,0.679404,0.569667,0.179500,False
+momentum,15:30|put|mag,181,0.074500,0.095250,0.603755,0.494733,0.074500,False
+momentum,15:30|both|vixmove_exp,146,0.115250,0.102250,0.654100,0.543599,0.115250,False
+momentum,15:30|both|mag,368,0.157500,0.218750,0.277087,0.152757,0.157500,False
+momentum,15:00|both|mag,368,0.201750,0.251500,0.241997,0.126356,0.201750,False
+momentum,15:00|put|mag,188,0.222500,0.255500,0.369339,0.259968,0.222500,False
+momentum,15:30|put|vixmove_exp,62,,0.314250,0.457087,0.386390,0.314250,False
+momentum,15:00|put|vixmove_fixed,42,,0.334500,0.483816,0.423467,0.334500,False
+momentum,15:00|put|vixmove_exp,58,,0.351000,0.435850,0.366421,0.351000,False
+momentum,15:30|put|vixmove_fixed,43,,0.409500,0.399052,0.342040,0.409500,False
+momentum,15:00|put|vixmove_lit,101,0.141500,0.174750,0.577852,0.483243,0.141500,False
+momentum,15:00|both|vixmove_lit,251,0.116500,0.046500,0.693247,0.548016,0.116500,False
+momentum,15:30|put|vixmove_lit,104,0.058500,0.163000,0.589284,0.498267,0.058500,False
+momentum,15:30|both|vixmove_lit,252,0.114000,0.088250,0.566611,0.416044,0.114000,False
+gapup,13:00|call|gap>0.3%,423,1.000000,1.000000,0.449661,0.001153,1.000000,False
 xmarket,gap-up on ETXEUR,548,1.000000,1.000000,,,1.000000,False
 xmarket,gap-up on GRXEUR,602,0.265750,0.265750,,,0.265750,False
 xmarket,gap-up on SPXUSD,499,0.162000,0.162000,,,0.162000,False
@@ -30,8 +30,8 @@ fvg,FVG long|R1|bos_on,308,1.000000,1.000000,,,1.000000,False
 fvg,FVG long|R2|bos_on,307,1.000000,1.000000,,,1.000000,False
 fvg,FVG long|R1|bos_off,664,1.000000,1.000000,,,1.000000,False
 fvg,FVG long|R2|bos_off,661,1.000000,1.000000,,,1.000000,False
-gapliq,GAPLIQ T1,121,1.000000,1.000000,,,1.000000,False
-gapliq,GAPLIQ T2,121,1.000000,1.000000,,,1.000000,False
+gapliq,GAPLIQ T1,120,1.000000,1.000000,,,1.000000,False
+gapliq,GAPLIQ T2,120,1.000000,1.000000,,,1.000000,False
 gapliq,GAPLIQ T3,132,1.000000,1.000000,,,1.000000,False
 flatten,FLATTEN U1,102,0.297000,0.306500,,,0.297000,False
 flatten,FLATTEN U2,343,1.000000,1.000000,,,1.000000,False

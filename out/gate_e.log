@@ -1,8 +1,8 @@
 [PASS] ext feed loaded through the manifest as SPY and rescaled ×10
 [PASS] frozen thresholds identical on the extended frame
-[PASS] IDENTITY: 850 native trades vs 850 via the ext path on 2019-06→2020-05, all prices/returns equal
+[PASS] IDENTITY: 842 native trades vs 842 via the ext path on 2019-06→2020-05, all prices/returns equal
 [PASS] DIVIDEND: reference close shifted by the dividend on the ex-date only
 [PASS] ROLL: declared roll date excluded from prior-close signals
 [PASS] REFUSAL: missing manifest refused; declared ES on SPY-level prices refused
-[PASS] DIVIDEND SCOPE: an ex-date inside the native (Oanda) era leaves native prior closes and trades untouched (850 vs 850 trades)
+[PASS] DIVIDEND SCOPE: an ex-date inside the native (Oanda) era leaves native prior closes and trades untouched (842 vs 842 trades)
 GATE (e): PASS

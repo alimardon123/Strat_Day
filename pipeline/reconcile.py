@@ -121,6 +121,11 @@ def main(mode="insample"):
     frame, _, meta = sessions.build_extended(trading_days=td)
     day = signals.day_table(frame, vix, dividends=meta["dividends"] if meta else None, trading_days=td,
                             roll_dates=meta["roll_dates"] if meta else ())
+    no930 = signals.sessions_without_open_bar(day)
+    gap_on_no930 = int((day.loc[no930, "gap"] > signals.GAP_MIN).sum())     # any ref_ok: covers the S12 sleeve too
+    print(f"A52.3: sessions without a 09:30 bar (the mag gate reads the literal 09:30 open, so they never signal): "
+          f"{len(no930)} {[str(d.date()) for d in no930]}; gap > {signals.GAP_MIN} on any of them under the first-bar "
+          f"convention the gap-up rule keeps (must be 0): {gap_on_no930}")
     pd.DataFrame([signals.ref_report(day.loc[SEL_START:SEL_END])]).to_csv("out/reconcile_ref_report.csv", index=False)
     fixed = {e: signals.fixed_thresholds(day, e) for e in (900, 930)}
     all_dates = [d for d in td if pd.Timestamp(SEL_START) <= d <= pd.Timestamp(SEL_END)]

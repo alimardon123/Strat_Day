@@ -1234,3 +1234,41 @@ Every consumer of that column, enumerated by searching `pipeline/`:
 - Fixed: each gate exits non-zero after writing its outputs when any check fails. `reproduce.py`'s "research/
   untouched" check also requires `git status` itself to succeed.
 - Every gate passes today, so no output changes.
+
+### A52a result (2026-10-02) — what the corrections changed, read from the regenerated files
+
+**Baseline first.** Before any A52 code ran, an unmodified checkout regenerated all 176 committed outputs
+byte-identically in this container, plus the one gitignored file. A first fresh fetch differed: one stock-panel file
+was silently skipped on a transient read (`files_skipped` in `data/raw/manifest_bigmovers_stocks.json`). That made
+the own-account outputs differ until a re-fetch of the same upstream commit returned every file; the record is in
+CHANGELOG.md. The VIX source is now pinned (Makefile `VIX_URL`).
+
+**Part 3, by enumeration, as registered.**
+- Exactly four sessions lack a 09:30 bar, printed by `pipeline/reconcile.py` and `pipeline/units/gapliq.py`:
+  2005-09-13, 2020-03-09, 2020-03-16, 2020-03-18.
+- The gap-up rule's gap exceeds its threshold on none of them under the first-bar convention, and no opex day is
+  among them (`out/reconcile.log`, `out/flow.log`). So the gap-up rule, the S12 sleeve and the flow candidates
+  stay unchanged, as registered.
+- Exactly 22 tracked outputs changed. Every other output is byte-identical: the D1 and gap-up holdout tables, fvg,
+  flatten, oflow, the real-price re-pricing, event volatility, Track B and C, the own-account track, and gate (c),
+  which keeps Thread A's convention.
+- The changed files are `out/gapliq_*`, `out/reconcile_{candidates,trades_selection,trials,decision}*`,
+  `out/trials.csv`, `out/pbo.csv`, `out/power_analysis.csv`, `out/poscontrol.csv`, `out/bexit_detectability.csv`,
+  `out/gate_e.csv`, their logs, and PLAYBOOK_0DTE.md.
+
+**Values, cited by column.**
+- **A39.** The HOLDOUT T1 and T2 rows move by one session (`out/gapliq_candidates.csv`, `n`, `net_pts_cost1`,
+  `p_boot_day`). SELECTION T1 and T2 each lose their 2020-03-18 trade. T1's label stays UNDERPOWERED.
+- **The four `mag` configurations.** Their SELECTION rows move materially (`out/reconcile_candidates.csv`, `n`,
+  `net_pts`, `sharpe_calday`, `p_boot_month`). `15:30|put|mag` enters the decision rule's tie set. The tie-break
+  still picks the registered winner, by a margin in `sharpe_calday`.
+- **Family FDR.** Still 0 of 48 (`out/trials.csv`, `fdr_pass_10pct_family`).
+- **Gate (e).** Its identity counts change because the `mag` trades on those sessions are now excluded in both
+  paths; it still passes (`out/gate_e.csv`).
+- **PBO** (`out/pbo.csv`, `pbo`), **A47's family ranges** (`out/power_analysis.csv`) and **the A50 floors**
+  (`out/poscontrol.csv`): these are reported in SCORECARD.md and ASSESSMENT.md, edited in place, with the
+  pre-correction value beside each changed headline.
+
+**Generated prose.** PLAYBOOK §2's ranking sentence was typed text that the correction made false: one
+magnitude-gated configuration now outranks one VIX-gated two-sided configuration. `pipeline/report.py` now generates
+that sentence from the selection rows.

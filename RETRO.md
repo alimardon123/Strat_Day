@@ -211,3 +211,29 @@ evidence ×4) qualify for a framework edit under the fold-in rule. Not done: edi
 and `crucible-retro` touches skill packages OUTSIDE this repository, and the owner asked to see the exact wording
 changes and a prune list first. The proposal is ready on request; nothing outside `/home/user/Strat_Day` has been
 modified.
+
+## Addendum 2026-10-02 (audit round) — three classes recur, one new
+
+**"The claim outran the evidence" reaches count 5, in a new form: a validation that could not fail was reported as
+the headline evidence.** A50 part (b) compared the mean of `pts + δ` with the mean of `pts` plus δ, which is equal
+by arithmetic. FINDING.md then led with that result. The R4 rule asks whether the treatment moves every input.
+This case passes that test, because the treatment does move the input, and still says nothing. Sharpened rule:
+**before registering a validation criterion, write down one concrete way the stated method could fail it. If no
+implementation of the method can fail it, it is not a check.** Count 5.
+
+**R5 (completeness by enumeration) recurs: a local fix to a shared input.** A46's FIX 1 found that `day_table`'s
+`open` is a post-halt first bar on four sessions and fixed it inside `flatten.py` alone. Two other measures read the
+same column, and both kept the defect for 2.5 weeks. Rule: **when a defect is in a shared input, grep every
+consumer before closing the fix.** The fix goes to the input or to every consumer, never only to the unit that
+exposed it. Count +1.
+
+**R1 recurs (necessary but not sufficient): gates that could not fail the build.** Three gates printed FAIL and
+exited 0, while D7 promised a failing build. Rule: **test every gate once in its failing state.**
+
+**New, environment: provenance recorded but never compared.** The manifests stored checksums, commits and skip
+lists, but no step compared a fresh fetch with them. A daily-updated source drifted, and a transient error dropped a
+file. Both would have been caught by one comparison. Count 1.
+
+**Kept: the full-regeneration diff earned its cost again.** Regenerating in a separate worktree and diffing
+against committed outputs is what separated the fetch glitch from the correction's real effects. It is also what
+showed that a typed sentence in a generator had become false.

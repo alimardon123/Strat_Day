@@ -3,8 +3,12 @@
 all:
 	python -m pipeline.run_all
 
+# VIX is pinned to the upstream commit whose file matches data/raw/manifest_vix.json's sha256: the
+# source's `main` updates daily, so an unpinned fetch drifts past 2026-09-11 (measured 2026-10-02).
+VIX_URL = https://raw.githubusercontent.com/datasets/finance-vix/dfa11a56046c1a7fe5315e93aebf3232373f6674/data/vix-daily.csv
+
 fetch:
-	python -m pipeline.units.fetch_vix --out data/raw/vix_daily.parquet
+	python -m pipeline.units.fetch_vix --in $(VIX_URL) --out data/raw/vix_daily.parquet
 	python -m pipeline.units.fetch_oanda --in SPX500_USD --out data/raw/oanda_SPX500_USD.parquet
 	python -m pipeline.units.fetch_oanda_xau --out data/raw/oanda_XAU_USD.parquet
 	for i in SPXUSD GRXEUR ETXEUR JPXJPY; do python -m pipeline.units.fetch_histdata --in $$i --out data/raw/histdata_$$i.parquet; done

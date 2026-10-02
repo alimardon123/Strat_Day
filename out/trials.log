@@ -4,15 +4,15 @@ trials counted: 48 (families: {'momentum': 16, 'fvg': 8, 'xmarket': 3, 'eventvol
 momentum                 15:00|both|vixmove_fixed   92     0.0630                  False
 momentum                 15:30|both|vixmove_fixed   92     0.0833                  False
 momentum                   15:00|both|vixmove_exp  145     0.1795                  False
+momentum                            15:30|put|mag  181     0.0745                  False
 momentum                   15:30|both|vixmove_exp  146     0.1153                  False
-momentum                            15:30|put|mag  182     0.2545                  False
+momentum                           15:30|both|mag  368     0.1575                  False
+momentum                           15:00|both|mag  368     0.2018                  False
+momentum                            15:00|put|mag  188     0.2225                  False
 momentum                    15:30|put|vixmove_exp   62     0.3142                  False
 momentum                  15:00|put|vixmove_fixed   42     0.3345                  False
 momentum                    15:00|put|vixmove_exp   58     0.3510                  False
-momentum                            15:00|put|mag  189     0.3623                  False
 momentum                  15:30|put|vixmove_fixed   43     0.4095                  False
-momentum                           15:30|both|mag  371     0.4785                  False
-momentum                           15:00|both|mag  371     0.4928                  False
 momentum                    15:00|put|vixmove_lit  101     0.1415                  False
 momentum                   15:00|both|vixmove_lit  251     0.1165                  False
 momentum                    15:30|put|vixmove_lit  104     0.0585                  False
@@ -32,8 +32,8 @@ momentum                   15:30|both|vixmove_lit  252     0.1140               
      fvg                       FVG long|R2|bos_on  307     1.0000                  False
      fvg                      FVG long|R1|bos_off  664     1.0000                  False
      fvg                      FVG long|R2|bos_off  661     1.0000                  False
-  gapliq                                GAPLIQ T1  121     1.0000                  False
-  gapliq                                GAPLIQ T2  121     1.0000                  False
+  gapliq                                GAPLIQ T1  120     1.0000                  False
+  gapliq                                GAPLIQ T2  120     1.0000                  False
   gapliq                                GAPLIQ T3  132     1.0000                  False
  flatten                               FLATTEN U1  102     0.2970                  False
  flatten                               FLATTEN U2  343     1.0000                  False

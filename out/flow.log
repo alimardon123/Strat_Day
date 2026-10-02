@@ -1,3 +1,4 @@
+A52.3: opex days without a 09:30 bar (the only flow candidate that reads the open; must be 0): 0
                                candidate   n     win  net_pts  net_pct  p_boot_day  control_mean_pct  excess_over_control_pct  frac_seeds_beaten
 month_end: against MTD move, 15:00→close 184 40.2174  -1.5772  -0.0813      1.0000           -0.0703                  -0.0110             0.4150
           opex: continue open→15:00 move 168 40.4762  -1.0821  -0.0969      1.0000           -0.0545                  -0.0424             0.1450

@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import sys
+import time
 import traceback
 from datetime import datetime, timezone
 
@@ -31,10 +32,18 @@ def tree(path):
     return out.splitlines()
 
 
-def show(path, file):
-    """File contents as text, or None if the file is not in the tree."""
-    r = subprocess.run(["git", "-C", path, "show", f"HEAD:{file}"], capture_output=True, text=True)
-    return r.stdout if r.returncode == 0 else None
+def show(path, file, attempts=4):
+    """File contents as text, or None if `git show` still fails after `attempts` tries. Every caller asks only for
+    files listed by `tree()`, so a failure here is a transient lazy-blob fetch through the proxy, not a missing file;
+    it is retried (1, 2, 4 s back-off) rather than allowed to drop a file from a panel silently, which is how one
+    stock file (BBD) vanished from a 2026-10-02 fetch. `pipeline.verify_raw` catches anything that still slips."""
+    for i in range(attempts):
+        r = subprocess.run(["git", "-C", path, "show", f"HEAD:{file}"], capture_output=True, text=True)
+        if r.returncode == 0:
+            return r.stdout
+        if i < attempts - 1:
+            time.sleep(2 ** i)
+    return None
 
 
 def manifest(name, **fields):

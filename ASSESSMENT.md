@@ -45,7 +45,7 @@ from `out/` by `make all` and byte-identical on `make repeat`.
 
 | # | Landed | Evidence |
 |---|---|---|
-| D1 | Pre-registered. 16 configurations on 2013-01→2020-05-13; winner after the Phase 4 tie-break repair `15:00\|both\|vixmove_exp` (expanding-tercile rule, no fitted parameters; n 145, +3.12 pts/trade net, calendar-day Sharpe 0.49). Thread B's construction (VIX gate, move from the prior close, both directions) beats Thread A's (magnitude from the open, put-only) in every cross; the entry time (15:00 vs 15:30) is a wash. No trial passes BH-FDR at 10% across the 33-trial family (25 before the A36 FVG trials joined) — the reconciliation answers *which shape*, not yet *whether it is real*. | `out/reconcile_candidates.csv`, `out/reconcile_decision.md` |
+| D1 | Pre-registered. 16 configurations on 2013-01→2020-05-13; winner after the Phase 4 tie-break repair `15:00\|both\|vixmove_exp` (expanding-tercile rule, no fitted parameters; n 145, +3.12 pts/trade net, calendar-day Sharpe 0.49). Thread B's construction (VIX gate, move from the prior close, both directions) beat Thread A's (magnitude from the open, put-only) in every cross until A52.3's 09:30-open correction; since it, `15:30\|put\|mag` (Sharpe 0.47) beats `15:30\|put\|vixmove_exp` and `15:30\|both\|mag` and ties within 0.10 of the top, while the tie-break still picks the same winner; the entry time (15:00 vs 15:30) is a wash. No trial passes BH-FDR at 10% across the 33-trial family (25 before the A36 FVG trials joined) — the reconciliation answers *which shape*, not yet *whether it is real*. | `out/reconcile_candidates.csv`, `out/reconcile_decision.md` |
 | D2 | DONE on real data: FAILED for both signals (table above); per-year rows with option returns at spreads 1/2/3, worst day and MAE in `out/holdout_by_year.csv`; the 15 post-selection rows published; data window reported, not filled. | `out/holdout_summary.csv`, `out/holdout_by_year.csv`, PLAYBOOK §7 |
 | D2b | Done as a finding: the gap-up call is +0.022%/trade on SPX (p 0.16), +0.019% on DAX (p 0.27), −0.033% on EuroStoxx (p 1.0) over 2010–2018. Marginal where it exists; not universal. | `out/xmarket_*.csv` |
 | D3 | Done in-sample; holdout pending. With the exit half of the spread still charged, limit entry at 0.25 ATR adds +0.66 pts per signal to the gap-up call (0.34 of it a cost assumption, 0.31 price improvement net of adverse selection, p 0.002) and only +0.22 to the winner (0.36 cost assumption minus 0.14 adverse selection, p 0.38). Thread B's "largest single improvement" is real for the 13:00 leg and mostly a cost assumption for the last-hour leg. | `out/insample_execution.csv` |
@@ -72,13 +72,13 @@ midpoint.
 ## Overnight-loss forced-liquidation rebound (A39) — pre-registered, tested, not promoted
 
 Three trials (`out/gapliq_candidates.csv`, PLAYBOOK §10). On the holdout the hypothesis trade T1 (call from 10:00 after an
-overnight loss below the expanding 10th percentile) is positive: n 158, win 54.4 %, +2.20 pts at
-1 pt (+1.20 at 2 pt), day-block p 0.26, above its day-selection control (-1.07)
-and its timing control (+0.02); the timing fingerprint holds (T2 from 09:31: +0.12 pts < T1).
+overnight loss below the expanding 10th percentile) is positive: n 159, win 54.7 %, +2.19 pts at
+1 pt (+1.19 at 2 pt), day-block p 0.25, above its day-selection control (-0.97)
+and its timing control (+0.10); the timing fingerprint holds (T2 from 09:31: +0.08 pts < T1). (A52.3; was n 158, +2.20.)
 But n < 200 → UNDERPOWERED, p is far from 0.05, and the mirror T3 (put from 10:00 after an overnight GAIN) is also positive
 (+1.89 pts, p 0.43) — the asymmetry the forced-liquidation mechanism predicts is absent, so what the
 holdout shows is symmetric post-2020 reversal of large overnight gaps, not liquidation exhaustion. In the selection window T1
-is negative (-2.41 pts, n 121) and in the context window too. Per the A39 rule T1 is "a pattern
+is negative (-2.29 pts, n 120) and in the context window too. Per the A39 rule T1 is "a pattern
 without its mechanism": reported, never promoted. It is the only Track A candidate with a positive holdout row above both
 controls; the honest reading is a candidate for a forward test (option B) with a symmetric spec, not a trade.
 
@@ -157,9 +157,9 @@ roughly as much again, which is what a 198 % drawdown means when the fixed sizin
 ## Probability of backtest overfitting of the selection itself (A37)
 
 `out/pbo.csv`: with 12 rankable configurations on the selection window, CSCV over 16 blocks (12,870
-splits) gives PBO 0.73 — the in-sample best configuration ranks below the out-of-sample median in 73 %
-of splits, and its out-of-sample Sharpe is 0.05 against 0.25 for the average configuration
-(degradation slope −1.04). The per-column shuffled null gives 0.85, not 0.5, because the twelve
+splits) gives PBO 0.70 (0.73 before A52.3) — the in-sample best configuration ranks below the out-of-sample median in 70 %
+of splits, and its out-of-sample Sharpe is 0.14 against 0.30 for the average configuration
+(degradation slope −1.10). The per-column shuffled null gives 0.94, not 0.5, because the twelve
 configurations are near-duplicates whose own means and variances survive the shuffle; the statistic is
 reported, not used as a gate. It says what the holdout then confirmed: the ranking among these
 configurations carried no out-of-sample information.
@@ -305,10 +305,10 @@ detect, by family, on the HOLDOUT window where every verdict is decided:
 | fvg (A36) | 8 | 282 – 959 | 4.44 – 7.20 | **0.78 – 1.27** | −1.143 to +0.026 |
 | pre-registered (D1, gap-up) | 2 | 274 – 452 | 21.90 – 25.39 | 3.85 – 4.46 | −1.904 to −0.143 |
 | flatten (A46) | 3 | 144 – 299 | 31.59 – 44.70 | 5.55 – 7.86 | −3.283 to −1.082 |
-| gapliq (A39) | 3 | 154 – 158 | 45.29 – 50.86 | 7.96 – 8.94 | +0.117 to +2.202 |
+| gapliq (A39) | 3 | 154 – 159 | 45.15 – 50.70 | 7.94 – 8.91 | +0.077 to +2.191 |
 
 The cost every result must clear is 1.0 to 2.0 index points (`ACCEPTANCE.md:104-106`). Across all 61 rows the MDE
-runs 0.22 / 2.80 / 8.94 (best / median / worst); 25 of 61 resolve an effect at or below 2.0 points, and 8 of 16
+runs 0.22 / 2.76 / 8.91 (best / median / worst); 25 of 61 resolve an effect at or below 2.0 points, and 8 of 16
 on the holdout — all eight of them the FVG family.
 
 **A47's own refutation condition is MET for one family and NOT met for the others, and is reported as such.**
@@ -324,8 +324,8 @@ a shortage of signals.
 points of per-trade dispersion; hold-to-close delta-one positions carry 21.9-50.9. Roughly seven times less noise
 is what buys the power. Nothing should be built on this without its own pre-registration.
 
-**What it makes of A39, the programme's most-cited near-miss.** T1's published +2.20 pts/trade at n 158 sits
-against a detection threshold of 7.96 points for its own family. It is about a quarter of the way to what this
+**What it makes of A39, the programme's most-cited near-miss.** T1's published +2.19 pts/trade at n 159 sits
+against a detection threshold of 7.94 points for its own family. It is about a quarter of the way to what this
 design could distinguish from zero. That is the quantitative content of its UNDERPOWERED label.
 
 **What this changes for option B.** Forward-testing A44 — a hold-to-close, one-per-day candidate, so squarely in
@@ -461,8 +461,8 @@ holdout series) over δ ∈ {0, 0.25, 0.5, 1, 2, 4, 8} index points.
 
 | check | outcome |
 |---|---|
-| δ = 0 reproduces published HOLDOUT numbers | **EXACT to 6 dp, all four** — T1 +2.201582 (n 158), U1 −3.282639 (n 144), fvg `short\|R1\|bos_off` +0.026263 (n 959), D1 winner −0.143431 (n 274); p_boot_day, DSR/PSR, calendar-day Sharpe and controls also exact |
-| recovery of the injected effect | **exactly 0.0 deviation on all 28 rows** |
+| δ = 0 reproduces published HOLDOUT numbers | **EXACT to 6 dp, all four** — T1 +2.190881 (n 159, after A52.3), U1 −3.282639 (n 144), fvg `short\|R1\|bos_off` +0.026263 (n 959), D1 winner −0.143431 (n 274); p_boot_day, DSR/PSR, calendar-day Sharpe and controls also exact |
+| recovery of the injected effect | **exactly 0.0 deviation on all 28 rows** — an arithmetic identity of the additive per-trade injection, so not evidence (A52); the δ = 0 rebuild above and the survival floor below are the evidence |
 
 There is no harness bug, and the 48 negatives are not the product of broken measurement. That was the point of
 the exercise and it is settled.
@@ -470,7 +470,7 @@ the exercise and it is settled.
 **A defect in my own registration.** A50 scoped injection to HOLDOUT only, then gated on all six survival
 conditions — but condition 3 (family-wide BH-FDR) is computed on the **SELECTION** window for every fleet-unit
 candidate (`pipeline/trials.py:30,37,44,83`), which a holdout injection cannot move, and condition 6 (n ≥ 200) is
-unreachable for gapliq T1 (n 158) and flatten U1 (n 144) at any δ. Three of four candidates were pinned to FAIL
+unreachable for gapliq T1 (n 159) and flatten U1 (n 144) at any δ. Three of four candidates were pinned to FAIL
 by construction. Part (c) of the answer condition is therefore evaluable only for the D1 winner, where the
 empirical floor is δ = 8.0 literal (2.43× A47's theoretical 3.290, missing the registered 2× bound) and δ = 4.0
 on the five conditions a holdout injection can exercise (1.22×, clearing it). Reported as partly unevaluable, not

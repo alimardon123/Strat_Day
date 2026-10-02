@@ -37,7 +37,7 @@ findings, which you inherit:
    position with a hard 2% stop, paying 1-2 index points of spread. The constraint therefore
    forces a binary choice: a pure-delta instrument needing a directional edge, or a vol-exposed
    strike that pays the variance premium daily. There is no third option.
-3. THE ONE LARGE EFFECT. The 0DTE variance risk premium is 7-17% of premium per day. It is on
+3. THE ONE LARGE EFFECT. The 0DTE variance risk premium: a straddle buyer loses 3.6-11% of premium per session before costs, 7-17% after a $0.10 round trip. It is on
    the SELL side, which the account forbids. Selling it with defined risk was tested and fails
    at realistic costs (-8.6%/-5.0%/-6.8% of max loss per structure at $0.10/leg; breakeven near
    $0.03/leg).
@@ -124,9 +124,9 @@ narrower version of it.
 # HARD RULES — from the prior run's own post-mortem. Non-negotiable.
 R1. Verification must be SUFFICIENT, not merely necessary. Two Phase-2 gates are mandatory before
     any strategy runs: (a) a CLEAN CLONE reproduces all outputs byte-identically — re-running in
-    place does not test this; (b) a POSITIVE control — inject a known edge of known size into a
-    candidate's own trades and confirm the pipeline recovers it one-for-one. A null/random-walk
-    control alone is not enough. Without (b), every negative result you produce is uninterpretable.
+    place does not test this; (b) a POSITIVE control — inject a known edge of known size and confirm
+    the full survival rule flags it once it is large enough. A check that cannot fail (that the injected
+    mean comes back) is not a control, nor is a null control alone. Without (b), negatives are uninterpretable.
 R2. The survival rule has exactly one implementation (see above). Contract and code may not drift.
 R3. Every non-goal carries an explicit expiry condition. When any new data arrives, re-read the
     non-goal list and reopen anything whose stated reason has lapsed — explicitly, never silently.

@@ -120,7 +120,8 @@ def build_day_table(frame, vix, meta, td):
     day["px_1000"] = px_1000.reindex(day.index)
     day["px_0931"] = px_0931.reindex(day.index)
     day["both_bars"] = day["px_1000"].notna() & day["px_0931"].notna()
-    day["overnight_ret"] = np.where(day["ref_ok"], day["open"] / day["prev_close"] - 1, np.nan)
+    # A52.3: prior close -> the literal 09:30 open; a session with no 09:30 bar has no overnight return
+    day["overnight_ret"] = np.where(day["ref_ok"], day["open_930"] / day["prev_close"] - 1, np.nan)
     thr_lo = signals.expanding_threshold(day["overnight_ret"], q=Q_LO, min_prior=MIN_PRIOR_SESSIONS)
     thr_hi = signals.expanding_threshold(day["overnight_ret"], q=Q_HI, min_prior=MIN_PRIOR_SESSIONS)
     day["sig_lo"] = day["overnight_ret"] <= thr_lo
@@ -230,6 +231,9 @@ def main(inp, out):
     frame, _dropped, meta = sessions.build_extended(trading_days=td)
     vix = pd.read_parquet("data/raw/vix_daily.parquet")
     day = build_day_table(frame, vix, meta, td)
+    no930 = signals.sessions_without_open_bar(day)
+    print(f"A52.3: sessions without a 09:30 bar (no overnight return; never signal, never enter a percentile pool): "
+          f"{len(no930)} {[str(d.date()) for d in no930]}")
 
     rows, trade_frames = [], []
     for win_name, start, end in WINDOWS:

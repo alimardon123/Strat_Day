@@ -1,36 +1,36 @@
         family              candidate    window  exit_rule   n  sd_net_pts_cost1  sd_net_pts_cost2  mde_at_n  mde_at_200  answerable_at_n
-        gapliq                     T1   CONTEXT registered 284           15.9199           15.9199    2.3489      2.7991            False
-        gapliq                     T1   CONTEXT  fixed5pts 284            4.9410            4.9410    0.7290      0.8687             True
-        gapliq                     T1   CONTEXT fixed10pts 284            8.6915            8.6915    1.2824      1.5281             True
-        gapliq                     T1   CONTEXT fixed20pts 284           12.8163           12.8163    1.8910      2.2534             True
-        gapliq                     T2   CONTEXT registered 284           17.7589           17.7589    2.6202      3.1224            False
-        gapliq                     T2   CONTEXT  fixed5pts 284            4.9820            4.9820    0.7351      0.8759             True
-        gapliq                     T2   CONTEXT fixed10pts 284            9.0735            9.0735    1.3387      1.5953             True
-        gapliq                     T2   CONTEXT fixed20pts 284           13.6595           13.6595    2.0154      2.4016            False
+        gapliq                     T1   CONTEXT registered 283           15.9475           15.9475    2.3571      2.8039            False
+        gapliq                     T1   CONTEXT  fixed5pts 283            4.9498            4.9498    0.7316      0.8703             True
+        gapliq                     T1   CONTEXT fixed10pts 283            8.7067            8.7067    1.2869      1.5308             True
+        gapliq                     T1   CONTEXT fixed20pts 283           12.8387           12.8387    1.8976      2.2573             True
+        gapliq                     T2   CONTEXT registered 283           17.7896           17.7896    2.6294      3.1278            False
+        gapliq                     T2   CONTEXT  fixed5pts 283            4.9904            4.9904    0.7376      0.8774             True
+        gapliq                     T2   CONTEXT fixed10pts 283            9.0892            9.0892    1.3434      1.5981             True
+        gapliq                     T2   CONTEXT fixed20pts 283           13.6831           13.6831    2.0224      2.4058            False
         gapliq                     T3   CONTEXT registered 273           15.4729           15.4729    2.3285      2.7204            False
         gapliq                     T3   CONTEXT  fixed5pts 273            4.9301            4.9301    0.7419      0.8668             True
         gapliq                     T3   CONTEXT fixed10pts 273            8.4470            8.4470    1.2712      1.4852             True
         gapliq                     T3   CONTEXT fixed20pts 273           11.7635           11.7635    1.7703      2.0683             True
-        gapliq                     T1 SELECTION registered 121           27.7261           27.7261    6.2673      4.8748            False
-        gapliq                     T1 SELECTION  fixed5pts 121            5.0165            5.0165    1.1339      0.8820             True
-        gapliq                     T1 SELECTION fixed10pts 121            9.7524            9.7524    2.2045      1.7147            False
-        gapliq                     T1 SELECTION fixed20pts 121           16.1681           16.1681    3.6547      2.8427            False
-        gapliq                     T2 SELECTION registered 121           28.5563           28.5563    6.4549      5.0208            False
-        gapliq                     T2 SELECTION  fixed5pts 121            4.9585            4.9585    1.1208      0.8718             True
-        gapliq                     T2 SELECTION fixed10pts 121            9.9112            9.9112    2.2404      1.7426            False
-        gapliq                     T2 SELECTION fixed20pts 121           16.5656           16.5656    3.7446      2.9126            False
+        gapliq                     T1 SELECTION registered 120           27.8082           27.8082    6.3120      4.8892            False
+        gapliq                     T1 SELECTION  fixed5pts 120            5.0147            5.0147    1.1382      0.8817             True
+        gapliq                     T1 SELECTION fixed10pts 120            9.7450            9.7450    2.2120      1.7134            False
+        gapliq                     T1 SELECTION fixed20pts 120           16.1214           16.1214    3.6593      2.8345            False
+        gapliq                     T2 SELECTION registered 120           28.6525           28.6525    6.5036      5.0377            False
+        gapliq                     T2 SELECTION  fixed5pts 120            4.9507            4.9507    1.1237      0.8704             True
+        gapliq                     T2 SELECTION fixed10pts 120            9.9010            9.9010    2.2474      1.7408            False
+        gapliq                     T2 SELECTION fixed20pts 120           16.5222           16.5222    3.7502      2.9049            False
         gapliq                     T3 SELECTION registered 132           34.2325           34.2325    7.4086      6.0188            False
         gapliq                     T3 SELECTION  fixed5pts 132            4.9824            4.9824    1.0783      0.8760             True
         gapliq                     T3 SELECTION fixed10pts 132            9.2981            9.2981    2.0123      1.6348            False
         gapliq                     T3 SELECTION fixed20pts 132           14.7300           14.7300    3.1879      2.5898            False
-        gapliq                     T1   HOLDOUT registered 158           45.2937           45.2937    8.9597      7.9636            False
-        gapliq                     T1   HOLDOUT  fixed5pts 158            5.0123            5.0123    0.9915      0.8813             True
-        gapliq                     T1   HOLDOUT fixed10pts 158           10.0286           10.0286    1.9838      1.7632             True
-        gapliq                     T1   HOLDOUT fixed20pts 158           19.5820           19.5820    3.8736      3.4429            False
-        gapliq                     T2   HOLDOUT registered 158           50.8580           50.8580   10.0604      8.9419            False
-        gapliq                     T2   HOLDOUT  fixed5pts 158            5.0095            5.0095    0.9909      0.8808             True
-        gapliq                     T2   HOLDOUT fixed10pts 158           10.0286           10.0286    1.9838      1.7632             True
-        gapliq                     T2   HOLDOUT fixed20pts 158           19.7070           19.7070    3.8983      3.4649            False
+        gapliq                     T1   HOLDOUT registered 159           45.1503           45.1503    8.9032      7.9383            False
+        gapliq                     T1   HOLDOUT  fixed5pts 159            5.0109            5.0109    0.9881      0.8810             True
+        gapliq                     T1   HOLDOUT fixed10pts 159           10.0298           10.0298    1.9778      1.7634             True
+        gapliq                     T1   HOLDOUT fixed20pts 159           19.5780           19.5780    3.8606      3.4422            False
+        gapliq                     T2   HOLDOUT registered 159           50.6993           50.6993    9.9974      8.9140            False
+        gapliq                     T2   HOLDOUT  fixed5pts 159            5.0109            5.0109    0.9881      0.8810             True
+        gapliq                     T2   HOLDOUT fixed10pts 159           10.0266           10.0266    1.9772      1.7629             True
+        gapliq                     T2   HOLDOUT fixed20pts 159           19.6458           19.6458    3.8740      3.4541            False
         gapliq                     T3   HOLDOUT registered 154           48.0105           48.0105    9.6197      8.4412            False
         gapliq                     T3   HOLDOUT  fixed5pts 154            4.9649            4.9649    0.9948      0.8729             True
         gapliq                     T3   HOLDOUT fixed10pts 154            9.8404            9.8404    1.9717      1.7301             True

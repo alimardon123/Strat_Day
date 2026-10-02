@@ -26,10 +26,14 @@ underlying price shift (exit_px -> exit_px + direction*delta) expressed in both 
 codebase already carries per trade, so the points and percent series stay mutually consistent
 exactly as they would for a real trade, while every other column (date, entry_px, kind, stop_px,
 ...) and every OTHER session (all non-signal days, and every sibling trial's own signal days) is
-left bit-for-bit untouched. This is A50's own suggested method ("inject into the per-trade
-series, not into the price frame... leaves the gate, the thresholds, the signal selection and
-every other session provably untouched"); no concrete reason was found that it misrepresents the
-pipeline, so no alternative was substituted.
+left bit-for-bit untouched. A50 registered the drift "on a COPY of the underlying frame"
+(ACCEPTANCE.md:882-884); the per-trade injection is used instead because it is the one that keeps
+A50's other requirement -- "leaving all other sessions, all thresholds and the entire gate
+untouched" -- which a drift added to the frame would break through the expanding percentile pools
+(A52.1; an earlier version of this docstring attributed to A50 a sentence A50 does not contain).
+Because the injection is additive on the scored series, `recovered_minus_delta` is zero by
+arithmetic: it checks that the scoring path averages the same rows, not that an edge is recovered.
+What does test the pipeline is the delta=0 rebuild from raw data and the survival floor (A50a).
 
 Each candidate's COMPLETE scoring path is then re-run on the injected series by IMPORTING AND
 CALLING the existing helpers -- never reimplementing a statistic: `pipeline.stats.one_sided_p`
@@ -471,6 +475,7 @@ def main(inp, out):
             r = score_fn(delta)
             if delta == 0.0:
                 mean0 = r["mean_net_pts"]
+            # identically 0 under the additive per-trade injection (A52.1): an arithmetic check, not evidence
             recovered_minus_delta = (r["mean_net_pts"] - mean0 - delta) if pd.notna(mean0) else np.nan
             rows.append(dict(candidate=candidate, family=family, window=window, delta=delta, n=r["n"],
                              mean_net_pts=r["mean_net_pts"], recovered_minus_delta=recovered_minus_delta,

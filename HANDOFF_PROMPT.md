@@ -28,7 +28,7 @@ must be tradeable under it.
 
 # STATE — established, do not rediscover, do not re-derive
 - 48 pre-registered trials across three data sets. 0 pass the family-wide Benjamini-Hochberg
-  FDR at 10%. The best holdout result is +2.20 index points/trade at n=158, which its own
+  FDR at 10%. The best holdout result is +2.19 index points/trade at n=159, which its own
   family cannot distinguish from zero.
 - ACCEPTANCE.md is the APPEND-ONLY contract: done-statements, the six-condition survival rule,
   numeric budgets, non-goals, and 50 amendments (A1-A50), each pre-registered in its own commit
@@ -62,9 +62,9 @@ trial slots the whole family's FDR correction pays for.
    premium daily. There is no third option.
 
 # VALIDATED — you may rely on these without re-testing
-- A50 positive control: at zero injection the pipeline reproduces every published number exactly
-  to 6 dp; with a known edge injected it recovers it one-for-one, deviation exactly 0.0 across
-  28 rows. The instruments work.
+- A50 positive control: at zero injection every candidate, rebuilt from raw data, reproduces its
+  published numbers exactly to 6 dp, and with a known edge injected the scoring path flags survival
+  from 4.0 pts/trade (A50a). Its "0.0 deviation across 28 rows" is an arithmetic identity (A52).
 - Clean-checkout reproducibility, verified end to end (see STATE).
 
 # THE DECISION GATE — do this first, and let the answer decide the run
@@ -81,7 +81,7 @@ Check, by inspection and not by memory, whether any of these five inputs is now 
 **If NONE is present, the correct outcome is to confirm the negative and STOP.** Re-verify the
 state (git clean, `out/trials.csv` at 48 rows with 0 passing, `make repeat` byte-identical),
 report it in three lines, and end the run. Do NOT manufacture a 49th trial. The measured
-probability of backtest overfitting for this selection procedure is 0.73, so each additional
+probability of backtest overfitting for this selection procedure is 0.70, so each additional
 trial tightens the correction applied to all 48 existing results while being very unlikely to
 survive: searching harder now makes the evidence worse, not better. Stopping is the
 contractually valid outcome — the mission's own preamble says a rigorous negative is a valid

@@ -62,6 +62,9 @@ def main(path, out):
     frame, _ = sessions.build("oanda", path, sessions.trading_days_from_vix())
     day = signals.day_table(frame, vix)
     day = day.loc["2005-01-01":"2020-05-13"]
+    no930 = set(signals.sessions_without_open_bar(day))
+    print(f"A52.3: opex days without a 09:30 bar (the only flow candidate that reads the open; must be 0): "
+          f"{len(no930 & set(third_fridays(day.index)))}")
     mtd_base = day["close"].groupby(day.index.to_period("M")).transform("first")
     day["mtd"] = day["prev_close"] / mtd_base.shift(1).fillna(mtd_base) - 1
     rows = [

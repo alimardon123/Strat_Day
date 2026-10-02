@@ -819,6 +819,27 @@ def bexit_caption(df):
     return "\n\n".join([withdrawal, proportionality, economics, conclusion, safeguard])
 
 
+def ranking_sentence(cand_sel, winner_name):
+    """§2's ranking prose, generated from the selection rows (A52.3 made the old typed sentence false): the tie set is
+    `pipeline/reconcile.py`'s own (within 0.10 calendar-day Sharpe of the top), and whether every VIX-gated two-sided
+    configuration outranks every magnitude-gated or put-only one is computed, not asserted."""
+    rk = cand_sel[cand_sel["rankable"]].sort_values("rank")
+    tied = rk[(rk["sharpe_calday"].max() - rk["sharpe_calday"]) <= 0.10]
+    vix2 = rk[(rk["gate"] != "mag") & (rk["direction"] == "both")]
+    rest = rk.drop(vix2.index)
+    if vix2["rank"].max() < rest["rank"].min():
+        order = "Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one"
+    else:
+        worst = vix2.loc[vix2["rank"].idxmax()]
+        above = rest[rest["rank"] < worst["rank"]]
+        order = (f"Not every VIX-gated two-sided configuration outranks the magnitude-gated and put-only ones: "
+                 + ", ".join(f"`{r.candidate}` (rank {int(r['rank'])})" for _, r in above.iterrows())
+                 + f" ranks above `{worst['candidate']}` (rank {int(worst['rank'])})")
+    ties = ", ".join(f"`{r.candidate}` {r.sharpe_calday:.3f}" for _, r in tied.iterrows())
+    return (f"{order}; the configurations within 0.10 Sharpe of the top tie ({ties}) and the tie-break (fewest FITTED "
+            f"parameters — an expanding rule has none — then the higher Sharpe) picks `{winner_name}`.")
+
+
 def playbook():
     ext = sessions.ext_present()
     w = winner()
@@ -909,9 +930,7 @@ def playbook():
     else:
         L += [md(cand_sel[~cand_sel["rankable"]][["candidate", "n", "win", "net_pts", "net_pct", "sharpe_calday", "p_boot_month", "p_boot_day"]],
                  int_cols=INT_COLS), ""]
-    L += ["Every VIX-gated two-sided configuration outranks every magnitude-gated or put-only one; the four VIX-gated two-sided "
-          "variants tie within 0.10 Sharpe and the tie-break (fewest FITTED parameters — an expanding rule has none) picks the "
-          f"15:00 entry with the expanding-tercile rule. {fdr_sentence}{pbo_sentence}", ""]
+    L += [f"{ranking_sentence(cand_sel, w)} {fdr_sentence}{pbo_sentence}", ""]
     L += ["## 3. Option-level results — IN-SAMPLE (% of premium per trade)", "",
           md(summ[["signal", "spread", "settle", "k", "n", "trades_per_year", "win", "mean", "median", "worst_trade", "worst_day",
                    "mae_worst", "full_loss_trades", "premium_mean"]], int_cols=INT_COLS), "",

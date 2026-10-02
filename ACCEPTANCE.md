@@ -964,3 +964,311 @@ corrected here (it is disclosed at the point of use); recorded so the divergence
 the full rule could be exercised an empirical floor within 1.22× of theory on the exercisable conditions. The 48
 negatives are not the product of broken measurement. A50's part (c) was under-specified by me and is reported as
 partially unevaluable rather than spun as either a pass or a failure.
+
+## Amendment A51 — the real cost of the programme's instrument, measured from 0DTE quotes (pre-registered 2026-10-02, before any quote exists on the branch and before any code; ZERO new trials)
+
+**Why now: a non-goal's premise has lapsed (RETRO R3).** The non-goal "no real 0DTE quotes (unobtainable — k×VIX is
+the model)" (`ACCEPTANCE.md:120`) and A45 rule 5's "not measurable inside this pipeline" both rest on quotes being
+unobtainable. On 2026-10-02 three market-data hosts that DATA.md records as refused at the proxy (403) answered from
+this container with 401, authentication required: `data.alpaca.markets`, `hist.databento.com`, `api.polygon.io`.
+Alpaca's API lists historical option bars and trades but only latest quotes, so historical consolidated quotes need
+a paid source (Databento OPRA or Polygon). The non-goal is reopened here explicitly, for a measurement only.
+
+**The question.** Every survival verdict charges a fixed 1.0 index-point round trip (`ACCEPTANCE.md:51`, budget
+`:104`), and FINDING.md's headline is that no directional edge "pays its 1-2 index points of spread". That cost was
+assumed and never measured against a bid or an ask: the owner's option shards carry trade prints only, and A41 found
+no print in the exact minute for most of the 2 %-ITM session-minutes it checked (`out/realopt_calibration.csv`,
+missing share). A51 measures it, measures which strike depth is cheapest to trade, and re-prices the one large
+effect this programme found (the sell side, A43) at real bid and ask.
+
+**This is a MEASUREMENT, not a candidate.** Zero trials: the family stays at 48, `out/trials.csv` is untouched, and no
+published number, label, p-value or FDR decision is revised. Nothing it produces can be promoted. Every re-read below
+follows the A41 precedent: information, never a verdict.
+
+**Input (fixed now, vendor-neutral).** `data/ext/spy_0dte_quotes_1min_<YYYY-MM>.csv.gz` (monthly shards, each under
+100 MB), columns `ts,expiry,strike,right,bid,ask,bid_size,ask_size`. `ts` is UTC `YYYY-MM-DD HH:MM:SS` on a whole
+minute: the instant at which that consolidated best bid and offer applies. `expiry` is the NY date of `ts` (same-day
+contracts only), `strike` is in SPY dollars, `right` is C or P, prices are dollars, sizes are contracts. Universe:
+every SPY contract expiring that day with a strike within ±4 % of the session's 09:30 SPY price (wider than the trade
+shards' ±3 %, so a 2.5 %-deep strike survives an intraday drift). `data/ext/quotes_manifest.json` declares the vendor,
+dataset, schema, how the vendor's timestamp was mapped to `ts` (`ts_semantics`), the band, the window, and each
+shard's sha256 and row count; the unit refuses to run without it (the A6 rule). The quote prevailing at instant t is
+the latest row with `ts` ≤ t in the same session and no older than 5 minutes; otherwise the leg is missing, counted
+and never filled. The underlying reference S at instant t is the canonical extended frame's close of the bar ending
+at t, in SPY dollars (SPX-equivalent points ÷ 10). Every cost is reported in SPX index points (10 × SPY dollars),
+the survival rule's unit.
+
+**Window (fixed now).** DECISION WINDOW = 2026-03-02 → 2026-09-11: the most recent six months, 135 sessions with option
+bars on the branch. The downloader's default request is exactly this window. Months supplied beyond it are reported
+by calendar quarter as context and never move a decision statistic. If the full-session fetch costs more than the
+owner will pay, the owner may choose, before any quote is downloaded, an instants-only fetch of the minutes below;
+the manifest records that choice and nothing else changes.
+
+**Instants.** Entries are the programme's own, read at the close of the decision bar (A11): 10:01, 11:01, 13:01, 15:01
+and 15:31 ET (A39/A44 at 10:00, A46 at 11:00, the gap-up call at 13:00, the D1 winner at 15:00, A38 at 15:30).
+09:32 and 13:31 are measured for A42/A43 only; A45 rule 2 bars entries before 10:00. Exit is 15:55 (A28: SPY is
+physically settled and sold by 15:55 with both spread halves charged); 16:00 is also measured, for A43's exits at the
+15:59 bar close.
+
+**Measurements (all fixed now).**
+
+- **M1 — the spread surface.** For each session, each instant above, each right, and each moneyness in {1.5, 1.0,
+  0.5 % OTM; ATM; 0.5, 1.0, 1.5, 2.0, 2.5 % ITM}: the listed strike nearest the target (ITM call S(1 − m), OTM call
+  S(1 + m), mirrored for puts; ties go away from spot), and its quoted spread, ask − bid. Per cell, over sessions
+  (one value per session, so date-clustered by construction, R6): n, missing share, and the R7 summary as named
+  fields: min, p10, median, mean, p90, max, share at the one-cent minimum, share locked or crossed (ask ≤ bid).
+- **M2 — the decision statistic Cm.** The programme's exact instrument: 2 % ITM with A8's rounding away from spot on
+  the $1 grid, at each of the five entry instants, calls and puts, exited at 15:55. Round trip per leg RT = (ask −
+  mid) at entry + (mid − bid) at exit, mid = (bid + ask) / 2. Per session c_s = the mean RT over that session's legs;
+  **Cm = the median over sessions of c_s**, with a 90 % session-bootstrap interval (2,000 resamples, seed 11) and the
+  R7 fields. Coverage gate: if more than 20 % of all session × leg decision legs are missing, Cm is labelled
+  INCOMPLETE and M4 does not run.
+- **M3 — which depth is cheapest.** For ATM and 0.5, 1.0, 1.5, 2.0, 2.5 % ITM at the five entry instants, exit 15:55,
+  per session: RT; the entry delta from Black-Scholes at the mid-implied volatility (r = 0, T = minutes to 16:00 /
+  (365×24×60), A7's clock; delta = ±1 when mid − intrinsic ≤ $0.005; legs whose volatility does not solve are counted
+  and excluded); the static-hedged option P&L h = (mid_exit − mid_entry) − delta × (S_exit − S_entry), whose mean is
+  the variance-premium drag a buyer pays for convexity (A42); and the total cost per unit of delta TC = (RT − h) /
+  |delta|. Reported: the mean and median of each, and the 90 % session-bootstrap interval of mean TC. The depth with
+  the lowest mean TC per right and instant is REPORTED, never selected for anything.
+- **M4 — re-read of published holdout series at Cm.** Enumerated (R5): every counted trial with a HOLDOUT per-trade
+  series in index points on the branch, 19 series. These are the two pre-registered D1/D2 signals
+  (`out/holdout_d4_1500_both_vixmove_exp_s1_cash_k1.0.csv`, `out/holdout_d4_1300_call_gapgt0.3pct_s1_cash_k1.0.csv`,
+  column `pts`), fvg 8 (`out/fvg_candidates_trades.csv`, filled rows), gapliq 3, flatten 3 and oflow 3 (their
+  `*_trades.csv`, column `net_pts_cost1`). Excluded, each for a stated reason:
+  - the 15 POST-SELECTION momentum rows, which have no per-trade file (`out/realopt.log`);
+  - the remaining momentum and gap-up rows, which are selection-window only;
+  - xmarket, which is DAX/EuroStoxx/SPX 2010-2018 with no option leg;
+  - flow, which has no holdout window;
+  - eventvol, because E1 and E3 are negative at zero added cost (`out/eventvol_candidates.csv`) and E2 has n ≈ 20;
+  - sellvol, which is re-priced in M5 instead;
+  - letf, which never ran;
+  - Track B, which trades SPY shares at 2 bp/side, not options.
+
+  Each series is re-read with the per-trade net = gross − Cm, where gross = net at 1 pt + 1.0. It is scored by the
+  survival rule's six conditions, unchanged (R2):
+  1. net > 0;
+  2. one-sided day-block p < 0.05 (`pipeline.stats.one_sided_p`, seed 11);
+  3. BH-FDR at 10 % across the 19 re-read rows;
+  4. the published excess over the day-selection control > 0;
+  5. DSR > 0.95 at the trial's own published N;
+  6. n ≥ 200.
+
+  The intraday families (fvg, oflow) are also shown at Cm_intraday = the median over sessions of the mean full
+  spread of the 2 %-ITM legs at the five entry instants; this is a sensitivity, not a second test. A row passing all
+  six is labelled QUALIFIES FOR A FORWARD TEST. The only consequence is that the owner may pre-register a forward
+  test of that exact rule on sessions after 2026-09-11. A qualifying fvg row's forward test must also replace its
+  touch-equals-fill entry with a quote-based fill. Nothing is promoted on this data.
+- **M5 — A43 re-priced at real quotes (information for a non-prop account).** S1, S2 and S3 are exactly as A43
+  registered them: strikes by A43's nearest-listed rule at the 09:32 / 13:31 instants, and exit at the 16:00
+  instant. Each is priced at mids, then charged every leg's measured spread both ways (sell at the bid, buy at the
+  ask).
+  - Reported: n; sessions skipped; mean and median net per structure in dollars and in % of max loss (max loss from
+    the quoted credit); worst day; win rate; one-sided day-block p; breakeven cost per leg at mids.
+  - Quotes exist where prints do not, so the large-move sessions A43 skipped for missing wing prints
+    (`ASSESSMENT.md`, Track C) are priced here.
+  - n ≤ 135 < 200, so it is UNDERPOWERED by construction and not a verdict.
+  - The prop account cannot trade this. It answers FINDING.md's input 4 (relaxing the constraint) with real prices.
+
+**Validation, before any number is published (RETRO R1).**
+- **V1, scale and mapping.** For strikes at least 1.5 % ITM, the median of (mid − intrinsic) must lie in
+  [−$0.10, +$0.25] for calls and for puts separately; a price-scale error or a swapped right lands far outside. The
+  locked-or-crossed share is reported.
+- **V2, timestamp alignment.** For contract-minutes with both a trade bar (`data/ext/spy_0dte_1min_*`) and quotes,
+  compute the share of bar closes within [bid − $0.01, ask + $0.01]. Score this against the quote prevailing at the
+  bar's end and against the quote prevailing at its start. The manifest's declared alignment must score higher than
+  the alternative, and its share must be at least 25 %; a timezone or minute-offset error scores near zero.
+- **V3, coverage.** As in M2.
+- **On any V1-V3 failure:** nothing is published, the defect is fixed, and V1-V3 run again.
+- **V4, code level.** A test feeds the unit a quote file with known spreads, built from a real vendor sample of the
+  format; the unit must recover every spread exactly, and a zero-spread file must give Cm = 0.
+
+**What each criterion can and cannot move (RETRO R4).**
+- **Cm versus 1.0.** Only the quotes move it: spreads → 0 gives Cm → 0, and spreads → ∞ gives Cm > 1. Both ends are
+  reachable, so the criterion is not vacuous.
+- **The re-read.** A uniform cost change moves conditions 1, 2, 3 and 5 only:
+  - Condition 4 cannot move, because the control pays the same cost.
+  - Condition 6 cannot move, because there are no new trades.
+  - So gapliq and flatten (holdout n < 200) cannot qualify at any Cm, and neither can any row with a negative
+    published excess. This is stated now rather than discovered.
+  - A cost cut from 1.0 to any Cm ≥ 0 is an additive shift of at most +1.0 point per trade. A50 found fvg
+    `short|R1|bos_off` first passes the five holdout-re-runnable conditions at δ = 4.0 (`out/poscontrol.csv`), so
+    M4 is expected to qualify nothing for that row, whatever Cm turns out to be.
+
+**What each outcome means, stated now.**
+- **Cm ≥ 1.0 pt:** the cost assumption was not conservative. Every negative stands and was, if anything, optimistic.
+- **0.5 ≤ Cm < 1.0:** the assumption was conservative by up to half a point. The re-read is reported, and FINDING.md's
+  "1-2 index points" is corrected by a later amendment citing this output.
+- **Cm < 0.5:** as above. Every future registration uses the measured cost instead of 1.0.
+- **Cheapest depth (M3) other than 2 % ITM:** a finding about how the account should be traded. It changes no
+  published result.
+- **M5 positive after real spreads:** NOT an edge (n < 200). It would justify buying 2024-02 → 2026-03 quotes to
+  re-run A43 on its full registered window under its own promotion rule, as a separate amendment.
+
+**What would refute the concern motivating A51** ("the negative is an artifact of an over-conservative cost"): Cm ≥
+1.0, or no re-read row qualifying at the measured Cm.
+
+**Honest priors.**
+- **Cm < 1.0: MEDIUM-LOW.** The 2 %-ITM contracts trade thinly (A41), and thin markets quote wide.
+- **Cheapest depth nearer the money than 2 % ITM: MEDIUM.**
+- **Any M4 row qualifying: LOW**, per the R4 paragraph above.
+- **M5 positive at real spreads: LOW-MEDIUM.** The short legs earned their premium in A43; the open question was
+  always the four legs of spread. Prices from trade prints may also have flattered the credit.
+
+**Non-goals, each with its expiry (RETRO R3).**
+- **No execution simulation** (fills at the mid, queue position, partial fills): revisit when order-level or
+  paper-trading records exist.
+- **No SPX or XSP costs** (cash settlement removes the exit half): revisit if SPX/XSP quotes are supplied.
+- **No A49 dealer-hedging re-test:** that needs trades stamped with the prevailing quote (e.g. Databento's
+  trade-with-BBO schema) and gets its own amendment if supplied.
+- **No change to any registered rule, and no new trial:** permanent for A51.
+
+**Outputs.**
+- `out/costs_surface.csv` (M1).
+- `out/costs_decision.csv` and `out/costs_sessions.csv` (M2).
+- `out/costs_depth.csv` (M3).
+- `out/costs_reread.csv` (M4).
+- `out/costs_trackc.csv` (M5).
+- `out/costs_validation.csv` (V1-V3).
+
+These are rendered in `PLAYBOOK_0DTE.md` §20 by `pipeline/report.py`. Without the quote file, the unit writes
+header-only outputs and exits 0 (the A38/A41 convention), so `make all` never fails before the data exists.
+
+### A51a clarification (2026-10-02, before any quote exists on the branch) — the prevailing-quote rule for change-only vendor rows
+
+Verified from the vendor's documentation and its published sample files (no data was bought, no API call made).
+Databento's OPRA `cbbo-1m` stamps each record with the END of its one-minute interval and carries the consolidated
+BBO as of that instant, which is A51's `ts` definition exactly. But it emits a record only for a minute in which the
+BBO or the last sale changed. A missing row therefore means "unchanged", not "no quote". A51's 5-minute staleness
+limit would mark unchanged-but-valid quotes as missing and bias every statistic toward actively requoted strikes.
+
+**Replaced, before any quote exists.**
+- The manifest declares `rows_on_change`, which is true for this schema.
+- When it is true, the quote prevailing at instant t is the latest row with `ts` ≤ t in the same session, no older
+  than 30 minutes. For a SPY same-day contract during regular hours, only a vendor outage, not a quiet quote,
+  plausibly explains a longer silence.
+- When it is false, A51's 5-minute limit stands.
+- A row with an empty bid or ask (the vendor's empty-book record) means no quote at that instant, and the leg is
+  missing.
+- Sessions the vendor reports as degraded or missing are listed in the manifest and excluded from every A51
+  statistic.
+- Nothing else in A51 changes.
+
+## Amendment A52 — four record corrections from the 2026-10-02 audit (part 3 pre-registered before any code change; ZERO new trials)
+
+A fresh-context audit of the shipped record (2026-10-02) found four places where the record overstates, mis-states
+or fails to enforce its own evidence. None of the four adds a trial: the family stays at 48.
+
+**1. A50's "exactly 0.0 deviation across 28 rows" is an identity, not evidence.**
+- `pipeline/units/poscontrol.py` injects δ into each candidate's per-trade series (`inject_delta`: `pts += δ`). It
+  reports `recovered_minus_delta` = mean(pts + δ) − mean(pts) − δ, which is zero by arithmetic for every δ. Part (b)
+  of A50's answer condition could not fail.
+- The registered method (`ACCEPTANCE.md:882-884`) adds the drift "on a COPY of the underlying frame". The unit's
+  docstring credits A50 with a sentence ("inject into the per-trade series, not into the price frame") that A50
+  does not contain.
+- The per-trade method is kept, because it honours A50's own requirement that "all thresholds and the entire gate"
+  stay untouched; a drift added to the frame would move later sessions' gates through the expanding pools. What is
+  corrected is the claim.
+- What A50 does establish stands:
+  - At δ = 0, every candidate rebuilt from raw data by its own unit code reproduces its published HOLDOUT numbers
+    exactly.
+  - The scoring path flags survival once δ is large enough. That is A50a's detection-versus-promotion finding
+    (`out/poscontrol.csv`).
+- A50a's sentence "Parts (a) and (b) PASS cleanly" is corrected here to: part (a) passes and is evidence; part (b)
+  passes by construction and is not evidence.
+- The docstring is corrected. The deliverables that cite the zero deviation as evidence are corrected: FINDING.md,
+  the two handoff prompts, ASSESSMENT.md's A50 row (in place, same line), and dated notes appended to BLOCKED.md
+  and RETRO.md.
+
+**2. "7-17 % of premium per day" includes the buyer's cost.**
+- FINDING.md and README.md give the 0DTE variance risk premium as "7-17% of premium per day" (A42).
+- Those are a straddle buyer's mean losses at the counted +$0.10 round-trip cost (`out/eventvol_candidates.csv`,
+  `mean_pct` at `cost` 0.1, trials E1 and E3).
+- The rows at `cost` 0.0 are the premium measure without the trading cost.
+- The deliverables now give both, read from that file. Nothing is re-measured.
+
+**3. The 09:30-open defect that A46 fixed locally is still live in two other measures (the rule is fixed here,
+before any code changes).**
+
+`signals.day_table`'s `open` is the open of the session's FIRST bar. A46's FIX 1 (`pipeline/units/flatten.py`
+docstring, point 3) established that on a session with no bar at 09:30 (mod 570) the first bar is a post-halt
+reopen. A measure defined on the 09:30 open is wrong there. The sessions recorded then were 2005-09-13 and the
+circuit-breaker mornings 2020-03-09, 2020-03-16 and 2020-03-18; the fix re-counts them by enumeration and prints
+the count.
+
+Every consumer of that column, enumerated by searching `pipeline/`:
+- **A39's overnight return** (`pipeline/units/gapliq.py`, prior close → 09:30 open): AFFECTED. `out/
+  gapliq_candidates_trades.csv` has SELECTION T1 and T2 trades on 2020-03-18.
+- **D1's `mag` gate** (`pipeline/signals.py`, |open → entry|, A9, `ACCEPTANCE.md:72`), and the trade direction the
+  same move sets: AFFECTED. `out/reconcile_trades_selection.csv` has trades on all three 2020 sessions for
+  `15:00|both|mag` and `15:30|both|mag`, and on 2020-03-18 for `15:00|put|mag` and `15:30|put|mag`.
+- **The gap-up rule's gap** (A10) and **the opex flow candidate** (`pipeline/units/flow.py`): the fix must show that
+  neither can fire on any session lacking the 09:30 bar. If that holds, both are left unchanged, so Thread A's
+  reproduction gate and the own-account S12 sleeve keep Thread A's own first-bar convention. If it does not hold,
+  they are corrected under this same rule.
+- **Thread A's reproduction gate** (`pipeline/reproduce.py`): keeps Thread A's convention by design (A30 reproduces
+  the prior under its own conventions).
+- **fvg, rangebars, sweep and xmarket**: use bars as printed or their own session definitions, with no 09:30-open
+  concept, so they are not affected.
+
+**The rule.**
+- `signals.day_table` gains `open_930`, the literal 09:30 bar's open, NaN when that bar is absent.
+- A39's overnight return reads `open_930`.
+- The `mag` gate's move, its direction, and the day-selection control's direction base read `open_930`. That
+  control's pool requires the base to exist, as the prior-close gates already require a valid prior close.
+- A session without the 09:30 bar has no value: it never signals and adds nothing to any expanding percentile pool.
+- Nothing else changes: no window, threshold rule, cost, seed or other column.
+
+**Reporting.**
+- Every number the full regeneration changes is reported, with nothing adjusted to compensate: CONTEXT, SELECTION
+  and HOLDOUT rows, the trial ledger, PBO, the power table, the positive control, the real-price re-pricing and the
+  generated documents.
+- If the D1 ranking changes order, the pre-registered winner stays the one registered, and the change is reported.
+- Every label follows mechanically. In particular, A39 T1 stays UNDERPOWERED unless its corrected holdout n
+  reaches 200.
+- A44's forward test (unbuilt) inherits the corrected overnight return.
+
+**4. Gates that print FAIL exit 0.**
+- `pipeline/reproduce.py`, `pipeline/gate_ext.py` and `pipeline/sessions.py` print a gate's FAIL but exit 0, so
+  `pipeline/run_all.py` cannot see the failure. Only `pipeline/gate_etf.py` exits non-zero.
+- D7 requires `make all` to exit non-zero on any failure (`ACCEPTANCE.md:44`).
+- Fixed: each gate exits non-zero after writing its outputs when any check fails. `reproduce.py`'s "research/
+  untouched" check also requires `git status` itself to succeed.
+- Every gate passes today, so no output changes.
+
+### A52a result (2026-10-02) — what the corrections changed, read from the regenerated files
+
+**Baseline first.** Before any A52 code ran, an unmodified checkout regenerated all 176 committed outputs
+byte-identically in this container, plus the one gitignored file. A first fresh fetch differed: one stock-panel file
+was silently skipped on a transient read (`files_skipped` in `data/raw/manifest_bigmovers_stocks.json`). That made
+the own-account outputs differ until a re-fetch of the same upstream commit returned every file; the record is in
+CHANGELOG.md. The VIX source is now pinned (Makefile `VIX_URL`).
+
+**Part 3, by enumeration, as registered.**
+- Exactly four sessions lack a 09:30 bar, printed by `pipeline/reconcile.py` and `pipeline/units/gapliq.py`:
+  2005-09-13, 2020-03-09, 2020-03-16, 2020-03-18.
+- The gap-up rule's gap exceeds its threshold on none of them under the first-bar convention, and no opex day is
+  among them (`out/reconcile.log`, `out/flow.log`). So the gap-up rule, the S12 sleeve and the flow candidates
+  stay unchanged, as registered.
+- Exactly 22 tracked outputs changed. Every other output is byte-identical: the D1 and gap-up holdout tables, fvg,
+  flatten, oflow, the real-price re-pricing, event volatility, Track B and C, the own-account track, and gate (c),
+  which keeps Thread A's convention.
+- The changed files are `out/gapliq_*`, `out/reconcile_{candidates,trades_selection,trials,decision}*`,
+  `out/trials.csv`, `out/pbo.csv`, `out/power_analysis.csv`, `out/poscontrol.csv`, `out/bexit_detectability.csv`,
+  `out/gate_e.csv`, their logs, and PLAYBOOK_0DTE.md.
+
+**Values, cited by column.**
+- **A39.** The HOLDOUT T1 and T2 rows move by one session (`out/gapliq_candidates.csv`, `n`, `net_pts_cost1`,
+  `p_boot_day`). SELECTION T1 and T2 each lose their 2020-03-18 trade. T1's label stays UNDERPOWERED.
+- **The four `mag` configurations.** Their SELECTION rows move materially (`out/reconcile_candidates.csv`, `n`,
+  `net_pts`, `sharpe_calday`, `p_boot_month`). `15:30|put|mag` enters the decision rule's tie set. The tie-break
+  still picks the registered winner, by a margin in `sharpe_calday`.
+- **Family FDR.** Still 0 of 48 (`out/trials.csv`, `fdr_pass_10pct_family`).
+- **Gate (e).** Its identity counts change because the `mag` trades on those sessions are now excluded in both
+  paths; it still passes (`out/gate_e.csv`).
+- **PBO** (`out/pbo.csv`, `pbo`), **A47's family ranges** (`out/power_analysis.csv`) and **the A50 floors**
+  (`out/poscontrol.csv`): these are reported in SCORECARD.md and ASSESSMENT.md, edited in place, with the
+  pre-correction value beside each changed headline.
+
+**Generated prose.** PLAYBOOK §2's ranking sentence was typed text that the correction made false: one
+magnitude-gated configuration now outranks one VIX-gated two-sided configuration. `pipeline/report.py` now generates
+that sentence from the selection rows.

@@ -9,7 +9,7 @@ would change it. Everything else in this repository is the evidence behind that 
 correction**. Under the account constraint (0DTE options only, long-only, naked calls or puts, no overnight) the
 permitted instrument reduces to a leveraged intraday position with a hard 2% stop, and no directional edge found
 here pays its 1-2 index points of spread. The one large effect the programme did measure — the 0DTE variance
-risk premium, 7-17% of premium per day — is on the sell side, which the account forbids.
+risk premium, 3.6-11% of premium per session before costs (7-17% after a $0.10 round trip) — is on the sell side, which the account forbids.
 
 ## The deliverables
 
@@ -38,7 +38,7 @@ risk premium, 7-17% of premium per day — is on the sell side, which the accoun
 ## How to reproduce
 
 ```
-make fetch     # populates data/raw from GitHub mirrors (~13 min); data/ext is committed
+make fetch     # populates data/raw from GitHub mirrors (~13 min), then fails unless it matches the committed manifests; data/ext is committed
 make all       # regenerates every table and every generated document (~17 min, 36 steps)
 make repeat    # runs it again and diffs; must print "REPEAT: byte-identical"
 ```

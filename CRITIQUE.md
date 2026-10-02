@@ -427,3 +427,4 @@ overwrites its single output unconditionally.
 | AU4 | gate could not fail the build | gates (b), (c), (e) printed FAIL and exited 0 | A52.4: exit non-zero; each demonstrated failing then passing |
 | EN1 | reproducibility, environment | the VIX fetch tracked a daily-updated `main` | Makefile pins the commit matching the manifest sha256 |
 | EN2 | reproducibility, environment | a transient read error silently dropped one stock file from a fresh fetch; nothing compares a fresh manifest with the committed one, so the drift surfaced only as unexplained own-account differences | re-fetched (byte-identical baseline restored); manifest verification recommended as a follow-up |
+| EN2-fix | follow-up done | EN2's recommended guard is implemented: `pipeline/verify_raw.py` fails `make fetch` when a fresh fetch does not reproduce the committed manifests, and `_gh.show` retries transient reads | 12 tests, 8/8 mutants killed; the BBD case fails on real data |

@@ -38,7 +38,7 @@ risk premium, 3.6-11% of premium per session before costs (7-17% after a $0.10 r
 ## How to reproduce
 
 ```
-make fetch     # populates data/raw from GitHub mirrors (~13 min); data/ext is committed
+make fetch     # populates data/raw from GitHub mirrors (~13 min), then fails unless it matches the committed manifests; data/ext is committed
 make all       # regenerates every table and every generated document (~17 min, 36 steps)
 make repeat    # runs it again and diffs; must print "REPEAT: byte-identical"
 ```

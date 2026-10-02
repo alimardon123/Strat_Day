@@ -1,4 +1,4 @@
-.PHONY: all fetch repeat gates clean
+.PHONY: all fetch verify-raw repeat gates clean
 
 all:
 	python -m pipeline.run_all
@@ -15,6 +15,11 @@ fetch:
 	python -m pipeline.units.fetch_bigmovers --in spy --out data/raw/spy_daily.parquet
 	python -m pipeline.units.fetch_bigmovers --in stocks --out data/raw/stocks_daily.parquet
 	python -m pipeline.units.fetch_etf_kaggle --in ETFs --out data/raw/etf_daily_kaggle.parquet
+	python -m pipeline.verify_raw
+
+# A fetch must reproduce the committed manifests (ignoring fetched_at) or it fails; see pipeline/verify_raw.py
+verify-raw:
+	python -m pipeline.verify_raw
 
 gates:
 	python -m pipeline.sessions oanda data/raw/oanda_SPX500_USD.parquet

@@ -1132,3 +1132,105 @@ physically settled and sold by 15:55 with both spread halves charged); 16:00 is 
 
 These are rendered in `PLAYBOOK_0DTE.md` §20 by `pipeline/report.py`. Without the quote file, the unit writes
 header-only outputs and exits 0 (the A38/A41 convention), so `make all` never fails before the data exists.
+
+### A51a clarification (2026-10-02, before any quote exists on the branch) — the prevailing-quote rule for change-only vendor rows
+
+Verified from the vendor's documentation and its published sample files (no data was bought, no API call made).
+Databento's OPRA `cbbo-1m` stamps each record with the END of its one-minute interval and carries the consolidated
+BBO as of that instant, which is A51's `ts` definition exactly. But it emits a record only for a minute in which the
+BBO or the last sale changed. A missing row therefore means "unchanged", not "no quote". A51's 5-minute staleness
+limit would mark unchanged-but-valid quotes as missing and bias every statistic toward actively requoted strikes.
+
+**Replaced, before any quote exists.**
+- The manifest declares `rows_on_change`, which is true for this schema.
+- When it is true, the quote prevailing at instant t is the latest row with `ts` ≤ t in the same session, no older
+  than 30 minutes. For a SPY same-day contract during regular hours, only a vendor outage, not a quiet quote,
+  plausibly explains a longer silence.
+- When it is false, A51's 5-minute limit stands.
+- A row with an empty bid or ask (the vendor's empty-book record) means no quote at that instant, and the leg is
+  missing.
+- Sessions the vendor reports as degraded or missing are listed in the manifest and excluded from every A51
+  statistic.
+- Nothing else in A51 changes.
+
+## Amendment A52 — four record corrections from the 2026-10-02 audit (part 3 pre-registered before any code change; ZERO new trials)
+
+A fresh-context audit of the shipped record (2026-10-02) found four places where the record overstates, mis-states
+or fails to enforce its own evidence. None of the four adds a trial: the family stays at 48.
+
+**1. A50's "exactly 0.0 deviation across 28 rows" is an identity, not evidence.**
+- `pipeline/units/poscontrol.py` injects δ into each candidate's per-trade series (`inject_delta`: `pts += δ`). It
+  reports `recovered_minus_delta` = mean(pts + δ) − mean(pts) − δ, which is zero by arithmetic for every δ. Part (b)
+  of A50's answer condition could not fail.
+- The registered method (`ACCEPTANCE.md:882-884`) adds the drift "on a COPY of the underlying frame". The unit's
+  docstring credits A50 with a sentence ("inject into the per-trade series, not into the price frame") that A50
+  does not contain.
+- The per-trade method is kept, because it honours A50's own requirement that "all thresholds and the entire gate"
+  stay untouched; a drift added to the frame would move later sessions' gates through the expanding pools. What is
+  corrected is the claim.
+- What A50 does establish stands:
+  - At δ = 0, every candidate rebuilt from raw data by its own unit code reproduces its published HOLDOUT numbers
+    exactly.
+  - The scoring path flags survival once δ is large enough. That is A50a's detection-versus-promotion finding
+    (`out/poscontrol.csv`).
+- A50a's sentence "Parts (a) and (b) PASS cleanly" is corrected here to: part (a) passes and is evidence; part (b)
+  passes by construction and is not evidence.
+- The docstring is corrected. The deliverables that cite the zero deviation as evidence are corrected: FINDING.md,
+  the two handoff prompts, ASSESSMENT.md's A50 row (in place, same line), and dated notes appended to BLOCKED.md
+  and RETRO.md.
+
+**2. "7-17 % of premium per day" includes the buyer's cost.**
+- FINDING.md and README.md give the 0DTE variance risk premium as "7-17% of premium per day" (A42).
+- Those are a straddle buyer's mean losses at the counted +$0.10 round-trip cost (`out/eventvol_candidates.csv`,
+  `mean_pct` at `cost` 0.1, trials E1 and E3).
+- The rows at `cost` 0.0 are the premium measure without the trading cost.
+- The deliverables now give both, read from that file. Nothing is re-measured.
+
+**3. The 09:30-open defect that A46 fixed locally is still live in two other measures (the rule is fixed here,
+before any code changes).**
+
+`signals.day_table`'s `open` is the open of the session's FIRST bar. A46's FIX 1 (`pipeline/units/flatten.py`
+docstring, point 3) established that on a session with no bar at 09:30 (mod 570) the first bar is a post-halt
+reopen. A measure defined on the 09:30 open is wrong there. The sessions recorded then were 2005-09-13 and the
+circuit-breaker mornings 2020-03-09, 2020-03-16 and 2020-03-18; the fix re-counts them by enumeration and prints
+the count.
+
+Every consumer of that column, enumerated by searching `pipeline/`:
+- **A39's overnight return** (`pipeline/units/gapliq.py`, prior close → 09:30 open): AFFECTED. `out/
+  gapliq_candidates_trades.csv` has SELECTION T1 and T2 trades on 2020-03-18.
+- **D1's `mag` gate** (`pipeline/signals.py`, |open → entry|, A9, `ACCEPTANCE.md:72`), and the trade direction the
+  same move sets: AFFECTED. `out/reconcile_trades_selection.csv` has trades on all three 2020 sessions for
+  `15:00|both|mag` and `15:30|both|mag`, and on 2020-03-18 for `15:00|put|mag` and `15:30|put|mag`.
+- **The gap-up rule's gap** (A10) and **the opex flow candidate** (`pipeline/units/flow.py`): the fix must show that
+  neither can fire on any session lacking the 09:30 bar. If that holds, both are left unchanged, so Thread A's
+  reproduction gate and the own-account S12 sleeve keep Thread A's own first-bar convention. If it does not hold,
+  they are corrected under this same rule.
+- **Thread A's reproduction gate** (`pipeline/reproduce.py`): keeps Thread A's convention by design (A30 reproduces
+  the prior under its own conventions).
+- **fvg, rangebars, sweep and xmarket**: use bars as printed or their own session definitions, with no 09:30-open
+  concept, so they are not affected.
+
+**The rule.**
+- `signals.day_table` gains `open_930`, the literal 09:30 bar's open, NaN when that bar is absent.
+- A39's overnight return reads `open_930`.
+- The `mag` gate's move, its direction, and the day-selection control's direction base read `open_930`. That
+  control's pool requires the base to exist, as the prior-close gates already require a valid prior close.
+- A session without the 09:30 bar has no value: it never signals and adds nothing to any expanding percentile pool.
+- Nothing else changes: no window, threshold rule, cost, seed or other column.
+
+**Reporting.**
+- Every number the full regeneration changes is reported, with nothing adjusted to compensate: CONTEXT, SELECTION
+  and HOLDOUT rows, the trial ledger, PBO, the power table, the positive control, the real-price re-pricing and the
+  generated documents.
+- If the D1 ranking changes order, the pre-registered winner stays the one registered, and the change is reported.
+- Every label follows mechanically. In particular, A39 T1 stays UNDERPOWERED unless its corrected holdout n
+  reaches 200.
+- A44's forward test (unbuilt) inherits the corrected overnight return.
+
+**4. Gates that print FAIL exit 0.**
+- `pipeline/reproduce.py`, `pipeline/gate_ext.py` and `pipeline/sessions.py` print a gate's FAIL but exit 0, so
+  `pipeline/run_all.py` cannot see the failure. Only `pipeline/gate_etf.py` exits non-zero.
+- D7 requires `make all` to exit non-zero on any failure (`ACCEPTANCE.md:44`).
+- Fixed: each gate exits non-zero after writing its outputs when any check fails. `reproduce.py`'s "research/
+  untouched" check also requires `git status` itself to succeed.
+- Every gate passes today, so no output changes.

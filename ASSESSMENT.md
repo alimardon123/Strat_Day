@@ -462,7 +462,7 @@ holdout series) over δ ∈ {0, 0.25, 0.5, 1, 2, 4, 8} index points.
 | check | outcome |
 |---|---|
 | δ = 0 reproduces published HOLDOUT numbers | **EXACT to 6 dp, all four** — T1 +2.201582 (n 158), U1 −3.282639 (n 144), fvg `short\|R1\|bos_off` +0.026263 (n 959), D1 winner −0.143431 (n 274); p_boot_day, DSR/PSR, calendar-day Sharpe and controls also exact |
-| recovery of the injected effect | **exactly 0.0 deviation on all 28 rows** |
+| recovery of the injected effect | **exactly 0.0 deviation on all 28 rows** — an arithmetic identity of the additive per-trade injection, so not evidence (A52); the δ = 0 rebuild above and the survival floor below are the evidence |
 
 There is no harness bug, and the 48 negatives are not the product of broken measurement. That was the point of
 the exercise and it is settled.

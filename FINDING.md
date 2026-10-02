@@ -21,7 +21,7 @@ Three checks that had never been run before this session:
 
 | check | result |
 |---|---|
-| Can the pipeline SEE an edge that is there? (A50) | **Yes.** At zero injection it reproduces every published number exactly to 6 dp; with an edge injected it recovers it one-for-one, deviation **exactly 0.0** across 28 rows |
+| Can the pipeline flag an edge that is there? (A50) | **Yes, above a floor.** At zero injection every candidate, rebuilt from raw data by its own code, reproduces its published numbers exactly to 6 dp. With a known edge injected into its trades, the scoring path first flags survival at δ = 4.0 pts/trade on the five conditions a holdout injection can move (D1 winner, fvg) and at 8.0 on all six (D1 winner) (`out/poscontrol.csv`). The often-quoted "deviation exactly 0.0 across 28 rows" is an arithmetic identity of the injection, not evidence (A52) |
 | What size of edge can it see? (A47) | Detection floor 0.40 to 8.94 pts/trade by family, against a cost of 1-2 pts |
 | Does a stranger get the same numbers? (D7) | **Yes.** Fresh clone, raw data refetched from nothing, 36/36 steps: `diff -r` on 177 output files returned **nothing** |
 
@@ -43,9 +43,9 @@ structurally unavailable, and the two facts interlock:
 | source | status under this constraint |
 |---|---|
 | **Delta** (direction) | The only one actually available at the traded strike. **48 pre-registered trials, 0 pass.** This is an empirical result, not a proof — directional prediction is not impossible, this programme did not find it |
-| **Gamma** (realised vol above implied) | Requires a strike with time value, i.e. at- or out-of-the-money — where the measured loss is **−53%/trade at a 17% hit rate (ATM)** and **−50.6% median (OTM)**. Tested directly as a long straddle: **−7% of premium at 09:31, −17% at 13:30** (A42, n 646/608) |
+| **Gamma** (realised vol above implied) | Requires a strike with time value, i.e. at- or out-of-the-money — where the measured loss is **−53%/trade at a 17% hit rate (ATM)** and **−50.6% median (OTM)**. Tested directly as a long straddle: **−7% of premium at 09:31, −17% at 13:30** after a $0.10 round trip (−3.6% / −11.0% before it; A42, n 646/608) |
 | **Vega** (implied vol repricing) | **Structurally ≈ 0 at the traded strike:** time value is exactly 0.000 index points at 30, 60 and 180 minutes to expiry across every k tested (`out/options_timevalue.csv`). Capturing vol repricing across sessions needs an overnight hold, which the account forbids |
-| **Theta** (time decay) | **Wrong sign for a buyer by definition.** Capturing it requires selling, which the account forbids. Its measured size is the largest effect in this programme: 7-17% of premium per day |
+| **Theta** (time decay) | **Wrong sign for a buyer by definition.** Capturing it requires selling, which the account forbids. Its measured size is the largest effect in this programme: a straddle buyer loses 3.6% of premium from 09:31 and 11.0% from 13:30 to the close before costs, 7.0% and 17.2% after a $0.10 round trip (`out/eventvol_candidates.csv`) |
 
 The trap is the interlock. Both threads independently found the strike must be 2% in the money, because
 at-the-money and out-of-the-money lose roughly half the premium per trade. But 2% ITM has **zero time value**,
@@ -58,7 +58,9 @@ of things."
 
 ## The one large effect this programme did measure
 
-The 0DTE variance risk premium: **7-17% of premium per day** (A42, n 646/608). It is on the **sell** side, which
+The 0DTE variance risk premium: a straddle buyer loses **3.6% of premium from 09:31 and 11.0% from 13:30 to the
+close before costs**, 7.0% and 17.2% after a $0.10 round trip (A42, n 646/608, `out/eventvol_candidates.csv`; the
+older "7-17%" figure was the cost-inclusive one, A52). It is on the **sell** side, which
 the account forbids. Selling it with defined risk was tested anyway and fails at realistic costs (A43: −8.6% /
 −5.0% / −6.8% of max loss per structure at $0.10/leg; breakeven near $0.03/leg).
 

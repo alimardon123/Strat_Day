@@ -62,9 +62,9 @@ trial slots the whole family's FDR correction pays for.
    premium daily. There is no third option.
 
 # VALIDATED — you may rely on these without re-testing
-- A50 positive control: at zero injection the pipeline reproduces every published number exactly
-  to 6 dp; with a known edge injected it recovers it one-for-one, deviation exactly 0.0 across
-  28 rows. The instruments work.
+- A50 positive control: at zero injection every candidate, rebuilt from raw data, reproduces its
+  published numbers exactly to 6 dp, and with a known edge injected the scoring path flags survival
+  from 4.0 pts/trade (A50a). Its "0.0 deviation across 28 rows" is an arithmetic identity (A52).
 - Clean-checkout reproducibility, verified end to end (see STATE).
 
 # THE DECISION GATE — do this first, and let the answer decide the run

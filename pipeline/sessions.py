@@ -344,7 +344,10 @@ if __name__ == "__main__":
     gaps = cal[cal["reason"] == "feed gap"]
     print(f"feed gaps (market open, <300 bars): {len(gaps)} sessions; by year: "
           f"{gaps.groupby(pd.to_datetime(gaps['date']).dt.year).size().to_dict()}")
-    for name, ok in gate(feed, frame, dropped, probe, cal):
+    checks = gate(feed, frame, dropped, probe, cal)
+    for name, ok in checks:
         print(f"[{'PASS' if ok else 'FAIL'}] {name}")
     probe.to_csv(f"out/dst_probe_{feed}.csv", index=False)
     cal.to_csv(f"out/calendar_{feed}.csv", index=False)
+    if not all(ok for _, ok in checks):
+        sys.exit(1)                                               # A52.4: run_all must see a failed gate

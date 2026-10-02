@@ -181,8 +181,11 @@ if __name__ == "__main__":
     for name, ok in obs:
         results.append((name, ok))
         print(f"[{'PASS' if ok else 'FAIL'}] {name}")
-    clean = subprocess.run(["git", "status", "--porcelain", "research/"], capture_output=True, text=True).stdout.strip() == ""
+    gs = subprocess.run(["git", "status", "--porcelain", "research/"], capture_output=True, text=True)
+    clean = gs.returncode == 0 and gs.stdout.strip() == ""        # a failing `git status` is not "untouched" (A52.4)
     results.append(("research/ untouched", clean))
     print(f"[{'PASS' if clean else 'FAIL'}] git status --porcelain research/ is empty")
     print("\nGATE (c):", "PASS" if all(ok for _, ok in results) else "FAIL", "-", sum(ok for _, ok in results), "of", len(results))
     pd.DataFrame(results, columns=["check", "ok"]).to_csv("out/gate_c.csv", index=False)
+    if not all(ok for _, ok in results):
+        sys.exit(1)                                               # A52.4: run_all must see a failed gate

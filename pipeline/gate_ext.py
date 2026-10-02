@@ -140,6 +140,8 @@ def main():
         print(f"[{'PASS' if ok else 'FAIL'}] {name}")
     print("GATE (e):", "PASS" if all(ok for _, ok in results) else "FAIL")
     pd.DataFrame(results, columns=["check", "ok"]).to_csv("out/gate_e.csv", index=False)
+    if not all(ok for _, ok in results):
+        raise SystemExit(1)                                       # A52.4: run_all must see a failed gate
 
 
 if __name__ == "__main__":
